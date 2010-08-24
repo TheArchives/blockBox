@@ -1,0 +1,37 @@
+[spawn]
+y = 63
+x = 32
+z = 32
+h = 0
+
+[teleports]
+
+[ops]
+
+[messages]
+
+[hacks]
+hacks = N/A
+
+[writers]
+
+[plus]
+
+[owner]
+owner = N/A
+
+[permissions]
+all_write = True
+private = False
+admin_blocks = True
+
+[display]
+physics = False
+highlight_ops = True
+finite_water = False
+
+[size]
+y = 64
+x = 64
+z = 64
+

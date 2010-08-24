@@ -1,0 +1,18 @@
+[spawn]
+y = 3
+x = 128
+z = 128
+h = 0
+
+[permissions]
+all_write = True
+
+[ops]
+
+[writers]
+
+[size]
+y = 64
+x = 1024
+z = 256
+

@@ -1,0 +1,41 @@
+[spawn]
+y = 79
+x = 51
+z = 107
+h = 1
+
+[teleports]
+
+[autoshutdown]
+autoshutdown = True
+
+[ops]
+
+[messages]
+
+[hacks]
+hacks = N/A
+
+[writers]
+ninjaq = true
+
+[plus]
+
+[owner]
+owner = N/A
+
+[permissions]
+all_write = False
+private = False
+admin_blocks = True
+
+[display]
+physics = False
+highlight_ops = True
+finite_water = False
+
+[size]
+y = 128
+x = 128
+z = 128
+

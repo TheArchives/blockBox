@@ -1,0 +1,25 @@
+[spawn]
+y = 68
+x = 8
+z = 8
+h = 0
+
+[ops]
+
+[writers]
+
+[size]
+y = 64
+x = 16
+z = 16
+
+[display]
+physics = False
+highlight_ops = True
+finite_water = False
+
+[permissions]
+all_write = True
+private = False
+admin_blocks = True
+
