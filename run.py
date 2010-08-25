@@ -1,3 +1,4 @@
+#!/usr/bin/python2.6
 #    iCraft is Copyright 2010 both
 #
 #    The Archives team:
@@ -29,14 +30,11 @@
 
 import sys
 if not sys.version_info[:2] == (2, 6):
-    print "Sorry, but you need Python 2.6.x to run iCraft 2"
+    print "Python 2.6.x is required in order to run blockBox."
     exit(1)
 
 import os.path
 import time
-
-#!/usr/bin/python
-
 import logging
 import os,shutil
 from myne.constants import *
@@ -66,9 +64,7 @@ console.setFormatter(formatter)
 # add the handler to the root logger
 logging.getLogger('').addHandler(console)
 
-logging.log(logging.INFO, "Starting up iCraft %s" % VERSION)
-logging.log(logging.INFO, "Please don't forget to check for updates.")
-logging.log(logging.INFO, "http://hlmc.net/ | irc.esper.net #iCraft")
+logging.log(logging.INFO, "Starting up blockBox %s..." % VERSION)
 
 factory = MyneFactory()
 controller = ControllerFactory(factory)
@@ -104,8 +100,7 @@ finally:
         world.stop()
         world.save_meta()
     logging.log(logging.INFO, "Done flushing...")
-    logging.log(logging.INFO, "Please don't forget to check for updates.")
-    logging.log(logging.INFO, "http://hlmc.net/ | irc.esper.net #iCraft")
+    logging.log(logging.INFO, "Thanks for using blockBox!")
     if os.name is not "nt":
         sys.stdout.write(chr(27)+"[m")
     exit(1);
