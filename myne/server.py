@@ -164,12 +164,12 @@ class MyneFactory(Factory):
         self.chatlog = open("logs/server.log", "a")
         self.chatlog = open("logs/chat.log", "a")
         # Create a default world, if there isn't one.
-        if not os.path.isdir("worlds/%s" % self.default_name):
+        if not os.path.isdir("mapdata/worlds/%s" % self.default_name):
             logging.log(logging.INFO, "Generating %s world..." % self.default_name)
             sx, sy, sz = 64, 64, 64
             grass_to = (sy // 2)
             world = World.create(
-                "worlds/%s" % self.default_name,
+                "mapdata/worlds/%s" % self.default_name,
                 sx, sy, sz, # Size
                 sx//2,grass_to+2, sz//2, 0, # Spawn
                 ([BLOCK_DIRT]*(grass_to-1) + [BLOCK_GRASS] + [BLOCK_AIR]*(sy-grass_to)) # Levels
@@ -197,7 +197,7 @@ class MyneFactory(Factory):
         self.heartbeat = Heartbeat(self)
         # Boot worlds that got loaded
         for world in self.worlds:
-            self.loadWorld("worlds/%s" % world, world)
+            self.loadWorld("mapdata/worlds/%s" % world, world)
         # Set up tasks to run during execution
         reactor.callLater(0.1, self.sendMessages)
         reactor.callLater(1, self.printInfo)
@@ -330,8 +330,8 @@ class MyneFactory(Factory):
             i += 1
         world_id = "a-%i" % i
         # Copy and boot
-        self.newWorld(world_id, "../archives/%s" % filename)
-        self.loadWorld("worlds/%s" % world_id, world_id)
+        self.newWorld(world_id, "../mapdata/archives/%s" % filename)
+        self.loadWorld("mapdata/worlds/%s" % world_id, world_id)
         world = self.worlds[world_id]
         world.is_archive = True
         return world_id
@@ -395,7 +395,7 @@ class MyneFactory(Factory):
     def leaveWorld(self, world, user):
         world.clients.remove(user)
         if world.autoshutdown and len(world.clients)<1:
-            if world.basename == ("worlds/" + self.default_name):
+            if world.basename == ("mapdata/worlds/" + self.default_name):
                 return
             else:
                 if not self.asd_delay == 0:
@@ -451,8 +451,8 @@ class MyneFactory(Factory):
         self.worlds[world_id].flush()
         self.worlds[world_id].save_meta()
         del self.worlds[world_id]
-        world = self.worlds[world_id] =  World("worlds/%s" % world_id, world_id)
-        world.source = "worlds/" + world_id
+        world = self.worlds[world_id] =  World("mapdata/worlds/%s" % world_id, world_id)
+        world.source = "mapdata/worlds/" + world_id
         world.clients = set()
         world.id = world_id
         world.factory = self
@@ -679,17 +679,17 @@ class MyneFactory(Factory):
     def newWorld(self, new_name, template="default"):
         "Creates a new world from some template."
         # Make the directory
-        os.mkdir("worlds/%s" % new_name)
+        os.mkdir("mapdata/worlds/%s" % new_name)
         # Find the template files, copy them to the new location
         for filename in ["blocks.gz", "world.meta"]:
-            shutil.copyfile("templates/%s/%s" % (template, filename), "worlds/%s/%s" % (new_name, filename))
+            shutil.copyfile("templates/%s/%s" % (template, filename), "mapdata/worlds/%s/%s" % (new_name, filename))
 
     def renameWorld(self, old_worldid, new_worldid):
         "Renames a world."
         assert old_worldid not in self.worlds
         assert self.world_exists(old_worldid)
         assert not self.world_exists(new_worldid)
-        os.rename("worlds/%s" % (old_worldid), "worlds/%s" % (new_worldid))
+        os.rename("mapdata/worlds/%s" % (old_worldid), "mapdata/worlds/%s" % (new_worldid))
 
     def numberWithPhysics(self):
         "Returns the number of worlds with physics enabled."
@@ -743,7 +743,7 @@ class MyneFactory(Factory):
 
     def world_exists(self, world_id):
         "Says if the world exists (even if unbooted)"
-        return os.path.isdir("worlds/%s/" % world_id)
+        return os.path.isdir("mapdata/worlds/%s/" % world_id)
 
     def AutoBackup(self):
         for world in self.worlds:
@@ -752,7 +752,7 @@ class MyneFactory(Factory):
             reactor.callLater(float(self.backup_freq * 60),self.AutoBackup)
 
     def Backup(self,world_id):
-            world_dir = ("worlds/%s/" % world_id)
+            world_dir = ("mapdata/worlds/%s/" % world_id)
             if world_id == self.default_name and not self.backup_default:
                 return
             if not os.path.exists(world_dir):
@@ -793,7 +793,7 @@ class MyneFactory(Factory):
     
     def loadArchives(self):
         self.archives = {}
-        for name in os.listdir("archives/"):
+        for name in os.listdir("mapdata/archives/"):
             if os.path.isdir(os.path.join("archives", name)):
                 for subfilename in os.listdir(os.path.join("archives", name)):
                     match = re.match(r'^(\d\d\d\d\-\d\d\-\d\d_\d?\d\_\d\d)$', subfilename)

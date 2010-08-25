@@ -126,7 +126,7 @@ class StdinPlugin(threading.Thread):
                                     print Spec(self, message[1], False, True, self.server)
                             elif message[0] == ("boot"):
                                 world = str(message[1]).lower()
-                                self.server.loadWorld("worlds/"+world, world)
+                                self.server.loadWorld("mapdata/worlds/"+world, world)
                                 print "World '"+world+"' booted."
                             elif message[0] == ("shutdown"):
                                 world = str(message[1]).lower()
@@ -144,7 +144,7 @@ class StdinPlugin(threading.Thread):
                                         template = message[2]
                                     world_id = message[1].lower()
                                     self.server.newWorld(world_id, template)
-                                    self.server.loadWorld("worlds/%s" % world_id, world_id)
+                                    self.server.loadWorld("mapdata/worlds/%s" % world_id, world_id)
                                     self.server.worlds[world_id].all_write = False
                                     if len(message) < 4:
                                         self.client.sendServerMessage("World '%s' made and booted." % world_id)

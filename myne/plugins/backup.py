@@ -45,9 +45,9 @@ class BackupPlugin(ProtocolPlugin):
     def commandBackup(self, parts, byuser, overriderank):
         "/backup worldname - Op\nMakes a backup copy of the map of the map."
         if len(parts) == 1:
-            parts.append(self.client.world.basename.lstrip("worlds"))
+            parts.append(self.client.world.basename.lstrip("mapdata/worlds"))
         world_id = parts[1]
-        world_dir = ("worlds/%s/" % world_id)
+        world_dir = ("mapdata/worlds/%s/" % world_id)
         if not os.path.exists(world_dir):
            self.client.sendServerMessage("World %s does not exist." % (world_id))
         else:
@@ -78,7 +78,7 @@ class BackupPlugin(ProtocolPlugin):
             self.client.sendServerMessage("Please specify at least a world ID!")
         else:
             world_id = parts[1].lower()
-            world_dir = ("worlds/%s/" % world_id)
+            world_dir = ("mapdata/worlds/%s/" % world_id)
             if len(parts) < 3:
                 backups = os.listdir(world_dir+"backup/")
                 backups.sort(lambda x, y: int(x) - int(y))
@@ -93,7 +93,7 @@ class BackupPlugin(ProtocolPlugin):
                     shutil.copy( world_dir+"backup/%s/blocks.gz" %backup_number,world_dir)
                 else:
                     reactor.callLater(1, self.commandRestore(self, parts, byuser, overriderank))
-                self.client.factory.loadWorld("worlds/%s" % world_id, world_id)
+                self.client.factory.loadWorld("mapdata/worlds/%s" % world_id, world_id)
                 self.client.sendServerMessage("%s has been restored to %s and booted." %(world_id,backup_number))
                 self.client.factory.worlds[world_id].clients = old_clients
                 for client in self.client.factory.worlds[world_id].clients:
