@@ -113,7 +113,7 @@ class MyneFactory(Factory):
         self.wordfilter = ConfigParser()
         self.save_count = 1
         self.delay_count = 1
-        self.config.read("server.conf")
+        self.config.read("server.ini")
         self.saving = False
         self.max_clients = self.config.getint("main", "max_clients")
         self.server_name = self.config.get("main", "name")
@@ -149,7 +149,7 @@ class MyneFactory(Factory):
             self.irc_relay = None
         self.default_loaded = False
         #WORD FILTER LOL
-        self.wordfilter.read("wordfilter.conf")
+        self.wordfilter.read("wordfilter.ini")
         self.filter = []
         number = int(self.wordfilter.get("filter","count"))
         for x in range(number):
