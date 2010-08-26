@@ -26,7 +26,7 @@
 #    Or, send a letter to Creative Commons, 171 2nd Street,
 #    Suite 300, San Francisco, California, 94105, USA.
 
-VERSION = "v2.5.2"
+VERSION = "v1.0a"
 
 FORMAT_LENGTHS = {
     "b": 1,
@@ -398,4 +398,10 @@ BLOCK_OBSIDIAN = 49
 BLOCK_OPSIDIAN = 49
 
 class ServerFull(Exception):
-    pass
+	pass
+
+class NotConfigured(Exception):
+	def __init__(self):
+		self.msg = "blockBox is not configured. Read the installation guide if you wish to proceed."
+	def __str__(self):
+		return self.msg

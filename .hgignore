@@ -1,2 +1,6 @@
 glob:*.pyc
 glob:_build
+glob:logs/*.log
+glob:logs/console/*.log
+glob:url.txt
+glob:*.ini
