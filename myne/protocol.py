@@ -60,6 +60,7 @@ class MyneServerProtocol(Protocol):
 		self.loading_world = False
 		# Load plugins for ourselves
 		self.identified = False
+		self.quitmsg = "Goodbye."
 		self.commands = {}
 		self.hooks = {}
 		self.plugins = [plugin(self) for plugin in protocol_plugins]
@@ -70,7 +71,7 @@ class MyneServerProtocol(Protocol):
 		try:
 			self.id = self.factory.claimId(self)
 		except ServerFull:
-			self.sendError("The Server is Full from all of the Players.")
+			self.sendError("There are no availible player slots.")
 			return
 		# Open the Whisper Log, Adminchat log and WorldChat Log
 		self.whisperlog = open("logs/server.log", "a")
@@ -304,6 +305,8 @@ class MyneServerProtocol(Protocol):
 					break
 				# Send them back our info.
 				breakable_admins = self.runHook("canbreakadmin")
+				self.persist = Persist(self.username.lower())
+				reactor.callLater(0.1, self.setPersist)
 				self.sendPacked(
 					TYPE_INITIAL,
 					7, # Protocol version
@@ -1085,3 +1088,6 @@ class MyneServerProtocol(Protocol):
 					client.sendServerMessage("You have an message waiting in your Inbox.")
 					client.sendServerMessage("Use /inbox to check and see.")
 					reactor.callLater(300, self.MessageAlert)
+
+	def setPersist(self): # Load persisted variables.
+		self.quitmsg = self.persist.string("misc", "quitmsg", "Goodbye.")
