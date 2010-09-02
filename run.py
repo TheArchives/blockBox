@@ -42,6 +42,8 @@ from logging.handlers import SMTPHandler
 from lib.twisted.internet import reactor
 from myne.server import MyneFactory
 from myne.controller import ControllerFactory
+from myne.logger import ColoredLogger
+
 def LogTimestamp():
 	if os.path.exists("logs/console/console.log"):
 		shutil.copy("logs/console/console.log", "logs/console/console" +time.strftime("%Y%m%d%H%M%S",time.localtime(time.time())) +".log")
@@ -61,10 +63,11 @@ console = logging.StreamHandler()
 formatter = logging.Formatter("%(asctime)s - %(levelname)7s - %(message)s")
 # tell the handler to use this format
 console.setFormatter(formatter)
+logger = ColoredLogger("blockBox")
 # add the handler to the root logger
 logging.getLogger('').addHandler(console)
 
-logging.log(logging.INFO, "Starting up blockBox %s..." % VERSION)
+logger.info("Starting up blockBox %s..." % VERSION)
 
 factory = MyneFactory()
 controller = ControllerFactory(factory)
@@ -92,15 +95,16 @@ try:
 	reactor.run()
 finally:
 	# Make sure worlds are flushed
-	logging.log(logging.INFO, "Saving server meta...")
+	logger.info("Saving server meta...")
 	factory.saveMeta()
-	logging.log(logging.INFO, "Flushing worlds to disk...")
+	logger.info("Flushing worlds to disk...")
 	for world in factory.worlds.values():
-		logging.log(logging.INFO, "Saving: %s" % world.basename);
+		logger.info("Saving: %s" % world.basename);
 		world.stop()
 		world.save_meta()
-	logging.log(logging.INFO, "Done flushing...")
-	logging.log(logging.INFO, "Thanks for using blockBox!")
+	logger.info("Done flushing...")
+	logger.info("Thanks for using blockBox!")
+	logger.info("Press enter to exit.")
 	if os.name is not "nt":
 		sys.stdout.write(chr(27)+"[m")
-	exit(1);
+	factory.console.stop = True
