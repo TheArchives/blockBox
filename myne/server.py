@@ -685,7 +685,7 @@ class MyneFactory(Factory):
 		os.mkdir("mapdata/worlds/%s" % new_name)
 		# Find the template files, copy them to the new location
 		for filename in ["blocks.gz", "world.meta"]:
-			shutil.copyfile("templates/%s/%s" % (template, filename), "mapdata/worlds/%s/%s" % (new_name, filename))
+			shutil.copyfile("mapdata/templates/%s/%s" % (template, filename), "mapdata/worlds/%s/%s" % (new_name, filename))
 
 	def renameWorld(self, old_worldid, new_worldid):
 		"Renames a world."
