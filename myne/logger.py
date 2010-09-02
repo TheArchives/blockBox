@@ -74,7 +74,6 @@ class ColoredLogger():
 			sys.stdout.write(self.ctrl+self.col+"m")
 
 	def log(self, msg, color):
-		print time.strftime("%m/%d/%Y %I:%M:%S %p")
 		msg = "&7["+time.strftime("%m/%d/%Y %I:%M:%S %p")+"] %s - %s%s&7" % (self.name, color, msg)
 		split = msg.split("&")
 		for section in split:
@@ -91,7 +90,7 @@ class ColoredLogger():
 		self.log("DEBUG - " + msg , COLOUR_DARKGREEN)
 		
 	def info(self, msg):
-		self.log("INFO - " + msg , COLOUR_GREY)
+		self.log("INFO - " + msg , COLOUR_WHITE)
 		
 	def warning(self, msg):
 		self.log("WARNING - " + msg , COLOUR_YELLOW)

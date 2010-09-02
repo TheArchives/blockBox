@@ -257,3 +257,4 @@ class StdinPlugin(threading.Thread):
                 self.logger.error(traceback.format_exc())
         finally:
             time.sleep(0.1)
+            exit(1)
