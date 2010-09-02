@@ -39,7 +39,7 @@ import logging
 import os,shutil
 from myne.constants import *
 from logging.handlers import SMTPHandler
-from twisted.internet import reactor
+from lib.twisted.internet import reactor
 from myne.server import MyneFactory
 from myne.controller import ControllerFactory
 def LogTimestamp():

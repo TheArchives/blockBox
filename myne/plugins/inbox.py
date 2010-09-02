@@ -30,7 +30,7 @@
 import traceback
 from myne.plugins import ProtocolPlugin
 from myne.decorators import *
-from twisted.internet import reactor
+from lib.twisted.internet import reactor
 from myne.constants import *
 import pickle
 

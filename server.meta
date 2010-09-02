@@ -1,16 +1,17 @@
 [worlds]
 default = true
 
-[members]
-
 [mods]
-
-[admins]
-
-[directors]
 
 [silenced]
 
 [banned]
 
+[admins]
+
 [ipbanned]
+
+[directors]
+
+[members]
+

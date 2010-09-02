@@ -29,9 +29,9 @@
 
 import logging
 import traceback
-import simplejson
-from twisted.protocols.basic import LineReceiver
-from twisted.internet.protocol import Factory
+from lib import simplejson
+from lib.twisted.protocols.basic import LineReceiver
+from lib.twisted.internet.protocol import Factory
 
 class ControllerProtocol(LineReceiver):
     """

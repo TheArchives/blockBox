@@ -6,3 +6,4 @@ glob:url.txt
 glob:client.ini
 glob:server.ini
 glob:wordfilter.ini
+glob:*.bak

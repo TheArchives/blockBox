@@ -34,8 +34,8 @@ import hashlib
 import traceback
 import datetime
 import cPickle
-from twisted.internet.protocol import Protocol
-from twisted.internet import reactor
+from lib.twisted.internet.protocol import Protocol
+from lib.twisted.internet import reactor
 from myne.constants import *
 from myne.plugins import protocol_plugins
 from myne.decorators import *

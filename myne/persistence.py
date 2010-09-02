@@ -1,5 +1,5 @@
 from ConfigParser import RawConfigParser as ConfigParser
-from twisted.internet import reactor
+from lib.twisted.internet import reactor
 
 class PersistenceEngine(object):
 	def __init__(self, username):

@@ -31,7 +31,7 @@ import logging
 import time
 from collections import deque
 from threading import Thread, Lock
-from twisted.internet import reactor
+from lib.twisted.internet import reactor
 from constants import *
 
 CHR_WATER = chr(BLOCK_WATER)

@@ -36,7 +36,7 @@ import urllib
 import urllib2
 import cookielib
 import re
-from twisted.internet import reactor, protocol
+from lib.twisted.internet import reactor, protocol
 
 from myne.protocol import MyneServerProtocol, TYPE_FORMATS
 from myne.constants import *

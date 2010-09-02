@@ -30,7 +30,7 @@
 from myne.plugins import ProtocolPlugin
 from myne.decorators import *
 from myne.constants import *
-from twisted.internet import reactor
+from lib.twisted.internet import reactor
 import logging
 import datetime
 

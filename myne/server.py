@@ -44,8 +44,8 @@ import hashlib
 import random
 from myne.console import StdinPlugin
 from Queue import Queue, Empty
-from twisted.internet.protocol import Factory
-from twisted.internet import reactor
+from lib.twisted.internet.protocol import Factory
+from lib.twisted.internet import reactor
 from ConfigParser import RawConfigParser as ConfigParser
 from myne.protocol import MyneServerProtocol
 from myne.world import World
