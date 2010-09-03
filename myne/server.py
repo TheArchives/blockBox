@@ -53,6 +53,7 @@ from myne.irc_client import ChatBotFactory
 from myne.constants import *
 from myne.plugins import *
 from myne.timer import ResettableTimer
+from myne.logger import ColoredLogger
 
 class Heartbeat(object):
 	"""
@@ -62,13 +63,14 @@ The Salt is also used to help verify users' identities.
 
 	def __init__(self, factory):
 		self.factory = factory
+		self.logger = ColoredLogger("Heartbeat")
 		self.turl()
 
 	def turl(self):
 		try:
 			threading.Thread(target=self.get_url).start()
 		except:
-			logging.log(logging.ERROR, traceback.format_exc())
+			self.logger.error(traceback.format_exc())
 			reactor.callLater(1, self.turl)
 
 	def get_url(self):
@@ -86,15 +88,15 @@ The Salt is also used to help verify users' identities.
 				}))
 				self.url = fh.read().strip()
 				if self.factory.console_delay == self.factory.delay_count:
-					logging.log(logging.INFO, "Heartbeat Sent. Your URL: %s" % self.url)
-					logging.log(logging.INFO, "URL saved to url.txt")
+					self.logger.info("%s" % self.url)
+					self.logger.info("Saved URL to url.txt.")
 				open('url.txt', 'w').write(self.url)
 				if not self.factory.console.is_alive():
 					self.factory.console.run()
 			except:
-				logging.log(logging.ERROR, traceback.format_exc())
+				self.logger.error(traceback.format_exc())
 		except:
-			logging.log(logging.ERROR, traceback.format_exc())
+			self.logger.error(traceback.format_exc())
 		finally:
 			reactor.callLater(60, self.turl)
 
@@ -107,6 +109,7 @@ class MyneFactory(Factory):
 	def __init__(self):
 		if (os.path.exists("server.dist.ini") and not os.path.exists("server.ini")) or (os.path.exists("wordfilter.dist.ini") and not os.path.exists("wordfilter.ini")):
 			raise NotConfigured
+		self.logger = ColoredLogger("Server")
 		self.ServerVars = dict()
 		self.specs = ConfigParser()
 		self.last_heartbeat = time.time()
