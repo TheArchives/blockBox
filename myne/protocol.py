@@ -1093,4 +1093,4 @@ class MyneServerProtocol(Protocol):
 	def setPersist(self): # Load persisted variables.
 		self.quitmsg = self.persist.string("misc", "quitmsg", "Goodbye.")
 		self.homeworld = self.persist.string("misc", "homeworld", "default")
-		self.joinWorld(self.homeworld)
+		self.factory.joinWorld(self.homeworld, self)
