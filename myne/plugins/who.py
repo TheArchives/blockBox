@@ -165,4 +165,5 @@ class PlayersPlugin(ProtocolPlugin):
 		if not len(parts) > 1:
 			self.client.sendError("Quit: %s" % self.client.quitmsg)
 		else:
+			self.client.quitmsg = " ".join(parts[1:])
 			self.client.sendError("Quit: %s" % " ".join(parts[1:]))

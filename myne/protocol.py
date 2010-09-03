@@ -61,6 +61,7 @@ class MyneServerProtocol(Protocol):
 		# Load plugins for ourselves
 		self.identified = False
 		self.quitmsg = "Goodbye."
+		self.homeworld = "default"
 		self.commands = {}
 		self.hooks = {}
 		self.plugins = [plugin(self) for plugin in protocol_plugins]
@@ -86,7 +87,7 @@ class MyneServerProtocol(Protocol):
 			self.sendError("You are Banned for: %s" % self.factory.ipBanReason(ip))
 			return
 		self.log("Assigned ID %i" % self.id, level=logging.DEBUG)
-		self.factory.joinWorld(self.factory.default_name, self)
+		self.factory.joinWorld(self.homeworld, self)
 		self.sent_first_welcome = False
 		self.read_only = False
 		self.username = None
@@ -1091,3 +1092,5 @@ class MyneServerProtocol(Protocol):
 
 	def setPersist(self): # Load persisted variables.
 		self.quitmsg = self.persist.string("misc", "quitmsg", "Goodbye.")
+		self.homeworld = self.persist.string("misc", "homeworld", "default")
+		self.joinWorld(self.homeworld)

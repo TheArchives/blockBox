@@ -74,7 +74,7 @@ class MultiWorldPlugin(ProtocolPlugin):
                 template = parts[2]
             world_id = parts[1].lower()
             self.client.factory.newWorld(world_id, template)
-            self.client.factory.loadWorld("worlds/%s" % world_id, world_id)
+            self.client.factory.loadWorld("mapdata/worlds/%s" % world_id, world_id)
             self.client.factory.worlds[world_id].all_write = False
             if len(parts) < 4:
                 self.client.sendServerMessage("World '%s' made and booted." % world_id)
@@ -135,7 +135,7 @@ class MultiWorldPlugin(ProtocolPlugin):
                 self.client.sendServerMessage("World '%s' already exists!" % parts[1])
             else:
                 try:
-                    self.client.factory.loadWorld("worlds/%s" % parts[1], parts[1])
+                    self.client.factory.loadWorld("mapdata/worlds/%s" % parts[1], parts[1])
                     self.client.sendServerMessage("World '%s' booted." % parts[1])
                 except AssertionError:
                     self.client.sendServerMessage("There is no world by that name.")
@@ -147,7 +147,7 @@ class MultiWorldPlugin(ProtocolPlugin):
         if world_id not in self.client.factory.worlds:
             self.client.sendServerMessage("Attempting to boot and join '%s'" % world_id)
             try:
-                self.client.factory.loadWorld("worlds/%s" % world_id, world_id)
+                self.client.factory.loadWorld("mapdata/worlds/%s" % world_id, world_id)
             except AssertionError:
                 self.client.sendServerMessage("There is no world by that name.")
                 return
@@ -164,7 +164,7 @@ class MultiWorldPlugin(ProtocolPlugin):
         if len(parts) > 1:
             if parts[1].lower() == "all":
                 worlds = []
-                for world in os.listdir("worlds/"):
+                for world in os.listdir("mapdata/worlds/"):
                     if not world.startswith("."):
                         worlds.append(world)
                 self.client.sendServerList(["All:"] +worlds)
@@ -176,10 +176,16 @@ class MultiWorldPlugin(ProtocolPlugin):
 
     def commandTemplates(self, parts, byuser, overriderank):
         "/templates - Guest\nLists available templates"
-        self.client.sendServerList(["Templates:"] + os.listdir("templates/"))
+        self.client.sendServerList(["Templates:"] + os.listdir("mapdata/templates/"))
 
     def commandHome(self, parts, byuser, overriderank):
-        self.client.changeToWorld("default")
+        "/home [worldname] - Guest\nGoes to and/or changes your home world."
+        if not len(parts) > 1:
+            self.client.changeToWorld(self.client.homeworld)
+        else:
+            self.client.homeworld = parts[1]
+            self.client.persist.set("misc", "homeworld", parts[1])
+            self.client.sendServerMessage("Your home world is now %s!" % parts[1])
 
     @world_list
     @admin_only
@@ -202,12 +208,12 @@ class MultiWorldPlugin(ProtocolPlugin):
             sx, sy, sz = int(parts[2]), int(parts[4]), int(parts[3])
             grass_to = (sy // 2)
             world = World.create(
-                "worlds/%s" % world_id,
+                "mapdata/worlds/%s" % world_id,
                 sx, sy, sz, # Size
                 sx//2,grass_to+2, sz//2, 0, # Spawn
                 ([BLOCK_DIRT]*(grass_to-1) + [BLOCK_GRASS] + [BLOCK_AIR]*(sy-grass_to)) # Levels
             )
-            self.client.factory.loadWorld("worlds/%s" % world_id, world_id)
+            self.client.factory.loadWorld("mapdata/worlds/%s" % world_id, world_id)
             self.client.factory.worlds[world_id].all_write = False
             self.client.sendServerMessage("World '%s' made and booted." % world_id)
     
@@ -220,8 +226,8 @@ class MultiWorldPlugin(ProtocolPlugin):
         else:
             if parts[1] in self.client.factory.worlds:
                 self.client.factory.unloadWorld(parts[1])
-            shutil.copytree("worlds/%s" %parts[1], "worlds/.trash/%s" %parts[1])
-            shutil.rmtree("worlds/%s" % parts[1])
+            shutil.copytree("mapdata/worlds/%s" %parts[1], "mapdata/worlds/.trash/%s" %parts[1])
+            shutil.rmtree("mapdata/mworlds/%s" % parts[1])
             self.client.sendServerMessage("World deleted.")
     
     #@world_list

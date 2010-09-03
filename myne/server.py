@@ -587,12 +587,12 @@ class MyneFactory(Factory):
 						for client in self.clients.values():
 							client.sendPlayerLeave(*data)
 							if not source_client.username is None:
-								client.sendServerMessage("%s has quit! %s(%s%s)" % (source_client.username, COLOUR_RED, source_client.quitmsg))
+								client.sendServerMessage("%s has quit! (%s%s%s)" % (source_client.username, COLOUR_RED, source_client.quitmsg, COLOUR_YELLOW))
 							else:
 								source_client.log("Pinged the server.")
 						if not source_client.username is None:
 							if self.irc_relay and world:
-								self.irc_relay.sendServerMessage("%s has quit! %s(%s)" % (source_client.username, COLOUR_RED, source_client.quitmsg))
+								self.irc_relay.sendServerMessage("%s has quit! (%s%s%s)" % (source_client.username, COLOUR_RED, source_client.quitmsg, COLOUR_YELLOW))
 						logging.log(logging.INFO, "%s has quit! (%s)" % (source_client.username, source_client.quitmsg))
 					# Someone changed worlds!
 					elif task is TASK_WORLDCHANGE:
