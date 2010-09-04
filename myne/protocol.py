@@ -72,7 +72,7 @@ class MyneServerProtocol(Protocol):
 		self.identified = False
 		self.logger = ColoredLogger("Client")
 		self.quitmsg = "Goodbye."
-		self.homeworld = "default"
+		self.homeworld = "main"
 		self.commands = {}
 		self.hooks = {}
 		self.plugins = [plugin(self) for plugin in protocol_plugins]
@@ -93,9 +93,9 @@ class MyneServerProtocol(Protocol):
 		self.wclog = open("logs/staff.log", "a")
 		self.adlog = open("logs/world.log", "a")
 		# Check for IP bans
-		ip = self.transport.getPeer().host
-		if self.factory.isIpBanned(ip):
-			self.sendError("You are Banned for: %s" % self.factory.ipBanReason(ip))
+		self.ip = self.transport.getPeer().host
+		if self.factory.isIpBanned(self.ip):
+			self.sendError("You are Banned for: %s" % self.factory.ipBanReason(self.ip))
 			return
 		self.factory.joinWorld(self.homeworld, self)
 		self.sent_first_welcome = False
@@ -622,6 +622,31 @@ class MyneServerProtocol(Protocol):
 			color = COLOUR_GREY
 		return color
 
+	def rankName(self):
+		if self.isSpectator():
+			name = "Spectator"
+		elif self.isOwner():
+			name = "Owner"
+		elif self.isDirector():
+			name = "Director"
+		elif self.isAdmin():
+			name = "Admin"
+		elif self.isMod():
+			name = "Mod"
+		elif self.username.lower() == "notch" or self.username.lower() == "dock" or self.username.lower() == "pixeleater" or self.username.lower() == "andrewph" or self.username.lower() == "ikjames" or self.username.lower() == "goober" or self.username.lower() == "gothfox" or self.username.lower() == "destroyerx1" or self.username.lower() == "willempiee" or self.username.lower() == "dwarfy" or self.username.lower() == "erronjason" or self.username.lower() == "adam01" or self.username.lower() == "aera" or self.username.lower() == "andrewgodwin" or self.username.lower() == "revenant" or self.username.lower() == "gdude2002" or self.username.lower() == "varriount" or self.username.lower() == "notmeh" or self.username.lower() == "bidoof_king" or self.username.lower() == "rils" or self.username.lower() == "fragmer" or self.username.lower() == "tktech" or self.username.lower() == "pyropyro":
+			name = "VIP"
+		elif self.isWorldOwner():
+			name = "World Owner"
+		elif self.isOp():
+			name = "Op"
+		elif self.isMember():
+			name = "Member"
+		elif self.isWriter():
+			name = "Writer"
+		else:
+			name = "Guest"
+		return name
+
 	def loadRank(self):
 		file = open('ranks.dat', 'r')
 		bank_dic = cPickle.load(file)
@@ -790,6 +815,10 @@ class MyneServerProtocol(Protocol):
 					newline = line[1:]
 				else:
 					newline = line
+				newline = newline.replace("%name%", self.username)
+				newline = newline.replace("%ip%", self.ip)
+				newline = newline.replace("%rcolor%", self.userColour())
+				newline = newline.replace("%rname%", self.rankName())
 				self.sendPacked(TYPE_MESSAGE, id, prefix + newline)
 
 	def sendAction(self, id, colour, username, text):
@@ -1098,7 +1127,8 @@ class MyneServerProtocol(Protocol):
 					client.sendServerMessage("Use /inbox to check and see.")
 					reactor.callLater(300, self.MessageAlert)
 
-	def setPersist(self): # Load persisted variables.
+	def setPersist(self): # Load persisted variables, and store some important stuff.
+		self.persist.set("misc", "ip", self.ip)
 		self.quitmsg = self.persist.string("misc", "quitmsg", "Goodbye.")
 		self.homeworld = self.persist.string("misc", "homeworld", "default")
 		self.factory.joinWorld(self.homeworld, self)

@@ -170,7 +170,7 @@ class MyneFactory(Factory):
 		self.salt = hashlib.md5(hashlib.md5(str(random.getrandbits(128))).digest()).hexdigest()[-32:].strip("0")
 		# Load up the plugins specified
 		plugins = self.config.options("plugins")
-		self.logger.info("Loading plugins...")
+		self.logger.info("Loading %i plugins..." % len(plugins))
 		load_plugins(plugins)
 		# Open the chat log, ready for appending
 		self.chatlog = open("logs/server.log", "a")
