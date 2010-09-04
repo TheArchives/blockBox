@@ -295,10 +295,29 @@ class ChatBot(irc.IRCClient):
                         moddedmsg = msg[:51].replace(" ", "")
                         if moddedmsg[len(moddedmsg)-2] == "&":
                             msg = msg.replace("&", "*")
-                    self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, user, msg)))
+                    self.factory.queue.put((self, TASK_IRCMESSAGE, (127, userColour(user), user, msg)))
         except:
             logging.log(logging.ERROR,traceback.format_exc())
             self.msg(self.factory.irc_channel,"ERROR " + traceback.format_exc())
+
+    def userColour(self, user):
+        if user in self.factory.spectators:
+            color = COLOUR_BLACK
+        elif user is self.factory.owner:
+            color = COLOUR_DARKGREEN
+        elif user in self.factory.directors:
+            color = COLOUR_GREEN
+        elif user in self.factory.admins:
+            color = COLOUR_DARKRED
+        elif user in self.factory.mods:
+            color = COLOUR_RED
+        elif self.username.lower() == "notch" or self.username.lower() == "dock" or self.username.lower() == "pixeleater" or self.username.lower() == "andrewph" or self.username.lower() == "ikjames" or self.username.lower() == "goober" or self.username.lower() == "gothfox" or self.username.lower() == "destroyerx1" or self.username.lower() == "willempiee" or self.username.lower() == "dwarfy" or self.username.lower() == "erronjason" or self.username.lower() == "adam01" or self.username.lower() == "aera" or self.username.lower() == "andrewgodwin" or self.username.lower() == "revenant" or self.username.lower() == "gdude2002" or self.username.lower() == "varriount" or self.username.lower() == "notmeh" or self.username.lower() == "bidoof_king" or self.username.lower() == "rils" or self.username.lower() == "fragmer" or self.username.lower() == "tktech" or self.username.lower() == "pyropyro":
+            color = COLOUR_YELLOW
+        elif user in self.factory.members:
+            color = COLOUR_WHITE
+        else:
+            color = COLOUR_GREY
+        return color
 
     def action(self, user, channel, msg):
         """This will get called when the bot sees someone do an action."""

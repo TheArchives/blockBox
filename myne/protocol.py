@@ -775,23 +775,35 @@ class MyneServerProtocol(Protocol):
 	def sendPlayerDir(self, id, h, p):
 		self.sendPacked(TYPE_PLAYERDIR, id, h, p)
 
-	def sendMessage(self, id, colour, username, text, direct=False, action=False):
+	def sendMessage(self, id, colour, username, text, direct=False, action=False, irc=False):
 		"Sends a message to the player, splitting it up if needed."
 		# See if it's muted.
 		replacement = self.runHook("recvmessage", colour, username, text, action)
 		if replacement is False:
 			return
 		# See if we should highlight the names
-		if self.world.highlight_ops:
-			if action:
-				prefix = "%s*%s%s%s " % (COLOUR_YELLOW, colour, username, COLOUR_WHITE)
+		if irc:
+			if self.world.highlight_ops:
+				if action:
+					prefix = "%s*<%s%s>%s " % (COLOUR_YELLOW, colour, username, COLOUR_WHITE)
+				else:
+					prefix = "<%s%s>%s " % (colour, username, COLOUR_WHITE)
 			else:
-				prefix = "%s%s:%s " % (colour, username, COLOUR_WHITE)
+				if action:
+					prefix = "%s*<%s%s>%s " % (COLOUR_YELLOW, COLOUR_WHITE, username, COLOUR_WHITE)
+				else:
+					prefix = "<%s> " % username
 		else:
-			if action:
-				prefix = "%s*%s%s%s " % (COLOUR_YELLOW, COLOUR_WHITE, username, COLOUR_WHITE)
+			if self.world.highlight_ops:
+				if action:
+					prefix = "%s*%s%s%s " % (COLOUR_YELLOW, colour, username, COLOUR_WHITE)
+				else:
+					prefix = "%s%s:%s " % (colour, username, COLOUR_WHITE)
 			else:
-				prefix = "%s: " % username
+				if action:
+					prefix = "%s*%s%s%s " % (COLOUR_YELLOW, COLOUR_WHITE, username, COLOUR_WHITE)
+				else:
+					prefix = "%s: " % username
 		# Send the message in more than one bit if needed
 		self._sendMessage(prefix, text, id)
 
