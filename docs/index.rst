@@ -19,6 +19,7 @@ If you would like to get started and create your very own blockBox server, check
    
    tutorial
    development
+   licensing
 
 Indices and tables
 ==================
