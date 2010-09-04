@@ -3,7 +3,7 @@ glob:_build
 glob:logs/*.log
 glob:logs/console/*.log
 glob:url.txt
-glob:client.ini
-glob:server.ini
-glob:wordfilter.ini
+glob:conf/client.ini
+glob:conf/server.ini
+glob:conf/wordfilter.ini
 glob:*.bak

@@ -107,7 +107,7 @@ class MyneFactory(Factory):
 	protocol = MyneServerProtocol
 
 	def __init__(self):
-		if (os.path.exists("server.dist.ini") and not os.path.exists("server.ini")) or (os.path.exists("wordfilter.dist.ini") and not os.path.exists("wordfilter.ini")):
+		if (os.path.exists("conf/server.dist.ini") and not os.path.exists("conf/server.ini")) or (os.path.exists("conf/wordfilter.dist.ini") and not os.path.exists("conf/wordfilter.ini")):
 			raise NotConfigured
 		self.logger = ColoredLogger("Server")
 		self.ServerVars = dict()
@@ -118,7 +118,7 @@ class MyneFactory(Factory):
 		self.wordfilter = ConfigParser()
 		self.save_count = 1
 		self.delay_count = 1
-		self.config.read("server.ini")
+		self.config.read("conf/server.ini")
 		self.saving = False
 		self.max_clients = self.config.getint("main", "max_clients")
 		self.server_name = self.config.get("main", "name")
@@ -153,7 +153,7 @@ class MyneFactory(Factory):
 			self.irc_relay = None
 		self.main_loaded = False
 		#WORD FILTER LOL
-		self.wordfilter.read("wordfilter.ini")
+		self.wordfilter.read("conf/wordfilter.ini")
 		self.filter = []
 		number = int(self.wordfilter.get("filter","count"))
 		for x in range(number):
