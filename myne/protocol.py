@@ -41,6 +41,7 @@ from myne.plugins import protocol_plugins
 from myne.decorators import *
 from myne.irc_client import ChatBotFactory
 from myne.persistence import PersistenceEngine as Persist
+from myne.logger import ColoredLogger
 
 class MyneServerProtocol(Protocol):
 	"""
@@ -48,10 +49,19 @@ class MyneServerProtocol(Protocol):
 	Commands are mainly provided by plugins (protocol plugins).
 	"""
 	
-	def log(self, message, level=logging.INFO):
+	def log(self, message, level="info"):
 		"Fire-and-forget log function which adds in identifying info"
 		peer = self.transport.getPeer()
-		logging.log(level, "(%s:%s) %s" % (peer.host, peer.port, message))
+		if level is "debug":
+			self.logger.debug("(%s:%s) %s" % (peer.host, peer.port, message))
+		elif level is "info":
+			self.logger.info("(%s:%s) %s" % (peer.host, peer.port, message))
+		elif level is "warning":
+			self.logger.warning("(%s:%s) %s" % (peer.host, peer.port, message))
+		elif level is "error":
+			self.logger.error("(%s:%s) %s" % (peer.host, peer.port, message))
+		elif level is "critical":
+			self.logger.critical("(%s:%s) %s" % (peer.host, peer.port, message))
 	
 	def connectionMade(self):
 		"We've got a TCP connection, let's set ourselves up."
@@ -60,6 +70,7 @@ class MyneServerProtocol(Protocol):
 		self.loading_world = False
 		# Load plugins for ourselves
 		self.identified = False
+		self.logger = ColoredLogger("Client")
 		self.quitmsg = "Goodbye."
 		self.homeworld = "default"
 		self.commands = {}
@@ -86,7 +97,6 @@ class MyneServerProtocol(Protocol):
 		if self.factory.isIpBanned(ip):
 			self.sendError("You are Banned for: %s" % self.factory.ipBanReason(ip))
 			return
-		self.log("Assigned ID %i" % self.id, level=logging.DEBUG)
 		self.factory.joinWorld(self.homeworld, self)
 		self.sent_first_welcome = False
 		self.read_only = False
@@ -194,7 +204,6 @@ class MyneServerProtocol(Protocol):
 		if self.username:
 			self.log("Disconnected '%s'" % (self.username,))
 			self.runHook("playerquit",self.username)
-			self.log("(reason: %s)" % (reason,), level=logging.DEBUG)
 		# Kill all plugins
 		del self.plugins
 		del self.commands
@@ -279,6 +288,7 @@ class MyneServerProtocol(Protocol):
 			if type == TYPE_INITIAL:
 				# Get the client's details
 				protocol, self.username, mppass, utype = parts
+				self.logger = ColoredLogger(self.username)
 				if self.identified == True:
 					self.log("Kicked '%s'; already logged in to server" % (self.username))
 					self.sendError("You already logged in! Foolish bot owners.")
@@ -874,7 +884,6 @@ class MyneServerProtocol(Protocol):
 		self.zipped_level, self.zipped_size = gzip_handle, zipped_size
 		# Preload our first chunk, send a level stream header, and go!
 		self.chunk = self.zipped_level.read(1024)
-		self.log("Sending level...", level=logging.DEBUG)
 		self.sendPacked(TYPE_PRECHUNK)
 		reactor.callLater(0.001, self.sendLevelChunk)
 
@@ -894,7 +903,6 @@ class MyneServerProtocol(Protocol):
 			self.endSendLevel()
 
 	def endSendLevel(self):
-		self.log("Sent level data", level=logging.DEBUG)
 		self.sendPacked(TYPE_LEVELSIZE, self.world.x, self.world.y, self.world.z)
 		sx, sy, sz, sh = self.world.spawn
 		self.p = 0

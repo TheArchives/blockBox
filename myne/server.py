@@ -29,7 +29,6 @@
 
 import urllib
 import time
-import logging
 import os
 import re
 import sys
@@ -359,7 +358,7 @@ class MyneFactory(Factory):
 			world.save_meta()
 			world.flush()
 			if self.console_delay == self.delay_count:
-				logging.log(logging.INFO,"World '%s' has been saved." % world_id)
+				self.logger.info("World '%s' has been saved." % world_id)
 			if self.save_count == 5:
 				for client in list(list(self.worlds[world_id].clients))[:]:
 					client.sendServerMessage("World '%s' has been saved." % world_id)
@@ -368,7 +367,7 @@ class MyneFactory(Factory):
 				self.save_count += 1
 			if shutdown: del self.worlds[world_id]
 		except:
-			logging.log(logging.INFO,"Error saving %s" % world_id)
+			self.logger.info("Error saving %s" % world_id)
 
 	def claimId(self, client):
 		for i in range(1, self.max_clients+1):
@@ -384,9 +383,9 @@ class MyneFactory(Factory):
 		"Makes the player join the given World."
 		new_world = self.worlds[worldid]
 		try:
-			logging.log(logging.INFO,"%s is joining world %s" %(user.username,new_world.basename))
+			self.logger.info("%s is joining world %s" %(user.username,new_world.basename))
 		except:
-			logging.log(logging.INFO,"%s is joining world %s" %(user.transport.getPeer().host,new_world.basename))
+			self.logger.info("%s is joining world %s" %(user.transport.getPeer().host,new_world.basename))
 		if hasattr(user, "world") and user.world:
 			self.leaveWorld(user.world, user)
 		user.world = new_world
@@ -426,7 +425,7 @@ class MyneFactory(Factory):
 		"""
 		try:
 			if ASD and len(self.worlds[world_id].clients)>0:
-				logging.log(logging.ERROR, "YOU HAS ERROR, REPORT THIS TO GOOBER")
+				self.logger.error("YOU HAS ERROR, REPORT THIS TO GOOBER")
 				return
 		except KeyError:
 			return
@@ -511,7 +510,7 @@ class MyneFactory(Factory):
 						try:
 							world = source_client.world
 						except AttributeError:
-							logging.log(logging.WARN, "Source client for message has no world. Ignoring.")
+							self.logger.warning("Source client for message has no world. Ignoring.")
 							continue
 					# Someone built/deleted a block
 					if task is TASK_BLOCKSET:
@@ -614,7 +613,7 @@ class MyneFactory(Factory):
 								client.sendMessage(100, COLOUR_YELLOW+"#"+colour, username, message, False, False)
 						if self.irc_relay and len(data)>3:
 							self.irc_relay.sendServerMessage("#"+username+": "+text,True,username)
-						logging.log(logging.INFO,"#"+username+": "+text)
+						self.logger.info("#"+username+": "+text)
 						self.adlog = open("logs/server.log", "a")
 						self.adlog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+" - "+username+": "+text+"\n")
 						self.adlog.flush()
@@ -635,7 +634,7 @@ class MyneFactory(Factory):
 						message = self.messagestrip(message);
 						for client in self.clients.values():
 							client.sendNormalMessage(COLOUR_DARKBLUE + message)
-						logging.log(logging.INFO,message)
+						self.logger.info(message)
 						if self.irc_relay and world:
 							self.irc_relay.sendServerMessage(message)
 					elif task == TASK_ONMESSAGE:
@@ -658,7 +657,7 @@ class MyneFactory(Factory):
 						message = data
 						for client in self.clients.values():
 							client.sendNormalMessage(COLOUR_DARKRED + message)
-						logging.log(logging.INFO,message)
+						self.logger.info(message)
 						if self.irc_relay and world:
 							self.irc_relay.sendServerMessage(message)
 					elif task == TASK_AWAYMESSAGE:
@@ -672,7 +671,7 @@ class MyneFactory(Factory):
 						if self.irc_relay and world:
 							self.irc_relay.sendAction(username, text)
 				except Exception, e:
-					logging.log(logging.ERROR, traceback.format_exc())
+					self.logger.error(traceback.format_exc())
 		except Empty:
 			pass
 		# OK, now, for every world, let them read their queues
@@ -807,7 +806,7 @@ class MyneFactory(Factory):
 						try:
 							when = datetime.datetime.strptime(when, "%Y-%m-%d_%H_%M")
 						except ValueError, e:
-							logging.log(logging.WARN, "Bad archive filename %s" % subfilename)
+							self.logger.warning("Bad archive filename %s" % subfilename)
 							continue
 						if name not in self.archives:
 							self.archives[name] = {}
