@@ -106,7 +106,7 @@ class MyneFactory(Factory):
 	protocol = MyneServerProtocol
 
 	def __init__(self):
-		if (os.path.exists("conf/server.dist.ini") and not os.path.exists("conf/server.ini")) or (os.path.exists("conf/wordfilter.dist.ini") and not os.path.exists("conf/wordfilter.ini")):
+		if (os.path.exists("conf/server.dist.ini") and not os.path.exists("conf/server.ini")) or (os.path.exists("conf/wordfilter.dist.ini") and not os.path.exists("conf/wordfilter.ini")) or (os.path.exists("conf/ranks.dist.ini") and not os.path.exists("conf/ranks.ini")):
 			raise NotConfigured
 		self.logger = ColoredLogger("Server")
 		self.ServerVars = dict()
@@ -114,6 +114,8 @@ class MyneFactory(Factory):
 		self.last_heartbeat = time.time()
 		self.lastseen = ConfigParser()
 		self.config = ConfigParser()
+		self.ranks = ConfigParser()
+		self.rankcount = 0
 		self.wordfilter = ConfigParser()
 		self.save_count = 1
 		self.delay_count = 1
@@ -126,7 +128,7 @@ class MyneFactory(Factory):
 		self.public = self.config.getboolean("main", "public")
 		self.enable_archives = self.config.getboolean("worlds", "enable_archives")
 		self.duplicate_logins = self.config.getboolean("options", "duplicate_logins")
-		self.verify_names = True #DON'T TURN THIS OFF UNLESS YOU KNOW WHAT YOU'RE DOING. THIS VERIFIES THE NAMES ON THE SERVER TO SEE IF THEY ARE WHO THEY SAY THEY ARE, TURNING IT OFF CAN BE DANGEROUS AND A BIG SECURITY RISK. YOU WILL NOT BE SUPPORTED BY THE ICRAFT TEAM IF THIS IS TURNED OFF.
+		self.verify_names = self.config.getboolean("options", "verify_names")
 		self.asd_delay = self.config.getint("worlds", "asd_delay")
 		self.control_password = self.config.get("network", "control_password")
 		self.physics_limit = self.config.getint("options", "physics_limit")
@@ -151,10 +153,17 @@ class MyneFactory(Factory):
 		else:
 			self.irc_relay = None
 		self.main_loaded = False
-		#WORD FILTER LOL
+		# Ranks System
+		self.ranks.read("conf/ranks.ini")
+		self.ranklist = []
+		self.rankcount = self.ranks.getint("ranks","count")
+		for x in range(self.rankcount):
+			self.ranklist = self.ranklist + [[self.ranks.getint(str(x), "id"), self.ranks.get(str(x), "name"), self.ranks.get(str(x), "color")]]
+		self.logger.info("Successfully loaded %i ranks." % self.rankcount)
+		# Word Filter
 		self.wordfilter.read("conf/wordfilter.ini")
 		self.filter = []
-		number = int(self.wordfilter.get("filter","count"))
+		number = self.wordfilter.getint("filter","count")
 		for x in range(number):
 			self.filter = self.filter + [[self.wordfilter.get("filter","s"+str(x)),self.wordfilter.get("filter","r"+str(x))]]
 		# Salt, for the heartbeat server/verify-names

@@ -5,6 +5,8 @@ glob:logs/console/*.log
 glob:url.txt
 glob:conf/client.ini
 glob:conf/server.ini
+glob:conf/ranks.ini
 glob:conf/wordfilter.ini
 glob:*.bak
+glob:*.orig
 glob:persist/*.ini
