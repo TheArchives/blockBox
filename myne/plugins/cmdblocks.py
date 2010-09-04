@@ -650,6 +650,8 @@ class CommandPlugin(ProtocolPlugin):
             thiscmd = thiscmd.replace("$ircchan", self.client.factory.irc_channel)
             thiscmd = thiscmd.replace("$ircnet", self.client.factory.config.get("irc", "server"))
         thiscmd = thiscmd.replace("$owner", self.client.factory.owner)
+        thiscmd = thiscmd.replace("$rcolor", self.client.userColour())
+        thiscmd = thiscmd.replace("$rname", self.client.rankName())
         thiscmd = thiscmd.replace("$date", time.strftime("%m/%d/%Y",time.localtime(time.time())))
         thiscmd = thiscmd.replace("$time", time.strftime("%H:%M:%S",time.localtime(time.time())))
         myrank = "guest"
@@ -688,7 +690,7 @@ class CommandPlugin(ProtocolPlugin):
         thiscmd = thiscmd.replace("$posy", str(ry))
         thiscmd = thiscmd.replace("$posz", str(rz))
         thiscmd = thiscmd.replace("$posa", str(rx)+" "+str(ry)+" "+str(rx))
-        thiscmd = thiscmd.replace("$rank", myrank)
+        thiscmd = thiscmd.replace("$rid", myrank)
         thiscmd = thiscmd.replace("$rnum", str(myranknum))
         for variable in self.customvars.keys():
             thiscmd = thiscmd.replace("$"+variable, str(self.customvars[variable]))
@@ -949,12 +951,12 @@ class CommandPlugin(ProtocolPlugin):
                         func(parts, False, guest)
                 except UnboundLocalError:
                     self.client.sendServerMessage("Internal server error.")
-                    self.client.log(traceback.format_exc(), level=logging.ERROR)
+                    self.client.log(traceback.format_exc(), "error")
             except Exception, e:
 
                 self.client.sendServerMessage("Internal server error.")
 
-                self.client.log(traceback.format_exc(), level=logging.ERROR)
+                self.client.log(traceback.format_exc(), "error")
         self.runningcmdlist.remove(self.runningcmdlist[0])
         reactor.callLater(0.1, self.runcommands)
 
