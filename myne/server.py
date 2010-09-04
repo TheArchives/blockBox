@@ -163,14 +163,14 @@ class MyneFactory(Factory):
 		self.salt = hashlib.md5(hashlib.md5(str(random.getrandbits(128))).digest()).hexdigest()[-32:].strip("0")
 		# Load up the plugins specified
 		plugins = self.config.options("plugins")
-		logging.log(logging.INFO, "Loading plugins...")
+		self.logger.info("Loading plugins...")
 		load_plugins(plugins)
 		# Open the chat log, ready for appending
 		self.chatlog = open("logs/server.log", "a")
 		self.chatlog = open("logs/chat.log", "a")
 		# Create a default world, if there isn't one.
 		if not os.path.isdir("mapdata/worlds/%s" % self.default_name):
-			logging.log(logging.INFO, "Generating %s world..." % self.default_name)
+			self.logger.info("Generating %s world..." % self.default_name)
 			sx, sy, sz = 64, 64, 64
 			grass_to = (sy // 2)
 			world = World.create(
@@ -179,7 +179,7 @@ class MyneFactory(Factory):
 				sx//2,grass_to+2, sz//2, 0, # Spawn
 				([BLOCK_DIRT]*(grass_to-1) + [BLOCK_GRASS] + [BLOCK_AIR]*(sy-grass_to)) # Levels
 			)
-			logging.log(logging.INFO, "Generated.")
+			self.logger.info("Generated.")
 		# Initialise internal datastructures
 		self.worlds = {}
 		self.directors = set()
@@ -315,9 +315,9 @@ class MyneFactory(Factory):
 
 	def printInfo(self):
 		if self.console_delay == self.delay_count:
-			logging.log(logging.INFO, "There are %s Players on the server" % len(self.clients))
+			self.logger.info("There are %s Players on the server" % len(self.clients))
 			for key in self.worlds:
-				logging.log(logging.INFO, "%s: %s" % (key, ", ".join(str(c.username) for c in self.worlds[key].clients)))
+				self.logger.info("%s: %s" % (key, ", ".join(str(c.username) for c in self.worlds[key].clients)))
 			self.delay_count=1
 		else:
 			self.delay_count+=1
@@ -418,7 +418,7 @@ class MyneFactory(Factory):
 		world.id = world_id
 		world.factory = self
 		world.start()
-		logging.log(logging.INFO, "World '%s' Booted." % world_id)
+		self.logger.info("World '%s' Booted." % world_id)
 		return world_id
 
 	def unloadWorld(self, world_id,ASD=False):
@@ -440,7 +440,7 @@ class MyneFactory(Factory):
 			client.sendServerMessage("World '%s' has been Shutdown." % world_id)
 		self.worlds[world_id].stop()
 		self.saveWorld(world_id,True)
-		logging.log(logging.INFO, "World '%s' Shutdown." % world_id)
+		self.logger.info("World '%s' Shutdown." % world_id)
 
 	def rebootworld(self, world_id):
 		"""
@@ -462,7 +462,7 @@ class MyneFactory(Factory):
 		world.id = world_id
 		world.factory = self
 		world.start()
-		logging.log(logging.INFO, "Rebooted %s" % world_id)
+		self.logger.info("Rebooted %s" % world_id)
 
 	def publicWorlds(self):
 		"""
@@ -542,7 +542,7 @@ class MyneFactory(Factory):
 							if (client.world.global_chat or client.world is source_client.world):
 								client.sendMessage(*data)
 						id, colour, username, text = data
-						logging.log(logging.INFO, "%s: %s" % (username, text))
+						self.logger.info("%s: %s" % (username, text))
 						self.chatlog.write("%s - %s: %s\n" % (datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M"), username, text))
 						self.chatlog.flush()
 						if self.irc_relay and world:
@@ -552,7 +552,7 @@ class MyneFactory(Factory):
 						for client in self.clients.values():
 							client.sendMessage(*data)
 						id, colour, username, text = data
-						logging.log(logging.INFO, "<%s> %s" % (username, text))
+						self.logger.info("<%s> %s" % (username, text))
 						self.chatlog.write("[%s] <%s> %s\n" % (datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M"), username, text))
 						self.chatlog.flush()
 						if self.irc_relay and world:
@@ -566,7 +566,7 @@ class MyneFactory(Factory):
 						for client in self.clients.values():
 							client.sendAction(*data)
 						id, colour, username, text = data
-						logging.log(logging.INFO, "ACTION - *%s %s" % (username, text))
+						self.logger.info("ACTION - *%s %s" % (username, text))
 						self.chatlog.write("%s *%s %s\n" % (datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M"), username, text))
 						self.chatlog.flush()
 						if self.irc_relay and world:
@@ -596,7 +596,7 @@ class MyneFactory(Factory):
 						if not source_client.username is None:
 							if self.irc_relay and world:
 								self.irc_relay.sendServerMessage("%s has quit! (%s%s%s)" % (source_client.username, COLOUR_RED, source_client.quitmsg, COLOUR_YELLOW))
-						logging.log(logging.INFO, "%s has quit! (%s)" % (source_client.username, source_client.quitmsg))
+						self.logger.info("%s has quit! (%s)" % (source_client.username, source_client.quitmsg))
 					# Someone changed worlds!
 					elif task is TASK_WORLDCHANGE:
 						# Only run it for clients who weren't the source.
@@ -605,7 +605,7 @@ class MyneFactory(Factory):
 							client.sendServerMessage("%s joined '%s'" % (source_client.username, world.id))
 						if self.irc_relay and world:
 							self.irc_relay.sendServerMessage("%s joined '%s'" % (source_client.username, world.id))
-						logging.log(logging.INFO, "%s has now joined '%s'" % (source_client.username, world.id))
+						self.logger.info("%s has now joined '%s'" % (source_client.username, world.id))
 					elif task == TASK_STAFFMESSAGE:
 						# Give all staff the message :D
 						id, colour, username, text = data
@@ -667,7 +667,7 @@ class MyneFactory(Factory):
 						message = data
 						for client in world.clients:
 							client.sendNormalMessage(COLOUR_DARKPURPLE + message)
-						logging.log(logging.INFO, "AWAY - %s %s" % (username, text))
+						self.logger.info("AWAY - %s %s" % (username, text))
 						self.chatlog.write("%s %s %s\n" % (datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M"), username, text))
 						self.chatlog.flush()
 						if self.irc_relay and world:
@@ -762,7 +762,7 @@ class MyneFactory(Factory):
 			if world_id == self.default_name and not self.backup_default:
 				return
 			if not os.path.exists(world_dir):
-				logging.log(logging.INFO, "World %s does not exist." % (world.id))
+				self.logger.info("World %s does not exist." % (world.id))
 			else:
 				if not os.path.exists(world_dir+"backup/"):
 					os.mkdir(world_dir+"backup/")
@@ -779,9 +779,9 @@ class MyneFactory(Factory):
 				os.mkdir(path)
 				shutil.copy(world_dir + "blocks.gz", path)
 				try:
-					logging.log(logging.INFO, "%s's backup %s is saved." %(world_id, str(int(backups[-1])+1)))
+					self.logger.info("%s's backup %s is saved." %(world_id, str(int(backups[-1])+1)))
 				except:
-					logging.log(logging.INFO, "%s's backup 0 is saved.")
+					self.logger.info("%s's backup 0 is saved.")
 				if len(backups)+1 > self.backup_max:
 					for i in range(0,((len(backups)+1)-self.backup_max)):
 						shutil.rmtree(os.path.join(world_dir+"backup/", str(int(backups[i]))))
@@ -813,5 +813,5 @@ class MyneFactory(Factory):
 						if name not in self.archives:
 							self.archives[name] = {}
 						self.archives[name][when] = "%s/%s" % (name, subfilename)
-		logging.log(logging.INFO, "Loaded %s discrete archives." % len(self.archives))
+		self.logger.info("Loaded %s discrete archives." % len(self.archives))
 		reactor.callLater(300, self.loadArchives)		
