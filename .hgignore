@@ -7,3 +7,4 @@ glob:conf/client.ini
 glob:conf/server.ini
 glob:conf/wordfilter.ini
 glob:*.bak
+glob:persist/*.ini
