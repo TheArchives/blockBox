@@ -133,7 +133,6 @@ class MyneFactory(Factory):
 		self.physics_limit = self.config.getint("options", "physics_limit")
 		self.console_delay = self.config.getint("options", "console_delay")
 		self.info_url = self.config.get("info", "info_url")
-		self.default_name = self.config.get("worlds", "default_name")
 		self.default_backup = self.config.get("worlds", "default_backup")
 		self.owner = self.config.get("info", "owner").lower()
 		self.backup_freq = self.config.getint("backup", "backup_freq")
@@ -152,7 +151,7 @@ class MyneFactory(Factory):
 			reactor.connectTCP(self.config.get("irc", "server"), self.config.getint("irc", "port"), self.irc_relay)
 		else:
 			self.irc_relay = None
-		self.default_loaded = False
+		self.main_loaded = False
 		#WORD FILTER LOL
 		self.wordfilter.read("wordfilter.ini")
 		self.filter = []
@@ -169,12 +168,12 @@ class MyneFactory(Factory):
 		self.chatlog = open("logs/server.log", "a")
 		self.chatlog = open("logs/chat.log", "a")
 		# Create a default world, if there isn't one.
-		if not os.path.isdir("mapdata/worlds/%s" % self.default_name):
-			self.logger.info("Generating %s world..." % self.default_name)
+		if not os.path.isdir("mapdata/worlds/main"):
+			self.logger.info("Generating main world...")
 			sx, sy, sz = 64, 64, 64
 			grass_to = (sy // 2)
 			world = World.create(
-				"mapdata/worlds/%s" % self.default_name,
+				"mapdata/worlds/main",
 				sx, sy, sz, # Size
 				sx//2,grass_to+2, sz//2, 0, # Spawn
 				([BLOCK_DIRT]*(grass_to-1) + [BLOCK_GRASS] + [BLOCK_AIR]*(sy-grass_to)) # Levels
@@ -225,12 +224,12 @@ class MyneFactory(Factory):
 		if config.has_section("worlds"):
 			for name in config.options("worlds"):
 				self.worlds[name] = None
-				if name is self.default_name:
-					self.default_loaded = True
+				if name is "main":
+					self.main_loaded = True
 		else:
-			self.worlds[self.default_name] = None
-		if not self.default_loaded:
-			self.worlds[self.default_name] = None
+			self.worlds["main"] = None
+		if not self.main_loaded:
+			self.worlds["main"] = None
 		# Read in the admins
 		if config.has_section("admins"):
 			for name in config.options("admins"):
@@ -392,7 +391,7 @@ class MyneFactory(Factory):
 			self.leaveWorld(user.world, user)
 		user.world = new_world
 		new_world.clients.add(user)
-		if not worldid == self.default_name and not new_world.ASD == None:
+		if not worldid == "main" and not new_world.ASD == None:
 			new_world.ASD.kill()
 			new_world.ASD = None
 		return new_world
@@ -400,7 +399,7 @@ class MyneFactory(Factory):
 	def leaveWorld(self, world, user):
 		world.clients.remove(user)
 		if world.autoshutdown and len(world.clients)<1:
-			if world.basename == ("mapdata/worlds/" + self.default_name):
+			if world.basename == ("mapdata/worlds/main"):
 				return
 			else:
 				if not self.asd_delay == 0:
@@ -431,12 +430,12 @@ class MyneFactory(Factory):
 				return
 		except KeyError:
 			return
-		assert world_id != self.default_name
+		assert world_id != "main"
 		if  not self.worlds[world_id].ASD == None:
 			self.worlds[world_id].ASD.kill()
 			self.worlds[world_id].ASD = None
 		for client in list(list(self.worlds[world_id].clients))[:]:
-			client.changeToWorld(self.default_name)
+			client.changeToWorld("main")
 			client.sendServerMessage("World '%s' has been Shutdown." % world_id)
 		self.worlds[world_id].stop()
 		self.saveWorld(world_id,True)
@@ -447,10 +446,10 @@ class MyneFactory(Factory):
 		Reboots a world in a crash case
 		"""
 		for client in list(list(self.worlds[world_id].clients))[:]:
-			if world_id == self.default_name:
+			if world_id == "main":
 				client.changeToWorld(self.factory.default_backup)
 			else:
-				client.changeToWorld(self.default_name)
+				client.changeToWorld("main")
 			client.sendServerMessage("%s has been Rebooted" % world_id)
 		self.worlds[world_id].stop()
 		self.worlds[world_id].flush()
@@ -507,7 +506,7 @@ class MyneFactory(Factory):
 					if isinstance(source_client, World):
 						world = source_client
 					elif str(source_client).startswith("<StdinPlugin"):
-						world = self.worlds[self.default_name]
+						world = self.worlds["main"]
 					else:
 						try:
 							world = source_client.world
@@ -759,7 +758,7 @@ class MyneFactory(Factory):
 
 	def Backup(self,world_id):
 			world_dir = ("mapdata/worlds/%s/" % world_id)
-			if world_id == self.default_name and not self.backup_default:
+			if world_id == "main" and not self.backup_default:
 				return
 			if not os.path.exists(world_dir):
 				self.logger.info("World %s does not exist." % (world.id))
