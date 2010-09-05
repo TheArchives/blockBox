@@ -41,7 +41,7 @@ from myne.constants import *
 from logging.handlers import SMTPHandler
 from lib.twisted.internet import reactor
 from myne.server import MyneFactory
-from myne.controller import ControllerFactory
+from myne.api import APIFactory
 from myne.logger import ColoredLogger
 
 def LogTimestamp():
@@ -70,9 +70,9 @@ logging.getLogger('').addHandler(console)
 logger.info("Starting up blockBox %s..." % VERSION)
 
 factory = MyneFactory()
-controller = ControllerFactory(factory)
+api = APIFactory(factory)
 reactor.listenTCP(factory.config.getint("network", "port"), factory)
-reactor.listenTCP(factory.config.getint("network", "controller_port"), controller)
+reactor.listenTCP(factory.config.getint("network", "api_port"), api)
 money_logger = logging.getLogger('TransactionLogger')
 fh = logging.FileHandler('logs/server.log')
 formatter = logging.Formatter("%(asctime)s: %(message)s")

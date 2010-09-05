@@ -33,18 +33,18 @@ from lib import simplejson
 from lib.twisted.protocols.basic import LineReceiver
 from lib.twisted.internet.protocol import Factory
 
-class ControllerProtocol(LineReceiver):
+class APIProtocol(LineReceiver):
     """
-    Protocol for dealing with controller requests.
+    Protocol for dealing with API requests.
     """
     def connectionMade(self):
         peer = self.transport.getPeer()
-        logging.log(logging.INFO, "Control connection made from %s:%s" % (peer.host, peer.port))
-        self.factory, self.controller_factory = self.factory.main_factory, self.factory
+        logging.log(logging.INFO, "API connection made from %s:%s" % (peer.host, peer.port))
+        self.factory, self.api_factory = self.factory.main_factory, self.factory
     
     def connectionLost(self, reason):
         peer = self.transport.getPeer()
-        logging.log(logging.INFO, "Control connection lost from %s:%s" % (peer.host, peer.port))
+        logging.log(logging.INFO, "API connection lost from %s:%s" % (peer.host, peer.port))
     
     def sendJson(self, data):
         self.sendLine(simplejson.dumps(data))
@@ -52,9 +52,9 @@ class ControllerProtocol(LineReceiver):
     def lineReceived(self, line):
         data = simplejson.loads(line)
         peer = self.transport.getPeer()
-        if data['password'] != self.factory.control_password:
+        if data['password'] != self.factory.api_password:
             self.sendJson({"error": "invalid password"})
-            logging.log(logging.INFO, "Control: Invalid password %s (%s:%s)" % (data, peer.host, peer.port))
+            logging.log(logging.INFO, "API: Invalid password %s (%s:%s)" % (data, peer.host, peer.port))
         else:
             command = data['command'].lower()
             try:
@@ -62,7 +62,7 @@ class ControllerProtocol(LineReceiver):
             except AttributeError:
                 self.sendLine("ERROR Unknown command '%s'" % command)
             else:
-                logging.log(logging.INFO, "Control: %s %s (%s:%s)" % (command.upper(), data, peer.host, peer.port))
+                logging.log(logging.INFO, "API: %s %s (%s:%s)" % (command.upper(), data, peer.host, peer.port))
                 try:
                     func(data)
                 except Exception, e:
@@ -116,8 +116,8 @@ class ControllerProtocol(LineReceiver):
             "physics": world.physics,
         })
 
-class ControllerFactory(Factory):
-    protocol = ControllerProtocol
+class APIFactory(Factory):
+    protocol = APIProtocol
     
     def __init__(self, main_factory):
         self.main_factory = main_factory

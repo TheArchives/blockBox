@@ -130,7 +130,7 @@ class MyneFactory(Factory):
 		self.duplicate_logins = self.config.getboolean("options", "duplicate_logins")
 		self.verify_names = self.config.getboolean("options", "verify_names")
 		self.asd_delay = self.config.getint("worlds", "asd_delay")
-		self.control_password = self.config.get("network", "control_password")
+		self.api_password = self.config.get("network", "api_password")
 		self.physics_limit = self.config.getint("options", "physics_limit")
 		self.console_delay = self.config.getint("options", "console_delay")
 		self.info_url = self.config.get("info", "info_url")
