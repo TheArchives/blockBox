@@ -93,8 +93,8 @@ class helpPlugin(ProtocolPlugin):
                         self.client.sendServerMessage("The Server Ranks - Spec")
                     else:
                         self.client.sendServerMessage("The Server Ranks - Guest")
-                    self.client.sendServerMessage("* "+COLOUR_DARKGREEN+"Owner "+COLOUR_GREEN+"Director "+COLOUR_RED+"Admin "+COLOUR_BLUE+"Mod "+COLOUR_PURPLE+"IRC")
-                    self.client.sendServerMessage("* "+COLOUR_DARKPURPLE+"World Owner "+COLOUR_DARKCYAN+"Op "+COLOUR_GREY+"Member "+COLOUR_CYAN+"Builder "+COLOUR_WHITE+"Guest "+COLOUR_BLACK+"Spec")
+                    self.client.sendServerMessage("* "+COLOUR_DARKGREEN+"Owner "+COLOUR_GREEN+"Director "+COLOUR_DARKRED+"Admin "+COLOUR_RED+"Mod "+COLOUR_GREY+"<IRC>")
+                    self.client.sendServerMessage("* "+COLOUR_DARKBLUE+"World Owner "+COLOUR_BLUE+"Op "+COLOUR_WHITE+"Member "+COLOUR_CYAN+"Builder "+COLOUR_GREY+"Guest "+COLOUR_BLACK+"Spec")
                 else:
                     self.client.sendServerMessage("Unknown command '%s'" % parts[1])
             else:
@@ -193,7 +193,7 @@ class helpPlugin(ProtocolPlugin):
 
     @info_list
     def commandAbout(self, parts, byuser, overriderank):
-        self.client.sendServerMessage("About The Server - iCraft %s http://hlmc.net/" % VERSION)
+        self.client.sendServerMessage("About The Server - blockBox %s" % VERSION)
         self.client.sendServerMessage("Name: "+self.client.factory.server_name)
         self.client.sendServerMessage("URL: "+self.client.factory.info_url)
         self.client.sendServerMessage("Owner: "+self.client.factory.owner)
