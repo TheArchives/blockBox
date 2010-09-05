@@ -34,6 +34,8 @@ from threading import Thread, Lock
 from lib.twisted.internet import reactor
 from constants import *
 
+CHR_STEP = chr(BLOCK_STEP)
+CHR_DOUBLESTEP = chr(BLOCK_DOUBLESTEP)
 CHR_WATER = chr(BLOCK_WATER)
 CHR_LAVA = chr(BLOCK_LAVA)
 CHR_AIR = chr(BLOCK_AIR)
@@ -64,6 +66,7 @@ class Physics(Thread):
     GRASS_GROW_LIMIT = 10
     GRASS_DIE_LIMIT = 10
     SAND_FALL_LIMIT = 1000
+    STEP_FALL_LIMIT = 1000
     
     def __init__(self, blockstore):
         Thread.__init__(self)
@@ -81,10 +84,8 @@ class Physics(Thread):
     def run(self):
         while self.running:
             if self.blockstore.physics:
-                logging.log(logging.DEBUG, "Starting physics run for '%s'. (a%i, f%i, s%i, gg%i, gd%i)" % (self.blockstore.blocks_path, len(self.air_queue), len(self.fluid_queue), len(self.sponge_queue), len(self.grass_grow_queue), len(self.grass_die_queue)))
                 # If this is the first of a physics run, redo the queues from scratch
                 if self.was_physics == False:
-                    logging.log(logging.DEBUG, "Performing queue scan for '%s'." % self.blockstore.blocks_path)
                     self.scan_blocks()
                 # SCIENCE!!!
                 changes, overflow = self.run_iteration()
@@ -98,7 +99,6 @@ class Physics(Thread):
                 if overflow and (time.time() - self.last_lag > self.LAG_INTERVAL):
                     self.blockstore.admin_message("Physics is currently lagging in %(id)s.")
                     self.last_lag = time.time()
-                logging.log(logging.DEBUG, "Ended physics run for '%s' (c%i, a%i, f%i, s%i, gg%i, gd%i)." % (self.blockstore.blocks_path, len(changes), len(self.air_queue), len(self.fluid_queue), len(self.sponge_queue), len(self.grass_grow_queue), len(self.grass_die_queue)))
             else:
                 if self.was_physics:
                     self.init_queues()
@@ -115,6 +115,7 @@ class Physics(Thread):
         self.sponge_queue = set()
         self.sponge_locations = set()
         self.sand_queue = set()
+        self.step_queue = set()
     
     def scan_blocks(self):
         "Scans the blockstore, looking for things to add to the queues."
@@ -130,6 +131,8 @@ class Physics(Thread):
                 self.sponge_queue.add(offset)
             elif block is CHR_SAND:
                 self.sand_queue.add(offset)
+            elif block is CHR_STEP:
+                self.step_queue.add(offset)
     
     def handle_change(self, offset, block):
         "Gets called when a block is changed, with its position and type."
@@ -144,8 +147,10 @@ class Physics(Thread):
                 self.sponge_queue.add(offset)
             elif block is CHR_SAND:
                 self.sand_queue.add(offset)
+        if block is CHR_STEP:
+            self.step_queue.add(offset)
         if block is CHR_DIRT or block is CHR_GRASS:
-                self.grass_grow_queue.add(offset)
+            self.grass_grow_queue.add(offset)
     
     def apply_ops(self, ops):
         "Immediately applies changes to the in-memory state. Returns the changes."
@@ -222,6 +227,16 @@ class Physics(Thread):
                     offset = self.sand_queue.pop()
                     ops = list(self.apply_ops(self.handle_sand_fall(offset)))
                     sand_fall += len(ops)
+                    changes.extend(ops)
+            except KeyError:
+                pass
+            # Let's move on to step joining. Do n of these.
+            step_fall = 0
+            try:
+                while step_fall < self.STEP_FALL_LIMIT:
+                    offset = self.step_queue.pop()
+                    ops = list(self.apply_ops(self.handle_step_fall(offset)))
+                    step_fall += len(ops)
                     changes.extend(ops)
             except KeyError:
                 pass
@@ -455,3 +470,19 @@ class Physics(Thread):
                         yield (nx, ny, nz, ord(block))
                         yield (x, y, z, BLOCK_AIR)
                         return
+    
+    def handle_sand_fall(self, offset):
+        """
+        Handles step falling. Experimental.
+        """
+        x, y, z = self.blockstore.get_coords(offset)
+        block = self.blockstore.raw_blocks[offset]
+        try:
+            below = self.blockstore.get_offset(x, y-1, z)
+        except AssertionError:   
+            pass # At bottom of map
+        else:
+            if self.blockstore.raw_blocks[below] is CHR_STEP:
+                yield (x, y-1, z, BLOCK_DOUBLESTEP)  
+                yield (x, y, z, BLOCK_AIR)
+                return
