@@ -29,47 +29,30 @@
 
 from myne.plugins import ProtocolPlugin
 from myne.decorators import *
-import cPickle #Now using the MUCH faster, optimized cPickle
+from myne.persistence import PersistenceEngine as Persist
 class TitlePlugin(ProtocolPlugin):
     
     commands = {
         "title":     "commandSetTitle",
     }
-    
-    #System methods, not for commands
-    def loadRank(self):
-        file = open('ranks.dat', 'r')
-        rank_dic = cPickle.load(file)
-        file.close()
-        return rank_dic
-    
-    def dumpRank(self, bank_dic):
-        file = open('ranks.dat', 'w')
-        cPickle.dump(bank_dic, file)
-        file.close()
-    
+
     @player_list
     @director_only
     def commandSetTitle(self, parts, byuser, overriderank):
         "/title username [title] - Director\nGives or removes a title to username."
-        if len(parts)==3:
-            rank = self.loadRank()
-            user = parts[1]
-            if len(parts[2])<6:
-                rank[user] = parts[2]
-                self.dumpRank(rank)
-                self.client.sendServerMessage("Added title.")
-            else:
-                self.client.sendServerMessage("A title must be 5 character or less")
-        elif len(parts)==2:
-            rank = self.loadRank()
-            user = parts[1]
-            if user not in rank:
-                self.client.sendServerMessage("Syntax: /title username title")
-                return False
-            else:
-                rank.pop(user)
-                self.dumpRank(rank)
-                self.client.sendServerMessage("Removed title.")
-        elif len(parts)>3:
-            self.client.sendServerMessage("You may only set one word as a title.")
+        with Persist(parts[1]) as p:
+            if len(parts)==3:
+                if len(parts[2])<6:
+                    p.set("misc", "title", parts[2])
+                    self.client.sendServerMessage("Added title.")
+                else:
+                    self.client.sendServerMessage("A title must be 5 character or less")
+            elif len(parts)==2:
+                if user not in rank:
+                    self.client.sendServerMessage("Syntax: /title username title")
+                    return False
+                else:
+                    p.set("misc", "title", "")
+                    self.client.sendServerMessage("Removed title.")
+            elif len(parts)>3:
+                self.client.sendServerMessage("You may only set one word as a title.")

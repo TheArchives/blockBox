@@ -426,12 +426,11 @@ class MyneServerProtocol(Protocol):
 				self.x, self.y, self.z, self.h, self.p = x, y, z, h, p
 			elif type == TYPE_MESSAGE:
 				byte, message = parts
-				rank = self.loadRank()
 				user = self.username.lower()
 				if self.username.lower() in rank:
-					self.title = "\""+rank[user]+"\" "
-				else:
-					self.title = ''
+					self.title = "\""+self.persist.get("misc", "title", "")+"\" "
+				if self.title is "\"\"":
+					self.title = ""
 				self.usertitlename = self.title + self.username
 				override = self.runHook("chatmsg", message)				
 				goodchars = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " ", "!", "@", "#", "$", "%", "*", "(", ")", "-", "_", "+", "=", "{", "[", "}", "]", ":", ";", "\"", "\'", "<", ",", ">", ".", "?", "/", "\\", "|"]
@@ -646,12 +645,6 @@ class MyneServerProtocol(Protocol):
 		else:
 			name = "Guest"
 		return name
-
-	def loadRank(self):
-		file = open('ranks.dat', 'r')
-		bank_dic = cPickle.load(file)
-		file.close()
-		return bank_dic
 
 	def colouredUsername(self):
 		if self.world.highlight_ops:
