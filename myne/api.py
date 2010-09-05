@@ -27,24 +27,24 @@
 #    Or, send a letter to Creative Commons, 171 2nd Street,
 #    Suite 300, San Francisco, California, 94105, USA.
 
-import logging
 import traceback
 from lib import simplejson
 from lib.twisted.protocols.basic import LineReceiver
 from lib.twisted.internet.protocol import Factory
+from myne.logger import ColoredLogger
 
 class APIProtocol(LineReceiver):
     """
     Protocol for dealing with API requests.
     """
     def connectionMade(self):
-        peer = self.transport.getPeer()
-        logging.log(logging.INFO, "API connection made from %s:%s" % (peer.host, peer.port))
         self.factory, self.api_factory = self.factory.main_factory, self.factory
+        peer = self.transport.getPeer()
+        self.api_factory.logger.info("Connection made from %s:%s" % (peer.host, peer.port))
     
     def connectionLost(self, reason):
         peer = self.transport.getPeer()
-        logging.log(logging.INFO, "API connection lost from %s:%s" % (peer.host, peer.port))
+        self.api_factory.logger.info("Connection lost from %s:%s" % (peer.host, peer.port))
     
     def sendJson(self, data):
         self.sendLine(simplejson.dumps(data))
@@ -54,20 +54,26 @@ class APIProtocol(LineReceiver):
         peer = self.transport.getPeer()
         if data['password'] != self.factory.api_password:
             self.sendJson({"error": "invalid password"})
-            logging.log(logging.INFO, "API: Invalid password %s (%s:%s)" % (data, peer.host, peer.port))
+            self.api_factory.logger.info("Invalid password %s (%s:%s)" % (data, peer.host, peer.port))
         else:
             command = data['command'].lower()
             try:
                 func = getattr(self, "command%s" % command.title())
             except AttributeError:
-                self.sendLine("ERROR Unknown command '%s'" % command)
+                self.sendLine("ERROR: Unknown command '%s'" % command)
             else:
-                logging.log(logging.INFO, "API: %s %s (%s:%s)" % (command.upper(), data, peer.host, peer.port))
+                self.api_factory.logger.info("%s %s (%s:%s)" % (command.upper(), data, peer.host, peer.port))
                 try:
                     func(data)
                 except Exception, e:
-                    self.sendLine("ERROR %s" % e)
+                    self.sendLine("ERROR: %s" % e)
                     traceback.print_exc()
+    
+    def commandIrcInfo(self, data):
+        if self.factory.config.getboolean("irc", "use_irc"):
+            self.sendJson({"irc": [self.factory.config.get("irc", "server"), self.factory.config.getint("irc", "port"), self.factory.irc_channel]})
+        else:
+            self.sendLine("ERROR: No IRC information for server.")
     
     def commandUsers(self, data):
         self.sendJson({"users": list(self.factory.usernames.keys())})
@@ -121,3 +127,5 @@ class APIFactory(Factory):
     
     def __init__(self, main_factory):
         self.main_factory = main_factory
+        self.logger = ColoredLogger("API")
+
