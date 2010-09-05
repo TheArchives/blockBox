@@ -29,7 +29,7 @@
 
 from myne.plugins import ProtocolPlugin
 from myne.decorators import *
-import cPickle #Now using the MUCH faster, optimized cPickle
+from myne.persistence import PersistenceEngine as Persist
 import logging
 
 class MoneyPlugin(ProtocolPlugin):
@@ -42,34 +42,16 @@ class MoneyPlugin(ProtocolPlugin):
         "removebank":    "commandRemoveAccount",
     }
 
-    money_logger = logging.getLogger('TransactionLogger')
-    
-    #System methods, not for commands
-    def loadBank(self):
-        file = open('balances.dat', 'r')
-        bank_dic = cPickle.load(file)
-        file.close()
-        return bank_dic
-    
-    def dumpBank(self, bank_dic):
-        file = open('balances.dat', 'w')
-        cPickle.dump(bank_dic, file)
-        file.close()
-    
     def commandBalance(self, parts, byuser, overriderank):    
         "/bank - Guest\nAliases: balance\nFirst time: Creates you a account.\nOtherwise: Checks your balance."
-        bank = self.loadBank()
-        user = self.client.username.lower()
-        if user in bank:
+        if self.client.persist.getint("bank", "balance", -1) is not -1:
             self.client.sendServerMessage("Welcome to the Bank!")
-            self.client.sendServerMessage("Your current balance is M%d." % bank[user])
+            self.client.sendServerMessage("Your current balance is C%d." % bank[user])
         else:
-            bank[user] = 5000
-            self.dumpBank(bank)
+            self.client.persist.set("bank", "balance", 5000)
             self.client.sendServerMessage("Welcome to the Bank!")
-            self.client.sendServerMessage("We have created your account for %s." % user)
-            self.client.sendServerMessage("Your balance is now %d Minecash." % bank[user])
-            self.money_logger.info("%s created a new account!" % user)
+            self.client.sendServerMessage("We have created your account.")
+            self.client.sendServerMessage("Your current balance is C%d." % bank[user])
 
     @director_only
     def commandSetAccount(self, parts, byuser, overriderank):
@@ -77,22 +59,20 @@ class MoneyPlugin(ProtocolPlugin):
         if len(parts) != 3:
             self.client.sendServerMessage("Syntax: /set <target> <amount>")    
             return False
-        bank = self.loadBank()
         target = parts[1]
-        if target not in bank:
-            self.client.sendServerMessage("Invalid target")
+        with Persist(target) as p:
+            tbalance = p.getint("bank", "balance", -1)
+        if tbalance is -1:
+            self.client.sendServerMessage("Invalid target.")
             return False
         try:
             amount = int(parts[2])
         except ValueError:
-            self.client.sendServerMessage("Invalid amount")
+            self.client.sendServerMessage("Invalid amount.")
             return False
-        if self.client.username.lower() in bank:
-            bank[target] = amount
-            self.dumpBank(bank)
-            self.client.sendServerMessage("Set player balance to M%d" % amount)
-        else:
-            self.client.sendServerMessage("You don't have bank account, use /bank to make one!")
+        with Persist(target) as p:
+            p.set("bank", "balance", amount)
+        self.client.sendServerMessage("Set player balance to C%d." % amount)
             
     def commandPay(self, parts, byuser, overriderank):
         "/pay username amount - Guest\nThis lets you send money to other people."
@@ -100,35 +80,35 @@ class MoneyPlugin(ProtocolPlugin):
             self.client.sendServerMessage("/pay <target> <amount>")
             return False
         user = self.client.username.lower()
+        ubalance = self.client.persist.getint("bank", "balance", -1)
         target = parts[1].lower()
-        bank = self.loadBank()
-        if target not in bank:
-            self.client.sendServerMessage("Error: Invalid Target")
+        with Persist(target) as p:
+            tbalance = p.getint("bank", "balance", -1)
+        if tbalance is -1:
+            self.client.sendServerMessage("Error: Invalid target.")
             return False
         try:
             amount = int(parts[2])
         except ValueError:
-            self.client.sendServerMessage("Error: Invalid Amount")
+            self.client.sendServerMessage("Error: Invalid amount.")
             return False
-        if user not in bank:
+        if ubalance is -1:
             self.client.sendServerMessage("Error: You don't have an account.")
-            self.client.sendServerMessage("Notice: Might want to do /bank")
+            self.client.sendServerMessage("Notice: Do /bank to create one.")
             return False
         elif amount < 0 and not self.client.isDirector():
             self.client.sendServerMessage("Error: Amount must be positive.")
             return False        
-        elif amount > bank[user] or amount < -(bank[target]):
-            self.client.sendServerMessage("Error: Not enough Minecash.")
+        elif amount > ubalance or amount < -(tbalance):
+            self.client.sendServerMessage("Error: Not enough Cubits.")
             return False
-        elif user in bank:
-            bank[target] = bank[target] + amount
-            bank[user] = bank[user] - amount
-            self.dumpBank(bank)
-            self.client.sendServerMessage("You sent M%d." % amount)
-            self.money_logger.info("%(user)s sent %(amount)d to %(target)s" % {'user': user, 'amount': amount, 'target': target})
-            #factory.usernames uses all lowercased for some reason
+        else:
+            with Persist(target) as p:
+                p.set("bank", "balance", tbalance + amount)
+            self.client.persist.set("bank", "balance", ubalance - amount)
+            self.client.sendServerMessage("You sent C%d." % amount)
             if target in self.client.factory.usernames:
-                self.client.factory.usernames[target].sendServerMessage("You received M%(amount)d from %(user)s." % {'amount': amount, 'user': user})
+                self.client.factory.usernames[target].sendServerMessage("You received C%(amount)d from %(user)s." % {'amount': amount, 'user': user})
 
     @director_only
     def commandRemoveAccount(self, parts, byuser, overriderank):
@@ -136,11 +116,10 @@ class MoneyPlugin(ProtocolPlugin):
         if len(parts) != 2:
             self.client.sendServerMessage("Syntax: /remove <target>")    
             return False
-        bank = self.loadBank()
         target = parts[1]
-        if target not in bank:
-            self.client.sendServerMessage("Invalid target")
-            return False
-        bank.pop(target)
-        self.dumpBank(bank)
-        self.client.sendServerMessage("Account Deleted")
+        with Persist(target) as p:
+            if p.getint("bank", "balance", -1) is -1:
+                self.client.sendServerMessage("Invalid target.")
+                return False
+            p.set("bank", "balance", -1)
+        self.client.sendServerMessage("Account deleted.")
