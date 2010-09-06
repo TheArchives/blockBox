@@ -106,7 +106,8 @@ class MyneFactory(Factory):
 	protocol = MyneServerProtocol
 
 	def __init__(self):
-		if (os.path.exists("conf/server.dist.ini") and not os.path.exists("conf/server.ini")) or (os.path.exists("conf/wordfilter.dist.ini") and not os.path.exists("conf/wordfilter.ini")) or (os.path.exists("conf/ranks.dist.ini") and not os.path.exists("conf/ranks.ini")):
+		if  (os.path.exists("conf/server.dist.ini") and not os.path.exists("conf/server.ini")) or \
+			(os.path.exists("conf/wordfilter.dist.ini") and not os.path.exists("conf/wordfilter.ini")):
 			raise NotConfigured
 		self.logger = logging.getLogger("Server")
 		self.ServerVars = dict()
@@ -114,8 +115,6 @@ class MyneFactory(Factory):
 		self.last_heartbeat = time.time()
 		self.lastseen = ConfigParser()
 		self.config = ConfigParser()
-		self.ranks = ConfigParser()
-		self.rankcount = 0
 		self.wordfilter = ConfigParser()
 		self.save_count = 1
 		self.delay_count = 1
@@ -153,13 +152,6 @@ class MyneFactory(Factory):
 		else:
 			self.irc_relay = None
 		self.main_loaded = False
-		# Ranks System
-		self.ranks.read("conf/ranks.ini")
-		self.ranklist = []
-		self.rankcount = self.ranks.getint("ranks","count")
-		for x in range(self.rankcount):
-			self.ranklist = self.ranklist + [[self.ranks.getint(str(x), "id"), self.ranks.get(str(x), "name"), self.ranks.get(str(x), "color")]]
-		self.logger.info("Successfully loaded %i ranks." % self.rankcount)
 		# Word Filter
 		self.wordfilter.read("conf/wordfilter.ini")
 		self.filter = []
