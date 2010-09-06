@@ -14,7 +14,7 @@ class PersistenceEngine(object):
 		self.username = None
 		self.ini = None
 	
-	def reload(self):
+	def reload():
 		self.ini.read("persist/%s.ini" % self.username.lower())
 		reactor.callLater(15, reload)
 	
