@@ -414,8 +414,8 @@ class MyneServerProtocol(Protocol):
 			elif type == TYPE_MESSAGE:
 				byte, message = parts
 				user = self.username.lower()
-				t = self.persist.string("misc", "title", None)
-				if t is None:
+				t = self.persist.string("misc", "title", "")
+				if t is "":
 					self.title = ""
 				else:
 					self.title = "\""+t+"\" "
