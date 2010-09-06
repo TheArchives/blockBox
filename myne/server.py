@@ -108,7 +108,7 @@ class MyneFactory(Factory):
 	def __init__(self):
 		if (os.path.exists("conf/server.dist.ini") and not os.path.exists("conf/server.ini")) or (os.path.exists("conf/wordfilter.dist.ini") and not os.path.exists("conf/wordfilter.ini")) or (os.path.exists("conf/ranks.dist.ini") and not os.path.exists("conf/ranks.ini")):
 			raise NotConfigured
-		self.logger = logger.getLogger("Server")
+		self.logger = logging.getLogger("Server")
 		self.ServerVars = dict()
 		self.specs = ConfigParser()
 		self.last_heartbeat = time.time()
