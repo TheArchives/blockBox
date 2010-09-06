@@ -59,6 +59,7 @@ class MyneServerProtocol(Protocol):
 		self.logger = logging.getLogger("Client")
 		self.quitmsg = "Goodbye."
 		self.homeworld = "main"
+		self.ip = self.transport.getPeer().host
 		self.commands = {}
 		self.hooks = {}
 		self.plugins = [plugin(self) for plugin in protocol_plugins]
@@ -79,12 +80,10 @@ class MyneServerProtocol(Protocol):
 		self.wclog = open("logs/staff.log", "a")
 		self.adlog = open("logs/world.log", "a")
 		# Check for IP bans
-		self.ip = self.transport.getPeer().host
 		if self.factory.isIpBanned(self.ip):
 			self.sendError("You are Banned for: %s" % self.factory.ipBanReason(self.ip))
 			return
 		self.logger.debug("Assigned ID %i" % self.id)
-		self.factory.joinWorld(self.homeworld, self)
 		self.sent_first_welcome = False
 		self.read_only = False
 		self.username = None
