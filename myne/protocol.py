@@ -906,7 +906,7 @@ class MyneServerProtocol(Protocol):
 		self.zipped_level, self.zipped_size = gzip_handle, zipped_size
 		# Preload our first chunk, send a level stream header, and go!
 		self.chunk = self.zipped_level.read(1024)
--		self.logger.debug("Sending level...")
+		self.logger.debug("Sending level...")
 		self.sendPacked(TYPE_PRECHUNK)
 		reactor.callLater(0.001, self.sendLevelChunk)
 
@@ -926,7 +926,7 @@ class MyneServerProtocol(Protocol):
 			self.endSendLevel()
 
 	def endSendLevel(self):
--		self.logger.debug("Sent level data")
+		self.logger.debug("Sent level data")
 		self.sendPacked(TYPE_LEVELSIZE, self.world.x, self.world.y, self.world.z)
 		sx, sy, sz, sh = self.world.spawn
 		self.p = 0
