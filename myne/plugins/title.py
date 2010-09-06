@@ -48,7 +48,7 @@ class TitlePlugin(ProtocolPlugin):
 				else:
 					self.client.sendServerMessage("A title must be 5 character or less")
 			elif len(parts)==2:
-				if user not in rank:
+				if p.string("misc", "title") is None:
 					self.client.sendServerMessage("Syntax: /title username title")
 					return False
 				else:

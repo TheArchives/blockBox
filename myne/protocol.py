@@ -414,10 +414,11 @@ class MyneServerProtocol(Protocol):
 			elif type == TYPE_MESSAGE:
 				byte, message = parts
 				user = self.username.lower()
-				if self.persist.string("misc", "title") is not None:
-					self.title = "\""+self.persist.string("misc", "title", "")+"\" "
-				else:
+				t = self.persist.string("misc", "title", None)
+				if t is None:
 					self.title = ""
+				else:
+					self.title = "\""+t+"\" "
 				self.usertitlename = self.title + self.username
 				override = self.runHook("chatmsg", message)				
 				goodchars = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " ", "!", "@", "#", "$", "%", "*", "(", ")", "-", "_", "+", "=", "{", "[", "}", "]", ":", ";", "\"", "\'", "<", ",", ">", ".", "?", "/", "\\", "|"]
@@ -882,7 +883,7 @@ class MyneServerProtocol(Protocol):
 
 	def sendOverload(self):
 		"Sends an overload - a fake map designed to use as much memory as it can."
-		self.sendPacked(TYPE_INITIAL, 7, "Loading...", "Entering world" % self.factory.default_name, 0)
+		self.sendPacked(TYPE_INITIAL, 7, "Loading...", "Entering world main", 0)
 		self.sendPacked(TYPE_PRECHUNK)
 		reactor.callLater(0.001, self.sendOverloadChunk)
 
@@ -1078,9 +1079,9 @@ class MyneServerProtocol(Protocol):
 								else:
 									self.sendServerMessage("You must be " + zone[7] + "to build here.")
 									return False
-		if self.world.id == self.factory.default_name and self.isMember() and not self.isMod() and not self.world.all_write:
+		if self.world.id == "main" and self.isMember() and not self.isMod() and not self.world.all_write:
 			self.sendBlock(x, y, z)
-			self.sendServerMessage("Only Builder/Op and Mod+ may edit '%s'." % self.factory.default_name)
+			self.sendServerMessage("Only Builder/Op and Mod+ may edit 'main'.")
 			return
 		if not self.world.all_write and self.isWriter() or self.isOp():
 			return True
@@ -1124,5 +1125,5 @@ class MyneServerProtocol(Protocol):
 	def setPersist(self): # Load persisted variables, and store some important stuff.
 		self.persist.set("misc", "ip", self.ip)
 		self.quitmsg = self.persist.string("misc", "quitmsg", "Goodbye.")
-		self.homeworld = self.persist.string("misc", "homeworld", "default")
+		self.homeworld = self.persist.string("misc", "homeworld", "main")
 		self.factory.joinWorld(self.homeworld, self)

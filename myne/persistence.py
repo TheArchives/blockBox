@@ -5,18 +5,25 @@ class PersistenceEngine(object):
 	def __init__(self, username):
 		self.username = username
 		self.ini = ConfigParser()
-		self.reload()
+		reactor.callLater(.1, self.reload, username)
+	
+	def __str__(self):
+		return self.username
 	
 	def __enter__(self):
-		pass
+		return self
 	
 	def __exit__(self, type, value, traceback):
 		self.username = None
 		self.ini = None
 	
-	def reload():
-		self.ini.read("persist/%s.ini" % self.username.lower())
-		reactor.callLater(15, reload)
+	def reload(self, username):
+		try:
+			self.ini.read("persist/%s.ini" % username.lower())
+		except:
+			pass
+		else:
+			reactor.callLater(10, self.reload, username)
 	
 	def string(self, section, name, default=None):
 		try:
@@ -52,6 +59,7 @@ class PersistenceEngine(object):
 		return ret
 	
 	def set(self, section, name, value):
+		self.ini.read("persist/%s.ini" % self.username.lower())
 		if not self.ini.has_section(section):
 			self.ini.add_section(section)
 		self.ini.set(section, name, str(value))
