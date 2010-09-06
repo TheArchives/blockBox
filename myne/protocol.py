@@ -41,27 +41,13 @@ from myne.plugins import protocol_plugins
 from myne.decorators import *
 from myne.irc_client import ChatBotFactory
 from myne.persistence import PersistenceEngine as Persist
-from myne.logger import ColoredLogger
+import logging
 
 class MyneServerProtocol(Protocol):
 	"""
 	Main protocol class for communicating with clients.
 	Commands are mainly provided by plugins (protocol plugins).
 	"""
-	
-	def log(self, message, level="info"):
-		"Fire-and-forget log function which adds in identifying info"
-		peer = self.transport.getPeer()
-		if level is "debug":
-			self.logger.debug("(%s:%s) %s" % (peer.host, peer.port, message))
-		elif level is "info":
-			self.logger.info("(%s:%s) %s" % (peer.host, peer.port, message))
-		elif level is "warning":
-			self.logger.warning("(%s:%s) %s" % (peer.host, peer.port, message))
-		elif level is "error":
-			self.logger.error("(%s:%s) %s" % (peer.host, peer.port, message))
-		elif level is "critical":
-			self.logger.critical("(%s:%s) %s" % (peer.host, peer.port, message))
 	
 	def connectionMade(self):
 		"We've got a TCP connection, let's set ourselves up."
@@ -70,7 +56,7 @@ class MyneServerProtocol(Protocol):
 		self.loading_world = False
 		# Load plugins for ourselves
 		self.identified = False
-		self.logger = ColoredLogger("Client")
+		self.logger = logging.getLogger("Client")
 		self.quitmsg = "Goodbye."
 		self.homeworld = "main"
 		self.commands = {}
@@ -97,6 +83,7 @@ class MyneServerProtocol(Protocol):
 		if self.factory.isIpBanned(self.ip):
 			self.sendError("You are Banned for: %s" % self.factory.ipBanReason(self.ip))
 			return
+		self.logger.debug("Assigned ID %i" % self.id)
 		self.factory.joinWorld(self.homeworld, self)
 		self.sent_first_welcome = False
 		self.read_only = False
@@ -114,7 +101,7 @@ class MyneServerProtocol(Protocol):
 		command = command.lower()
 		# Warn if already registered
 		if command in self.commands:
-			self.log("Command '%s' is already registered. Overriding." % command, logging.WARN)
+			self.logger.warning("Command '%s' is already registered. Overriding." % command)
 		# Register
 		self.commands[command] = func
 	
@@ -126,7 +113,7 @@ class MyneServerProtocol(Protocol):
 			if self.commands[command] == func:
 				del self.commands[command]
 		except KeyError:
-			self.log("Command '%s' is not registered to %s." % (command, func), logging.WARN)
+			self.logger.warning("Command '%s' is not registered to %s." % (command, func))
 	
 	def registerHook(self, hook, func):
 		"Registers func as something to be run for hook 'hook'."
@@ -139,7 +126,7 @@ class MyneServerProtocol(Protocol):
 		try:
 			self.hooks[hook].remove(func)
 		except (KeyError, ValueError):
-			self.log("Hook '%s' is not registered to %s." % (command, func), logging.WARN)
+			self.logger.warning("Hook '%s' is not registered to %s." % (command, func))
 	
 	def unloadPlugin(self, plugin_class):
 		"Unloads the given plugin class."
@@ -202,8 +189,9 @@ class MyneServerProtocol(Protocol):
 		self.factory.releaseId(self.id)
 		self.factory.queue.put((self, TASK_PLAYERLEAVE, (self.id,)))
 		if self.username:
-			self.log("Disconnected '%s'" % (self.username,))
+			self.logger.info("Disconnected '%s'" % (self.username,))
 			self.runHook("playerquit",self.username)
+			self.logger.debug("(reason: %s)" % (reason,))
 		# Kill all plugins
 		del self.plugins
 		del self.commands
@@ -218,7 +206,7 @@ class MyneServerProtocol(Protocol):
 		self.transport.write(chr(mtype) + fmt.encode(*args))
 	
 	def sendError(self, error):
-		self.log("Sending error: %s" % error)
+		self.logger.info("Sending error: %s" % error)
 		self.sendPacked(TYPE_ERROR, error)
 		reactor.callLater(0.2, self.transport.loseConnection)
 	
@@ -288,19 +276,19 @@ class MyneServerProtocol(Protocol):
 			if type == TYPE_INITIAL:
 				# Get the client's details
 				protocol, self.username, mppass, utype = parts
-				self.logger = ColoredLogger(self.username)
+				self.logger = logging.getLogger(self.username)
 				if self.identified == True:
-					self.log("Kicked '%s'; already logged in to server" % (self.username))
+					self.logger.info("Kicked '%s'; already logged in to server" % (self.username))
 					self.sendError("You already logged in! Foolish bot owners.")
 				# Check their password
 				correct_pass = hashlib.md5(self.factory.salt + self.username).hexdigest()[-32:].strip("0")
 				mppass = mppass.strip("0")
 				if not self.transport.getHost().host.split(".")[0:2] == self.transport.getPeer().host.split(".")[0:2]:
 					if self.factory.verify_names and mppass != correct_pass:
-						self.log("Kicked '%s'; invalid password (%s, %s)" % (self.username, mppass, correct_pass))
+						self.logger.info("Kicked '%s'; invalid password (%s, %s)" % (self.username, mppass, correct_pass))
 						self.sendError("Incorrect authentication. (try again in 60s?)")
 						return
-				self.log("Connected, as '%s'" % self.username)
+				self.logger.info("Connected, as '%s'" % self.username)
 				self.identified = True
 				# Are they banned?
 				if self.factory.isBanned(self.username):
@@ -337,16 +325,16 @@ class MyneServerProtocol(Protocol):
 				if block == 255:
 					block = 0
 				if block > 49:
-					self.log("Kicked '%s'; Tried to place an invalid block.; Block: '%s'" % (self.transport.getPeer().host, block))
+					self.logger.info("Kicked '%s'; Tried to place an invalid block.; Block: '%s'" % (self.transport.getPeer().host, block))
 					self.sendError("Invalid blocks are not allowed!")
 					return
 				if 6 < block < 12:
 					if not block == 9 and not block == 11:
-						self.log("Kicked '%s'; Tried to place an invalid block.; Block: '%s'" % (self.transport.getPeer().host, block))
+						self.logger.info("Kicked '%s'; Tried to place an invalid block.; Block: '%s'" % (self.transport.getPeer().host, block))
 						self.sendError("Invalid blocks are not allowed!")
 						return
 				if self.identified == False:
-					self.log("Kicked '%s'; did not send a login before building" % (self.transport.getPeer().host))
+					self.logger.info("Kicked '%s'; did not send a login before building" % (self.transport.getPeer().host))
 					self.sendError("Provide an authentication before building.")
 					return
 				try:
@@ -436,7 +424,7 @@ class MyneServerProtocol(Protocol):
 				goodchars = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " ", "!", "@", "#", "$", "%", "*", "(", ")", "-", "_", "+", "=", "{", "[", "}", "]", ":", ";", "\"", "\'", "<", ",", ">", ".", "?", "/", "\\", "|"]
 				for c in message.lower():
 					if not c in goodchars:
-						self.log("Kicked '%s'; Tried to use invalid characters; Message: '%s'" % (self.transport.getPeer().host, message))
+						self.logger.info("Kicked '%s'; Tried to use invalid characters; Message: '%s'" % (self.transport.getPeer().host, message))
 						self.sendError("Invalid characters are not allowed!")
 						return
 				message = message.replace("%0", "&0")
@@ -464,7 +452,7 @@ class MyneServerProtocol(Protocol):
 					if moddedmsg[len(moddedmsg)-2] == "&":
 						message = message.replace("&", "*")
 				if self.identified == False:
-					self.log("Kicked '%s'; did not send a login before chatting; Message: '%s'" % (self.transport.getPeer().host, message))
+					self.logger.info("Kicked '%s'; did not send a login before chatting; Message: '%s'" % (self.transport.getPeer().host, message))
 					self.sendError("Provide an authentication before chatting.")
 					return
 				if message.startswith("/"):
@@ -472,7 +460,7 @@ class MyneServerProtocol(Protocol):
 					parts = [x.strip() for x in message.split() if x.strip()]
 					command = parts[0].strip("/")
 					if not message.startswith("/tlog "):
-						self.log("%s just used: %s" % (self.username," ".join(parts)), level=logging.INFO)
+						self.logger.info("%s just used: %s" % (self.username," ".join(parts)))
 						#for command logging to IRC
 						if self.factory.irc_relay:
 							if self.factory.irc_cmdlogs:
@@ -520,7 +508,7 @@ class MyneServerProtocol(Protocol):
 						self.sendServerMessage("Internal server error.")
 						if self.isDirector():
 							self.sendSplitServerMessage(traceback.format_exc(0).replace("Traceback (most recent call last):", ""))
-						self.log(traceback.format_exc(), level=logging.ERROR)
+						self.logger.error(traceback.format_exc())
 				elif message.startswith("@"):
 					# It's a whisper
 					try:
@@ -532,7 +520,7 @@ class MyneServerProtocol(Protocol):
 						if username in self.factory.usernames:
 							self.factory.usernames[username].sendWhisper(self.username, text)
 							self.sendWhisper(self.username, text)
-							self.log("@"+self.username+" (from "+self.username+"): "+text)
+							self.logger.info("@"+self.username+" (from "+self.username+"): "+text)
 							self.whisperlog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+" - "+self.username+" (from "+self.usertitlename+"): "+text+"\n")
 							self.whisperlog.flush()
 						else:
@@ -552,7 +540,7 @@ class MyneServerProtocol(Protocol):
 									self.sendWorldMessage ("!"+self.userColour()+self.usertitlename+":"+COLOUR_WHITE+" "+text)
 								else:
 									self.sendWorldMessage ("!"+COLOUR_WHITE+self.usertitlename+":"+COLOUR_WHITE+" "+text)
-								self.log("!"+self.usertitlename+" in "+str(self.world.id)+": "+text)
+								self.logger.info("!"+self.usertitlename+" in "+str(self.world.id)+": "+text)
 								self.wclog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+" - "+self.usertitlename+" in "+str(self.world.id)+": "+text+"\n")
 								self.wclog.flush()
 							else:
@@ -588,13 +576,13 @@ class MyneServerProtocol(Protocol):
 									self.sendWorldMessage ("!"+self.userColour()+self.usertitlename+":"+COLOUR_WHITE+" "+message)
 								else:
 									self.sendWorldMessage ("!"+COLOUR_WHITE+self.usertitlename+":"+COLOUR_WHITE+" "+message)
-								self.log("!"+self.usertitlename+" in "+str(self.world.id)+": "+message)
+								self.logger.info("!"+self.usertitlename+" in "+str(self.world.id)+": "+message)
 								self.wclog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+" - "+self.usertitlename+" in "+str(self.world.id)+": "+message+"\n")
 								self.wclog.flush()
 							else:
 								self.factory.queue.put((self, TASK_MESSAGE, (self.id, self.userColour(), self.usertitlename, message)))
 			else:
-				self.log("Unhandleable type %s" % type, logging.WARN)
+				self.logger.warning("Unhandleable type %s" % type)
 
 	def userColour(self):
 		if self.isSpectator():
@@ -760,7 +748,7 @@ class MyneServerProtocol(Protocol):
 			else:
 				self.world[x, y, z].addCallback(real_send)
 		except AssertionError:
-			self.log("Block out of range: %s %s %s" % (x, y, z), level=logging.WARN)
+			self.logger.warning("Block out of range: %s %s %s" % (x, y, z))
 
 	def sendPlayerPos(self, id, x, y, z, h, p):
 		self.sendPacked(TYPE_PLAYERPOS, id, x, y, z, h, p)
@@ -918,12 +906,13 @@ class MyneServerProtocol(Protocol):
 		self.zipped_level, self.zipped_size = gzip_handle, zipped_size
 		# Preload our first chunk, send a level stream header, and go!
 		self.chunk = self.zipped_level.read(1024)
+-		self.logger.debug("Sending level...")
 		self.sendPacked(TYPE_PRECHUNK)
 		reactor.callLater(0.001, self.sendLevelChunk)
 
 	def sendLevelChunk(self):
 		if not hasattr(self, 'chunk'):
-			self.log("Cannot send chunk, there isn't one! %r %r" % (self, self.__dict__), level=logging.ERROR)
+			self.logger.error("Cannot send chunk, there isn't one! %r %r" % (self, self.__dict__))
 			return
 		if self.chunk:
 			self.sendPacked(TYPE_CHUNK, len(self.chunk), self.chunk, chr(int(100*(self.zipped_level.tell()/float(self.zipped_size)))))
@@ -937,6 +926,7 @@ class MyneServerProtocol(Protocol):
 			self.endSendLevel()
 
 	def endSendLevel(self):
+-		self.logger.debug("Sent level data")
 		self.sendPacked(TYPE_LEVELSIZE, self.world.x, self.world.y, self.world.z)
 		sx, sy, sz, sh = self.world.spawn
 		self.p = 0
