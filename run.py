@@ -33,63 +33,58 @@ if not sys.version_info[:2] == (2, 6):
 	print "Python 2.6.x is required in order to run blockBox."
 	exit(1)
 
-import os.path
-import time
 import logging
-import os,shutil
 from myne.constants import *
 from logging.handlers import SMTPHandler
 from lib.twisted.internet import reactor
 from myne.server import MyneFactory
 from myne.api import APIFactory
-from myne.logger import ColoredLogger
 
-def LogTimestamp():
-	if os.path.exists("logs/console/console.log"):
-		shutil.copy("logs/console/console.log", "logs/console/console" +time.strftime("%Y%m%d%H%M%S",time.localtime(time.time())) +".log")
-		f=open("logs/console/console.log",'w')
-		f.close()
-	reactor.callLater(6*60*60, LogTimestamp)#24hours*60minutes*60seconds
-LogTimestamp()
 logging.basicConfig(
-	format="%(asctime)s - %(levelname)7s - %(message)s",
+	format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 	level=("--debug" in sys.argv) and logging.DEBUG or logging.INFO,
-	datefmt="%Y-%m-%d %H:%M:%S",  filename="logs/console/console.log",
+	datefmt="%m/%d/%Y %H:%M:%S",
 )
 
-# define a Handler which writes DEBUG messages or higher to the sys.stderr
-console = logging.StreamHandler()
-# set a format which is simpler for console use
-formatter = logging.Formatter("%(asctime)s - %(levelname)7s - %(message)s")
-# tell the handler to use this format
-console.setFormatter(formatter)
-logger = ColoredLogger("blockBox")
-# add the handler to the root logger
-logging.getLogger('').addHandler(console)
-
+logger = logging.getLogger("blockBox")
 logger.info("Starting up blockBox %s..." % VERSION)
 
 factory = MyneFactory()
 api = APIFactory(factory)
 reactor.listenTCP(factory.config.getint("network", "port"), factory)
 reactor.listenTCP(factory.config.getint("network", "api_port"), api)
+
+rotate = logging.handlers.TimedRotatingFileHandler(
+	filename="logs/console/console.log", when="H",
+	interval=6, backupCount=14,
+)
+logging.root.addHandler(rotate)
+
+if factory.config.getboolean("email", "use_email"):
+	if factory.config.getboolean("email", "need_auth"):
+		email = logging.handlers.SMTPHandler(
+			(factory.config.get("email", "host"),factory.config.get("email", "port")),
+			factory.config.get("email", "from"),
+			[factory.config.get("email", "to")],
+			factory.config.get("email", "subject"),
+			(factory.config.get("email", "user"), factory.config.get("email", "pass")),
+		)
+	else:
+		email = logging.handlers.SMTPHandler(
+			(factory.config.get("email", "host"),factory.config.get("email", "port")),
+			factory.config.get("email", "from"),
+			[factory.config.get("email", "to")],
+			factory.config.get("email", "subject"),
+		)
+	emh.setLevel(logging.ERROR)
+	logging.root.addHandler(email)
+
 money_logger = logging.getLogger('TransactionLogger')
 fh = logging.FileHandler('logs/server.log')
 formatter = logging.Formatter("%(asctime)s: %(message)s")
 fh.setFormatter(formatter)
 #Add the handler
 money_logger.addHandler(fh)
-
-# Setup email handler
-if factory.config.has_section("email"):
-	emh = SMTPHandler(
-		factory.config.get("email", "host"),
-		factory.config.get("email", "from"),
-		[factory.config.get("email", "to")],
-		factory.config.get("email", "subject"),
-	)
-	emh.setLevel(logging.ERROR)
-	logging.root.addHandler(emh)
 
 try:
 	reactor.run()
@@ -105,6 +100,4 @@ finally:
 	logger.info("Done flushing...")
 	logger.info("Thanks for using blockBox!")
 	logger.info("Press enter to exit.")
-	if os.name is not "nt":
-		sys.stdout.write(chr(27)+"[m")
 	factory.console.stop = True

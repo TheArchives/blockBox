@@ -31,7 +31,7 @@ import traceback
 from lib import simplejson
 from lib.twisted.protocols.basic import LineReceiver
 from lib.twisted.internet.protocol import Factory
-from myne.logger import ColoredLogger
+import logging
 
 class APIProtocol(LineReceiver):
     """
@@ -127,5 +127,4 @@ class APIFactory(Factory):
     
     def __init__(self, main_factory):
         self.main_factory = main_factory
-        self.logger = ColoredLogger("API")
-
+        self.logger = logging.getLogger("API")
