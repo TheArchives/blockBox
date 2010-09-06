@@ -52,7 +52,7 @@ from myne.irc_client import ChatBotFactory
 from myne.constants import *
 from myne.plugins import *
 from myne.timer import ResettableTimer
-from myne.logger import ColoredLogger
+import logging
 
 class Heartbeat(object):
 	"""
@@ -62,7 +62,7 @@ The Salt is also used to help verify users' identities.
 
 	def __init__(self, factory):
 		self.factory = factory
-		self.logger = ColoredLogger("Heartbeat")
+		self.logger = logging.getLogger("Heartbeat")
 		self.turl()
 
 	def turl(self):
@@ -108,7 +108,7 @@ class MyneFactory(Factory):
 	def __init__(self):
 		if (os.path.exists("conf/server.dist.ini") and not os.path.exists("conf/server.ini")) or (os.path.exists("conf/wordfilter.dist.ini") and not os.path.exists("conf/wordfilter.ini")) or (os.path.exists("conf/ranks.dist.ini") and not os.path.exists("conf/ranks.ini")):
 			raise NotConfigured
-		self.logger = ColoredLogger("Server")
+		self.logger = logger.getLogger("Server")
 		self.ServerVars = dict()
 		self.specs = ConfigParser()
 		self.last_heartbeat = time.time()
