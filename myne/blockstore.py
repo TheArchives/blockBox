@@ -55,6 +55,7 @@ class BlockStore(Thread):
         # Initialise variables
         self.physics = False
         self.physics_engine = Physics(self)
+        self.logger = logging.getLogger("Blockstore")
         self.raw_blocks = None
         self.running = True
         self.unflooding = False
@@ -77,36 +78,36 @@ class BlockStore(Thread):
                     try:
                         self[task[1]] = task[2]
                     except AssertionError:
-                        logging.log("Tried to set a block at %s in %s!" % (task[1], self.blocks_path), logging.WARN)
+                        self.logger.warning("Tried to set a block at %s in %s!" % (task[1], self.blocks_path))
                 # Asking for a block?
                 elif task[0] is TASK_BLOCKGET:
                     self.out_queue.put([TASK_BLOCKGET, task[1], self[task[1]]])
                 # Perhaps physics was enabled?
                 elif task[0] is TASK_PHYSICSOFF:
-                    logging.log(logging.DEBUG, "Disabling physics on '%s'..." % self.blocks_path)
+                    self.logger.debug("Disabling physics on '%s'..." % self.blocks_path)
                     self.disable_physics()
                 # Or disabled?
                 elif task[0] is TASK_PHYSICSON:
-                    logging.log(logging.DEBUG, "Enabling physics on '%s'..." % self.blocks_path)
+                    self.logger.debug("Enabling physics on '%s'..." % self.blocks_path)
                     self.enable_physics()
                 # I can haz finite water tiem?
                 elif task[0] is TASK_FWATERON:
-                    logging.log(logging.DEBUG, "Enabling finite water on '%s'..." % self.blocks_path)
+                    self.logger.debug("Enabling finite water on '%s'..." % self.blocks_path)
                     self.finite_water = True
                 # Noes, no more finite water.
                 elif task[0] is TASK_FWATEROFF:
-                    logging.log(logging.DEBUG, "Disabling finite water on '%s'..." % self.blocks_path)
+                    self.logger.debug("Disabling finite water on '%s'..." % self.blocks_path)
                     self.finite_water = False
                 # Do they need to do a Moses?
                 elif task[0] is TASK_UNFLOOD:
-                    logging.log(logging.DEBUG, "Unflood started on '%s'..." % self.blocks_path)
+                    self.logger.debug("Unflood started on '%s'..." % self.blocks_path)
                     self.unflooding = True
                 # Perhaps that's it, and we need to stop?
                 elif task[0] is TASK_STOP:
-                    logging.log(logging.DEBUG, "Stopping block store '%s'..." % self.blocks_path)
+                    self.logger.debug("Stopping block store '%s'..." % self.blocks_path)
                     self.physics_engine.stop()
                     self.flush()
-                    logging.log(logging.DEBUG, "Stopped block store '%s'." % self.blocks_path)
+                    self.logger.debug("Stopped block store '%s'." % self.blocks_path)
                     return
                 # ???
                 else:
@@ -199,7 +200,7 @@ class BlockStore(Thread):
         # Don't flush if there's nothing to do
         if not self.queued_blocks:
             return
-        logging.log(logging.DEBUG, "Flushing %s..." % self.blocks_path)
+        self.logger.debug("Flushing %s..." % self.blocks_path)
         # Open the old and the new file
         gz = gzip.GzipFile(self.blocks_path)
         new_gz = gzip.GzipFile(self.blocks_path + ".new", 'wb', compresslevel=4)

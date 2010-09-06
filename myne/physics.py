@@ -75,6 +75,7 @@ class Physics(Thread):
         self.running = True
         self.was_physics = False
         self.was_unflooding = False
+        self.logger = logging.getLogger("Physics")
         self.init_queues()
     
     def stop(self):
