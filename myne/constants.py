@@ -1,39 +1,39 @@
-#    iCraft is Copyright 2010 both
+#	iCraft is Copyright 2010 both
 #
-#    The Archives team:
-#                   <Adam Guy> adam@adam-guy.com AKA "Adam01"
-#                   <Andrew Godwin> andrew@aeracode.org AKA "Aera"
-#                   <Dylan Lukes> lukes.dylan@gmail.com AKA "revenant"
-#                   <Gareth Coles> colesgareth2@hotmail.com AKA "gdude2002"
+#	The Archives team:
+#				   <Adam Guy> adam@adam-guy.com AKA "Adam01"
+#				   <Andrew Godwin> andrew@aeracode.org AKA "Aera"
+#				   <Dylan Lukes> lukes.dylan@gmail.com AKA "revenant"
+#				   <Gareth Coles> colesgareth2@hotmail.com AKA "gdude2002"
 #
-#    And,
+#	And,
 #
-#    The iCraft team:
-#                   <Andrew Dolgov> fox@bah.org.ru AKA "gothfox"
-#                   <Andrew Horn> Andrew@GJOCommunity.com AKA "AndrewPH"
-#                   <Brad Reardon> brad@bradness.co.cc AKA "PixelEater"
-#                   <James Kirslis> james@helplarge.com AKA "iKJames"
-#                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
-#                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
-#                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
-#                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
-#                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
-#                   <Willem van der Ploeg> willempieeploeg@live.nl AKA "willempiee"
+#	The iCraft team:
+#				   <Andrew Dolgov> fox@bah.org.ru AKA "gothfox"
+#				   <Andrew Horn> Andrew@GJOCommunity.com AKA "AndrewPH"
+#				   <Brad Reardon> brad@bradness.co.cc AKA "PixelEater"
+#				   <James Kirslis> james@helplarge.com AKA "iKJames"
+#				   <Jason Sayre> admin@erronjason.com AKA "erronjason"
+#				   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#				   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
+#				   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
+#				   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
+#				   <Willem van der Ploeg> willempieeploeg@live.nl AKA "willempiee"
 #
-#    iCraft is licensed under the Creative Commons
-#    Attribution-NonCommercial-ShareAlike 3.0 Unported License. 
-#    To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/3.0/
-#    Or, send a letter to Creative Commons, 171 2nd Street,
-#    Suite 300, San Francisco, California, 94105, USA.
+#	iCraft is licensed under the Creative Commons
+#	Attribution-NonCommercial-ShareAlike 3.0 Unported License. 
+#	To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/3.0/
+#	Or, send a letter to Creative Commons, 171 2nd Street,
+#	Suite 300, San Francisco, California, 94105, USA.
 
 VERSION = "v1.0b1"
 
 FORMAT_LENGTHS = {
-    "b": 1,
-    "a": 1024,
-    "s": 64,
-    "h": 2,
-    "i": 4,
+	"b": 1,
+	"a": 1024,
+	"s": 64,
+	"h": 2,
+	"i": 4,
 }
 
 from format import Format
@@ -55,21 +55,21 @@ TYPE_MESSAGE = 13
 TYPE_ERROR = 14
 
 TYPE_FORMATS = {
-    TYPE_INITIAL: Format("bssb"),
-    TYPE_KEEPALIVE: Format(""),
-    TYPE_PRECHUNK: Format(""),
-    TYPE_CHUNK: Format("hab"),
-    TYPE_LEVELSIZE: Format("hhh"),
-    TYPE_BLOCKCHANGE: Format("hhhbb"),
-    TYPE_BLOCKSET: Format("hhhb"),
-    TYPE_SPAWNPOINT: Format("bshhhbb"),
-    TYPE_PLAYERPOS: Format("bhhhbb"),
-    TYPE_NINE: Format("bbbbbb"),
-    TYPE_TEN: Format("bbbb"),
-    TYPE_PLAYERDIR: Format("bbb"),
-    TYPE_PLAYERLEAVE: Format("b"),
-    TYPE_MESSAGE: Format("bs"),
-    TYPE_ERROR: Format("s"),
+	TYPE_INITIAL: Format("bssb"),
+	TYPE_KEEPALIVE: Format(""),
+	TYPE_PRECHUNK: Format(""),
+	TYPE_CHUNK: Format("hab"),
+	TYPE_LEVELSIZE: Format("hhh"),
+	TYPE_BLOCKCHANGE: Format("hhhbb"),
+	TYPE_BLOCKSET: Format("hhhb"),
+	TYPE_SPAWNPOINT: Format("bshhhbb"),
+	TYPE_PLAYERPOS: Format("bhhhbb"),
+	TYPE_NINE: Format("bbbbbb"),
+	TYPE_TEN: Format("bbbb"),
+	TYPE_PLAYERDIR: Format("bbb"),
+	TYPE_PLAYERLEAVE: Format("b"),
+	TYPE_MESSAGE: Format("bs"),
+	TYPE_ERROR: Format("s"),
 }
 
 TASK_BLOCKSET = 1
