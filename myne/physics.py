@@ -86,7 +86,7 @@ class Physics(Thread):
 		while self.running:
 			if self.blockstore.physics:
 				# If this is the first of a physics run, redo the queues from scratch
-				self.logger.debug("Starting physics run for '%s'. (a%i, f%i, s%i, gg%i, gd%i)" % (self.blockstore.blocks_path, len(self.air_queue), len(self.fluid_queue), len(self.sponge_queue), len(self.grass_grow_queue), len(self.grass_die_queue)))
+				self.logger.debug("Starting physics run for '%s'. (a%i, f%i, s%i, gg%i, gd%i, sf%i)" % (self.blockstore.blocks_path, len(self.air_queue), len(self.fluid_queue), len(self.sponge_queue), len(self.grass_grow_queue), len(self.grass_die_queue), len(self.step_queue)))
 				if self.was_physics == False:
 					self.logger.debug("Performing queue scan for '%s'." % self.blockstore.blocks_path)
 					self.scan_blocks()
@@ -102,7 +102,7 @@ class Physics(Thread):
 				if overflow and (time.time() - self.last_lag > self.LAG_INTERVAL):
 					self.blockstore.admin_message("Physics is currently lagging in %(id)s.")
 					self.last_lag = time.time()
-				self.logger.debug("Ended physics run for '%s' (c%i, a%i, f%i, s%i, gg%i, gd%i, sf%i)." % (self.blockstore.blocks_path, len(changes), len(self.air_queue), len(self.fluid_queue), len(self.sponge_queue), len(self.grass_grow_queue), len(self.grass_die_queue), len(self.step_queue))
+				self.logger.debug("Ended physics run for '%s' (c%i, a%i, f%i, s%i, gg%i, gd%i, sf%i)." % (self.blockstore.blocks_path, len(changes), len(self.air_queue), len(self.fluid_queue), len(self.sponge_queue), len(self.grass_grow_queue), len(self.grass_die_queue), len(self.step_queue)))
 			else:
 				if self.was_physics:
 					self.init_queues()
