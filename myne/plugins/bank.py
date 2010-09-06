@@ -41,17 +41,21 @@ class MoneyPlugin(ProtocolPlugin):
         "setbank":        "commandSetAccount",
         "removebank":    "commandRemoveAccount",
     }
-
+    
+    money_logger = logging.getLogger('TransactionLogger')
+    
     def commandBalance(self, parts, byuser, overriderank):    
         "/bank - Guest\nAliases: balance\nFirst time: Creates you a account.\nOtherwise: Checks your balance."
         if self.client.persist.getint("bank", "balance", -1) is not -1:
             self.client.sendServerMessage("Welcome to the Bank!")
-            self.client.sendServerMessage("Your current balance is C%d." % bank[user])
+            self.client.sendServerMessage("Your current balance is C%d." % self.client.persist.getint("bank", "balance", -1))
         else:
             self.client.persist.set("bank", "balance", 5000)
             self.client.sendServerMessage("Welcome to the Bank!")
             self.client.sendServerMessage("We have created your account.")
-            self.client.sendServerMessage("Your current balance is C%d." % bank[user])
+            self.client.sendServerMessage("Your current balance is C%d." % self.client.persist.getint("bank", "balance", -1))
+            self.client.sendServerMessage("NOTE: We CAN detect cheating. Do NOT try it.")
+            self.money_logger.info("%s has created an account." % self.client.username)
 
     @director_only
     def commandSetAccount(self, parts, byuser, overriderank):
@@ -109,12 +113,13 @@ class MoneyPlugin(ProtocolPlugin):
             self.client.sendServerMessage("You sent C%d." % amount)
             if target in self.client.factory.usernames:
                 self.client.factory.usernames[target].sendServerMessage("You received C%(amount)d from %(user)s." % {'amount': amount, 'user': user})
+            self.money_logger.info("%(user)s sent %(amount)d to %(target)s" % {'user': user, 'amount': amount, 'target': target})
 
     @director_only
     def commandRemoveAccount(self, parts, byuser, overriderank):
         "/removebank username - Director\nRemoves Bank Account"
         if len(parts) != 2:
-            self.client.sendServerMessage("Syntax: /remove <target>")    
+            self.client.sendServerMessage("Syntax: /removebank <target>")    
             return False
         target = parts[1]
         with Persist(target) as p:
