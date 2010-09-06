@@ -46,14 +46,14 @@ class MoneyPlugin(ProtocolPlugin):
 	
 	def commandBalance(self, parts, byuser, overriderank):	
 		"/bank - Guest\nAliases: balance\nFirst time: Creates you a account.\nOtherwise: Checks your balance."
-		if self.client.persist.getint("bank", "balance", -1) is not -1:
+		if self.client.persist.int("bank", "balance", -1) is not -1:
 			self.client.sendServerMessage("Welcome to the Bank!")
-			self.client.sendServerMessage("Your current balance is C%d." % self.client.persist.getint("bank", "balance", -1))
+			self.client.sendServerMessage("Your current balance is C%d." % self.client.persist.int("bank", "balance", -1))
 		else:
 			self.client.persist.set("bank", "balance", 5000)
 			self.client.sendServerMessage("Welcome to the Bank!")
 			self.client.sendServerMessage("We have created your account.")
-			self.client.sendServerMessage("Your current balance is C%d." % self.client.persist.getint("bank", "balance", -1))
+			self.client.sendServerMessage("Your current balance is C%d." % self.client.persist.int("bank", "balance", -1))
 			self.client.sendServerMessage("NOTE: We CAN detect cheating. Do NOT try it.")
 			self.money_logger.info("%s has created an account." % self.client.username)
 
@@ -65,7 +65,7 @@ class MoneyPlugin(ProtocolPlugin):
 			return False
 		target = parts[1]
 		with Persist(target) as p:
-			tbalance = p.getint("bank", "balance", -1)
+			tbalance = p.int("bank", "balance", -1)
 		if tbalance is -1:
 			self.client.sendServerMessage("Invalid target.")
 			return False
@@ -84,10 +84,10 @@ class MoneyPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("/pay <target> <amount>")
 			return False
 		user = self.client.username.lower()
-		ubalance = self.client.persist.getint("bank", "balance", -1)
+		ubalance = self.client.persist.int("bank", "balance", -1)
 		target = parts[1].lower()
 		with Persist(target) as p:
-			tbalance = p.getint("bank", "balance", -1)
+			tbalance = p.int("bank", "balance", -1)
 		if tbalance is -1:
 			self.client.sendServerMessage("Error: Invalid target.")
 			return False
@@ -123,7 +123,7 @@ class MoneyPlugin(ProtocolPlugin):
 			return False
 		target = parts[1]
 		with Persist(target) as p:
-			if p.getint("bank", "balance", -1) is -1:
+			if p.int("bank", "balance", -1) is -1:
 				self.client.sendServerMessage("Invalid target.")
 				return False
 			p.set("bank", "balance", -1)

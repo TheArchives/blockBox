@@ -414,9 +414,9 @@ class MyneServerProtocol(Protocol):
 			elif type == TYPE_MESSAGE:
 				byte, message = parts
 				user = self.username.lower()
-				if self.username.lower() in rank:
-					self.title = "\""+self.persist.get("misc", "title", "")+"\" "
-				if self.title is "\"\"":
+				if self.persist.string("misc", "title") is not None:
+					self.title = "\""+self.persist.string("misc", "title", "")+"\" "
+				else:
 					self.title = ""
 				self.usertitlename = self.title + self.username
 				override = self.runHook("chatmsg", message)				

@@ -5,7 +5,18 @@ class PersistenceEngine(object):
 	def __init__(self, username):
 		self.username = username
 		self.ini = ConfigParser()
-		self.ini.read("persist/%s.ini" % username.lower())
+		self.reload()
+	
+	def __enter__(self):
+		pass
+	
+	def __exit__(self, type, value, traceback):
+		self.username = None
+		self.ini = None
+	
+	def reload(self):
+		self.ini.read("persist/%s.ini" % self.username.lower())
+		reactor.callLater(15, reload)
 	
 	def string(self, section, name, default=None):
 		try:
