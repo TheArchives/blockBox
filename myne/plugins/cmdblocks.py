@@ -42,6 +42,7 @@ from myne.timer import ResettableTimer
 class CommandPlugin(ProtocolPlugin):
 	
 	commands = {
+		"cmdhelp": "commandCmdHelp",
 		"cmd": "commandCommand",
 		"gcmd": "commandGuestCommand",
 		"scmd": "commandSensorCommand",
@@ -79,11 +80,13 @@ class CommandPlugin(ProtocolPlugin):
 		self.customvars = dict({})
 		self.cmdinfolines = None
 		self.infoindex = None
+//TODO: Persist, derp
 	def loadBank(self):
 		file = open('balances.dat', 'r')
 		bank_dic = cPickle.load(file)
 		file.close()
 		return bank_dic
+
 	def message(self, message):
 		if self.cmdinfolines is not None:
 			if message.lower() == "next":
@@ -228,6 +231,7 @@ class CommandPlugin(ProtocolPlugin):
 			else:
 				self.client.sendServerMessage("Please answer yes or no.")
 				return True
+
 	def blockChanged(self, x, y, z, block, byUser):
 		"Hook trigger for block changes."
 		#avoid infinite loops by making blocks unaffected by commands
@@ -269,7 +273,6 @@ class CommandPlugin(ProtocolPlugin):
 			if self.placing_cmd:
 				self.client.sendServerMessage("You placed a command block. Type /cmdend to stop.")
 				self.client.world.add_command(x, y, z, self.command_cmd)
-			
 
 	def newWorld(self, world):
 		"Hook to reset Command abilities in new worlds if not op."
@@ -296,6 +299,105 @@ class CommandPlugin(ProtocolPlugin):
 		except AssertionError:
 			pass
 		self.last_block_position = (rx, ry, rz)
+
+	@info_list
+	@writer_only
+	def commandCmdHelp(self, parts, byuser, overriderank):
+		"/cmdhelp category [subcategory] - Builder\ncmdblocks help, learn what you can do in them."
+		if len(parts) > 1:
+			if parts[1].lower() == "types":
+				if len(parts) > 2:
+					if parts[2].lower() == "cmd":
+						self.client.sendSplitServerMessage("cmd - This is the main type of cmdblocks. Activated by clicking the block, these commands will only work if the user can.")
+					elif parts[2].lower() == "gcmd":
+						self.client.sendSplitServerMessage("gcmd - This is the guest type of cmdblocks. Activated by clicking the block, these commands will work for anyone.")
+					elif parts[2].lower() == "scmd":
+						self.client.sendSplitServerMessage("scmd - This is the sensor type of cmdblocks. Activated by passing through, these commands will only work if the user can.")
+					elif parts[2].lower() == "gscmd":
+						self.client.sendSplitServerMessage("gscmd - This is the guest sensor of cmdblocks. Activated by passing through, these commands will work for anyone.")
+					else:
+						self.client.sendServerMessage("That subcategory doesn't exist.")
+				else:
+					self.client.sendServerMessage("cmdblocks Help - Types")
+					self.client.sendServerMessage("There are many types of cmdblocks.")
+					self.client.sendServerMessage("Subcategories: cmd gcmd scmd gscmd")
+			elif parts[1].lower() == "functions":
+				if len(parts) > 2:
+					if parts[2].lower() == "self":
+						self.client.sendServerMessage("self message - Outputs a message like a msgblock.")
+					elif parts[2].lower() == "exit":
+						self.client.sendServerMessage("exit - Stops the cmdblock, no more commands.")
+					elif parts[2].lower() == "wait":
+						self.client.sendServerMessage("wait seconds - Pauses the cmdblock for x seconds.")
+					elif parts[2].lower() == "getinput":
+						self.client.sendSplitServerMessage("getinput varname displaymsg - Pauses the cmdblock waiting for input. The input will be any type of data, stores it for retrieval via $varname")
+					elif parts[2].lower() == "getnum":
+						self.client.sendSplitServerMessage("getnum varname displaymsg - Pauses the cmdblock waiting for num input. The input will be any type of number, stores it for retrieval via $varname")
+					elif parts[2].lower() == "getblock":
+						self.client.sendSplitServerMessage("getblock varname displaymsg - Pauses the cmdblock waiting for block input. The input will be any type of block, stores it for retrieval via $varname")
+					elif parts[2].lower() == "getyesno":
+						self.client.sendSplitServerMessage("getyesno varname displaymsg - Pauses the cmdblock waiting for yesno input. The input will be a 'y' or 'n', stores it for retrieval via $varname")
+					else:
+						self.client.sendServerMessage("That subcategory doesn't exist.")
+				else:
+					self.client.sendServerMessage("cmdblocks Help - Functions")
+					self.client.sendSplitServerMessage("In cmdblocks there are functions, these are commands that exist only in cmdblocks and can't be done seperate.")
+					self.client.sendSplitServerMessage("Subcategories: getblock getinput getnum getyesno exit self wait")
+			elif parts[1].lower() == "variables":
+				if len(parts) > 2:
+					if parts[2].lower() == "bank":
+						self.client.sendServerMessage("$bank - Balance of the player.")
+					elif parts[2].lower() == "block":
+						self.client.sendServerMessage("$block(x,y,x) - Block type, as a integer, for xyz")
+					elif parts[2].lower() == "bname":
+						self.client.sendServerMessage("$bname - Returns the block num as name, can use with $block")
+					elif parts[2].lower() == "cname":
+						self.client.sendServerMessage("$cname - Name color of the player.")
+					elif parts[2].lower() == "date":
+						self.client.sendServerMessage("$date - Date of the server, Month/Day/Year")
+					elif parts[2].lower() == "eval":
+						self.client.sendServerMessage("$eval(expression) - Evaluate the string, returns the cal.")
+					elif parts[2].lower() == "first":
+						self.client.sendServerMessage("$first - True if first time, False if not.")
+					elif parts[2].lower() == "irc":
+						self.client.sendServerMessage("$irc - Returns the IRC network and channel.")
+					elif parts[2].lower() == "ircchan":
+						self.client.sendServerMessage("$ircchan - Returns the IRC channel.")
+					elif parts[2].lower() == "ircnet":
+						self.client.sendServerMessage("$ircnet - Returns the IRC network.")
+					elif parts[2].lower() == "name":
+						self.client.sendServerMessage("$name - Username of the player.")
+					elif parts[2].lower() == "owner":
+						self.client.sendServerMessage("$owner - Returns the server owner.")
+					elif parts[2].lower() == "posa":
+						self.client.sendServerMessage("$posa - Returns the xyz of the player.")
+					elif parts[2].lower() == "posx":
+						self.client.sendServerMessage("$posx - Returns the x of the player.")
+					elif parts[2].lower() == "posy":
+						self.client.sendServerMessage("$posy - Returns the y of the player.")
+					elif parts[2].lower() == "posz":
+						self.client.sendServerMessage("$posz - Returns the z of the player.")
+					elif parts[2].lower() == "rank":
+						self.client.sendServerMessage("$rank - Rank name of the player.")
+					elif parts[2].lower() == "ranknum":
+						self.client.sendServerMessage("$ranknum - Rank number of the player.")
+					elif parts[2].lower() == "rnd":
+						self.client.sendServerMessage("$rnd(min,max) - Returns a random number between the min and max.")
+					elif parts[2].lower() == "server":
+						self.client.sendServerMessage("$server - Name of the server.")
+					elif parts[2].lower() == "time":
+						self.client.sendServerMessage("$time - Time of the server, hours:minutes:seconds")
+					else:
+						self.client.sendServerMessage("That subcategory doesn't exist.")
+				else:
+					self.client.sendServerMessage("cmdblocks Help - Variables")
+					self.client.sendSplitServerMessage("In cmdblocks there are variables, these get replaced with the respectful information when the user uses a cmdblock. All Variables start with a $ for use and work in very purposes like display and IFs.")
+					self.client.sendSplitServerMessage("Subcategories: bank block bname cname date eval first irc ircchan ircnet name owner posa posx posy posz rank ranknum rnd server time")
+			else:
+				self.client.sendServerMessage("That category doesn't exist.")
+		else:
+			self.client.sendServerMessage("cmdblocks Help - Use: /cmdhelp category [subcategory]")
+			self.client.sendSplitServerMessage("Categories: types functions variables")
 
 	@writer_only
 	def commandCommand(self, parts, byuser, permissionoverride):
@@ -379,7 +481,7 @@ class CommandPlugin(ProtocolPlugin):
 				else:
 					self.client.sendServerMessage("Unknown command '%s'" % command)
 					return
-				if (self.client.isSpectator() and (getattr(func, "admin_only", False) or getattr(func, "mod_only", False) or getattr(func, "op_only", False) or getattr(func, "member_only", False) or getattr(func, "worldowner_only", False) or getattr(func, "writer_only", False))):
+				if (self.client.isSpectator() and (getattr(func, "admin_only", False) or getattr(func, "mod_only", False) or getattr(func, "op_only", False) or getattr(func, "advbuilder_only", False) or getattr(func, "worldowner_only", False) or getattr(func, "writer_only", False))):
 
 					return
 
@@ -403,7 +505,7 @@ class CommandPlugin(ProtocolPlugin):
 
 					return
 
-				if getattr(func, "member_only", False) and not (self.client.isMember() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
+				if getattr(func, "advbuilder_only", False) and not (self.client.isAdvBuilder() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
 
 					return
 
@@ -509,7 +611,7 @@ class CommandPlugin(ProtocolPlugin):
 				else:
 					self.client.sendServerMessage("Unknown command '%s'" % command)
 					return
-				if (self.client.isSpectator() and (getattr(func, "admin_only", False) or getattr(func, "mod_only", False) or getattr(func, "op_only", False) or getattr(func, "member_only", False) or getattr(func, "worldowner_only", False) or getattr(func, "writer_only", False))):
+				if (self.client.isSpectator() and (getattr(func, "admin_only", False) or getattr(func, "mod_only", False) or getattr(func, "op_only", False) or getattr(func, "advbuilder_only", False) or getattr(func, "worldowner_only", False) or getattr(func, "writer_only", False))):
 
 					self.client.sendServerMessage("'%s' is not available to specs." % command)
 
@@ -545,9 +647,9 @@ class CommandPlugin(ProtocolPlugin):
 
 					return
 
-				if getattr(func, "member_only", False) and not (self.client.isMember() or self.client.isMod()):
+				if getattr(func, "advbuilder_only", False) and not (self.client.isAdvBuilder() or self.client.isMod()):
 
-					self.client.sendServerMessage("'%s' is a Member-only command!" % command)
+					self.client.sendServerMessage("'%s' is a Advanced Builder-only command!" % command)
 
 					return
 
@@ -671,8 +773,8 @@ class CommandPlugin(ProtocolPlugin):
 		elif self.client.isMod():
 			myrank = "mod"
 			myranknum = 6
-		elif self.client.isMember():
-			myrank = "member"
+		elif self.client.isAdvBuilder():
+			myrank = "advbuilder"
 			myranknum = 3
 		elif self.client.isOp():
 			myrank = "op"
@@ -896,7 +998,7 @@ class CommandPlugin(ProtocolPlugin):
 
 		if runcmd is True:
 			if guest is False:
-				if (self.client.isSpectator() and (getattr(func, "admin_only", False) or getattr(func, "mod_only", False) or getattr(func, "op_only", False) or getattr(func, "member_only", False) or getattr(func, "worldowner_only", False) or getattr(func, "writer_only", False))):
+				if (self.client.isSpectator() and (getattr(func, "admin_only", False) or getattr(func, "mod_only", False) or getattr(func, "op_only", False) or getattr(func, "advbuilder_only", False) or getattr(func, "worldowner_only", False) or getattr(func, "writer_only", False))):
 
 					self.client.sendServerMessage("'%s' is not available to specs." % command)
 
@@ -932,9 +1034,9 @@ class CommandPlugin(ProtocolPlugin):
 
 					runcmd = False
 
-				if getattr(func, "member_only", False) and not (self.client.isMember() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
+				if getattr(func, "advbuilder_only", False) and not (self.client.isAdvBuilder() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
 
-					self.client.sendServerMessage("'%s' is a Member-only command!" % command)
+					self.client.sendServerMessage("'%s' is a Advanced Builder-only command!" % command)
 
 					runcmd = False
 

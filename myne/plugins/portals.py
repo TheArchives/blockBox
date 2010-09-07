@@ -95,8 +95,13 @@ class PortalPlugin(ProtocolPlugin):
 					return
 				world = self.client.factory.worlds[world_id]
 				if not self.client.canEnter(world):
-					if (rx, ry, rz) != self.last_block_position:
-						self.client.sendServerMessage("'%s' is private; you're not allowed in." % world_id)
+					if world.private:
+						if (rx, ry, rz) != self.last_block_position:
+							self.client.sendServerMessage("'%s' is private; you're not allowed in." % world_id)
+					#elif self.username.lower() in world.worldbans:
+					else:
+						if (rx, ry, rz) != self.last_block_position:
+							self.client.sendServerMessage("You're WorldBanned from '%s'; so you're not allowed in." % world_id)
 				else:
 					if world == self.client.world:
 						self.client.teleportTo(tx, ty, tz, th)

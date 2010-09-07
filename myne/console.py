@@ -76,6 +76,23 @@ class StdinPlugin(threading.Thread):
 						message = message.replace("%d", "&d")
 						message = message.replace("%e", "&e")
 						message = message.replace("%f", "&f")
+						message = message.replace("&0", "&0")
+						message = message.replace("&1", "&1")
+						message = message.replace("&2", "&2")
+						message = message.replace("&3", "&3")
+						message = message.replace("&4", "&4")
+						message = message.replace("&5", "&5")
+						message = message.replace("&6", "&6")
+						message = message.replace("&7", "&7")
+						message = message.replace("&8", "&8")
+						message = message.replace("&9", "&9")
+						message = message.replace("&a", "&a")
+						message = message.replace("&b", "&b")
+						message = message.replace("&c", "&c")
+						message = message.replace("&d", "&d")
+						message = message.replace("&e", "&e")
+						message = message.replace("&f", "&f")
+						message = message.replace("./", " /")
 						if message[len(message)-3] == "&":
 							print "You can not use a color at the end of a message"
 							return
@@ -160,12 +177,14 @@ class StdinPlugin(threading.Thread):
 								print "Chats available are: normal, whisper; @<player> <message>, world; !<world name> <message> and staff; #<message>."
 							elif message[0] == ("about"):
 								print "About The Server"
-								print ("Powered by iCraft %s - http://hlmc.net/"%VERSION)
+								//Shhh its something coming soon
+								print ("Powered by blockBox %s - http://3ps.hk-diy.net/blockbox"%VERSION)
 								print ("Name: "+self.server.server_name)
 								print ("URL: "+self.server.heartbeat.url)
 							elif message[0] == ("say"):
 								if len(message) == 1:
-									self.client.sendServerMessage("Please type a message.")
+//									self.client.sendServerMessage("Please type a message.")
+									print ("Please type a message.")
 								else:
 									self.server.queue.put((self, TASK_SERVERMESSAGE, ("[MSG] "+(" ".join(message[1:])))))
 							elif message[0] == ("srb"):

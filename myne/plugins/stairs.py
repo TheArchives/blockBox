@@ -125,7 +125,7 @@ class StairsPlugin(ProtocolPlugin):
 				limit = 2097152
 			elif self.client.isMod():
 				limit = 262144
-			elif self.client.isMember():
+			elif self.client.isAdvBuilder():
 				limit = 110592
 			elif self.client.isOp():
 				limit = 21952
@@ -215,6 +215,7 @@ class StairsPlugin(ProtocolPlugin):
 						block_iter.next()
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
-					self.client.sendServerMessage("Your stairs just completed.")
+					if byuser:
+						self.client.sendServerMessage("Your stairs just completed.")
 					pass
 			do_step()

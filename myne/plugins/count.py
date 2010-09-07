@@ -36,6 +36,7 @@ class CountPlugin(ProtocolPlugin):
 	
 	commands = {
 		"count": "commandCount",
+		"countdown": "commandCount",
 	}
 
 	def gotClient(self):
@@ -43,7 +44,7 @@ class CountPlugin(ProtocolPlugin):
 
 	@writer_only
 	def commandCount(self, parts, byuser, overriderank):
-		"/count [number] - Builder\nCounts down from 3 or from number given."
+		"/count [number] - Builder\nAliases: countdown\nCounts down from 3 or from number given (up to 15)"
 		if self.num != 0:
 			self.client.sendServerMessage("You can only have one count at a time!")
 			return
@@ -60,13 +61,13 @@ class CountPlugin(ProtocolPlugin):
 			self.num = 0
 			return
 		counttimer = ResettableTimer(self.num, 1, self.sendgo, self.sendcount)
-		self.client.sendWorldMessage("*&5%s" %self.num)
+		self.client.sendPlainWorldMessage("&2[COUNTDOWN] %s" %self.num)
 		counttimer.start()
 
 	def sendgo(self):
-		self.client.sendWorldMessage("*&5GO!")
+		self.client.sendPlainWorldMessage("&2[COUNTDOWN] GO!")
 		self.num = 0
 
 	def sendcount(self, count):
 		if not int(self.num)-int(count) == 0:
-			self.client.sendWorldMessage("*&5%s" %(int(self.num)-int(count)))
+			self.client.sendPlainWorldMessage("&2[COUNTDOWN] %s" %(int(self.num)-int(count)))

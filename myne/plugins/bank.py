@@ -41,7 +41,7 @@ class MoneyPlugin(ProtocolPlugin):
 		"setbank":		"commandSetAccount",
 		"removebank":	"commandRemoveAccount",
 	}
-	
+
 	money_logger = logging.getLogger('TransactionLogger')
 	
 	def commandBalance(self, parts, byuser, overriderank):	

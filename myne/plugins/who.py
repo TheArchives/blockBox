@@ -38,6 +38,7 @@ class PlayersPlugin(ProtocolPlugin):
 	
 	commands = {
 		"who": "commandWho",
+		"whois": "commandWho",
 		"players": "commandWho",
 		"pinfo": "commandWho",
 		"locate": "commandLocate",
@@ -67,11 +68,12 @@ class PlayersPlugin(ProtocolPlugin):
 
 	@player_list
 	def commandWho(self, parts, byuser, overriderank):
-		"/who [username] - Guest\nAliases: players, pinfo\nOnline players, or player lookup."
+		"/who [username] - Guest\nAliases: pinfo, players, whois\nOnline players, or player lookup."
 		if len(parts) < 2:
 			self.client.sendServerMessage("Do '/who username' for more info.")
 			self.client.sendServerList(["Players:"] + list(self.client.factory.usernames))
 		else:
+			//TODO: Persist derp
 			def loadBank():
 				file = open('balances.dat', 'r')
 				bank_dic = cPickle.load(file)
@@ -94,8 +96,8 @@ class PlayersPlugin(ProtocolPlugin):
 					self.client.sendServerMessage(parts[1]+" - "+COLOUR_DARKPURPLE+"World Owner")
 				elif username.isOp():
 					self.client.sendServerMessage(parts[1]+" - "+COLOUR_DARKCYAN+"Operator")
-				elif username.isMember():
-					self.client.sendServerMessage(parts[1]+" - "+COLOUR_GREY+"Member")
+				elif username.isAdvBuilder():
+					self.client.sendServerMessage(parts[1]+" - "+COLOUR_GREY+"Advanced Builder")
 				elif username.isWriter():
 					self.client.sendServerMessage(parts[1]+" - "+COLOUR_CYAN+"Builder")
 				elif username.isSpectator():
@@ -132,8 +134,8 @@ class PlayersPlugin(ProtocolPlugin):
 					self.client.sendServerMessage(parts[1]+" - "+COLOUR_DARKPURPLE+"World Owner")
 				elif username in self.client.world.ops:
 					self.client.sendServerMessage(parts[1]+" - "+COLOUR_DARKCYAN+"Operator")
-				elif username in self.client.factory.members:
-					self.client.sendServerMessage(parts[1]+" - "+COLOUR_GREY+"Member")
+				elif username in self.client.factory.advbuilders:
+					self.client.sendServerMessage(parts[1]+" - "+COLOUR_GREY+"Advanced Builder")
 				elif username in self.client.world.writers:
 					self.client.sendServerMessage(parts[1]+" - "+COLOUR_CYAN+"Builder")
 				else:

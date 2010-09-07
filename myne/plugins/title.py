@@ -34,12 +34,13 @@ class TitlePlugin(ProtocolPlugin):
 	
 	commands = {
 		"title":	 "commandSetTitle",
+		"settitle":	 "commandSetTitle",
 	}
 
 	@player_list
 	@director_only
 	def commandSetTitle(self, parts, byuser, overriderank):
-		"/title username [title] - Director\nGives or removes a title to username."
+		"/title username [title] - Director\nAliases: settitle\nGives or removes a title to username."
 		with Persist(parts[1]) as p:
 			if len(parts)==3:
 				if len(parts[2])<6:

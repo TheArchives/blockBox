@@ -1,2 +1,3 @@
 Worlds are stored in this directory. Each world has 2 definitive contents - world.meta and blocks.gz. Other contents may include a backup folder which is used for storing backups, if that particular system is enabled.
 It is highly recommended not to replace files in here while the world is online -- if you must, please shut down the world first.
+The .trash directory is used to store deleted worlds using ingame commands.

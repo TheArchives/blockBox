@@ -35,7 +35,7 @@ class ModsPlugin(ProtocolPlugin):
 	
 	commands = {
 		"staff": "commandStaff",
-		"members": "commandMembers",
+		"advbuilders": "commandAdvBuilders",
 		"directors": "commandDirectors",
 		"admins": "commandAdmins",
 		"mods": "commandMods",
@@ -43,27 +43,32 @@ class ModsPlugin(ProtocolPlugin):
 
 	@info_list
 	def commandStaff(self, parts, byuser, overriderank):
-		self.client.sendServerList(["The Server Staff"])
+		"/staff - Guest\nLists all server staff."
+		self.client.sendServerMessage("The Server Staff - Owner: "+self.client.factory.owner)
 		list = Staff(self)
 		for each in list:
 			self.client.sendServerList(each)
 
 	@info_list
-	def commandMembers(self, parts, byuser, overriderank):
-		if len(self.client.factory.members):
-			self.client.sendServerList(["Members:"] + list(self.client.factory.members))
+	def commandAdvBuilders(self, parts, byuser, overriderank):
+		"/advbuilders - Guest\nLists all Advanced Builders."
+		if len(self.client.factory.advbuilders):
+			self.client.sendServerList(["Advanced Builders:"] + list(self.client.factory.members))
 
 	@info_list
 	def commandDirectors(self, parts, byuser, overriderank):
+		"/direcors - Guest\nLists all Directors."
 		if len(self.client.factory.directors):
 			self.client.sendServerList(["Directors:"] + list(self.client.factory.directors))
 
 	@info_list
 	def commandAdmins(self, parts, byuser, overriderank):
+		"/admins - Guest\nLists all Admins."
 		if len(self.client.factory.admins):
 			self.client.sendServerList(["Admins:"] + list(self.client.factory.admins))
 
 	@info_list
 	def commandMods(self, parts, byuser, overriderank):
+		"/mods - Guest\nLists all Mods."
 		if len(self.client.factory.mods):
 			self.client.sendServerList(["Mods:"] + list(self.client.factory.mods))

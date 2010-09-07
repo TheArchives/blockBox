@@ -88,7 +88,7 @@ class ShapesPlugin(ProtocolPlugin):
 				limit = 262144
 			elif self.client.isOp():
 				limit = 110592
-			elif self.client.isMember():
+			elif self.client.isAdvBuilder():
 				limit = 55296
 			else:
 				limit = 4062
@@ -122,7 +122,8 @@ class ShapesPlugin(ProtocolPlugin):
 						block_iter.next()
 					reactor.callLater(0.01, do_step)
 				except StopIteration:
-					self.client.sendServerMessage("Your sphere just completed.")
+					if byuser:
+						self.client.sendServerMessage("Your sphere just completed.")
 					pass
 			do_step()
 
@@ -165,7 +166,7 @@ class ShapesPlugin(ProtocolPlugin):
 				limit = 262144
 			elif self.client.isOp():
 				limit = 110592
-			elif self.client.isMember():
+			elif self.client.isAdvBuilder():
 				limit = 55296
 			else:
 				limit = 4062
@@ -205,9 +206,9 @@ class ShapesPlugin(ProtocolPlugin):
 			do_step()
 
 	@build_list
-	@member_only
+	@advbuilder_only
 	def commandCurve(self, parts, byuser, overriderank):
-		"/curve blockname [x y z x2 y2 z2 x3 y3 z3] - Member\nSets a line of blocks along three points to block."
+		"/curve blockname [x y z x2 y2 z2 x3 y3 z3] - Advaced Builder\nSets a line of blocks along three points to block."
 		if len(parts) < 11 and len(parts) != 2:
 			self.client.sendServerMessage("Please enter a type (and possibly three coord triples)")
 		else:
@@ -234,9 +235,9 @@ class ShapesPlugin(ProtocolPlugin):
 				try:
 					x, y, z = self.client.last_block_changes[0]
 					x2, y2, z2 = self.client.last_block_changes[1]
-					x3, y3, z3 = self.client.thirdcoord
+					x3, y3, z3 = self.client.last_block_changes[2]
 				except:
-					self.client.sendServerMessage("You have not recorded three points yet (use /recthird).")
+					self.client.sendServerMessage("You have not clicked 3 points yet.")
 					return
 			else:
 				try:
@@ -252,9 +253,6 @@ class ShapesPlugin(ProtocolPlugin):
 				except ValueError:
 					self.client.sendServerMessage("All parameters must be integers")
 					return
-			if (x==x2 and y==y2 and z==z2) or (x==x3 and y==y3 and z==z3) or (x3==x2 and y3==y2 and z3==z2):
-				self.client.sendServerMessage("Repeated points error.")
-				return
 			if self.client.isDirector() or overriderank:
 				limit = 1073741824
 			elif self.client.isAdmin():
@@ -263,7 +261,7 @@ class ShapesPlugin(ProtocolPlugin):
 				limit = 262144
 			elif self.client.isOp():
 				limit = 110592
-			elif self.client.isMember():
+			elif self.client.isAdvBuilder():
 				limit = 55296
 			else:
 				limit = 4062
@@ -311,14 +309,15 @@ class ShapesPlugin(ProtocolPlugin):
 						block_iter.next()
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
-					self.client.sendServerMessage("Your curve just completed.")
+					if byuser:
+						self.client.sendServerMessage("Your curve just completed.")
 					pass
 			do_step()
 
 	@build_list
-	@member_only
+	@advbuilder_only
 	def commandPyramid(self, parts, byuser, overriderank):
-		"/pyramid blockname height [x y z] - Member\nSets all blocks in this area to be a pyramid."
+		"/pyramid blockname height [x y z] - Advanced Builder\nSets all blocks in this area to be a pyramid."
 		if len(parts) < 7 and len(parts) != 4:
 			self.client.sendServerMessage("Please enter a block type height and fill?")
 		else:
@@ -385,7 +384,7 @@ class ShapesPlugin(ProtocolPlugin):
 				limit = 262144
 			elif self.client.isOp():
 				limit = 110592
-			elif self.client.isMember():
+			elif self.client.isAdvBuilder():
 				limit = 55296
 			else:
 				limit = 4062
@@ -424,7 +423,8 @@ class ShapesPlugin(ProtocolPlugin):
 						block_iter.next()
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
-					self.client.sendServerMessage("Your pyramid just completed.")
+					if byuser:
+						self.client.sendServerMessage("Your pyramid just completed.")
 					pass
 			do_step()
 
@@ -489,7 +489,7 @@ class ShapesPlugin(ProtocolPlugin):
 				limit = 262144
 			elif self.client.isOp():
 				limit = 110592
-			elif self.client.isMember():
+			elif self.client.isAdvBuilder():
 				limit = 55296
 			else:
 				limit = 4062
@@ -525,7 +525,8 @@ class ShapesPlugin(ProtocolPlugin):
 						block_iter.next()
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
-					self.client.sendServerMessage("Your line just completed.")
+					if byuser:
+						self.client.sendServerMessage("Your line just completed.")
 					pass
 			do_step()
 
@@ -593,7 +594,7 @@ class ShapesPlugin(ProtocolPlugin):
 				limit = 262144
 			elif self.client.isOp():
 				limit = 110592
-			elif self.client.isMember():
+			elif self.client.isAdvBuilder():
 				limit = 55296
 			else:
 				limit = 4062
@@ -703,7 +704,7 @@ class ShapesPlugin(ProtocolPlugin):
 				limit = 262144
 			elif self.client.isOp():
 				limit = 110592
-			elif self.client.isMember():
+			elif self.client.isAdvBuilder():
 				limit = 55296
 			else:
 				limit = 4062
@@ -811,7 +812,7 @@ class ShapesPlugin(ProtocolPlugin):
 				limit = 262144
 			elif self.client.isOp():
 				limit = 110592
-			elif self.client.isMember():
+			elif self.client.isAdvBuilder():
 				limit = 55296
 			else:
 				limit = 4062
@@ -906,7 +907,7 @@ class ShapesPlugin(ProtocolPlugin):
 				limit = 262144
 			elif self.client.isOp():
 				limit = 110592
-			elif self.client.isMember():
+			elif self.client.isAdvBuilder():
 				limit = 55296
 			else:
 				limit = 4062
@@ -981,9 +982,9 @@ class ShapesPlugin(ProtocolPlugin):
 				try:
 					x, y, z = self.client.last_block_changes[0]
 					x2, y2, z2 = self.client.last_block_changes[1]
-					x3, y3, z3 = self.client.thirdcoord
+					x3, y3, z3 = self.client.last_block_changes[2]
 				except:
-					self.client.sendServerMessage("You have not recorded three corners yet (use /recthird).")
+					self.client.sendServerMessage("You have not clicked 3 points yet.")
 					return
 			else:
 				try:
@@ -999,9 +1000,6 @@ class ShapesPlugin(ProtocolPlugin):
 				except ValueError:
 					self.client.sendServerMessage("All parameters must be integers")
 					return
-			if (x==x2 and y==y2 and z==z2) or (x==x3 and y==y3 and z==z3) or (x3==x2 and y3==y2 and z3==z2):
-				self.client.sendServerMessage("Repeated corners error.")
-				return
 			#line 1 list
 			steps = int(((x2-x)**2+(y2-y)**2+(z2-z)**2)**0.5/0.75)
 			mx = float(x2-x)/steps
@@ -1058,7 +1056,7 @@ class ShapesPlugin(ProtocolPlugin):
 				limit = 262144
 			elif self.client.isOp():
 				limit = 110592
-			elif self.client.isMember():
+			elif self.client.isAdvBuilder():
 				limit = 55296
 			else:
 				limit = 4062

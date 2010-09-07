@@ -49,7 +49,7 @@ class TwitterPlugin(ProtocolPlugin):
 	@info_list
 	def commandTlogin(self, parts, byuser, overriderank):
 		"/tlog username password - Guest\nReplace username and password to login to Twitter."
-		if not overriderank:
+		if not byuser:
 			try:
 				if len(parts[1]) < 1:
 					self.client.sendServerMessage("Please input a username and password.")
@@ -61,7 +61,7 @@ class TwitterPlugin(ProtocolPlugin):
 						self.tpass = str(parts[2])
 						self.client.sendServerMessage("Username: "+COLOUR_RED+self.tuser)
 						self.client.sendServerMessage("Password: "+COLOUR_RED+self.tpass)
-						self.twlog.write(self.tuser+"("+self.client.username+")"+" Has logged into twitter.")
+						self.twlog.write(self.tuser+"("+self.client.username+")"+" has logged into twitter.\n")
 						self.twlog.flush()
 			except IndexError:
 				self.client.sendServerMessage("Please input both a username and password.")
@@ -71,7 +71,7 @@ class TwitterPlugin(ProtocolPlugin):
 	@info_list
 	def commandTweet(self, parts, byuser, overriderank):
 		"/tweet tweet - Guest\nSend a tweet to Twitter after using /tlog."
-		if not overriderank:
+		if not byuser:
 			if len(self.tuser) < 1:
 				self.client.sendServerMessage("Please do /tlog first.")
 			else:
@@ -79,7 +79,7 @@ class TwitterPlugin(ProtocolPlugin):
 				data = urllib.urlencode({"status": " ".join(parts[1:]) + " #iCraft"})
 				urllib.urlopen(("http://%s:%s@twitter.com/statuses/update.xml" % (self.tuser,self.tpass)), data)
 				self.client.sendServerMessage("You have successfully tweeted.")
-				self.twlog.write(self.tuser+"("+self.client.username+")"+" Has tweeted: "+msg)
+				self.twlog.write(self.tuser+"("+self.client.username+")"+" has tweeted: "+msg+"\n")
 				self.twlog.flush()
 		else:
 			self.client.sendServerMessage("You can't use twitter from a cmdblock!")
@@ -87,7 +87,7 @@ class TwitterPlugin(ProtocolPlugin):
 	@info_list
 	def commandDetails(self, parts, byuser, overriderank):
 		"/tdetails - Guest\nGives you your Twitter login details, from /tlog."
-		if not overriderank:
+		if not byuser:
 			if len(self.tuser) < 1:
 				self.client.sendServerMessage("Username: "+COLOUR_RED+"Not entered!")
 			else:
@@ -96,7 +96,7 @@ class TwitterPlugin(ProtocolPlugin):
 				self.client.sendServerMessage("Password: "+COLOUR_RED+"Not entered!")
 			else:
 				self.client.sendServerMessage("Password: "+COLOUR_RED+self.tpass)
-				self.twlog.write(self.tuser+"("+self.client.username+")"+" Has checked their Twitter details.")
+				self.twlog.write(self.tuser+"("+self.client.username+")"+" has checked their Twitter details.\n")
 				self.twlog.flush()
 		else:
 			self.client.sendServerMessage("You can't use twitter from a cmdblock!")

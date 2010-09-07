@@ -37,6 +37,7 @@ class PhysicsControlPlugin(ProtocolPlugin):
 		"physics": "commandPhysics",
 		#"physflush": "commandPhysflush",
 		"unflood": "commandUnflood",
+		"deflood": "commandUnflood",
 		"fwater": "commandFwater",
 		"asd":"commandASD",
 	}
@@ -44,7 +45,7 @@ class PhysicsControlPlugin(ProtocolPlugin):
 	@world_list
 	@op_only
 	def commandUnflood(self, parts, byuser, overriderank):
-		"/unflood worldname - Op\nSlowly removes all water and lava from the map."
+		"/unflood worldname - Op\nAliases: deflood\nSlowly removes all water and lava from the map."
 		self.client.world.start_unflooding()
 		self.client.sendWorldMessage("Unflooding has been initiated.")
 	

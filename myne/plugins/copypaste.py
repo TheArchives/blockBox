@@ -99,7 +99,8 @@ class BsavePlugin(ProtocolPlugin):
 						block_iter.next()
 					reactor.callLater(0.01, do_step)
 				except StopIteration:
-					self.client.sendServerMessage("Your paste just completed.")
+					if byuser:
+						self.client.sendServerMessage("Your paste just completed.")
 					pass
 			do_step()
 
@@ -175,13 +176,15 @@ class BsavePlugin(ProtocolPlugin):
 						block_iter.next()
 					reactor.callLater(0.01, do_step)
 				except StopIteration:
-					self.client.sendServerMessage("Your copy just completed.")
+					if byuser:
+						self.client.sendServerMessage("Your copy just completed.")
 					pass
 			do_step()
 
 	@build_list
 	@writer_only
 	def commandRotate(self, parts, byuser, overriderank):
+		"/rotate angle - Builder\nAllows you to rotate what you copied."
 		if len(parts)<2:
 			self.client.sendServerMessage("You must give an angle to rotate!")
 			return
@@ -198,11 +201,15 @@ class BsavePlugin(ProtocolPlugin):
 		for rotation in range(rotations):
 			tempblocks = set()
 			xmax=zmax=0
-			for x, y, z, block in self.client.bsaved_blocks:
-				if x > xmax:
-					xmax=x
-				if z > zmax:
-					zmax=z
+			try:
+				for x, y, z, block in self.client.bsaved_blocks:
+					if x > xmax:
+						xmax=x
+					if z > zmax:
+						zmax=z
+			except:
+				self.client.sendServerMessage("You haven't used /copy yet.")
+				return
 			for x, y, z, block in self.client.bsaved_blocks:
 				tempx = x
 				tempz = z
@@ -210,4 +217,5 @@ class BsavePlugin(ProtocolPlugin):
 				z = tempx
 				tempblocks.add((x,y,z,block))
 			self.client.bsaved_blocks = tempblocks
-		self.client.sendServerMessage("Done!")
+		if byuser:
+			self.client.sendServerMessage("Your rotate just completed.")

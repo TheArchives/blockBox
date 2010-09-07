@@ -41,7 +41,9 @@ class MessagingPlugin(ProtocolPlugin):
 		"srb": "commandSRB",
 		"u": "commandUrgent",
 		"urgent": "commandUrgent",
+		"away": "commandAway",
 		"afk": "commandAway",
+		"brb": "commandAway",
 		"back": "commandBack",
 	}
 
@@ -56,7 +58,7 @@ class MessagingPlugin(ProtocolPlugin):
 	
 	@player_list
 	def commandAway(self, parts, byuser, overriderank):
-		 "/away reason - Guest\nAliases: afk\nPrints out message of you going away."
+		 "/away reason - Guest\nAliases: afk, brb\nPrints out message of you going away."
 		 if len(parts) == 1:
 			 self.client.factory.queue.put((self.client, TASK_AWAYMESSAGE, self.client.username + " has gone: Away."))
 			 self.client.gone = 1
@@ -66,11 +68,14 @@ class MessagingPlugin(ProtocolPlugin):
 
 	@player_list
 	def commandMe(self, parts, byuser, overriderank):
-		"/me action - Guest\nPrints * username action"
+		"/me action - Guest\nPrints 'username action'"
 		if len(parts) == 1:
 			self.client.sendServerMessage("Please type an action.")
 		else:
-			self.client.factory.queue.put((self.client, TASK_ACTION, (self.client.id, self.client.userColour(), self.client.username, " ".join(parts[1:]))))
+			if self.client.isSilenced():
+				self.client.sendServerMessage("You are Silenced and lost your tongue.")
+			else:
+				self.client.factory.queue.put((self.client, TASK_ACTION, (self.client.id, self.client.userColour(), self.client.username, " ".join(parts[1:]))))
 	
 	@mod_only
 	def commandSay(self, parts, byuser, overriderank):

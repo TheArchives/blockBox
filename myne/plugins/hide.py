@@ -36,6 +36,7 @@ class HidePlugin(ProtocolPlugin):
 	
 	commands = {
 		"hide": "commandHide",
+		"cloak": "commandHide",
 	}
 	
 	hooks = {
@@ -53,7 +54,7 @@ class HidePlugin(ProtocolPlugin):
 	@player_list
 	@op_only
 	def commandHide(self, params, byuser, overriderank):
-		"/hide - Op\nHides you so no other players can see you. Toggle."
+		"/hide - Op\nAliases: cloak\nHides you so no other players can see you. Toggle."
 		if not self.hidden:
 			self.client.sendServerMessage("You have vanished.")
 			self.hidden = True

@@ -37,6 +37,7 @@ class BackupPlugin(ProtocolPlugin):
 
 	commands = {
 	"backup": "commandBackup",
+	"backups": "commandBackups",
 	"restore": "commandRestore",
 	}
 
@@ -45,7 +46,7 @@ class BackupPlugin(ProtocolPlugin):
 	def commandBackup(self, parts, byuser, overriderank):
 		"/backup worldname - Op\nMakes a backup copy of the map of the map."
 		if len(parts) == 1:
-			parts.append(self.client.world.basename.lstrip("mapdata/worlds"))
+			parts.append(self.client.world.basename.lstrip("worlds"))
 		world_id = parts[1]
 		world_dir = ("mapdata/worlds/%s/" % world_id)
 		if not os.path.exists(world_dir):
@@ -54,26 +55,34 @@ class BackupPlugin(ProtocolPlugin):
 			if not os.path.exists(world_dir+"backup/"):
 				os.mkdir(world_dir+"backup/")
 			folders = os.listdir(world_dir+"backup/")
-			backups = list([])
-			for x in folders:
-				if x.isdigit():
-					backups.append(x)
-			backups.sort(lambda x, y: int(x) - int(y))
-			path = os.path.join(world_dir+"backup/", "0")
-			if backups:
-				path = os.path.join(world_dir+"backup/", str(int(backups[-1])+1))
+			if len(parts) > 2:
+				path = os.path.join(world_dir+"backup/", parts[2])
+				if os.path.exists(path):
+					self.client.sendServerMessage("Backup %s already exists. Pick a different name." % parts[2])
+					return
+			else:
+				backups = list([])
+				for x in folders:
+					if x.isdigit():
+						backups.append(x)
+				backups.sort(lambda x, y: int(x) - int(y))
+				path = os.path.join(world_dir+"backup/", "0")
+				if backups:
+					path = os.path.join(world_dir+"backup/", str(int(backups[-1])+1))
 			os.mkdir(path)
 			shutil.copy(world_dir + "blocks.gz", path)
-			try:
-				self.client.sendServerMessage("Backup %s saved." % str(int(backups[-1])+1))
-			except:
-				self.client.sendServerMessage("Backup 0 saved.")
+			if len(parts) > 2:
+				self.client.sendServerMessage("Backup %s saved." % parts[2])
+			else:
+				try:
+					self.client.sendServerMessage("Backup %s saved." % str(int(backups[-1])+1))
+				except:
+					self.client.sendServerMessage("Backup 0 saved.")
 
 	@world_list
 	@op_only
 	def commandRestore(self, parts, byuser, overriderank):
 		"/restore worldname number - Op\nRestore map to indicated number."
-		
 		if len(parts) < 2:
 			self.client.sendServerMessage("Please specify at least a world ID!")
 		else:
@@ -98,3 +107,25 @@ class BackupPlugin(ProtocolPlugin):
 				self.client.factory.worlds[world_id].clients = old_clients
 				for client in self.client.factory.worlds[world_id].clients:
 					client.changeToWorld(world_id)
+
+	@world_list
+	@op_only
+	def commandBackups(self, parts, byuser, overriderank):
+		"/backups - Op\nLists all backups this map has."
+		try:
+			world_dir = ("mapdata/worlds/%s/" % self.client.world.id)
+			folders = os.listdir(world_dir+"backup/")
+			Num_backups = list([])
+			Name_backups = list([])
+			for x in folders:
+				if x.isdigit():
+					Num_backups.append(x)
+				else:
+					Name_backups.append(x)
+			Num_backups.sort(lambda x, y: int(x) - int(y))
+			if Num_backups > 2:
+				self.client.sendServerList(["Backups for %s:" % self.client.world.id] + [Num_backups[0] + "-" + Num_backups[-1]] + Name_backups)
+			else:
+				self.client.sendServerList(["Backups for %s:" % self.client.world.id] + Num_backups + Name_backups)
+		except:
+			self.client.sendServerMessage("Sorry, but there are no backups for %s." % self.client.world.id)

@@ -80,7 +80,8 @@ class MsgblockPlugin(ProtocolPlugin):
 		# Or a message?
 		try:
 			if self.client.world.has_message(rx, ry, rz) and (rx, ry, rz) != self.last_block_position:
-				self.client._sendMessage(COLOUR_GREEN, self.client.world.get_message(rx, ry, rz))
+				for message in self.client.world.get_message(rx, ry, rz).split('\n'):
+					self.client._sendMessage(COLOUR_GREEN, message)
 		except AssertionError:
 			pass
 		self.last_block_position = (rx, ry, rz)

@@ -49,19 +49,22 @@ class LavaPlugin(ProtocolPlugin):
 		if hasattr(self.client.world.blockstore, "raw_blocks"):
 			try: 
 				check_offset = self.client.world.blockstore.get_offset(rx, ry, rz)
-				block = self.client.world.blockstore.raw_blocks[check_offset]
+				try:
+					block = self.client.world.blockstore.raw_blocks[check_offset]
+				except (IndexError):
+					return
 				check_offset = self.client.world.blockstore.get_offset(rx, ry-1, rz)
 				blockbelow = self.client.world.blockstore.raw_blocks[check_offset]
 			except (KeyError, AssertionError):
 				pass
 			else:
-				if block == chr(BLOCK_LAVA) or blockbelow == chr(BLOCK_LAVA) or block == chr(BLOCK_STILLLAVA) or blockbelow == chr(BLOCK_STILLLAVA):
-					# Ok, so they touched lava. Warp them to the spawn.
-					#timer to stop spam
+				if block == chr(BLOCK_LAVA) or blockbelow == chr(BLOCK_LAVA):
+				#or block == chr(BLOCK_STILLLAVA) or blockbelow == chr(BLOCK_STILLLAVA):
+					#Ok, so they touched lava, THEY MUST DIE. Warp them to the spawn, timer to stop spam.
 					if self.died is False:
 						self.died = True
 						self.client.teleportTo(self.client.world.spawn[0], self.client.world.spawn[1], self.client.world.spawn[2], self.client.world.spawn[3])
-						self.client.factory.queue.put ((self.client.world,TASK_WORLDMESSAGE, (255, self.client.world, COLOUR_DARKRED+self.client.username+" has died.")))
+						self.client.factory.queue.put ((self.client.world,TASK_WORLDMESSAGE, (255, self.client.world, COLOUR_DARKRED+self.client.username+" has died from lava.")))
 						reactor.callLater(1, self.unDie)
 						
 	def unDie(self):

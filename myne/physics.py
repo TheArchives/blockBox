@@ -138,6 +138,13 @@ class Physics(Thread):
 			elif block is CHR_STEP:
 				self.step_queue.add(offset)
 	
+	def is_transparent(self, block):
+		"Returns whether specified block is transparent"
+		if block in (CHR_AIR, CHR_LEAVES, CHR_GLASS, CHR_RED_FLOWER, CHR_YELLOW_FLOWER, CHR_RED_MUSHROOM, CHR_BROWN_MUSHROOM, CHR_SHRUB):
+			return True
+		else:
+			return False
+	
 	def handle_change(self, offset, block):
 		"Gets called when a block is changed, with its position and type."
 		assert isinstance(block, str)
@@ -262,7 +269,7 @@ class Physics(Thread):
 		for ny in range(y+1, self.blockstore.y):
 			blocker_offset = self.blockstore.get_offset(x, ny, z)
 			blocker_block = self.blockstore.raw_blocks[blocker_offset]
-			if not ((blocker_block is CHR_AIR) or (blocker_block is CHR_GLASS) or (blocker_block is CHR_LEAVES)):
+			if not self.is_transparent(blocker_block):
 				blocked = True
 				break
 		return blocked

@@ -87,7 +87,7 @@ class InfoPlugin(ProtocolPlugin):
 	BlockList[49]="obsidian"
 
 	hooks = {
-		"blockchange": "blockChanged",
+		"preblockchange": "blockChanged",
 	}
 
 	commands = {
@@ -98,6 +98,8 @@ class InfoPlugin(ProtocolPlugin):
 		"pget": "commandInfo",
 		"binfoend": "commandInfoEnd",
 		"infoend": "commandInfoEnd",
+		"blockindex": "commandBlockindex",
+		"bindex": "commandBlockindex",
 	}
 	
 	def gotClient(self):
@@ -105,15 +107,35 @@ class InfoPlugin(ProtocolPlugin):
 	
 	def blockChanged(self, x, y, z, block, selected_block, byuser):
 		if self.binfo == 1:
-			self.client.sendServerMessage("Block Info: %s (%s)" % (self.BlockList[block], block))
-			self.client.sendServerMessage("x: %s y: %s z: %s" % (x, y, z))
-
+			check_offset = self.client.world.blockstore.get_offset(x, y, z)
+			block2 = ord(self.client.world.blockstore.raw_blocks[check_offset])
+			if block2 == 0:
+				self.client.sendServerMessage("Block Info: %s (%s)" % (self.BlockList[block], block))
+				self.client.sendServerMessage("x: %s y: %s z: %s" % (x, y, z))
+			else:
+				self.client.sendServerMessage("Block Info: %s (%s)" % (self.BlockList[block2], block2))
+				self.client.sendServerMessage("x: %s y: %s z: %s" % (x, y, z))
+				return False
 	@build_list
 	def commandInfo(self,parts,byuser,overriderank):
 			self.binfo = 1
 			self.client.sendServerMessage("You are now getting info about blocks.")
+			self.client.sendServerMessage("Use '/infoend' to stop.")
 
 	@build_list
 	def commandInfoEnd(self,parts,byuser,overriderank):
 			self.binfo = 0
 			self.client.sendServerMessage("You are no longer getting info about blocks.")
+
+	@build_list
+	def commandBlockindex(self, parts, byuser, overriderank):
+		"/blockindex blockname - Guest\nAliases: bindex\nGives you the index of the block."
+		if len(parts) != 2:
+			self.client.sendServerMessage("Please enter a block to check the index of.")
+		else:
+			try:
+				block = globals()['BLOCK_%s' % parts[1].upper()]
+			except KeyError:
+				self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
+				return
+			self.client.sendServerMessage("%s is represented by %s" % (parts[1],block))

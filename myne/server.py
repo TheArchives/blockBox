@@ -133,6 +133,7 @@ class MyneFactory(Factory):
 		self.physics_limit = self.config.getint("options", "physics_limit")
 		self.console_delay = self.config.getint("options", "console_delay")
 		self.info_url = self.config.get("info", "info_url")
+		//Idea: again default
 		self.default_backup = self.config.get("worlds", "default_backup")
 		self.owner = self.config.get("info", "owner").lower()
 		self.backup_freq = self.config.getint("backup", "backup_freq")
@@ -184,7 +185,7 @@ class MyneFactory(Factory):
 		self.directors = set()
 		self.admins = set()
 		self.mods = set()
-		self.members = set()
+		self.advbuilders = set()
 		self.spectators = set()
 		self.silenced = set()
 		self.banned = {}
@@ -211,6 +212,13 @@ class MyneFactory(Factory):
 		if self.enable_archives:
 			self.loadPlugin('archives')
 			reactor.callLater(1, self.loadArchives)
+		gc.disable()
+		self.cleanGarbage()
+
+	def cleanGarbage(self):
+		count = gc.collect()
+		logging.log(logging.INFO, "%i garbage objects collected, %i were uncollected." % ( count, len(gc.garbage)))
+		reactor.callLater(60*15, self.cleanGarbage)
 
 	def loadMeta(self):
 		"Loads the 'meta' - variables that change with the server (worlds, admins, etc.)"
@@ -238,9 +246,9 @@ class MyneFactory(Factory):
 		if config.has_section("mods"):
 			for name in config.options("mods"):
 				self.mods.add(name)
-		if config.has_section("members"):
-			for name in config.options("members"):
-				self.members.add(name)
+		if config.has_section("advbuilders"):
+			for name in config.options("advbuilders"):
+				self.advbuilders.add(name)
 		# Read in the directors
 		if config.has_section("directors"):
 			for name in config.options("directors"):
@@ -275,7 +283,7 @@ class MyneFactory(Factory):
 		config.add_section("directors")
 		config.add_section("admins")
 		config.add_section("mods")
-		config.add_section("members")
+		config.add_section("advbuilders")
 		config.add_section("silenced")
 		config.add_section("banned")
 		config.add_section("ipbanned")
@@ -290,8 +298,8 @@ class MyneFactory(Factory):
 			config.set("admins", admin, "true")
 		for mod in self.mods:
 			config.set("mods", mod, "true")
-		for member in self.members:
-			config.set("members", member, "true")
+		for advbuilder in self.advbuilders:
+			config.set("advbuilders", advbuilder, "true")
 		for ban, reason in self.banned.items():
 			config.set("banned", ban, reason)
 		for spectator in self.spectators:
@@ -426,7 +434,7 @@ class MyneFactory(Factory):
 		"""
 		try:
 			if ASD and len(self.worlds[world_id].clients)>0:
-				self.logger.error("YOU HAS ERROR, REPORT THIS TO GOOBER")
+				self.logger.error("AUTOSHUTDOWN ERROR DETECTED, PLEASE REPORT THIS ERROR TO BLOCKBOX TEAM")
 				return
 		except KeyError:
 			return
@@ -687,7 +695,10 @@ class MyneFactory(Factory):
 		os.mkdir("mapdata/worlds/%s" % new_name)
 		# Find the template files, copy them to the new location
 		for filename in ["blocks.gz", "world.meta"]:
-			shutil.copyfile("mapdata/templates/%s/%s" % (template, filename), "mapdata/worlds/%s/%s" % (new_name, filename))
+			try:
+				shutil.copyfile("templates/%s/%s" % (template, filename), "worlds/%s/%s" % (new_name, filename))
+			except:
+				client.sendServerMessage("That template doesn't exist.")
 
 	def renameWorld(self, old_worldid, new_worldid):
 		"Renames a world."
@@ -715,9 +726,9 @@ class MyneFactory(Factory):
 	def isMod(self, username):
 		return username.lower() in self.mods or self.isAdmin(username)
 
-	def isMember(self, username):
+	def isAdvBuilder(self, username):
 		#print "here" needs to check for op level also.
-		return username.lower() in self.members or self.isMod(username)
+		return username.lower() in self.advbuilders or self.isMod(username)
 
 	def isSpectator(self, username):
 		return username.lower() in self.spectators

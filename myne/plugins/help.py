@@ -37,6 +37,7 @@ class helpPlugin(ProtocolPlugin):
 
 	commands = {
 		"help": "commandHelp",
+		"?": "commandHelp",
 		"cmdlist": "commandCmdlist",
 		"commands": "commandCmdlist",
 		"about": "commandAbout",
@@ -45,6 +46,7 @@ class helpPlugin(ProtocolPlugin):
 
 	@info_list
 	def commandHelp(self, parts, byuser, overriderank):
+		"/help [document/command] - Guest\nHelp for this server and commands."
 		if len(parts) > 1:
 			try:
 				func = self.client.commands[parts[1].lower()]
@@ -58,12 +60,12 @@ class helpPlugin(ProtocolPlugin):
 				elif parts[1].lower() == "chat":
 					self.client.sendServerMessage("The Chats")
 					if self.client.isMod():
-						self.client.sendServerMessage("@Whispers")	
-						self.client.sendServerMessage("!World")
-						self.client.sendServerMessage("#Staff")
+						self.client.sendServerMessage("Whispers: @username Whispers")	
+						self.client.sendServerMessage("WorldChat: !message")
+						self.client.sendServerMessage("StaffChat: #message")
 					else:
-						self.client.sendServerMessage("@Whispers")	
-						self.client.sendServerMessage("!World")
+						self.client.sendServerMessage("Whispers: @username Whispers")	
+						self.client.sendServerMessage("WorldChat: !message")
 				elif parts[1].lower() == "physic":
 					self.client.sendServerMessage("The Physic Engine")
 					self.client.sendServerMessage("Turn physics on to use Physics (max of 5 worlds)")
@@ -73,28 +75,11 @@ class helpPlugin(ProtocolPlugin):
 					self.client.sendServerMessage("Sand will fall, grass will grow, sponges will absorb.")
 					self.client.sendServerMessage("Use unflood to move all water, lava, and spouts from the map.")
 				elif parts[1].lower() == "ranks":
-					if self.client.isOwner():
-						self.client.sendServerMessage("The Server Ranks - Owner")
-					elif self.client.isDirector():
-						self.client.sendServerMessage("The Server Ranks - Director")
-					elif self.client.isAdmin():
-						self.client.sendServerMessage("The Server Ranks - Admin")
-					elif self.client.isMod():
-						self.client.sendServerMessage("The Server Ranks - Mod")
-					elif self.client.isWorldOwner():
-						self.client.sendServerMessage("The Server Ranks - World Owner")
-					elif self.client.isOp():
-						self.client.sendServerMessage("The Server Ranks - Operator")
-					elif self.client.isMember():
-						self.client.sendServerMessage("The Server Ranks - Member")
-					elif self.client.isWriter():
-						self.client.sendServerMessage("The Server Ranks - Builder")
-					elif self.client.isSpectator():
-						self.client.sendServerMessage("The Server Ranks - Spec")
-					else:
-						self.client.sendServerMessage("The Server Ranks - Guest")
-					self.client.sendServerMessage("* "+COLOUR_DARKGREEN+"Owner "+COLOUR_GREEN+"Director "+COLOUR_DARKRED+"Admin "+COLOUR_RED+"Mod "+COLOUR_GREY+"<IRC>")
-					self.client.sendServerMessage("* "+COLOUR_DARKBLUE+"World Owner "+COLOUR_BLUE+"Op "+COLOUR_WHITE+"Member "+COLOUR_CYAN+"Builder "+COLOUR_GREY+"Guest "+COLOUR_BLACK+"Spec")
+					self.client.sendNormalMessage(COLOUR_YELLOW+"The Server Ranks - "+COLOUR_DARKGREEN+"Owner/Console (9) "+COLOUR_GREEN+"Director (8) "+COLOUR_RED+"Admin (7) "+COLOUR_BLUE+"Mod (6) "+COLOUR_PURPLE+"IRC "+COLOUR_DARKYELLOW+"World Owner (5) "+COLOUR_DARKCYAN+"Op (4) "+COLOUR_GREY+"Advanced Builder (3) "+COLOUR_CYAN+"Builder (2) "+COLOUR_WHITE+"Guest (1) "+COLOUR_BLACK+"Spec (0)")
+				elif parts[1].lower() == "cc":
+					self.client.sendServerMessage("The Color Codes")
+					self.client.sendNormalMessage("&a%a &b%b &c%c &d%d &e%e &f%f")
+					self.client.sendNormalMessage("&0%0 &1%1 &2%2 &3%3 &4%4 &5%5 &6%6 &7%7 &8%8 &9%9")
 				else:
 					self.client.sendServerMessage("Unknown command '%s'" % parts[1])
 			else:
@@ -105,13 +90,13 @@ class helpPlugin(ProtocolPlugin):
 					self.client.sendServerMessage("There's no help for that command.")
 		else:
 			self.client.sendServerMessage("Help Center")
-			self.client.sendServerMessage("Documents: /help [basics|chat|ranks|physic]")
+			self.client.sendServerMessage("Documents: /help [basics|chat|ranks|physic|cc]")
 			self.client.sendServerMessage("Commands: /cmdlist - Lookup: /help command")
-			self.client.sendServerMessage("About: /about")
-			self.client.sendServerMessage("Credits: /credits")
+			self.client.sendServerMessage("About: /about | Credits: /credits")
 
 	@info_list
 	def commandCmdlist(self, parts, byuser, overriderank):
+		"/cmdlist category - Guest\nThe command list of your rank, categories."
 		if len(parts) > 1:
 			if parts[1].lower() == "all":
 				self.ListCommands("all")
@@ -128,13 +113,8 @@ class helpPlugin(ProtocolPlugin):
 			else:
 				self.client.sendServerMessage("Unknown cmdlist '%s'" % parts[1])
 		else:
-			self.client.sendServerMessage("The Command List")
-			self.client.sendServerMessage("All: /cmdlist all")
-			self.client.sendServerMessage("Build: /cmdlist build")
-			self.client.sendServerMessage("World: /cmdlist world")
-			self.client.sendServerMessage("Player: /cmdlist player")
-			self.client.sendServerMessage("Info: /cmdlist info")
-			self.client.sendServerMessage("Other: /cmdlist other")
+			self.client.sendServerMessage("The Command List - Use: /cmdlist category")
+			self.client.sendServerMessage("Categories: all build world player info other")
 
 	def ListCommands(self,list):
 		self.client.sendServerMessage("%s Commands:"%list.title())
@@ -156,7 +136,7 @@ class helpPlugin(ProtocolPlugin):
 					continue
 				if getattr(command, "op_only", False) and not self.client.isOp():
 					continue
-				if getattr(command, "member_only", False) and not self.client.isMember():
+				if getattr(command, "advbuilder_only", False) and not self.client.isAdvBuilder():
 					continue
 				if getattr(command, "writer_only", False) and not self.client.isWriter():
 					continue
@@ -183,7 +163,7 @@ class helpPlugin(ProtocolPlugin):
 					continue
 				if getattr(command, "op_only", False) and not self.client.isOp():
 					continue
-				if getattr(command, "member_only", False) and not self.client.isMember():
+				if getattr(command, "advbuilder_only", False) and not self.client.isAdvBuilder():
 					continue
 				if getattr(command, "writer_only", False) and not self.client.isWriter():
 					continue
@@ -202,7 +182,8 @@ class helpPlugin(ProtocolPlugin):
 
 	@info_list
 	def commandCredits(self, parts, byuser, overriderank):
-		self.client.sendServerMessage("Credits")
+		"/credits - Guest\nCredits for the creators, devs and testers."
+		self.client.sendServerMessage("The Credits")
 		list = Credits(self)
 		for each in list:
 			self.client.sendSplitServerMessage(each)

@@ -298,6 +298,7 @@ class ImagedrawPlugin(ProtocolPlugin):
 						block_iter.next()
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
-					self.client.sendServerMessage("Your imagedraw just completed.")
+					if byuser:
+						self.client.sendServerMessage("Your imagedraw just completed.")
 					pass
 			do_step()

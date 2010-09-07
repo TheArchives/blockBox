@@ -39,6 +39,7 @@ class MutePlugin(ProtocolPlugin):
 		"muted": "commandMuted",
 		"silence": "commandSilence",
 		"desilence": "commandDesilence",
+		"unsilence": "commandDesilence",
 	}
 	
 	hooks = {
@@ -93,6 +94,9 @@ class MutePlugin(ProtocolPlugin):
 	@mod_only
 	@only_username_command
 	def commandDesilence(self, username, byuser, overriderank):
-		"/desilence username - Mod\nAllows the Player to talk."
-		self.client.factory.silenced.remove(username)
-		self.client.sendServerMessage("%s is no longer Silenced." % username.lower())
+		"/desilence username - Mod\nAliases: unsilence\nAllows the Player to talk."
+		if self.client.factory.isSilenced(username):
+			self.client.factory.silenced.remove(username)
+			self.client.sendServerMessage("%s is no longer Silenced." % username.lower())
+		else:
+			self.client.sendServerMessage("They aren't silenced.")

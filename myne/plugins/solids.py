@@ -69,7 +69,7 @@ class AdminBlocksPlugin(ProtocolPlugin):
 	
 	def sendAdminBlockUpdate(self):
 		"Sends a packet that updates the client's admin-building ability"
-		self.client.sendPacked(TYPE_INITIAL, 6, "Admincrete Update", "If you see this, it's a bug", self.canBreakAdminBlocks() and 100 or 0)
+		self.client.sendPacked(TYPE_INITIAL, 6, "Admincrete Update", "Reloading the server...", self.canBreakAdminBlocks() and 100 or 0)
 	
 	@world_list
 	@op_only
@@ -96,4 +96,3 @@ class AdminBlocksPlugin(ProtocolPlugin):
 		else:
 			self.client.sendServerMessage("You are now placing admin rock.")
 		self.building_solid = not self.building_solid
-	

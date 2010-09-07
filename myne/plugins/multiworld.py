@@ -57,6 +57,8 @@ class MultiWorldPlugin(ProtocolPlugin):
 		"create": "commandCreate",
 		"delete": "commandDelete",
 		"mapdelete": "commandDelete",
+		"undelete": "commandUnDelete",
+		"deleted": "commandDeleted",
 	}
 	
 	@world_list
@@ -143,7 +145,7 @@ class MultiWorldPlugin(ProtocolPlugin):
 	@world_list
 	@only_string_command("world name")
 	def commandLoad(self, world_id, byuser, overriderank, params=None):
-		"/l worldname - Guest\nAliases: load, j, join, map\nMoves you into world 'worldname'"
+		"/l worldname - Guest\nAliases: j, join, load, map\nMoves you into world 'worldname'"
 		if world_id not in self.client.factory.worlds:
 			self.client.sendServerMessage("Attempting to boot and join '%s'" % world_id)
 			try:
@@ -152,27 +154,49 @@ class MultiWorldPlugin(ProtocolPlugin):
 				self.client.sendServerMessage("There is no world by that name.")
 				return
 		world = self.client.factory.worlds[world_id]
-		if world.private:
-			if not self.client.canEnter(world):
+		if not self.client.canEnter(world):
+			if world.private:
 				self.client.sendServerMessage("'%s' is private; you're not allowed in." % world_id)
+				return
+			#elif self.username.lower() in world.worldbans:
+			else:
+				self.client.sendServerMessage("You're WorldBanned from '%s'; so you're not allowed in." % world_id)
 				return
 		self.client.changeToWorld(world_id)
 	
 	@world_list
 	def commandWorlds(self, parts, byuser, overriderank):
-		"/worlds [all]- Guest\nAliases: maps\nLists available worlds"
-		if len(parts) > 1:
-			if parts[1].lower() == "all":
-				worlds = []
-				for world in os.listdir("mapdata/worlds/"):
-					if not world.startswith("."):
-						worlds.append(world)
-				self.client.sendServerList(["All:"] +worlds)
-			else:
-				self.client.sendServerMessage("That command doesn't exist.")
-		else:
-			self.client.sendServerMessage("Do '/worlds all' for all worlds.")
+		"/worlds [letter|all] - Guest\nAliases: maps\nLists available worlds - by letter, online, or all."
+		if len(parts) != 2 and len(parts) != 3:
+			self.client.sendServerMessage("Do /worlds all for all worlds or choose a letter.")
 			self.client.sendServerList(["Online:"] + [id for id, world in self.client.factory.worlds.items() if self.client.canEnter(world)])
+			return
+		else:
+			if parts[1] == 'all':
+				self.client.sendServerList(["Worlds:"] + os.listdir("worlds/"))
+				return
+			if len(parts[1]) != 1:
+				self.client.sendServerMessage("Only specify one starting letter per entry, not multiple")
+				return
+			if len(parts)==3:
+				if len(parts[2]) != 1:
+					self.client.sendServerMessage("Only specify one starting letter per entry, not multiple")
+					return
+			letter1 = ord(parts[1].lower())
+			if len(parts)==3:
+				letter2 = ord(parts[2].lower())
+			else:
+				letter2 = letter1
+			if letter1>letter2:
+				a = letter1
+				letter1 = letter2
+				letter2 = a
+			worldlist = os.listdir("mapdata/worlds/")
+			newlist = []
+			for world in worldlist:
+				if letter1 <= ord(world[0]) <= letter2 and not world.startswith("."):
+					newlist.append(world)
+			self.client.sendServerList(["Worlds:"] + newlist)
 
 	def commandTemplates(self, parts, byuser, overriderank):
 		"/templates - Guest\nLists available templates"
@@ -190,22 +214,22 @@ class MultiWorldPlugin(ProtocolPlugin):
 	@world_list
 	@admin_only
 	def commandCreate(self, parts, byuser, overriderank):
-		"/create worldname width length height - Admin\nCreates a new world with specified dimensions."
+		"/create worldname width height length - Admin\nCreates a new world with specified dimensions."
 		if len(parts) == 1:
 			self.client.sendServerMessage("Please specify a world name.")
 		elif self.client.factory.world_exists(parts[1]):
 			self.client.sendServerMessage("Worldname in use")
 		elif len(parts) < 5:
 			self.client.sendServerMessage("Please specify dimensions. (width, length, height)")
-		elif int(parts[2]) < 16 or int(parts[4]) < 16 or int(parts[3]) < 16:
+		elif int(parts[2]) < 16 or int(parts[3]) < 16 or int(parts[4]) < 16:
 			self.client.sendServerMessage("No dimension may be smaller than 16.")
-		elif int(parts[2]) > 1024 or int(parts[4]) > 1024 or int(parts[3]) > 1024:
+		elif int(parts[2]) > 1024 or int(parts[3]) > 1024 or int(parts[4]) > 1024:
 			self.client.sendServerMessage("No dimension may be greater than 1024.")
-		elif (int(parts[2]) % 16) > 0 or (int(parts[4]) % 16) > 0 or (int(parts[3]) % 16) > 0:
+		elif (int(parts[2]) % 16) > 0 or (int(parts[3]) % 16) > 0 or (int(parts[4]) % 16) > 0:
 			self.client.sendServerMessage("All dimensions must be divisible by 16.")
 		else:
 			world_id = parts[1].lower()
-			sx, sy, sz = int(parts[2]), int(parts[4]), int(parts[3])
+			sx, sy, sz = int(parts[2]), int(parts[3]), int(parts[4])
 			grass_to = (sy // 2)
 			world = World.create(
 				"mapdata/worlds/%s" % world_id,
@@ -224,21 +248,76 @@ class MultiWorldPlugin(ProtocolPlugin):
 		if len(parts) == 1:
 			self.client.sendServerMessage("Please specify a worldname.")
 		else:
+			if not os.path.exists("mapdata/worlds/%s" % parts[1]):
+				self.client.sendServerMessage("World %s doesnt exist." %(parts[1]))
+				return
 			if parts[1] in self.client.factory.worlds:
 				self.client.factory.unloadWorld(parts[1])
+			name = parts[1]
+			extra="_0"
+			if os.path.exists("mapdata/worlds/.trash/%s" %(name)):
+				while True:
+					if os.path.exists("mapdata/worlds/.trash/%s" %(name+extra)):
+						extra = "_" + str(int(extra[1:])+1)
+					else:
+						name = name+extra
+						break
 			shutil.copytree("mapdata/worlds/%s" %parts[1], "mapdata/worlds/.trash/%s" %parts[1])
 			shutil.rmtree("mapdata/mworlds/%s" % parts[1])
 			self.client.sendServerMessage("World deleted.")
 	
-	#@world_list
-	#@admin_only
-	#def commandRestore(self, parts, byuser, overriderank):
-		#"/restore worldname - Admin\nBrings back a 'deleted' world."
-		#if len(parts) == 1:
-			#self.client.sendServerMessage("Please specify a worldname.")
-		#else:
-			#if parts[1] in self.client.factory.worlds:
-				#self.client.factory.unloadWorld(parts[1])
-			#shutil.copytree("worlds/.trash/%s", "worlds/%s" % (parts[1], parts[1]))
-			#shutil.rmtree("worlds/.trash/%s" % parts[1])
-			#self.client.sendServerMessage("World restored.")
+	@world_list
+	@admin_only
+	def commandUnDelete(self, parts, byuser, overriderank):
+		"/undelete worldname - Admin\nRestores a deleted map."
+		if len(parts) < 2:
+			self.client.sendServerMessage("Please specify a worldname.")
+			return
+		name = parts[1]
+		world_dir = ("mapdata/worlds/.trash/%s/" % name)
+		if not os.path.exists(world_dir):
+		   self.client.sendServerMessage("World %s is not in the world trash bin." % name)
+		   return
+		extra="_0"
+		if os.path.exists("mapdata/worlds/%s/" %(name)):
+			while True:
+				if os.path.exists("mapdata/worlds/%s/" %(name+extra)):
+					extra = "_" + str(int(extra[1:])+1)
+				else:
+					name = name+extra
+					break
+		path = ("mapdata/worlds/%s/" % name)
+		shutil.move(world_dir, path)
+		self.client.sendServerMessage("World restored as %s." % name)
+
+	@world_list
+	@admin_only
+	def commandDeleted(self, parts, byuser, overriderank):
+		"/deleted [letter] - Admin\nLists deleted worlds - by letter or all."
+		if len(parts) != 2 and len(parts) != 3:
+			self.client.sendServerMessage("Do '/deleted letter' for all starting with a letter.")
+			self.client.sendServerList(["Deleted:"] + os.listdir("mapdata/worlds/.trash/"))
+			return
+		else:
+			if len(parts[1]) != 1:
+				self.client.sendServerMessage("Only specify one starting letter per entry, not multiple")
+				return
+			if len(parts)==3:
+				if len(parts[2]) != 1:
+					self.client.sendServerMessage("Only specify one starting letter per entry, not multiple")
+					return
+			letter1 = ord(parts[1].lower())
+			if len(parts)==3:
+				letter2 = ord(parts[2].lower())
+			else:
+				letter2 = letter1
+			if letter1>letter2:
+				a = letter1
+				letter1 = letter2
+				letter2 = a
+			worldlist = os.listdir("mapdata/worlds/.trash/")
+			newlist = []
+			for world in worldlist:
+				if letter1 <= ord(world[0]) <= letter2 and not world.startswith("."):
+					newlist.append(world)
+			self.client.sendServerList(["Deleted:"] + newlist)

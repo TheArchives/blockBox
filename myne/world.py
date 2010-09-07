@@ -67,6 +67,7 @@ class World(object):
 		self.is_archive = False
 		self.teleports = {}
 		self.messages = {}
+		self.worldbans = {}
 		self.commands = {}
 		self.mines = {}
 		self.id = None
@@ -79,6 +80,12 @@ class World(object):
 		self.zoned = False
 		self.userzones = {}
 		self.rankzones = {}
+		self.entitylist = []
+		#Unsaved variables
+		self.entities_worldblockchangesdict = {}
+		self.entities_childerenlist = []
+		self.entities_childerenlist_index = 0
+		self.entities_epicentity = []
 		# Dict of deferreds to call when a block is gotten.
 		self.blockgets = {}
 		self.ASD = None
@@ -183,7 +190,7 @@ class World(object):
 		if config.has_section("autoshutdown"):
 			self.autoshutdown = config.get("autoshutdown", "autoshutdown")
 		if config.has_section("owner"):
-			self.owner = config.get("owner", "owner")
+			self.owner = config.get("owner", "owner").lower()
 		if config.has_section("ops"):
 			self.ops = set(x.lower() for x in config.options("ops"))
 		else:
@@ -242,6 +249,10 @@ class World(object):
 		if config.has_section("messages"):
 			for option in config.options("messages"):
 				self.messages[int(option)] = config.get("messages", option)
+		self.worldbans = {}
+		if config.has_section("worldbans"):
+			for option in config.options("worldbans"):
+				self.worldbans[option] = "True"
 		self.commands = {}
 		if config.has_section("commands"):
 			for option in config.options("commands"):
@@ -282,6 +293,20 @@ class World(object):
 						break
 					else:
 						i+=1
+						
+		self.entitylist = []
+		if config.has_section("entitylist"):
+			for option in config.options("entitylist"):
+				destination = [x.strip() for x in config.get("entitylist", option).split(",")]
+				for i in range(len(destination)):
+					try:
+						destination[i] = int(destination[i])
+					except:
+						if destination[i] == "False":
+							destination[i] = False
+						elif destination[i] == "True":
+							destination[i] = True
+				self.entitylist.append([destination[0],(destination[1],destination[2],destination[3])] + destination[4:])
 
 	@property
 	def store_raw_blocks(self):
@@ -305,12 +330,14 @@ class World(object):
 		config.add_section("display")
 		config.add_section("teleports")
 		config.add_section("messages")
+		config.add_section("worldbans")
 		config.add_section("commands")
 		config.add_section("mines")
 		config.add_section("autoshutdown")
 		config.add_section("userzones")
 		config.add_section("rankzones")
 		config.add_section("chat")
+		config.add_section("entitylist")
 		config.set("size", "x", str(self.x))
 		config.set("size", "y", str(self.y))
 		config.set("size", "z", str(self.z))
@@ -345,6 +372,9 @@ class World(object):
 		# Store messages
 		for offset, msg in self.messages.items():
 			config.set("messages", str(offset), msg)
+		# Store worldbans
+		for name in self.worldbans:
+			config.set("worldbans", str(name), "True")
 		# Store commands
 		for offset, cmd in self.commands.items():
 			cmdstr = ""
@@ -360,6 +390,12 @@ class World(object):
 		# Store rank zones
 		for name, zone in self.rankzones.items():
 			config.set("rankzones", str(name), ", ".join(map(str, zone)))
+
+		# Store entitylist
+		for i in range(len(self.entitylist)):
+			entry = self.entitylist[i]
+			config.set("entitylist", str(i), ", ".join(map(str, [entry[0],entry[1][0],entry[1][1],entry[1][2]] + entry[2:])))
+			
 		fp = open(self.meta_path, "w")
 		config.write(fp)
 		fp.close()
@@ -417,6 +453,19 @@ class World(object):
 	def has_message(self, x, y, z):
 		offset = self.get_offset(x, y, z)
 		return offset in self.messages
+
+	def add_worldban(self, name):
+		self.worldbans[name.lower()] = "True"
+		
+	def delete_worldban(self, name):
+		try:
+			del self.worldbans[name.lower()]
+			return True
+		except KeyError:
+			return False
+		
+	def isworldbanned(self, name):
+		return name.lower() in self.worldbans
 		
 	def add_command(self, x, y, z, cmd):
 		offset = self.get_offset(x, y, z)

@@ -54,7 +54,8 @@ class WorldUtilPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("Please specify an World Owner.")
 		else:
 			self.client.world.owner = str(parts[1])
-			self.client.sendWorldOwnerUpdate()
+			//This was deleted in iCraft2.6.2 for some weird reasons
+			#self.client.sendWorldOwnerUpdate()
 			self.client.sendServerMessage("The World Owner has been set.")
 
 	@info_list

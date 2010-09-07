@@ -51,9 +51,9 @@ def mod_only(func):
 	func.mod_only = True
 	return func
 
-def member_only(func):
-	"Decorator for member-only command methods."
-	func.member_only = True
+def advbuilder_only(func):
+	"Decorator for advanced builder-only command methods."
+	func.advbuilder_only = True
 	return func
 
 def worldowner_only(func):

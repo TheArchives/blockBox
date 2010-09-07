@@ -31,6 +31,7 @@ from myne.plugins import ProtocolPlugin
 from myne.decorators import *
 from myne.constants import *
 from myne.globals import *
+from myne.world import World
 
 class ModsPlugin(ProtocolPlugin):
 	
@@ -45,12 +46,14 @@ class ModsPlugin(ProtocolPlugin):
 		"specced": "commandSpecced",
 		"writer": "commandOldRanks",
 		"builder": "commandOldRanks",
+		"advbuilder": "commandOldRanks",
 		"op": "commandOldRanks",
 		"mod": "commandOldRanks",
 		"admin": "commandOldRanks",
 		"director": "commandOldRanks",
 		"dewriter": "commandOldDeRanks",
 		"debuilder": "commandOldDeRanks",
+		"deadvbuilder": "commandOldDeRanks",
 		"deop": "commandOldDeRanks",
 		"demod": "commandOldDeRanks",
 		"deadmin": "commandOldDeRanks",
@@ -60,7 +63,7 @@ class ModsPlugin(ProtocolPlugin):
 	@player_list
 	@mod_only
 	def commandSpecced(self, user, byuser, overriderank):
-		"/specced - Mod\nShows who is specced."
+		"/specced - Mod\nShows who is Specced."
 		if len(self.client.factory.spectators):
 			self.client.sendServerList(["Specced:"] + list(self.client.factory.spectators))
 		else:

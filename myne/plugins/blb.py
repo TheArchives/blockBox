@@ -52,7 +52,7 @@ class BlbPlugin(ProtocolPlugin):
 	@build_list
 	@writer_only
 	def commandBlb(self, parts, byuser, overriderank):
-		"/blb blockname [x y z x2 y2 z2] - Builder\nAliases: cub, cuboid, draw, box\nSets all blocks in this area to block."
+		"/blb blockname [x y z x2 y2 z2] - Builder\nAliases: box, cub, cuboid, draw\nSets all blocks in this area to block."
 		
 		if len(parts) < 8 and len(parts) != 2:
 			self.client.sendServerMessage("Please enter a type (and possibly two coord triples)")
@@ -95,7 +95,7 @@ class BlbPlugin(ProtocolPlugin):
 				limit = 262144
 			elif self.client.isOp():
 				limit = 110592
-			elif self.client.isMember():
+			elif self.client.isAdvBuilder():
 				limit = 55296
 			else:
 				limit = 4062
@@ -116,7 +116,7 @@ class BlbPlugin(ProtocolPlugin):
 								return
 							try:
 								world[i, j, k] = block
-								self.client.runHook("blockchange", x, y, z, block, block, byuser)
+								self.client.runHook("blockchange", x, y, z, ord(block), ord(block), byuser)
 							except AssertionError:
 								self.client.sendServerMessage("Out of bounds blb error.")
 								return
@@ -187,7 +187,7 @@ class BlbPlugin(ProtocolPlugin):
 				limit = 262144
 			elif self.client.isOp():
 				limit = 110592
-			elif self.client.isMember():
+			elif self.client.isAdvBuilder():
 				limit = 55296
 			else:
 				limit = 4062
@@ -209,7 +209,7 @@ class BlbPlugin(ProtocolPlugin):
 							if i==x or i==x2 or j==y or j==y2 or k==z or k==z2:
 								try:
 								   world[i, j, k] = block
-								   self.client.runHook("blockchange", x, y, z, block, block, byuser)
+								   self.client.runHook("blockchange", x, y, z, ord(block), ord(block), byuser)
 								except AssertionError:
 									self.client.sendServerMessage("Out of bounds bhb error.")
 									return
@@ -278,7 +278,7 @@ class BlbPlugin(ProtocolPlugin):
 				limit = 262144
 			elif self.client.isOp():
 				limit = 110592
-			elif self.client.isMember():
+			elif self.client.isAdvBuilder():
 				limit = 55296
 			else:
 				limit = 4062
@@ -300,7 +300,7 @@ class BlbPlugin(ProtocolPlugin):
 							if i==x or i==x2 or k==z or k==z2:
 								try:
 								   world[i, j, k] = block
-								   self.client.runHook("blockchange", x, y, z, block, block, byuser)
+								   self.client.runHook("blockchange", x, y, z, ord(block), ord(block), byuser)
 								except AssertionError:
 									self.client.sendServerMessage("Out of bounds bwb error.")
 									return
@@ -377,7 +377,7 @@ class BlbPlugin(ProtocolPlugin):
 					pass
 				elif username.isMod():
 					pass
-				elif username.isMember():
+				elif username.isAdvBuilder():
 					pass
 				elif username.isOp():
 					pass
@@ -421,7 +421,7 @@ class BlbPlugin(ProtocolPlugin):
 				limit = 262144
 			elif self.client.isOp():
 				limit = 110592
-			elif self.client.isMember():
+			elif self.client.isAdvBuilder():
 				limit = 55296
 			else:
 				limit = 4062
@@ -470,7 +470,8 @@ class BlbPlugin(ProtocolPlugin):
 						block_iter.next()
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
-					self.client.sendServerMessage("Your bcb just completed.")
+					if byuser:
+						self.client.sendServerMessage("Your bcb just completed.")
 					pass
 			do_step()
 
@@ -549,7 +550,7 @@ class BlbPlugin(ProtocolPlugin):
 				limit = 262144
 			elif self.client.isOp():
 				limit = 110592
-			elif self.client.isMember():
+			elif self.client.isAdvBuilder():
 				limit = 55296
 			else:
 				limit = 4062
@@ -600,7 +601,8 @@ class BlbPlugin(ProtocolPlugin):
 						block_iter.next()
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
-					self.client.sendServerMessage("Your bhcb just completed.")
+					if byuser:
+						self.client.sendServerMessage("Your bhcb just completed.")
 					pass
 			do_step()
 
@@ -667,7 +669,7 @@ class BlbPlugin(ProtocolPlugin):
 				limit = 262144
 			elif self.client.isOp():
 				limit = 110592
-			elif self.client.isMember():
+			elif self.client.isAdvBuilder():
 				limit = 55296
 			else:
 				limit = 4062
@@ -706,6 +708,7 @@ class BlbPlugin(ProtocolPlugin):
 						block_iter.next()
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
-					self.client.sendServerMessage("Your bfb just completed.")
+					if byuser:
+						self.client.sendServerMessage("Your bfb just completed.")
 					pass
 			do_step()

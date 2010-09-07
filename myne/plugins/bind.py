@@ -44,6 +44,8 @@ class BindPlugin(ProtocolPlugin):
 	
 	hooks = {
 		"blockchange": "blockChanged",
+		"rankchange": "sendAdminBlockUpdate",
+		"canbreakadmin": "canBreakAdminBlocks",
 	}
 	
 	def gotClient(self):
@@ -53,6 +55,17 @@ class BindPlugin(ProtocolPlugin):
 		"Hook trigger for block changes."
 		if block in self.block_overrides:
 			return self.block_overrides[block]
+
+	def canBreakAdminBlocks(self):
+		"Shortcut for checking permissions."
+		if hasattr(self.client, "world"):
+			return (not self.client.world.admin_blocks) or self.client.isOp()
+		else:
+			return False
+	
+	def sendAdminBlockUpdate(self):
+		"Sends a packet that updates the client's admin-building ability"
+		self.client.sendPacked(TYPE_INITIAL, 6, "Admincrete Update", "Reloading the server...", self.canBreakAdminBlocks() and 100 or 0)
 
 	@build_list
 	def commandBind(self, parts, byuser, overriderank):
@@ -67,7 +80,10 @@ class BindPlugin(ProtocolPlugin):
 				return
 			self.client.sendServerMessage("Please enter two block types.")
 		elif len(parts) == 2:
-			old = ord(self.client.GetBlockValue(parts[1]))
+			try:
+				old = ord(self.client.GetBlockValue(parts[1]))
+			except:
+				return
 			if old == None:
 				return
 			if old in self.block_overrides:
@@ -91,5 +107,5 @@ class BindPlugin(ProtocolPlugin):
 
 	@build_list
 	def commandAir(self, params, byuser, overriderank):
-		"/air - Guest\nAliases: stand, place\nPuts a block under you for easier building in the air."
+		"/air - Guest\nAliases: place, stand\nPuts a block under you for easier building in the air."
 		self.client.sendPacked(TYPE_BLOCKSET, self.client.x>>5, (self.client.y>>5)-3, (self.client.z>>5), BLOCK_WHITE)

@@ -220,7 +220,7 @@ class MyneServerProtocol(Protocol):
 		return (self.username.lower() in self.world.ops) or self.isWorldOwner() or self.isMod() or self.isAdmin() or self.isDirector() or self.isOwner()
 
 	def isWorldOwner(self):
-		return (self.username.lower() in self.world.owner) or self.isMod() or self.isAdmin() or self.isDirector() or self.isOwner()
+		return (self.username.lower() in self.world.owner.lower()) or self.isMod() or self.isAdmin() or self.isDirector() or self.isOwner()
 
 	def isOwner(self):
 		return self.username.lower()==self.factory.owner
@@ -238,19 +238,19 @@ class MyneServerProtocol(Protocol):
 		return self.factory.isMod(self.username.lower()) or self.isAdmin() or self.isDirector() or self.isOwner()
 
 	def isWriter(self):
-		return (self.username.lower() in self.world.writers) or self.isMember() or (self.username.lower() in self.world.ops) or self.isOp() or self.isWorldOwner()
+		return (self.username.lower() in self.world.writers) or self.isAdvBuilder() or (self.username.lower() in self.world.ops) or self.isOp() or self.isWorldOwner()
 
-	def isMember(self):
-		return self.factory.isMember(self.username.lower()) or (self.username.lower() in self.world.ops) or self.isWorldOwner() or self.isMod() or self.isAdmin() or self.isDirector() or self.isOwner()
+	def isAdvBuilder(self):
+		return self.factory.isAdvBuilder(self.username.lower()) or (self.username.lower() in self.world.ops) or self.isWorldOwner() or self.isMod() or self.isAdmin() or self.isDirector() or self.isOwner()
 
 	def isSpectator(self):
 		return self.factory.isSpectator(self.username.lower())
 	
 	def canEnter(self, world):
-		if not world.private:
+		if not world.private and (self.username.lower() not in world.worldbans):
 			return True
 		else:
-			return (self.username.lower() in world.writers) or (self.username.lower() in world.ops) or self.isMember() or self.isMod() or self.isAdmin() or self.isDirector()
+			return (self.username.lower() in world.writers) or (self.username.lower() in world.ops) or self.isWorldOwner() or self.isAdvBuilder() or self.isMod() or self.isAdmin() or self.isDirector()
 
 	def dataReceived(self, data):
 		# First, add the data we got onto our internal buffer
@@ -443,6 +443,36 @@ class MyneServerProtocol(Protocol):
 				message = message.replace("%d", "&d")
 				message = message.replace("%e", "&e")
 				message = message.replace("%f", "&f")
+				message = message.replace("1", "&0")
+				message = message.replace("2", "&1")
+				message = message.replace("3", "&2")
+				message = message.replace("10", "&3")
+				message = message.replace("5", "&4")
+				message = message.replace("4", "&5")
+				message = message.replace("7", "&6")
+				message = message.replace("15", "&7")
+				message = message.replace("14", "&8")
+				message = message.replace("12", "&9")
+				message = message.replace("9", "&a")
+				message = message.replace("11", "&b")
+				message = message.replace("4", "&c")
+				message = message.replace("13", "&d")
+				message = message.replace("8", "&e")
+				message = message.replace("0", "&f")
+				message = message.replace("01", "&0")
+				message = message.replace("02", "&1")
+				message = message.replace("03", "&2")
+				message = message.replace("05", "&4")
+				message = message.replace("04", "&5")
+				message = message.replace("07", "&6")
+				message = message.replace("09", "&a")
+				message = message.replace("04", "&c")
+				message = message.replace("08", "&e")
+				message = message.replace("00", "&f")
+				message = message.replace("./", " /")
+				message = message.replace(".!", " !")
+				message = message.replace(".@", " @")
+				message = message.replace(".#", " #")
 				message = message.replace("%$rnd", "&$rnd")
 				if message[len(message)-2] == "&":
 					self.sendServerMessage("You can not use a color at the end of a message")
@@ -475,7 +505,7 @@ class MyneServerProtocol(Protocol):
 						except KeyError:
 							self.sendServerMessage("Unknown command '%s'" % command)
 							return
-					if (self.isSpectator() and (getattr(func, "admin_only", False) or getattr(func, "mod_only", False) or getattr(func, "op_only", False) or getattr(func, "member_only", False) or getattr(func, "worldowner_only", False) or getattr(func, "writer_only", False))):
+					if (self.isSpectator() and (getattr(func, "admin_only", False) or getattr(func, "mod_only", False) or getattr(func, "op_only", False) or getattr(func, "advbuilder_only", False) or getattr(func, "worldowner_only", False) or getattr(func, "writer_only", False))):
 						self.sendServerMessage("'%s' is not available to specs." % command)
 						return
 					if getattr(func, "owner_only", False) and not self.isOwner():
@@ -493,8 +523,8 @@ class MyneServerProtocol(Protocol):
 					if getattr(func, "worldowner_only", False) and not (self.isMod() or self.isAdmin()):
 						self.sendServerMessage("'%s' is a WorldOwner-only command!" % command)
 						return
-					if getattr(func, "member_only", False) and not (self.isMember() or self.isOp() or self.isMod()):
-						self.sendServerMessage("'%s' is a Member-only command!" % command)
+					if getattr(func, "advbuilder_only", False) and not (self.isAdvBuilder() or self.isOp() or self.isMod()):
+						self.sendServerMessage("'%s' is an Advanced Builder-only command!" % command)
 						return
 					if getattr(func, "op_only", False) and not (self.isOp() or self.isMod()):
 						self.sendServerMessage("'%s' is an Op-only command!" % command)
@@ -582,9 +612,11 @@ class MyneServerProtocol(Protocol):
 							else:
 								self.factory.queue.put((self, TASK_MESSAGE, (self.id, self.userColour(), self.usertitlename, message)))
 			else:
+				//Idea: implement SMP detection and boot them out
 				self.logger.warning("Unhandleable type %s" % type)
 
 	def userColour(self):
+		//Idea: Back to original please
 		if self.isSpectator():
 			color = COLOUR_BLACK
 		elif self.isOwner():
@@ -601,7 +633,7 @@ class MyneServerProtocol(Protocol):
 			color = COLOUR_DARKBLUE
 		elif self.isOp():
 			color = COLOUR_BLUE
-		elif self.isMember():
+		elif self.isAdvBuilder():
 			color = COLOUR_WHITE
 		elif self.isWriter():
 			color = COLOUR_CYAN
@@ -626,8 +658,8 @@ class MyneServerProtocol(Protocol):
 			name = "World Owner"
 		elif self.isOp():
 			name = "Op"
-		elif self.isMember():
-			name = "Member"
+		elif self.isAdvBuilder():
+			name = "AdvBuilder"
 		elif self.isWriter():
 			name = "Writer"
 		else:
@@ -656,8 +688,7 @@ class MyneServerProtocol(Protocol):
 		self.last_block_changes = []
 		self.initial_position = position
 		if self.world.is_archive:
-			self.sendServerMessage("This world is an Archive, and will cease to exist")
-			self.sendServerMessage("once the last person leaves.")
+			self.sendSplitServerMessage("This world is an Archive, and will cease to exist once the last person leaves.")
 			self.sendServerMessage(COLOUR_RED+"Admins: Please do not reboot this world.")
 		breakable_admins = self.runHook("canbreakadmin")
 		self.sendPacked(TYPE_INITIAL, 7, "Loading...", "Entering world '%s'" % world_id, 100 if breakable_admins else 0)
@@ -708,12 +739,12 @@ class MyneServerProtocol(Protocol):
 		self.runHook("rankchange")
 		self.respawn()
 
-	def sendMemberUpdate(self):
-		"Sends the member message"
-		if self.isMember():
-			self.sendServerMessage("You are now a Member.")
+	def sendAdvBuilderUpdate(self):
+		"Sends the adv builder message"
+		if self.isAdvBuilder():
+			self.sendServerMessage("You are now an Advanced Builder.")
 		else:
-			self.sendServerMessage("You are no longer a Member.")
+			self.sendServerMessage("You are no longer an Advanced Builder.")
 		self.runHook("rankchange")
 		self.respawn()
 
@@ -970,8 +1001,12 @@ class MyneServerProtocol(Protocol):
 	def AllowedToBuild(self,x,y,z):
 		build = False
 		assigned = []
-		check_offset = self.world.blockstore.get_offset(x, y, z)
-		block = ord(self.world.blockstore.raw_blocks[check_offset])
+		try:
+			check_offset = self.world.blockstore.get_offset(x, y, z)
+			block = ord(self.world.blockstore.raw_blocks[check_offset])
+		except:
+			self.sendServerMessage("Out of bounds.")
+			return False
 		if block == BLOCK_SOLID and not self.isOp():
 			return False
 		for id,zone in self.world.userzones.items():
@@ -1029,12 +1064,12 @@ class MyneServerProtocol(Protocol):
 								else:
 									self.sendServerMessage("You must be " + zone[7] + "to build here.")
 									return False
-				if "member" == zone[7]:
+				if "advbuilder" == zone[7]:
 					x1,y1,z1,x2,y2,z2 = zone[1:7]
 					if x1 < x < x2:
 						if y1 < y < y2:
 							if z1 < z < z2:
-								if self.isMember():
+								if self.isAdvBuilder():
 									return True
 								else:
 									self.sendServerMessage("You must be " + zone[7] + "to build here.")
@@ -1079,7 +1114,8 @@ class MyneServerProtocol(Protocol):
 								else:
 									self.sendServerMessage("You must be " + zone[7] + "to build here.")
 									return False
-		if self.world.id == "main" and self.isMember() and not self.isMod() and not self.world.all_write:
+		//Idea: let users choose default world, yeah
+		if self.world.id == "main" and self.isAdvBuilder() and not self.isMod() and not self.world.all_write:
 			self.sendBlock(x, y, z)
 			self.sendServerMessage("Only Builder/Op and Mod+ may edit 'main'.")
 			return

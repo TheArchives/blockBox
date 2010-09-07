@@ -1,4 +1,4 @@
 @ECHO off
-TITLE iCraft
+TITLE blockBox
 run.py
 PAUSE
