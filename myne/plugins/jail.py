@@ -35,7 +35,7 @@ from myne.decorators import *
 from myne.constants import *
 from time import *
 import cPickle
-//TODO: Persist derp
+#TODO: Persist derp
 # jail constants for jail.dat
 J_USERS = 0
 J_ZONE = 1

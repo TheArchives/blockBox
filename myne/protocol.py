@@ -612,11 +612,11 @@ class MyneServerProtocol(Protocol):
 							else:
 								self.factory.queue.put((self, TASK_MESSAGE, (self.id, self.userColour(), self.usertitlename, message)))
 			else:
-				//Idea: implement SMP detection and boot them out
+				#Idea: implement SMP detection and boot them out
 				self.logger.warning("Unhandleable type %s" % type)
 
 	def userColour(self):
-		//Idea: Back to original please
+		#Idea: Back to original please
 		if self.isSpectator():
 			color = COLOUR_BLACK
 		elif self.isOwner():
@@ -1114,7 +1114,7 @@ class MyneServerProtocol(Protocol):
 								else:
 									self.sendServerMessage("You must be " + zone[7] + "to build here.")
 									return False
-		//Idea: let users choose default world, yeah
+		#Idea: let users choose default world, yeah
 		if self.world.id == "main" and self.isAdvBuilder() and not self.isMod() and not self.world.all_write:
 			self.sendBlock(x, y, z)
 			self.sendServerMessage("Only Builder/Op and Mod+ may edit 'main'.")

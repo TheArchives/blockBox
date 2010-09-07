@@ -133,7 +133,7 @@ class MyneFactory(Factory):
 		self.physics_limit = self.config.getint("options", "physics_limit")
 		self.console_delay = self.config.getint("options", "console_delay")
 		self.info_url = self.config.get("info", "info_url")
-		//Idea: again default
+		#Idea: again default
 		self.default_backup = self.config.get("worlds", "default_backup")
 		self.owner = self.config.get("info", "owner").lower()
 		self.backup_freq = self.config.getint("backup", "backup_freq")

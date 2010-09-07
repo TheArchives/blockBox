@@ -80,7 +80,7 @@ class CommandPlugin(ProtocolPlugin):
 		self.customvars = dict({})
 		self.cmdinfolines = None
 		self.infoindex = None
-//TODO: Persist, derp
+#TODO: Persist, derp
 	def loadBank(self):
 		file = open('balances.dat', 'r')
 		bank_dic = cPickle.load(file)

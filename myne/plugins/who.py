@@ -73,7 +73,7 @@ class PlayersPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("Do '/who username' for more info.")
 			self.client.sendServerList(["Players:"] + list(self.client.factory.usernames))
 		else:
-			//TODO: Persist derp
+			#TODO: Persist derp
 			def loadBank():
 				file = open('balances.dat', 'r')
 				bank_dic = cPickle.load(file)

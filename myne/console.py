@@ -177,13 +177,13 @@ class StdinPlugin(threading.Thread):
 								print "Chats available are: normal, whisper; @<player> <message>, world; !<world name> <message> and staff; #<message>."
 							elif message[0] == ("about"):
 								print "About The Server"
-								//Shhh its something coming soon
-								print ("Powered by blockBox %s - http://3ps.hk-diy.net/blockbox"%VERSION)
+								#Shhh its something coming soon
+								print ("Powered by blockBox %s - http://blockbox.hk-diy.net/"%VERSION)
 								print ("Name: "+self.server.server_name)
 								print ("URL: "+self.server.heartbeat.url)
 							elif message[0] == ("say"):
 								if len(message) == 1:
-//									self.client.sendServerMessage("Please type a message.")
+								#	self.client.sendServerMessage("Please type a message.")
 									print ("Please type a message.")
 								else:
 									self.server.queue.put((self, TASK_SERVERMESSAGE, ("[MSG] "+(" ".join(message[1:])))))

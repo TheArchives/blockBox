@@ -33,7 +33,7 @@ from myne.decorators import *
 from lib.twisted.internet import reactor
 from myne.constants import *
 import pickle
-//TODO: Persist derp
+#TODO: Persist derp
 class OfflineMessagePlugin(ProtocolPlugin):
 	
 	commands = {

@@ -236,7 +236,7 @@ class ChatBot(irc.IRCClient):
 							self.msg(self.factory.irc_channel, "Use '$"+self.nickname+" command arguments' to do it.")
 							self.msg(self.factory.irc_channel, "NOTE: Admin Commands are by PMing "+self.nickname+" - only for ops.")
 						elif msg_command[1] == ("about"):
-							self.msg(self.factory.irc_channel, "About the Server - blockBox %s - http://hlmc.net/" % VERSION)
+							self.msg(self.factory.irc_channel, "About the Server - blockBox %s - http://blockbox.hk-diy.net/" % VERSION)
 							self.msg(self.factory.irc_channel, "Name: "+self.factory.server_name)
 							self.msg(self.factory.irc_channel, "URL: "+self.factory.heartbeat.url)
 							self.msg(self.factory.irc_channel, "Site: "+self.factory.info_url)
