@@ -31,6 +31,7 @@ from lib.twisted.internet import reactor
 from myne.plugins import ProtocolPlugin
 from myne.decorators import *
 from myne.constants import *
+from myne.persistence import PersistenceEngine as Persist
 import logging
 import datetime
 import traceback
@@ -738,10 +739,10 @@ class CommandPlugin(ProtocolPlugin):
 		thiscmd = thiscmd.replace("/scmd", "")
 		thiscmd = thiscmd.replace("$name", self.client.username)
 		thiscmd = thiscmd.replace("$cname", self.client.colouredUsername())
-		bank = self.loadBank()
+		#bank = self.loadBank()
 		user = self.client.username.lower()
 		if user in bank:
-			balance = bank[user]
+			balance = self.client.persist.int("bank", "balance", -1)
 		else:
 			balance = 0
 		thiscmd = thiscmd.replace("$bank", str(balance))
