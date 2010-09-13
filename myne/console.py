@@ -187,6 +187,9 @@ class StdinPlugin(threading.Thread):
 									print ("Please type a message.")
 								else:
 									self.server.queue.put((self, TASK_SERVERMESSAGE, ("[MSG] "+(" ".join(message[1:])))))
+							elif message[0] == ("gc"):
+								#ManualGarbageMe
+								self.server.cleanGarbage()
 							elif message[0] == ("srb"):
 								self.server.queue.put((self, TASK_SERVERURGENTMESSAGE, ("[URGENT] Server Reboot - Back in a Flash")))
 							elif message[0] == ("u"):
