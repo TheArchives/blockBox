@@ -101,7 +101,6 @@ class StdinPlugin(threading.Thread):
 							message[0] = message[0][1:]
 							message[len(message)-1] = message[len(message)-1][:len(message[len(message)-1])-1]
 							# It's a command
-							#kick*, ban*, boot*, shutdown*, new*, about*, plr, plu, pll, u, say*, me*, srb*,
 							if message[0] == "kick":
 								for client in self.server.clients.values():
 									if client.username==message[1]:
@@ -173,7 +172,7 @@ class StdinPlugin(threading.Thread):
 							elif message[0] == ("srb"):
 								self.server.queue.put((self, TASK_SERVERURGENTMESSAGE, ("[URGENT] Server Reboot - Back in a Flash")))
 							elif message[0] == ("help"):
-								print "Commands available are: about, boot, ban, cpr, derank, kick, me, new, pll, plr, plu, rank, say, shutdown, spec, srb and u."
+								print "Commands available are: about, boot, ban, cpr, derank, gc, kick, me, new, pll, plr, plu, rank, say, shutdown, spec, srb and u."
 								print "Chats available are: normal, whisper; @<player> <message>, world; !<world name> <message> and staff; #<message>."
 							elif message[0] == ("about"):
 								print "About The Server"
