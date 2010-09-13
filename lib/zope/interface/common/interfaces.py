@@ -11,10 +11,6 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""Interfaces for standard python exceptions
-
-$Id: interfaces.py 110536 2010-04-06 02:59:44Z tseaver $
-"""
 from lib.zope.interface import Interface
 from lib.zope.interface import classImplements
 

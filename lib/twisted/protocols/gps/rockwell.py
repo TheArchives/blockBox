@@ -1,30 +1,8 @@
 # Copyright (c) 2001-2004 Twisted Matrix Laboratories.
 # See LICENSE for details.
- 
-
-"""Rockwell Semiconductor Zodiac Serial Protocol
-Coded from official protocol specs (Order No. GPS-25, 09/24/1996, Revision 11)
-
-Maintainer: Bob Ippolito
-
-The following Rockwell Zodiac messages are currently understood::
-    EARTHA\\r\\n (a hack to "turn on" a DeLorme Earthmate)
-    1000 (Geodesic Position Status Output)
-    1002 (Channel Summary)
-    1003 (Visible Satellites)
-    1011 (Receiver ID)
-
-The following Rockwell Zodiac messages require implementation::
-    None really, the others aren't quite so useful and require bidirectional communication w/ the device
-
-Other desired features::
-    - Compatability with the DeLorme Tripmate and other devices with this chipset (?)
-"""
-
 import struct, operator, math
 from lib.twisted.internet import protocol
 from lib.twisted.python import log
-
 DEBUG = 1
 
 class ZodiacParseError(ValueError):
@@ -32,7 +10,6 @@ class ZodiacParseError(ValueError):
 
 class Zodiac(protocol.Protocol):
   dispatch = {
-    # Output Messages (* means they get sent by the receiver by default periodically)
     1000: 'fix',          # *Geodesic Position Status Output
     1001: 'ecef',         # ECEF Position Status Output
     1002: 'channels',     # *Channel Summary
@@ -48,9 +25,7 @@ class Zodiac(protocol.Protocol):
     1135: 'eepromupdate', # EEPROM Update
     1136: 'eepromstatus', # EEPROM Status
   }
-  # these aren't used for anything yet, just sitting here for reference
   messages = {
-    # Input Messages
     'fix':      1200,     # Geodesic Position and Velocity Initialization
     'udatum':   1210,     # User-Defined Datum Definition
     'mdatum':   1211,     # Map Datum Select
@@ -76,8 +51,6 @@ class Zodiac(protocol.Protocol):
   def dataReceived(self, recd):
     self.recvd = self.recvd + recd
     while len(self.recvd) >= 10:
-
-      # hack for DeLorme EarthMate
       if self.recvd[:8] == 'EARTHA\r\n':
         if self.allow_earthmate_hack:
           self.allow_earthmate_hack = 0
@@ -92,7 +65,6 @@ class Zodiac(protocol.Protocol):
           raise ZodiacParseError
       sync, msg_id, length, acknak, checksum = struct.unpack('<HHHHh', self.recvd[:10])
       
-      # verify checksum
       cksum = -(reduce(operator.add, (sync, msg_id, length, acknak)) & 0xFFFF)
       cksum, = struct.unpack('<h', struct.pack('<h', cksum))
       if cksum != checksum:
@@ -101,10 +73,7 @@ class Zodiac(protocol.Protocol):
         else:
           raise ZodiacParseError
       
-      # length was in words, now it's bytes
       length = length * 2
-
-      # do we need more data ?
       neededBytes = 10
       if length:
         neededBytes += length + 2
@@ -114,10 +83,7 @@ class Zodiac(protocol.Protocol):
       if neededBytes > self.MAX_LENGTH:
         raise ZodiacParseError("Invalid Header??")
 
-      # empty messages pass empty strings
       message = ''
-
-      # does this message have data ?
       if length:
         message, checksum = self.recvd[10:10+length], struct.unpack('<h', self.recvd[10+length:neededBytes])[0]
         cksum = 0x10000 - (reduce(operator.add, struct.unpack('<%dH' % (length/2), message)) & 0xFFFF)
@@ -128,8 +94,7 @@ class Zodiac(protocol.Protocol):
             raise ZodiacParseError('Invalid Data Checksum %r != %r %r' % (checksum, cksum, message))
           else:
             raise ZodiacParseError
-      
-      # discard used buffer, dispatch message
+
       self.recvd = self.recvd[neededBytes:]
       self.receivedMessage(msg_id, message, acknak)
   
@@ -140,9 +105,6 @@ class Zodiac(protocol.Protocol):
     handler = getattr(self, 'handle_%s' % dispatch, None)
     decoder = getattr(self, 'decode_%s' % dispatch, None)
     if not (handler and decoder):
-      # missing handler or decoder
-      #if DEBUG:
-      #  log.msg('MISSING HANDLER/DECODER PAIR FOR: %r' % (dispatch,), debug=True)
       return
     decoded = decoder(message)
     return handler(*decoded)
@@ -151,8 +113,6 @@ class Zodiac(protocol.Protocol):
     assert len(message) == 98, "Geodesic Position Status Output should be 55 words total (98 byte message)"
     (ticks, msgseq, satseq, navstatus, navtype, nmeasure, polar, gpswk, gpses, gpsns, utcdy, utcmo, utcyr, utchr, utcmn, utcsc, utcns, latitude, longitude, height, geoidalsep, speed, course, magvar, climb, mapdatum, exhposerr, exvposerr, extimeerr, exphvelerr, clkbias, clkbiasdev, clkdrift, clkdriftdev) = struct.unpack('<LhhHHHHHLLHHHHHHLlllhLHhhHLLLHllll', message)
 
-    # there's a lot of shit in here.. 
-    # I'll just snag the important stuff and spit it out like my NMEA decoder
     utc = (utchr * 3600.0) + (utcmn * 60.0) + utcsc + (float(utcns) * 0.000000001)
     
     log.msg('utchr, utcmn, utcsc, utcns = ' + repr((utchr, utcmn, utcsc, utcns)), debug=True)
@@ -166,23 +126,14 @@ class Zodiac(protocol.Protocol):
     geoid = float(geoidalsep) * 0.01, 'M'
     dgps = None
     return (
-      # seconds since 00:00 UTC
       utc,                 
-      # latitude (degrees)
       latitude,
-      # longitude (degrees)
       longitude,
-      # position fix status (invalid = False, valid = True)
       posfix,
-      # number of satellites [measurements] used for fix 0 <= satellites <= 12 
       satellites,
-      # horizontal dilution of precision
       hdop,
-      # (altitude according to WGS-84 ellipsoid, units (always 'M' for meters)) 
       altitude,
-      # (geoid separation according to WGS-84 ellipsoid, units (always 'M' for meters))
       geoid,
-      # None, for compatability w/ NMEA code
       dgps,
     )
 
@@ -195,7 +146,6 @@ class Zodiac(protocol.Protocol):
     options_list = int(options_list[:4], 16) # only two bitflags, others are reserved
     minimize_rom = (options_list & 0x01) > 0
     minimize_ram = (options_list & 0x02) > 0
-    # (version info), (options info)
     return ((software_version, software_date), (minimize_rom, minimize_ram))
 
   def decode_channels(self, message):
@@ -205,12 +155,8 @@ class Zodiac(protocol.Protocol):
     message = message[18:]
     for i in range(12):
       flags, prn, cno = struct.unpack('<HHH', message[6 * i:6 * (i + 1)])
-      # measurement used, ephemeris available, measurement valid, dgps corrections available
       flags = (flags & 0x01, flags & 0x02, flags & 0x04, flags & 0x08)
       channels.append((flags, prn, cno))
-    # ((flags, satellite PRN, C/No in dbHz)) for 12 channels
-    # satellite message sequence number
-    # gps week number, gps seconds in week (??), gps nanoseconds from Epoch
     return (tuple(channels),) #, satseq, (gpswk, gpsws, gpsns))
 
   def decode_satellites(self, message):
@@ -223,8 +169,6 @@ class Zodiac(protocol.Protocol):
       prn, azi, elev = struct.unpack('<Hhh', message[6 * i:6 * (i + 1)])
       azi, elev = map(lambda n: (float(n) * 0.0180 / math.pi), (azi, elev))
       satellites.push((prn, azi, elev))
-    # ((PRN [0, 32], azimuth +=[0.0, 180.0] deg, elevation +-[0.0, 90.0] deg)) satellite info (0-12)
-    # (geometric, position, horizontal, vertical, time) dilution of precision 
     return (tuple(satellites), (gdop, pdop, hdop, vdop, tdop))
 
   def decode_dgps(self, message):

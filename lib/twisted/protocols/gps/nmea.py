@@ -1,32 +1,12 @@
 # -*- test-case-name: lib.twisted.test.test_nmea -*-
 # Copyright (c) 2001-2009 Twisted Matrix Laboratories.
 # See LICENSE for details.
-
-"""NMEA 0183 implementation
-
-Maintainer: Bob Ippolito
-
-The following NMEA 0183 sentences are currently understood::
-    GPGGA (fix)
-    GPGLL (position)
-    GPRMC (position and time)
-    GPGSA (active satellites)
- 
-The following NMEA 0183 sentences require implementation::
-    None really, the others aren't generally useful or implemented in most devices anyhow
-
-Other desired features::
-    - A NMEA 0183 producer to emulate GPS devices (?)
-"""
-
 import operator
 from lib.twisted.protocols import basic
 from lib.twisted.python.compat import reduce
-
 POSFIX_INVALID, POSFIX_SPS, POSFIX_DGPS, POSFIX_PPS = 0, 1, 2, 3
 MODE_AUTO, MODE_FORCED = 'A', 'M'
 MODE_NOFIX, MODE_2D, MODE_3D = 1, 2, 3
-
 class InvalidSentence(Exception):
     pass
 
@@ -34,8 +14,6 @@ class InvalidChecksum(Exception):
     pass
 
 class NMEAReceiver(basic.LineReceiver):
-    """This parses most common NMEA-0183 messages, presumably from a serial GPS device at 4800 bps
-    """
     delimiter = '\r\n'
     dispatch = {
         'GPGGA': 'fix',
@@ -50,13 +28,9 @@ class NMEAReceiver(basic.LineReceiver):
         'GPMSS': 'beacon',            # not implemented
         'GPZDA': 'time',              # not implemented
     }
-    # generally you may miss the beginning of the first message
     ignore_invalid_sentence = 1
-    # checksums shouldn't be invalid
     ignore_checksum_mismatch = 0
-    # ignore unknown sentence types
     ignore_unknown_sentencetypes = 0
-    # do we want to even bother checking to see if it's from the 20th century?
     convert_dates_before_y2k = 1
 
     def lineReceived(self, line):
@@ -64,7 +38,6 @@ class NMEAReceiver(basic.LineReceiver):
             if self.ignore_invalid_sentence:
                 return
             raise InvalidSentence("%r does not begin with $" % (line,))
-        # message is everything between $ and *, checksum is xor of all ASCII values of the message
         strmessage, checksum = line[1:].strip().split('*')
         message = strmessage.split(',')
         sentencetype, message = message[0], message[1:]
@@ -78,9 +51,7 @@ class NMEAReceiver(basic.LineReceiver):
         handler = getattr(self, "handle_%s" % dispatch, None)
         decoder = getattr(self, "decode_%s" % dispatch, None)
         if not (dispatch and handler and decoder):
-            # missing dispatch, handler, or decoder
             return
-        # return handler(*decoder(*message))
         try:
             decoded = decoder(*message)
         except Exception, e:
@@ -114,9 +85,6 @@ class NMEAReceiver(basic.LineReceiver):
             course = None
         utcdate = 2000+int(utcdate[4:6]), int(utcdate[2:4]), int(utcdate[0:2])
         if self.convert_dates_before_y2k and utcdate[0] > 2073:
-            # GPS was invented by the US DoD in 1973, but NMEA uses 2 digit year.
-            # Highly unlikely that we'll be using NMEA or this twisted module in 70 years,
-            # but remotely possible that you'll be using it to play back data from the 20th century.
             utcdate = (utcdate[0] - 100, utcdate[1], utcdate[2])
         if magvar != '':
             magvar = float(magvar)
@@ -129,11 +97,8 @@ class NMEAReceiver(basic.LineReceiver):
             longitude,
             speed,
             course,
-            # UTC seconds past utcdate
             utc,
-            # UTC (year, month, day)
             utcdate,
-            # None or magnetic variation in degrees (west is negative)
             magvar,
         )
 
@@ -160,15 +125,10 @@ class NMEAReceiver(basic.LineReceiver):
                 satlist.append(None)
         mode = (mode1, int(mode2))
         return (
-            # satellite list by channel
             tuple(satlist),
-            # (MODE_AUTO/MODE_FORCED, MODE_NOFIX/MODE_2DFIX/MODE_3DFIX)
             mode,
-            # position dilution of precision
             pdop,
-            # horizontal dilution of precision
             hdop,
-            # vertical dilution of precision
             vdop,
         )
     
@@ -188,22 +148,13 @@ class NMEAReceiver(basic.LineReceiver):
         else:
             dgps = None
         return (
-            # seconds since 00:00 UTC
             utc,                 
-            # latitude (degrees)
             latitude,       
-            # longitude (degrees)
             longitude,     
-            # position fix status (POSFIX_INVALID, POSFIX_SPS, POSFIX_DGPS, POSFIX_PPS)
             posfix,           
-            # number of satellites used for fix 0 <= satellites <= 12 
             satellites,   
-            # horizontal dilution of precision
             hdop,               
-            # None or (altitude according to WGS-84 ellipsoid, units (typically 'M' for meters)) 
             altitude,
-            # None or (geoid separation according to WGS-84 ellipsoid, units (typically 'M' for meters))
             geoid,
-            # (age of dgps data in seconds, dgps station id)
             dgps,
         )

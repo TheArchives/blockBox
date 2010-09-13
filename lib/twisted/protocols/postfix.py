@@ -1,22 +1,13 @@
 # -*- test-case-name: lib.twisted.test.test_postfix -*-
 # Copyright (c) 2001-2009 Twisted Matrix Laboratories.
 # See LICENSE for details.
-
-"""
-Postfix mail transport agent related protocols.
-"""
-
 import sys
 import UserDict
 import urllib
-
 from lib.twisted.protocols import basic
 from lib.twisted.protocols import policies
 from lib.twisted.internet import protocol, defer
 from lib.twisted.python import log
-
-# urllib's quote functions just happen to match
-# the postfix semantics.
 def quote(s):
     return urllib.quote(s)
 
@@ -24,18 +15,6 @@ def unquote(s):
     return urllib.unquote(s)
 
 class PostfixTCPMapServer(basic.LineReceiver, policies.TimeoutMixin):
-    """Postfix mail transport agent TCP map protocol implementation.
-
-    Receive requests for data matching given key via lineReceived,
-    asks it's factory for the data with self.factory.get(key), and
-    returns the data to the requester. None means no entry found.
-
-    You can use postfix's postmap to test the map service::
-
-    /usr/sbin/postmap -q KEY tcp:localhost:4242
-
-    """
-
     timeout = 600
     delimiter = '\n'
 
@@ -43,7 +22,6 @@ class PostfixTCPMapServer(basic.LineReceiver, policies.TimeoutMixin):
         self.setTimeout(self.timeout)
 
     def sendCode(self, code, message=''):
-        "Send an SMTP-like code with a message."
         self.sendLine('%3.3d %s' % (code, message or ''))
 
     def lineReceived(self, line):
@@ -91,16 +69,11 @@ class PostfixTCPMapServer(basic.LineReceiver, policies.TimeoutMixin):
             else:
                 self.sendCode(500, 'put is not implemented yet.')
 
-
 class PostfixTCPMapDictServerFactory(protocol.ServerFactory,
                                      UserDict.UserDict):
-    """An in-memory dictionary factory for PostfixTCPMapServer."""
-
     protocol = PostfixTCPMapServer
 
 class PostfixTCPMapDeferringDictServerFactory(protocol.ServerFactory):
-    """An in-memory dictionary factory for PostfixTCPMapServer."""
-
     protocol = PostfixTCPMapServer
 
     def __init__(self, data=None):

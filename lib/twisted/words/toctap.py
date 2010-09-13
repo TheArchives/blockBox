@@ -1,12 +1,5 @@
-
 # Copyright (c) 2001-2004 Twisted Matrix Laboratories.
 # See LICENSE for details.
-
-
-"""
-Support module for making TOC servers with twistd.
-"""
-
 from lib.twisted.words.protocols import toc
 from lib.twisted.python import usage
 from lib.twisted.application import strports

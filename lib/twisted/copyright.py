@@ -1,14 +1,7 @@
 # Copyright (c) 2001-2010 Twisted Matrix Laboratories.
 # See LICENSE for details.
-
-"""
-Copyright information for Twisted.
-"""
-
 from twisted import __version__ as version, version as longversion
-
 longversion = str(longversion)
-
 copyright="""\
 Copyright (c) 2001-2010 Twisted Matrix Laboratories.
 See LICENSE for details."""

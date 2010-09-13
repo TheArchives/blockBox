@@ -1,26 +1,11 @@
 # -*- test-case-name: twisted.test.test_stdio -*-
-
-"""Standard input/out/err support.
-
-Future Plans::
-
-    support for stderr, perhaps
-    Rewrite to use the reactor instead of an ad-hoc mechanism for connecting
-        protocols to transport.
-
-Maintainer: James Y Knight
-"""
-
 import warnings, errno, os
 from zope.interface import implements
-
 from twisted.internet import process, error, interfaces
 from twisted.python import log, failure
 
-
 class PipeAddress(object):
     implements(interfaces.IAddress)
-
 
 class StandardIO(object):
     implements(interfaces.ITransport, interfaces.IProducer, interfaces.IConsumer, interfaces.IHalfCloseableDescriptor)
@@ -32,15 +17,11 @@ class StandardIO(object):
     def __init__(self, proto, stdin=0, stdout=1):
         from twisted.internet import reactor
         self.protocol = proto
-
         self._writer = process.ProcessWriter(reactor, self, 'write', stdout)
         try:
             self._writer.startReading()
         except IOError, e:
             if e.errno == errno.EPERM:
-                # epoll will reject certain file descriptors by raising
-                # EPERM.  Most commonly, this means stdout was redirected to
-                # a regular file.
                 raise RuntimeError(
                     "This reactor does not support this type of file "
                     "descriptor (fd %d, mode %d) (for example, epollreactor "
@@ -52,9 +33,6 @@ class StandardIO(object):
         self._reader.startReading()
         self.protocol.makeConnection(self)
 
-    # ITransport
-
-    # XXX Actually, see #3597.
     def loseWriteConnection(self):
         if self._writer is not None:
             self._writer.loseConnection()
@@ -73,7 +51,6 @@ class StandardIO(object):
         if self._writer is not None:
             self._writer.loseConnection()
         if self._reader is not None:
-            # Don't loseConnection, because we don't want to SIGPIPE it.
             self._reader.stopReading()
 
     def getPeer(self):
@@ -82,8 +59,6 @@ class StandardIO(object):
     def getHost(self):
         return PipeAddress()
 
-
-    # Callbacks from process.ProcessReader/ProcessWriter
     def childDataReceived(self, fd, data):
         self.protocol.dataReceived(data)
 
@@ -92,7 +67,6 @@ class StandardIO(object):
             return
 
         if reason.value.__class__ == error.ConnectionDone:
-            # Normal close
             if fd == 'read':
                 self._readConnectionLost(reason)
             else:
@@ -102,8 +76,6 @@ class StandardIO(object):
 
     def connectionLost(self, reason):
         self.disconnected = True
-
-        # Make sure to cleanup the other half
         _reader = self._reader
         _writer = self._writer
         protocol = self.protocol
@@ -147,7 +119,6 @@ class StandardIO(object):
         else:
             self.connectionLost(reason)
 
-    # IConsumer
     def registerProducer(self, producer, streaming):
         if self._writer is None:
             producer.stopProducing()
@@ -158,7 +129,6 @@ class StandardIO(object):
         if self._writer is not None:
             self._writer.unregisterProducer()
 
-    # IProducer
     def stopProducing(self):
         self.loseConnection()
 
@@ -170,17 +140,13 @@ class StandardIO(object):
         if self._reader is not None:
             self._reader.resumeProducing()
 
-    # Stupid compatibility:
     def closeStdin(self):
-        """Compatibility only, don't use. Same as loseWriteConnection."""
         warnings.warn("This function is deprecated, use loseWriteConnection instead.",
                       category=DeprecationWarning, stacklevel=2)
         self.loseWriteConnection()
 
     def stopReading(self):
-        """Compatibility only, don't use. Call pauseProducing."""
         self.pauseProducing()
 
     def startReading(self):
-        """Compatibility only, don't use. Call resumeProducing."""
         self.resumeProducing()

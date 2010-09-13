@@ -1,15 +1,3 @@
-r"""Command-line tool to validate and pretty-print JSON
-
-Usage::
-
-    $ echo '{"json":"obj"}' | python -m lib.simplejson.tool
-    {
-        "json": "obj"
-    }
-    $ echo '{ 1.2:3.4}' | python -m lib.simplejson.tool
-    Expecting property name: line 1 column 2 (char 2)
-
-"""
 import sys
 import simplejson as json
 

@@ -11,11 +11,6 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""Adapter management
-
-$Id: adapter.py 110699 2010-04-09 08:16:17Z regebro $
-"""
-
 import weakref
 from lib.zope.interface import providedBy, Interface, ro
 
@@ -33,49 +28,10 @@ class BaseAdapterRegistry(object):
 
     def __init__(self, bases=()):
 
-        # The comments here could be improved. Possibly this bit needs
-        # explaining in a separate document, as the comments here can
-        # be quite confusing. /regebro
-
-        # {order -> {required -> {provided -> {name -> value}}}}
-        # Here "order" is actually an index in a list, "required" and
-        # "provided" are interfaces, and "required" is really a nested
-        # key.  So, for example:
-        # for order == 0 (that is, self._adapters[0]), we have:
-        #   {provided -> {name -> value}}
-        # but for order == 2 (that is, self._adapters[2]), we have:
-        #   {r1 -> {r2 -> {provided -> {name -> value}}}}
-        #
         self._adapters = []
-
-        # {order -> {required -> {provided -> {name -> [value]}}}}
-        # where the remarks about adapters above apply
         self._subscribers = []
-
-        # Set, with a reference count, keeping track of the interfaces
-        # for which we have provided components:
         self._provided = {}
-
-        # Create ``_v_lookup`` object to perform lookup.  We make this a
-        # separate object to to make it easier to implement just the
-        # lookup functionality in C.  This object keeps track of cache
-        # invalidation data in two kinds of registries.
-
-        #   Invalidating registries have caches that are invalidated
-        #     when they or their base registies change.  An invalidating
-        #     registry can only have invalidating registries as bases.
-        #     See LookupBasePy below for the pertinent logic.
-
-        #   Verifying registies can't rely on getting invalidation messages,
-        #     so have to check the generations of base registries to determine
-        #     if their cache data are current.  See VerifyingBasePy below
-        #     for the pertinent object.
         self._createLookup()
-
-        # Setting the bases causes the registries described above
-        # to be initialized (self._setBases -> self.changed ->
-        # self._v_lookup.changed).
-
         self.__bases__ = bases
 
     def _setBases(self, bases):
@@ -176,11 +132,6 @@ class BaseAdapterRegistry(object):
 
         del components[name]
         if not components:
-            # Clean out empty containers, since we don't want our keys
-            # to reference global objects (interfaces) unnecessarily.
-            # This is often a problem when an interface is slated for
-            # removal; a hold-over entry in the registry can make it
-            # difficult to remove such interfaces.
             for comp, k in reversed(lookups):
                 d = comp[k]
                 if d:
@@ -260,12 +211,6 @@ class BaseAdapterRegistry(object):
         if new:
             components[u''] = new
         else:
-            # Instead of setting components[u''] = new, we clean out
-            # empty containers, since we don't want our keys to
-            # reference global objects (interfaces) unnecessarily.  This
-            # is often a problem when an interface is slated for
-            # removal; a hold-over entry in the registry can make it
-            # difficult to remove such interfaces.
             if u'' in components:
                 del components[u'']
             for comp, k in reversed(lookups):
@@ -446,29 +391,6 @@ class AdapterLookupBase(object):
             if r is not None:
                 r.unsubscribe(self)
         self._required.clear()
-
-
-    # Extendors
-    # ---------
-
-    # When given an target interface for an adapter lookup, we need to consider
-    # adapters for interfaces that extend the target interface.  This is
-    # what the extendors dictionary is about.  It tells us all of the
-    # interfaces that extend an interface for which there are adapters
-    # registered.
-
-    # We could separate this by order and name, thus reducing the
-    # number of provided interfaces to search at run time.  The tradeoff,
-    # however, is that we have to store more information.  For example,
-    # is the same interface is provided for multiple names and if the
-    # interface extends many interfaces, we'll have to keep track of
-    # a fair bit of information for each name.  It's better to
-    # be space efficient here and be time efficient in the cache
-    # implementation.
-
-    # TODO: add invalidation when a provided interface changes, in case
-    # the interface's __iro__ has changed.  This is unlikely enough that
-    # we'll take our chances for now.
 
     def init_extendors(self):
         self._extendors = {}

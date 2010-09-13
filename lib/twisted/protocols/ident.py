@@ -1,74 +1,30 @@
 # -*- test-case-name: lib.twisted.test.test_ident -*-
 # Copyright (c) 2001-2010 Twisted Matrix Laboratories.
 # See LICENSE for details.
-
-"""
-Ident protocol implementation.
-
-@author: Jean-Paul Calderone
-"""
-
 from __future__ import generators
-
 import struct
-
 from lib.twisted.internet import defer
 from lib.twisted.protocols import basic
 from lib.twisted.python import log, failure
-
 _MIN_PORT = 1
 _MAX_PORT = 2 ** 16 - 1
 
 class IdentError(Exception):
-    """
-    Can't determine connection owner; reason unknown.
-    """
-
     identDescription = 'UNKNOWN-ERROR'
 
     def __str__(self):
         return self.identDescription
 
-
 class NoUser(IdentError):
-    """
-    The connection specified by the port pair is not currently in use or
-    currently not owned by an identifiable entity.
-    """
     identDescription = 'NO-USER'
 
-
 class InvalidPort(IdentError):
-    """
-    Either the local or foreign port was improperly specified. This should
-    be returned if either or both of the port ids were out of range (TCP
-    port numbers are from 1-65535), negative integers, reals or in any
-    fashion not recognized as a non-negative integer.
-    """
     identDescription = 'INVALID-PORT'
 
-
 class HiddenUser(IdentError):
-    """
-    The server was able to identify the user of this port, but the
-    information was not returned at the request of the user.
-    """
     identDescription = 'HIDDEN-USER'
 
-
 class IdentServer(basic.LineOnlyReceiver):
-    """
-    The Identification Protocol (a.k.a., "ident", a.k.a., "the Ident
-    Protocol") provides a means to determine the identity of a user of a
-    particular TCP connection. Given a TCP port number pair, it returns a
-    character string which identifies the owner of that connection on the
-    server's system.
-
-    Server authors should subclass this class and override the lookup method.
-    The default implementation returns an UNKNOWN-ERROR response for every
-    query.
-    """
-
     def lineReceived(self, line):
         parts = line.split(',')
         if len(parts) != 2:
@@ -87,22 +43,13 @@ class IdentServer(basic.LineOnlyReceiver):
     def invalidQuery(self):
         self.transport.loseConnection()
 
-
     def validQuery(self, portOnServer, portOnClient):
-        """
-        Called when a valid query is received to look up and deliver the
-        response.
-
-        @param portOnServer: The server port from the query.
-        @param portOnClient: The client port from the query.
-        """
         serverAddr = self.transport.getHost().host, portOnServer
         clientAddr = self.transport.getPeer().host, portOnClient
         defer.maybeDeferred(self.lookup, serverAddr, clientAddr
             ).addCallback(self._cbLookup, portOnServer, portOnClient
             ).addErrback(self._ebLookup, portOnServer, portOnClient
             )
-
 
     def _cbLookup(self, (sysName, userId), sport, cport):
         self.sendLine('%d, %d : USERID : %s : %s' % (sport, cport, sysName, userId))
@@ -115,33 +62,9 @@ class IdentServer(basic.LineOnlyReceiver):
             self.sendLine('%d, %d : ERROR : %s' % (sport, cport, IdentError(failure.value)))
 
     def lookup(self, serverAddress, clientAddress):
-        """Lookup user information about the specified address pair.
-
-        Return value should be a two-tuple of system name and username.
-        Acceptable values for the system name may be found online at::
-
-            U{http://www.iana.org/assignments/operating-system-names}
-
-        This method may also raise any IdentError subclass (or IdentError
-        itself) to indicate user information will not be provided for the
-        given query.
-
-        A Deferred may also be returned.
-
-        @param serverAddress: A two-tuple representing the server endpoint
-        of the address being queried.  The first element is a string holding
-        a dotted-quad IP address.  The second element is an integer
-        representing the port.
-
-        @param clientAddress: Like L{serverAddress}, but represents the
-        client endpoint of the address being queried.
-        """
         raise IdentError()
 
 class ProcServerMixin:
-    """Implements lookup() to grab entries for responses from /proc/net/tcp
-    """
-
     SYSTEM_NAME = 'LINUX'
 
     try:
@@ -180,20 +103,15 @@ class ProcServerMixin:
             localAddr, remoteAddr, uid = self.parseLine(ent)
             if remoteAddr == clientAddress and localAddr[1] == serverAddress[1]:
                 return (self.SYSTEM_NAME, self.getUsername(uid))
-
         raise NoUser()
 
-
 class IdentClient(basic.LineOnlyReceiver):
-
     errorTypes = (IdentError, NoUser, InvalidPort, HiddenUser)
 
     def __init__(self):
         self.queries = []
 
     def lookup(self, portOnServer, portOnClient):
-        """Lookup user information about the specified address pair.
-        """
         self.queries.append((defer.Deferred(), portOnServer, portOnClient))
         if len(self.queries) > 1:
             return self.queries[-1][0]

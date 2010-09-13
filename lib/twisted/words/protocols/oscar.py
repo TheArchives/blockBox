@@ -1,21 +1,12 @@
 # -*- test-case-name: lib.twisted.words.test -*-
 # Copyright (c) 2001-2008 Twisted Matrix Laboratories.
 # See LICENSE for details.
-
-
-"""
-An implementation of the OSCAR protocol, which AIM and ICQ use to communcate.
-
-Maintainer: Paul Swartz
-"""
-
 import struct
 import string
 import socket
 import random
 import types
 import re
-
 from lib.twisted.internet import reactor, defer, protocol
 from lib.twisted.python import log
 from lib.twisted.python.hashlib import md5
@@ -76,7 +67,7 @@ def encryptPasswordICQ(password):
 def dehtml(text):
     text=string.replace(text,"<br>","\n")
     text=string.replace(text,"<BR>","\n")
-    text=string.replace(text,"<Br>","\n") # XXX make this a regexp
+    text=string.replace(text,"<Br>","\n")
     text=string.replace(text,"<bR>","\n")
     text=re.sub('<.*?>','',text)
     text=string.replace(text,'&gt;','>')
@@ -174,7 +165,6 @@ class OSCARUser:
             s=s+', '+', '.join(o)
         s=s+'>'
         return s
-
 
 class SSIGroup:
     def __init__(self, name, tlvs = {}):
@@ -298,9 +288,6 @@ class OscarConnection(protocol.Protocol):
             self.stopKeepAliveID = None
 
     def disconnect(self):
-        """
-        send the disconnect flap, and sever the connection
-        """
         self.sendFLAP('', 0x04)
         def f(reason): pass
         self.connectionLost = f
@@ -318,9 +305,6 @@ class SNACBased(OscarConnection):
         self.requestCallbacks={} # request id:Deferred
 
     def sendSNAC(self,fam,sub,data,flags=[0,0]):
-        """
-        send a snac and wait for the response by returning a Deferred.
-        """
         reqid=self.lastID
         self.lastID=reqid+1
         d = defer.Deferred()
@@ -338,9 +322,6 @@ class SNACBased(OscarConnection):
         log.msg('data: %s' % repr(data))
 
     def sendSNACnr(self,fam,sub,data,flags=[0,0]):
-        """
-        send a snac, but don't bother adding a deferred, we don't care.
-        """
         self.sendFLAP(SNAC(fam,sub,0x10000*fam+sub,data))
 
     def oscar_(self,data):
@@ -368,7 +349,6 @@ class SNACBased(OscarConnection):
         log.msg("unknown for %s" % self)
         log.msg(snac)
 
-
     def oscar_01_03(self, snac):
         numFamilies = len(snac[3])/2
         self.supportedFamilies = struct.unpack("!"+str(numFamilies)+'H', snac[3])
@@ -379,22 +359,12 @@ class SNACBased(OscarConnection):
         self.sendSNACnr(0x01,0x17, d)
 
     def oscar_01_0A(self,snac):
-        """
-        change of rate information.
-        """
-        # this can be parsed, maybe we can even work it in
         pass
 
     def oscar_01_18(self,snac):
-        """
-        host versions, in the same format as we sent
-        """
         self.sendSNACnr(0x01,0x06,"") #pass
 
     def clientReady(self):
-        """
-        called when the client is ready to be online
-        """
         d = ''
         for fam in self.supportedFamilies:
             if self.snacFamilies.has_key(fam):
@@ -446,10 +416,6 @@ class BOSConnection(SNACBased):
             return u, rest
 
     def oscar_01_05(self, snac, d = None):
-        """
-        data for a new service connection
-        d might be a deferred to be called back when the service is ready
-        """
         tlvs = readTLVs(snac[3][2:])
         service = struct.unpack('!H',tlvs[0x0d])[0]
         ip = tlvs[5]
@@ -462,9 +428,6 @@ class BOSConnection(SNACBased):
         #self.services[service] = c
 
     def oscar_01_07(self,snac):
-        """
-        rate paramaters
-        """
         self.sendSNACnr(0x01,0x08,"\x00\x01\x00\x02\x00\x03\x00\x04\x00\x05") # ack
         self.initDone()
         self.sendSNACnr(0x13,0x02,'') # SSI rights info
@@ -474,9 +437,6 @@ class BOSConnection(SNACBased):
         self.sendSNACnr(0x09,0x02,'') # BOS rights
 
     def oscar_01_10(self,snac):
-        """
-        we've been warned
-        """
         skip = struct.unpack('!H',snac[3][:2])[0]
         newLevel = struct.unpack('!H',snac[3][2+skip:4+skip])[0]/10
         if len(snac[3])>4+skip:
@@ -486,36 +446,21 @@ class BOSConnection(SNACBased):
         self.receiveWarning(newLevel, by)
 
     def oscar_01_13(self,snac):
-        """
-        MOTD
-        """
         pass # we don't care for now
 
     def oscar_02_03(self, snac):
-        """
-        location rights response
-        """
         tlvs = readTLVs(snac[3])
         self.maxProfileLength = tlvs[1]
 
     def oscar_03_03(self, snac):
-        """
-        buddy list rights response
-        """
         tlvs = readTLVs(snac[3])
         self.maxBuddies = tlvs[1]
         self.maxWatchers = tlvs[2]
 
     def oscar_03_0B(self, snac):
-        """
-        buddy update
-        """
         self.updateBuddy(self.parseUser(snac[3]))
 
     def oscar_03_0C(self, snac):
-        """
-        buddy offline
-        """
         self.offlineBuddy(self.parseUser(snac[3]))
 
 #    def oscar_04_03(self, snac):
@@ -527,9 +472,6 @@ class BOSConnection(SNACBased):
         self.sendSNACnr(0x04,0x02,'\x00\x00\x00\x00\x00\x0b\x1f@\x03\xe7\x03\xe7\x00\x00\x00\x00') # IM rights
 
     def oscar_04_07(self, snac):
-        """
-        ICBM message (instant message)
-        """
         data = snac[3]
         cookie, data = data[:8], data[8:]
         channel = struct.unpack('!H',data[:2])[0]
@@ -579,10 +521,6 @@ class BOSConnection(SNACBased):
                 else:
                     log.msg('unknown TLV for incoming IM, %04x, %s' % (k,repr(v)))
 
-#  unknown tlv for user SNewdorf
-#  t: 29
-#  v: '\x00\x00\x00\x05\x02\x01\xd2\x04r\x00\x01\x01\x10/\x8c\x8b\x8a\x1e\x94*\xbc\x80}\x8d\xc4;\x1dEM'
-# XXX what is this?
             self.receiveMessage(user, multiparts, flags)
         elif channel == 2: # rondevouz
             status = struct.unpack('!H',tlvs[5][:2])[0]
@@ -618,31 +556,18 @@ class BOSConnection(SNACBased):
         apply(self.receiveChatInvite, (user,message)+info)
 
     def oscar_09_03(self, snac):
-        """
-        BOS rights response
-        """
         tlvs = readTLVs(snac[3])
         self.maxPermitList = tlvs[1]
         self.maxDenyList = tlvs[2]
 
     def oscar_0B_02(self, snac):
-        """
-        stats reporting interval
-        """
         self.reportingInterval = struct.unpack('!H',snac[3][:2])[0]
 
     def oscar_13_03(self, snac):
-        """
-        SSI rights response
-        """
         #tlvs = readTLVs(snac[3])
         pass # we don't know how to parse this
 
-    # methods to be called by the client, and their support methods
     def requestSelfInfo(self):
-        """
-        ask for the OSCARUser for ourselves
-        """
         d = defer.Deferred()
         self.sendSNAC(0x01, 0x0E, '').addCallback(self._cbRequestSelfInfo, d)
         return d
@@ -651,20 +576,12 @@ class BOSConnection(SNACBased):
         d.callback(self.parseUser(snac[5]))
 
     def initSSI(self):
-        """
-        this sends the rate request for family 0x13 (Server Side Information)
-        so we can then use it
-        """
         return self.sendSNAC(0x13, 0x02, '').addCallback(self._cbInitSSI)
 
     def _cbInitSSI(self, snac, d):
         return {} # don't even bother parsing this
 
     def requestSSI(self, timestamp = 0, revision = 0):
-        """
-        request the server side information
-        if the deferred gets None, it means the SSI is the same
-        """
         return self.sendSNAC(0x13, 0x05,
             struct.pack('!LH',timestamp,revision)).addCallback(self._cbRequestSSI)
 
@@ -717,22 +634,12 @@ class BOSConnection(SNACBased):
         return (groups[0].users,permit,deny,permitMode,visibility,timestamp,revision)
 
     def activateSSI(self):
-        """
-        active the data stored on the server (use buddy list, permit deny settings, etc.)
-        """
         self.sendSNACnr(0x13,0x07,'')
 
     def startModifySSI(self):
-        """
-        tell the OSCAR server to be on the lookout for SSI modifications
-        """
         self.sendSNACnr(0x13,0x11,'')
 
     def addItemSSI(self, item, groupID = None, buddyID = None):
-        """
-        add an item to the SSI server.  if buddyID == 0, then this should be a group.
-        this gets a callback when it's finished, but you can probably ignore it.
-        """
         if groupID is None:
             if isinstance(item, SSIGroup):
                 groupID = 0
@@ -766,10 +673,6 @@ class BOSConnection(SNACBased):
         self.sendSNACnr(0x13,0x12,'')
 
     def setProfile(self, profile):
-        """
-        set the profile.
-        send None to not set a profile (different from '' for a blank one)
-        """
         self.profile = profile
         tlvs = ''
         if self.profile is not None:
@@ -780,29 +683,16 @@ class BOSConnection(SNACBased):
         self.sendSNACnr(0x02, 0x04, tlvs)
 
     def setAway(self, away = None):
-        """
-        set the away message, or return (if away == None)
-        """
         self.awayMessage = away
         tlvs = TLV(3,'text/aolrtf; charset="us-ascii"') + \
                TLV(4,away or '')
         self.sendSNACnr(0x02, 0x04, tlvs)
 
     def setIdleTime(self, idleTime):
-        """
-        set our idle time.  don't call more than once with a non-0 idle time.
-        """
         self.sendSNACnr(0x01, 0x11, struct.pack('!L',idleTime))
 
-    def sendMessage(self, user, message, wantAck = 0, autoResponse = 0, offline = 0 ):  \
+    def sendMessage(self, user, message, wantAck = 0, autoResponse = 0, offline = 0 ):
                     #haveIcon = 0, ):
-        """
-        send a message to user (not an OSCARUseR).
-        message can be a string, or a multipart tuple.
-        if wantAck, we return a Deferred that gets a callback when the message is sent.
-        if autoResponse, this message is an autoResponse, as if from an away message.
-        if offline, this is an offline message (ICQ only, I think)
-        """
         data = ''.join([chr(random.randrange(0, 127)) for i in range(8)]) # cookie
         data = data + '\x00\x01' + chr(len(user)) + user
         if not type(message) in (types.TupleType, types.ListType):
@@ -842,11 +732,6 @@ class BOSConnection(SNACBased):
         return user, message
 
     def connectService(self, service, wantCallback = 0, extraData = ''):
-        """
-        connect to another service
-        if wantCallback, we return a Deferred that gets called back when the service is online.
-        if extraData, append that to our request.
-        """
         if wantCallback:
             d = defer.Deferred()
             self.sendSNAC(0x01,0x04,struct.pack('!H',service) + extraData).addCallback(self._cbConnectService, d)
@@ -858,9 +743,6 @@ class BOSConnection(SNACBased):
         self.oscar_01_05(snac[2:], d)
 
     def createChat(self, shortName):
-        """
-        create a chat room
-        """
         if self.services.has_key(SERVICE_CHATNAV):
             return self.services[SERVICE_CHATNAV].createChat(shortName)
         else:
@@ -868,9 +750,6 @@ class BOSConnection(SNACBased):
 
 
     def joinChat(self, exchange, fullName, instance):
-        """
-        join a chat room
-        """
         #d = defer.Deferred()
         return self.connectService(0x0e, 1, TLV(0x01, struct.pack('!HB',exchange, len(fullName)) + fullName +
                           struct.pack('!H', instance))).addCallback(self._cbJoinChat) #, d)
@@ -905,70 +784,37 @@ class BOSConnection(SNACBased):
         return tlvs.get(0x04,None) # return None if there is no away message
 
     #def acceptSendFileRequest(self,
-
-    # methods to be overriden by the client
     def initDone(self):
-        """
-        called when we get the rate information, which means we should do other init. stuff.
-        """
         log.msg('%s initDone' % self)
         pass
 
     def updateBuddy(self, user):
-        """
-        called when a buddy changes status, with the OSCARUser for that buddy.
-        """
         log.msg('%s updateBuddy %s' % (self, user))
         pass
 
     def offlineBuddy(self, user):
-        """
-        called when a buddy goes offline
-        """
         log.msg('%s offlineBuddy %s' % (self, user))
         pass
 
     def receiveMessage(self, user, multiparts, flags):
-        """
-        called when someone sends us a message
-        """
         pass
 
     def receiveWarning(self, newLevel, user):
-        """
-        called when someone warns us.
-        user is either None (if it was anonymous) or an OSCARUser
-        """
         pass
 
     def receiveChatInvite(self, user, message, exchange, fullName, instance, shortName, inviteTime):
-        """
-        called when someone invites us to a chat room
-        """
         pass
 
     def chatReceiveMessage(self, chat, user, message):
-        """
-        called when someone in a chatroom sends us a message in the chat
-        """
         pass
 
     def chatMemberJoined(self, chat, member):
-        """
-        called when a member joins the chat
-        """
         pass
 
     def chatMemberLeft(self, chat, member):
-        """
-        called when a member leaves the chat
-        """
         pass
 
     def receiveSendFileRequest(self, user, file, description, cookie):
-        """
-        called when someone tries to send a file to us
-        """
         pass
 
 class OSCARService(SNACBased):
@@ -995,7 +841,6 @@ class ChatNavService(OSCARService):
         0x0d:(1, 0x0010, 0x059b)
     }
     def oscar_01_07(self, snac):
-        # rate info
         self.sendSNACnr(0x01, 0x08, '\000\001\000\002\000\003\000\004\000\005')
         self.sendSNACnr(0x0d, 0x02, '')
 

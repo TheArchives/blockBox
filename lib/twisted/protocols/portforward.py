@@ -1,20 +1,12 @@
 
 # Copyright (c) 2001-2004 Twisted Matrix Laboratories.
 # See LICENSE for details.
-
-"""
-A simple port forwarder.
-"""
-
-# Twisted imports
 from lib.twisted.internet import protocol
 from lib.twisted.python import log
 
 class Proxy(protocol.Protocol):
     noisy = True
-
     peer = None
-
     def setPeer(self, peer):
         self.peer = peer
 
@@ -31,11 +23,9 @@ class Proxy(protocol.Protocol):
 class ProxyClient(Proxy):
     def connectionMade(self):
         self.peer.setPeer(self)
-        # We're connected, everybody can read to their hearts content.
         self.peer.transport.resumeProducing()
 
 class ProxyClientFactory(protocol.ClientFactory):
-
     protocol = ProxyClient
 
     def setServer(self, server):
@@ -49,26 +39,17 @@ class ProxyClientFactory(protocol.ClientFactory):
     def clientConnectionFailed(self, connector, reason):
         self.server.transport.loseConnection()
 
-
 class ProxyServer(Proxy):
-
     clientProtocolFactory = ProxyClientFactory
 
     def connectionMade(self):
-        # Don't read anything from the connecting client until we have
-        # somewhere to send it to.
         self.transport.pauseProducing()
-
         client = self.clientProtocolFactory()
         client.setServer(self)
-
         from lib.twisted.internet import reactor
         reactor.connectTCP(self.factory.host, self.factory.port, client)
 
-
 class ProxyFactory(protocol.Factory):
-    """Factory for port forwarder."""
-
     protocol = ProxyServer
 
     def __init__(self, host, port):

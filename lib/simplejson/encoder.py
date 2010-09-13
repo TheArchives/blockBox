@@ -1,5 +1,3 @@
-"""Implementation of JSONEncoder
-"""
 import re
 from decimal import Decimal
 
@@ -71,89 +69,12 @@ encode_basestring_ascii = (
     c_encode_basestring_ascii or py_encode_basestring_ascii)
 
 class JSONEncoder(object):
-    """Extensible JSON <http://json.org> encoder for Python data structures.
-
-    Supports the following objects and types by default:
-
-    +-------------------+---------------+
-    | Python            | JSON          |
-    +===================+===============+
-    | dict              | object        |
-    +-------------------+---------------+
-    | list, tuple       | array         |
-    +-------------------+---------------+
-    | str, unicode      | string        |
-    +-------------------+---------------+
-    | int, long, float  | number        |
-    +-------------------+---------------+
-    | True              | true          |
-    +-------------------+---------------+
-    | False             | false         |
-    +-------------------+---------------+
-    | None              | null          |
-    +-------------------+---------------+
-
-    To extend this to recognize other objects, subclass and implement a
-    ``.default()`` method with another method that returns a serializable
-    object for ``o`` if possible, otherwise it should call the superclass
-    implementation (to raise ``TypeError``).
-
-    """
     item_separator = ', '
     key_separator = ': '
     def __init__(self, skipkeys=False, ensure_ascii=True,
             check_circular=True, allow_nan=True, sort_keys=False,
             indent=None, separators=None, encoding='utf-8', default=None,
             use_decimal=False):
-        """Constructor for JSONEncoder, with sensible defaults.
-
-        If skipkeys is false, then it is a TypeError to attempt
-        encoding of keys that are not str, int, long, float or None.  If
-        skipkeys is True, such items are simply skipped.
-
-        If ensure_ascii is true, the output is guaranteed to be str
-        objects with all incoming unicode characters escaped.  If
-        ensure_ascii is false, the output will be unicode object.
-
-        If check_circular is true, then lists, dicts, and custom encoded
-        objects will be checked for circular references during encoding to
-        prevent an infinite recursion (which would cause an OverflowError).
-        Otherwise, no such check takes place.
-
-        If allow_nan is true, then NaN, Infinity, and -Infinity will be
-        encoded as such.  This behavior is not JSON specification compliant,
-        but is consistent with most JavaScript based encoders and decoders.
-        Otherwise, it will be a ValueError to encode such floats.
-
-        If sort_keys is true, then the output of dictionaries will be
-        sorted by key; this is useful for regression tests to ensure
-        that JSON serializations can be compared on a day-to-day basis.
-
-        If indent is a string, then JSON array elements and object members
-        will be pretty-printed with a newline followed by that string repeated
-        for each level of nesting. ``None`` (the default) selects the most compact
-        representation without any newlines. For backwards compatibility with
-        versions of simplejson earlier than 2.1.0, an integer is also accepted
-        and is converted to a string with that many spaces.
-
-        If specified, separators should be a (item_separator, key_separator)
-        tuple.  The default is (', ', ': ').  To get the most compact JSON
-        representation you should specify (',', ':') to eliminate whitespace.
-
-        If specified, default is a function that gets called for objects
-        that can't otherwise be serialized.  It should return a JSON encodable
-        version of the object or raise a ``TypeError``.
-
-        If encoding is not None, then all input strings will be
-        transformed into unicode using that encoding prior to JSON-encoding.
-        The default is UTF-8.
-        
-        If use_decimal is true (not the default), ``decimal.Decimal`` will
-        be supported directly by the encoder. For the inverse, decode JSON
-        with ``parse_float=decimal.Decimal``.
-
-        """
-
         self.skipkeys = skipkeys
         self.ensure_ascii = ensure_ascii
         self.check_circular = check_circular
@@ -170,33 +91,9 @@ class JSONEncoder(object):
         self.encoding = encoding
 
     def default(self, o):
-        """Implement this method in a subclass such that it returns
-        a serializable object for ``o``, or calls the base implementation
-        (to raise a ``TypeError``).
-
-        For example, to support arbitrary iterators, you could
-        implement default like this::
-
-            def default(self, o):
-                try:
-                    iterable = iter(o)
-                except TypeError:
-                    pass
-                else:
-                    return list(iterable)
-                return JSONEncoder.default(self, o)
-
-        """
         raise TypeError(repr(o) + " is not JSON serializable")
 
     def encode(self, o):
-        """Return a JSON string representation of a Python data structure.
-
-        >>> from simplejson import JSONEncoder
-        >>> JSONEncoder().encode({"foo": ["bar", "baz"]})
-        '{"foo": ["bar", "baz"]}'
-
-        """
         # This is for extremely simple cases and benchmarks.
         if isinstance(o, basestring):
             if isinstance(o, str):
@@ -220,15 +117,6 @@ class JSONEncoder(object):
             return u''.join(chunks)
 
     def iterencode(self, o, _one_shot=False):
-        """Encode the given object and yield each string
-        representation as available.
-
-        For example::
-
-            for chunk in JSONEncoder().iterencode(bigobject):
-                mysocket.write(chunk)
-
-        """
         if self.check_circular:
             markers = {}
         else:
@@ -285,13 +173,6 @@ class JSONEncoder(object):
 
 
 class JSONEncoderForHTML(JSONEncoder):
-    """An encoder that produces JSON safe to embed in HTML.
-
-    To embed JSON content in, say, a script tag on a web page, the
-    characters &, < and > should be escaped. They cannot be escaped
-    with the usual entities (e.g. &amp;) because they are not expanded
-    within <script> tags.
-    """
 
     def encode(self, o):
         # Override JSONEncoder.encode because it has hacks for

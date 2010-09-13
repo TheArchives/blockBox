@@ -1,24 +1,9 @@
 # Copyright (c) 2001-2009 Twisted Matrix Laboratories.
 # See LICENSE for details.
-
-"""
-Chop up shoutcast stream into MP3s and metadata, if available.
-"""
-
 from lib.twisted.web import http
 from twisted import copyright
 
-
 class ShoutcastClient(http.HTTPClient):
-    """
-    Shoutcast HTTP stream.
-
-    Modes can be 'length', 'meta' and 'mp3'.
-
-    See U{http://www.smackfu.com/stuff/programming/shoutcast.html}
-    for details on the protocol.
-    """
-
     userAgent = "Twisted Shoutcast client " + copyright.version
 
     def __init__(self, path="/"):
@@ -35,7 +20,6 @@ class ShoutcastClient(http.HTTPClient):
         self.endHeaders()
         
     def lineReceived(self, line):
-        # fix shoutcast crappiness
         if not self.firstLine and line:
             if len(line.split(": ", 1)) == 1:
                 line = line.replace(":", ": ", 1)
@@ -47,13 +31,9 @@ class ShoutcastClient(http.HTTPClient):
             self.got_metadata = True
 
     def handleEndHeaders(self):
-        # Lets check if we got metadata, and set the
-        # appropriate handleResponsePart method.
         if self.got_metadata:
-            # if we have metadata, then it has to be parsed out of the data stream
             self.handleResponsePart = self.handleResponsePart_with_metadata
         else:
-            # otherwise, all the data is MP3 data
             self.handleResponsePart = self.gotMP3Data
 
     def handleResponsePart_with_metadata(self, data):
@@ -99,13 +79,7 @@ class ShoutcastClient(http.HTTPClient):
         return meta
     
     def gotMetaData(self, metadata):
-        """Called with a list of (key, value) pairs of metadata,
-        if metadata is available on the server.
-
-        Will only be called on non-empty metadata.
-        """
         raise NotImplementedError, "implement in subclass"
     
     def gotMP3Data(self, data):
-        """Called with chunk of MP3 data."""
         raise NotImplementedError, "implement in subclass"

@@ -11,45 +11,6 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""Interfaces
-
-This package implements the Python "scarecrow" proposal.
-
-The package exports two objects, `Interface` and `Attribute` directly. It also
-exports several helper methods. Interface is used to create an interface with
-a class statement, as in:
-
-  class IMyInterface(Interface):
-    '''Interface documentation
-    '''
-
-    def meth(arg1, arg2):
-        '''Documentation for meth
-        '''
-
-    # Note that there is no self argument
-
-To find out what you can do with interfaces, see the interface
-interface, `IInterface` in the `interfaces` module.
-
-The package has several public modules:
-
-  o `declarations` provides utilities to declare interfaces on objects. It
-    also provides a wide range of helpful utilities that aid in managing
-    declared interfaces. Most of its public names are however imported here.
-
-  o `document` has a utility for documenting an interface as structured text.
-
-  o `exceptions` has the interface-defined exceptions
-
-  o `interfaces` contains a list of all public interfaces for this package.
-
-  o `verify` has utilities for verifying implementations of interfaces.
-
-See the module doc strings for more information.
-
-$Id: __init__.py 110699 2010-04-09 08:16:17Z regebro $
-"""
 __docformat__ = 'restructuredtext'
 
 from lib.zope.interface.interface import Interface, _wire

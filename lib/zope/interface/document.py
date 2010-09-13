@@ -11,19 +11,9 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-""" Pretty-Print an Interface object as structured text (Yum)
-
-This module provides a function, asStructuredText, for rendering an
-interface as structured text.
-
-$Id: document.py 110536 2010-04-06 02:59:44Z tseaver $
-"""
 import lib.zope.interface
 
 def asStructuredText(I, munge=0):
-    """ Output structured text format.  Note, this will whack any existing
-    'structured' format of the text.  """
-
     r = [I.getName()]
     outp = r.append
     level = 1
@@ -68,8 +58,6 @@ def asStructuredText(I, munge=0):
 
 
 def _trim_doc_string(text):
-    """ Trims a doc string to make it format
-    correctly with structured text. """
 
     lines = text.replace('\r\n', '\n').split('\n')
     nlines = [lines.pop(0)]
@@ -83,7 +71,6 @@ def _trim_doc_string(text):
 
 
 def _justify_and_indent(text, level, munge=0, width=72):
-    """ indent and justify text, rejustify (munge) if specified """
 
     indent = " " * level
 

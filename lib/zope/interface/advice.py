@@ -11,21 +11,6 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""Class advice.
-
-This module was adapted from 'protocols.advice', part of the Python
-Enterprise Application Kit (PEAK).  Please notify the PEAK authors
-(pje@telecommunity.com and tsarna@sarna.org) if bugs are found or
-Zope-specific changes are required, so that the PEAK version of this module
-can be kept in sync.
-
-PEAK is a Python application framework that interoperates with (but does
-not require) Zope 3 and Twisted.  It provides tools for manipulating UML
-models, object-relational persistence, aspect-oriented programming, and more.
-Visit the PEAK home page at http://peak.telecommunity.com for more information.
-
-$Id: advice.py 110699 2010-04-09 08:16:17Z regebro $
-"""
 
 from types import FunctionType
 try:
@@ -37,10 +22,6 @@ except ImportError:
 import sys
 
 def getFrameInfo(frame):
-    """Return (kind,module,locals,globals) for a frame
-
-    'kind' is one of "exec", "module", "class", "function call", or "unknown".
-    """
 
     f_locals = frame.f_locals
     f_globals = frame.f_globals
@@ -73,39 +54,6 @@ def getFrameInfo(frame):
 
 
 def addClassAdvisor(callback, depth=2):
-    """Set up 'callback' to be passed the containing class upon creation
-
-    This function is designed to be called by an "advising" function executed
-    in a class suite.  The "advising" function supplies a callback that it
-    wishes to have executed when the containing class is created.  The
-    callback will be given one argument: the newly created containing class.
-    The return value of the callback will be used in place of the class, so
-    the callback should return the input if it does not wish to replace the
-    class.
-
-    The optional 'depth' argument to this function determines the number of
-    frames between this function and the targeted class suite.  'depth'
-    defaults to 2, since this skips this function's frame and one calling
-    function frame.  If you use this function from a function called directly
-    in the class suite, the default will be correct, otherwise you will need
-    to determine the correct depth yourself.
-
-    This function works by installing a special class factory function in
-    place of the '__metaclass__' of the containing class.  Therefore, only
-    callbacks *after* the last '__metaclass__' assignment in the containing
-    class will be executed.  Be sure that classes using "advising" functions
-    declare any '__metaclass__' *first*, to ensure all callbacks are run."""
-
-    frame = sys._getframe(depth)
-    kind, module, caller_locals, caller_globals = getFrameInfo(frame)
-
-    # This causes a problem when zope interfaces are used from doctest.
-    # In these cases, kind == "exec".
-    #
-    #if kind != "class":
-    #    raise SyntaxError(
-    #        "Advice must be in the body of a class statement"
-    #    )
 
     previousMetaclass = caller_locals.get('__metaclass__')
     if __python3:
@@ -127,9 +75,6 @@ def addClassAdvisor(callback, depth=2):
                 meta = defaultMetaclass
 
         elif isClassAdvisor(previousMetaclass):
-            # special case: we can't compute the "true" metaclass here,
-            # so we need to invoke the previous metaclass and let it
-            # figure it out for us (and apply its own advice in the process)
             meta = previousMetaclass
 
         else:

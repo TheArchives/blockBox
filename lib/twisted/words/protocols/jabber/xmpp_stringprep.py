@@ -2,10 +2,8 @@
 #
 # Copyright (c) 2001-2005 Twisted Matrix Laboratories.
 # See LICENSE for details.
-
 import sys, warnings
 from lib.zope.interface import Interface, implements
-
 if sys.version_info < (2,3,2):
     import re
 
@@ -23,37 +21,27 @@ if sys.version_info < (2,3,2):
                   "incorrect protocol-level behavior.  It is strongly "
                   "recommended you upgrade to Python 2.3.2 or newer if you "
                   "intend to use Twisted's Jabber support.")
-
 else:
     import stringprep
     import unicodedata
     from encodings import idna
-
     crippled = False
 
 del sys, warnings
 
 class ILookupTable(Interface):
-    """ Interface for character lookup classes. """
-
     def lookup(c):
-        """ Return whether character is in this table. """
 
 class IMappingTable(Interface):
-    """ Interface for character mapping classes. """
-
     def map(c):
-        """ Return mapping for character. """
 
 class LookupTableFromFunction:
-
     implements(ILookupTable)
 
     def __init__(self, in_table_function):
         self.lookup = in_table_function
 
 class LookupTable:
-
     implements(ILookupTable)
 
     def __init__(self, table):
@@ -63,14 +51,12 @@ class LookupTable:
         return c in self._table
 
 class MappingTableFromFunction:
-
     implements(IMappingTable)
 
     def __init__(self, map_table_function):
         self.map = map_table_function
 
 class EmptyMappingTable:
-    
     implements(IMappingTable)
 
     def __init__(self, in_table_function):
@@ -146,30 +132,7 @@ class Profile:
                                     stringprep.in_table_d1(string[-1])):
             raise UnicodeError, "Violation of BIDI Requirement 3"
 
-
 class NamePrep:
-    """ Implements preparation of internationalized domain names.
-
-    This class implements preparing internationalized domain names using the
-    rules defined in RFC 3491, section 4 (Conversion operations).
-    
-    We do not perform step 4 since we deal with unicode representations of
-    domain names and do not convert from or to ASCII representations using
-    punycode encoding. When such a conversion is needed, the L{idna} standard
-    library provides the C{ToUnicode()} and C{ToASCII()} functions. Note that
-    L{idna} itself assumes UseSTD3ASCIIRules to be false.
-    
-    The following steps are performed by C{prepare()}:
-    
-      - Split the domain name in labels at the dots (RFC 3490, 3.1)
-      - Apply nameprep proper on each label (RFC 3491)
-      - Enforce the restrictions on ASCII characters in host names by
-        assuming STD3ASCIIRules to be true. (STD 3)
-      - Rejoin the labels using the label separator U+002E (full stop).
-    
-    """
-
-    # Prohibited characters.
     prohibiteds = [unichr(n) for n in range(0x00, 0x2c + 1) +
                                        range(0x2e, 0x2f + 1) +
                                        range(0x3a, 0x40 + 1) +
@@ -178,9 +141,7 @@ class NamePrep:
 
     def prepare(self, string):
         result = []
-
         labels = idna.dots.split(string)
-
         if labels and len(labels[-1]) == 0:
             trailing_dot = '.'
             del labels[-1]
@@ -189,7 +150,6 @@ class NamePrep:
 
         for label in labels:
             result.append(self.nameprep(label))
-
         return ".".join(result) + trailing_dot
 
     def check_prohibiteds(self, string):

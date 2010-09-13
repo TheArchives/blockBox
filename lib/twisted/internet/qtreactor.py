@@ -3,9 +3,6 @@
 # See LICENSE for details.
 
 try:
-    # 'import qtreactor' would have imported this file instead of the
-    # top-level qtreactor. __import__ does the right thing
-    # (kids, don't repeat this at home)
     install = __import__('qtreactor').install
 except ImportError:
     from lib.twisted.plugins.twisted_qtstub import errorMessage
