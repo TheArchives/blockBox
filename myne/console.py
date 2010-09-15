@@ -171,7 +171,7 @@ class StdinPlugin(threading.Thread):
 									self.server.queue.put((self, TASK_ACTION, (1, "&d", "Console", " ".join(message[1:]))))
 							elif message[0] == ("srb"):
 								self.server.queue.put((self, TASK_SERVERURGENTMESSAGE, ("[URGENT] Server Reboot - Back in a Flash")))
-							elif message[0] == ("help"):
+                            elif message[0] == ("help"):
 								print "Commands available are: about, boot, ban, cpr, derank, gc, kick, me, new, pll, plr, plu, rank, say, shutdown, spec, srb and u."
 								print "Chats available are: normal, whisper; @<player> <message>, world; !<world name> <message> and staff; #<message>."
 							elif message[0] == ("about"):
