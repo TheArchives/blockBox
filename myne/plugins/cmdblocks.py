@@ -39,6 +39,7 @@ import random
 import time
 import cPickle
 from myne.timer import ResettableTimer
+from myne.persistence import PersistenceEngine as Persist
 
 class CommandPlugin(ProtocolPlugin):
 	
@@ -81,11 +82,6 @@ class CommandPlugin(ProtocolPlugin):
 		self.customvars = dict({})
 		self.cmdinfolines = None
 		self.infoindex = None
-#TODO: Persist, derp
-	def loadBank(self):
-		file = open('balances.dat', 'r')
-		bank_dic = cPickle.load(file)
-		file.close()
 		return bank_dic
 
 	def message(self, message):
@@ -739,12 +735,9 @@ class CommandPlugin(ProtocolPlugin):
 		thiscmd = thiscmd.replace("/scmd", "")
 		thiscmd = thiscmd.replace("$name", self.client.username)
 		thiscmd = thiscmd.replace("$cname", self.client.colouredUsername())
-		#bank = self.loadBank()
 		user = self.client.username.lower()
-		if user in bank:
-			balance = self.client.persist.int("bank", "balance", -1)
-		else:
-			balance = 0
+		with Persist(user) as p:
+			balance = p.int("bank", "balance", 0)
 		thiscmd = thiscmd.replace("$bank", str(balance))
 		thiscmd = thiscmd.replace("$first", str(self.client.username in self.client.factory.lastseen))
 		thiscmd = thiscmd.replace("$server", self.client.factory.server_name)
@@ -894,10 +887,11 @@ class CommandPlugin(ProtocolPlugin):
 				self.client.sendServerMessage("Pay syntax error.")
 				runcmd = False
 			if runcmd:
-				bank = self.loadBank()
 				user = self.client.username.lower()
-			if user in bank:
-				if bank[user] > amount:
+				with Perist(user) as p:
+					balance = p.int("bank", "balance", -1)
+			if balance is not -1:
+				if balance >= amount:
 					self.listeningforpay = True
 					self.client.sendServerMessage("%s is requesting payment of C%s. Pay? [Y/N]" %(target, amount))
 					return
