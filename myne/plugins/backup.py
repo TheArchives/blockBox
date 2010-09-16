@@ -46,7 +46,7 @@ class BackupPlugin(ProtocolPlugin):
 	def commandBackup(self, parts, byuser, overriderank):
 		"/backup worldname - Op\nMakes a backup copy of the map of the map."
 		if len(parts) == 1:
-			parts.append(self.client.world.basename.lstrip("worlds"))
+			parts.append(self.client.world.basename.lstrip("mapdata/worlds"))
 		world_id = parts[1]
 		world_dir = ("mapdata/worlds/%s/" % world_id)
 		if not os.path.exists(world_dir):
