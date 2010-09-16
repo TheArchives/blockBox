@@ -38,8 +38,8 @@ import cookielib
 import re
 from lib.twisted.internet import reactor, protocol
 
-from myne.protocol import MyneServerProtocol, TYPE_FORMATS
-from myne.constants import *
+from blockbox.protocol import MyneServerProtocol, TYPE_FORMATS
+from blockbox.constants import *
 
 class RipClient(MyneServerProtocol):
 	"""Once connected, send a message, then print the result."""

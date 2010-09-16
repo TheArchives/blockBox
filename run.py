@@ -34,11 +34,11 @@ if not sys.version_info[:2] == (2, 6):
 	exit(1)
 
 import logging
-from myne.constants import *
+from blockbox.constants import *
 from logging.handlers import SMTPHandler
 from lib.twisted.internet import reactor
-from myne.server import MyneFactory
-from myne.api import APIFactory
+from blockbox.server import MyneFactory
+from blockbox.api import APIFactory
 
 logging.basicConfig(
 	format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
