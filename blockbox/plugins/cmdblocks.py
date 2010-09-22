@@ -82,6 +82,7 @@ class CommandPlugin(ProtocolPlugin):
 		self.customvars = dict({})
 		self.cmdinfolines = None
 		self.infoindex = None
+		return bank_dic
 
 	def message(self, message):
 		if self.cmdinfolines is not None:
@@ -692,18 +693,18 @@ class CommandPlugin(ProtocolPlugin):
 		
 	@writer_only
 	def commandShowcmdblocks(self, parts, byuser, permissionoverride):
-		"/cmdshow - Builder\nShows all command blocks as yellow, only to you."
-		for offset in self.client.world.commands.keys():
-			x, y, z = self.client.world.get_coords(offset)
-			self.client.sendPacked(TYPE_BLOCKSET, x, y, z, BLOCK_YELLOW)
-		self.client.sendServerMessage("All commands appearing yellow temporarily.")
+	   "/cmdshow - Builder\nShows all command blocks as yellow, only to you."
+	   for offset in self.client.world.commands.keys():
+		   x, y, z = self.client.world.get_coords(offset)
+		   self.client.sendPacked(TYPE_BLOCKSET, x, y, z, BLOCK_YELLOW)
+	   self.client.sendServerMessage("All commands appearing yellow temporarily.")
 	
 	@writer_only
 	@on_off_command
 	def commandcmdinfo(self, onoff, byuser, permissionoverride):
-		"/cmdinfo - Builder\nTells you the commands in a cmdblock"
-		self.cmdinfo = onoff == "on"
-		self.client.sendServerMessage("Command block info is now %s." %onoff)
+	   "/cmdinfo - Builder\nTells you the commands in a cmdblock"
+	   self.cmdinfo = onoff == "on"
+	   self.client.sendServerMessage("Command block info is now %s." %onoff)
 
 
 
