@@ -582,8 +582,10 @@ class MyneServerProtocol(Protocol):
 								self.wclog.flush()
 							else:
 								self.factory.queue.put((self, TASK_MESSAGE, (self.id, self.userColour(), self.usertitlename, message)))
+			elif type == 2:
+				#Experimental SMP boot-em-out
+				self.sendError("blockBox is designed to be used with Minecraft Creative!")
 			else:
-				#Idea: implement SMP detection and boot them out
 				self.logger.warning("Unhandleable type %s" % type)
 
 	def userColour(self):
