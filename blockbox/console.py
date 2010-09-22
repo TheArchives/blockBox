@@ -34,6 +34,7 @@ import datetime
 from blockbox.constants import *
 import logging
 from globals import *
+from blockbox.irc_client import ChatBotFactory
 
 class StdinPlugin(threading.Thread):
 
@@ -171,8 +172,8 @@ class StdinPlugin(threading.Thread):
 									self.server.queue.put((self, TASK_ACTION, (1, "&d", "Console", " ".join(message[1:]))))
 							elif message[0] == ("srb"):
 								self.server.queue.put((self, TASK_SERVERURGENTMESSAGE, ("[URGENT] Server Reboot - Back in a Flash")))
-                            elif message[0] == ("help"):
-								print "Commands available are: about, boot, ban, cpr, derank, gc, kick, me, new, pll, plr, plu, rank, say, shutdown, spec, srb and u."
+							elif message[0] == ("help"):
+								print "Commands available are: about, boot, ban, cpr, cpr_irc, derank, gc, kick, me, new, pll, plr, plu, rank, say, shutdown, spec, srb and u."
 								print "Chats available are: normal, whisper; @<player> <message>, world; !<world name> <message> and staff; #<message>."
 							elif message[0] == ("about"):
 								print "About The Server"
@@ -223,6 +224,10 @@ class StdinPlugin(threading.Thread):
 									print ("Plugin '%s' loaded." % message[1])
 							elif message[0] == ("cpr"):
 								self.server.heartbeat.turl()
+							elif message[0] == ("cpr_irc"):
+								self.server.irc_relay = None
+								self.server.irc_relay = ChatBotFactory(self.server)
+								reactor.connectTCP(self.server.config.get("irc", "server"), self.server.config.getint("irc", "port"), self.server.irc_relay)
 							else:
 								print "There is no " + message[0] + " command."
 						elif message.startswith("@"):
