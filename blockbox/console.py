@@ -173,7 +173,7 @@ class StdinPlugin(threading.Thread):
 							elif message[0] == ("srb"):
 								self.server.queue.put((self, TASK_SERVERURGENTMESSAGE, ("[URGENT] Server Reboot - Back in a Flash")))
 							elif message[0] == ("help"):
-								print "Commands available are: about, boot, ban, cpr, cpr_irc, derank, gc, kick, me, new, pll, plr, plu, rank, say, shutdown, spec, srb and u."
+								print "Commands available are: about, boot, ban, cpr, derank, gc, kick, irc_cpr, me, new, pll, plr, plu, rank, say, shutdown, spec, srb and u."
 								print "Chats available are: normal, whisper; @<player> <message>, world; !<world name> <message> and staff; #<message>."
 							elif message[0] == ("about"):
 								print "About The Server"
@@ -224,7 +224,7 @@ class StdinPlugin(threading.Thread):
 									print ("Plugin '%s' loaded." % message[1])
 							elif message[0] == ("cpr"):
 								self.server.heartbeat.turl()
-							elif message[0] == ("cpr_irc"):
+							elif message[0] == ("irc_cpr"):
 								self.server.irc_relay = None
 								self.server.irc_relay = ChatBotFactory(self.server)
 								reactor.connectTCP(self.server.config.get("irc", "server"), self.server.config.getint("irc", "port"), self.server.irc_relay)
