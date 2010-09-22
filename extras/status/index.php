@@ -3,9 +3,11 @@
 *************************************************************
 ************** Copyright 2010 Public-Craft.com **************
 ************ Made by Andrew Horn (aka "AndrewPH") ***********
+******* Improvised by Timothy Choi (aka "tyteen4a03") *******
 *************************************************************
 */
-?>
+include('./config.php');
+$output = '
 <html>
 <head>
 <style>
@@ -21,17 +23,7 @@
 #main				{ display:block; color:#eee; padding-top:10px; padding-bottom:10px; padding-left:10px; width:500px; background:#555; list-style:none; font: 14px/14px helvetica, sans-serif; margin-right:auto; margin-left:auto;}
 body 				{ background:#000; }
 </style>	
-<?PHP
-// Basic stuff first.
-include('./config.php');
-
-echo "<title>".$sitename."</title>";
-?>
+<title>'.$sitename.'</title>
 </head>
 <br />
-<body>
-<?PHP
-include('./resource/content.php');
-?>
-</body>
-</html>
+<body>'.eval("./resource/content.php").'</body></html>

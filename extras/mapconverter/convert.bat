@@ -5,5 +5,6 @@ echo.
 set choice=
 set /p choice=Enter in the name of the map without the .dat: 
 java -Xms512M -Xmx512M -cp minecraft-server.jar; OrigFormat load %choice%.dat %choice%
+java -Xms512M -Xmx512M -cp minecraft-server.jar; OrigFormat save %choice%.dat %choice%
 echo Done converting!
 goto loop

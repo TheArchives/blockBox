@@ -1,0 +1,14 @@
+HOW TO USE
+BOTH WINDOWS AND LINUX
+Please remember to put minecraft-server.jar in the same directory of this folder!
+
+WINDOWS
+Make sure you have the Sun JRE installed, double click convert.bat.
+
+LINUX
+Make sure you have the Sun JRE installed, run the following codes IN ORDER:
+java -Xms512M -Xmx512M -cp minecraft-server.jar; OrigFormat load map.dat map
+java -Xms512M -Xmx512M -cp minecraft-server.jar; OrigFormat save map.dat map
+
+After running the commands a folder with the world name would appear. Copy it into mapdata/worlds and load into the world. Ta-da! Your world is now online.
+If the world is already running (or is default map) please shut down the world (/shutdown worldname, for default please shut down server) or else the world will break!
