@@ -41,7 +41,7 @@ class MyneServerProtocol(Protocol):
 		try:
 			self.id = self.factory.claimId(self)
 		except ServerFull:
-			self.sendError("There are no availible player slots.")
+			self.sendError("No availible player slots.")
 			return
 		# Open the Whisper Log, Adminchat log and WorldChat Log
 		self.whisperlog = open("logs/server.log", "a")
@@ -52,7 +52,7 @@ class MyneServerProtocol(Protocol):
 		self.adlog = open("logs/world.log", "a")
 		# Check for IP bans
 		if self.factory.isIpBanned(self.ip):
-			self.sendError("You are Banned for: %s" % self.factory.ipBanReason(self.ip))
+			self.sendError("Banned: %s" % self.factory.ipBanReason(self.ip))
 			return
 		self.logger.debug("Assigned ID %i" % self.id)
 		self.sent_first_welcome = False
@@ -262,7 +262,7 @@ class MyneServerProtocol(Protocol):
 				self.identified = True
 				# Are they banned?
 				if self.factory.isBanned(self.username):
-					self.sendError("You are Banned for: %s" % self.factory.banReason(self.username))
+					self.sendError("Banned: %s" % self.factory.banReason(self.username))
 					return
 				# OK, see if there's anyone else with that username
 				if not self.factory.duplicate_logins and self.username.lower() in self.factory.usernames:
@@ -356,7 +356,7 @@ class MyneServerProtocol(Protocol):
 				# OK, replay changes to others
 				else:
 					self.factory.queue.put((self, TASK_BLOCKSET, (x, y, z, block)))
-					if len(self.last_block_changes) >= 2:
+					if len(self.last_block_changes) >= 3:
 						self.last_block_changes = [(x, y, z)] + self.last_block_changes[:1]+self.last_block_changes[1:2]
 					else:
 						self.last_block_changes = [(x, y, z)] + self.last_block_changes[:1]
