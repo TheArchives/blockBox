@@ -33,6 +33,7 @@ import time
 from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
+from blockbox.persistence import PersistenceEngine as Persist
 
 class PlayersPlugin(ProtocolPlugin):
 	
@@ -73,88 +74,84 @@ class PlayersPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("Do '/who username' for more info.")
 			self.client.sendServerList(["Players:"] + list(self.client.factory.usernames))
 		else:
-			#TODO: Persist derp
-			def loadBank():
-				file = open('balances.dat', 'r')
-				bank_dic = cPickle.load(file)
-				file.close()
-				return bank_dic
-			bank = loadBank()
 			user = parts[1].lower()
-			if parts[1].lower() in self.client.factory.usernames:
-				#Parts is an array, always, so we get the first item.
-				username = self.client.factory.usernames[parts[1].lower()]
-				if username.isOwner():
-					self.client.sendServerMessage(parts[1]+" - "+COLOUR_DARKGREEN+"Owner")
-				elif username.isDirector():
-					self.client.sendServerMessage(parts[1]+" - "+COLOUR_GREEN+"Director")
-				elif username.isAdmin():
-					self.client.sendServerMessage(parts[1]+" - "+COLOUR_RED+"Admin")
-				elif username.isMod():
-					self.client.sendServerMessage(parts[1]+" - "+COLOUR_BLUE+"Mod")
-				elif username.isWorldOwner():
-					self.client.sendServerMessage(parts[1]+" - "+COLOUR_DARKPURPLE+"World Owner")
-				elif username.isOp():
-					self.client.sendServerMessage(parts[1]+" - "+COLOUR_DARKCYAN+"Operator")
-				elif username.isAdvBuilder():
-					self.client.sendServerMessage(parts[1]+" - "+COLOUR_GREY+"Advanced Builder")
-				elif username.isWriter():
-					self.client.sendServerMessage(parts[1]+" - "+COLOUR_CYAN+"Builder")
-				elif username.isSpectator():
-					self.client.sendServerMessage(parts[1]+" - "+COLOUR_BLACK+"Spec")
+			with Persist(user) as p:
+				if parts[1].lower() in self.client.factory.usernames:
+					#Parts is an array, always, so we get the first item.
+					username = self.client.factory.usernames[parts[1].lower()]
+					if username.isOwner():
+						self.client.sendServerMessage(parts[1]+" - "+COLOUR_DARKGREEN+"Owner")
+					elif username.isDirector():
+						self.client.sendServerMessage(parts[1]+" - "+COLOUR_GREEN+"Director")
+					elif username.isAdmin():
+						self.client.sendServerMessage(parts[1]+" - "+COLOUR_RED+"Admin")
+					elif username.isMod():
+						self.client.sendServerMessage(parts[1]+" - "+COLOUR_BLUE+"Mod")
+					elif username.isWorldOwner():
+						self.client.sendServerMessage(parts[1]+" - "+COLOUR_DARKPURPLE+"World Owner")
+					elif username.isOp():
+						self.client.sendServerMessage(parts[1]+" - "+COLOUR_DARKCYAN+"Operator")
+					elif username.isAdvBuilder():
+						self.client.sendServerMessage(parts[1]+" - "+COLOUR_GREY+"Advanced Builder")
+					elif username.isWriter():
+						self.client.sendServerMessage(parts[1]+" - "+COLOUR_CYAN+"Builder")
+					elif username.isSpectator():
+						self.client.sendServerMessage(parts[1]+" - "+COLOUR_BLACK+"Spec")
+					else:
+						self.client.sendServerMessage(parts[1]+" - "+COLOUR_WHITE+"Player")
+					if self.client.isAdmin():
+						self.client.sendServerMessage("IP: "+str(username.transport.getPeer().host))
+					if username.gone == 1:
+						self.client.sendServerMessage("Status: "+COLOUR_DARKPURPLE+"Away")
+					elif username.gone == 0:
+						self.client.sendServerMessage("Status: "+COLOUR_DARKGREEN+"Online")
+					else:
+						self.client.sendServerMessage("Status: "+COLOUR_DARKGREEN+"Online")
+					self.client.sendServerMessage("World: %s" % (username.world.id))
+					if user in bank:
+						self.client.sendServerMessage("Balance: M%d." %(bank[user]))
+					else:
+						self.client.sendServerMessage("Balance: N/A")
 				else:
-					self.client.sendServerMessage(parts[1]+" - "+COLOUR_WHITE+"Player")
-				if self.client.isAdmin():
-					self.client.sendServerMessage("IP: "+str(username.transport.getPeer().host))
-				if username.gone == 1:
-					self.client.sendServerMessage("Status: "+COLOUR_DARKPURPLE+"Away")
-				elif username.gone == 0:
-					self.client.sendServerMessage("Status: "+COLOUR_DARKGREEN+"Online")
-				else:
-					self.client.sendServerMessage("Status: "+COLOUR_DARKGREEN+"Online")
-				self.client.sendServerMessage("World: %s" % (username.world.id))
-				if user in bank:
-					self.client.sendServerMessage("Balance: M%d." %(bank[user]))
-				else:
-					self.client.sendServerMessage("Balance: N/A")
-			else:
-				#Parts is an array, always, so we get the first item.
-				username = parts[1].lower()
-				if username in self.client.factory.spectators:
-					self.client.sendServerMessage(parts[1]+" - "+COLOUR_BLACK+"Spec")
-				elif username in self.client.factory.owner:
-					self.client.sendServerMessage(parts[1]+" - "+COLOUR_DARKGREEN+"Owner")
-				elif username in self.client.factory.directors:
-					self.client.sendServerMessage(parts[1]+" - "+COLOUR_GREEN+"Director")
-				elif username in self.client.factory.admins:
-					self.client.sendServerMessage(parts[1]+" - "+COLOUR_RED+"Admin")
-				elif username in self.client.factory.mods:
-					self.client.sendServerMessage(parts[1]+" - "+COLOUR_BLUE+"Mod")
-				elif username in self.client.world.owner:
-					self.client.sendServerMessage(parts[1]+" - "+COLOUR_DARKPURPLE+"World Owner")
-				elif username in self.client.world.ops:
-					self.client.sendServerMessage(parts[1]+" - "+COLOUR_DARKCYAN+"Operator")
-				elif username in self.client.factory.advbuilders:
-					self.client.sendServerMessage(parts[1]+" - "+COLOUR_GREY+"Advanced Builder")
-				elif username in self.client.world.writers:
-					self.client.sendServerMessage(parts[1]+" - "+COLOUR_CYAN+"Builder")
-				else:
-					self.client.sendServerMessage(parts[1]+" - "+COLOUR_WHITE+"Guest")
-				self.client.sendServerMessage("Status: "+COLOUR_DARKRED+"Offline")
-				if username not in self.client.factory.lastseen:
-					self.client.sendServerMessage("Last Seen: N/A")
-				else:
-					t = time.time() - self.client.factory.lastseen[username]
-					days = t // 86400
-					hours = (t % 86400) // 3600
-					mins = (t % 3600) // 60
-					desc = "%id, %ih, %im" % (days, hours, mins)
-					self.client.sendServerMessage("Last Seen: %s ago." % (desc))
-					#self.commandLastseen(parts, byuser, overriderank)
-				if user in bank:
-					self.client.sendServerMessage("Balance: C%d." %(bank[user]))
-				else:
-					self.client.sendServerMessage("Balance: N/A")
+					#Parts is an array, always, so we get the first item.
+					username = parts[1].lower()
+					if username in self.client.factory.spectators:
+						self.client.sendServerMessage(parts[1]+" - "+COLOUR_BLACK+"Spec")
+					elif username in self.client.factory.owner:
+						self.client.sendServerMessage(parts[1]+" - "+COLOUR_DARKGREEN+"Owner")
+					elif username in self.client.factory.directors:
+						self.client.sendServerMessage(parts[1]+" - "+COLOUR_GREEN+"Director")
+					elif username in self.client.factory.admins:
+						self.client.sendServerMessage(parts[1]+" - "+COLOUR_RED+"Admin")
+					elif username in self.client.factory.mods:
+						self.client.sendServerMessage(parts[1]+" - "+COLOUR_BLUE+"Mod")
+					elif username in self.client.world.owner:
+						self.client.sendServerMessage(parts[1]+" - "+COLOUR_DARKPURPLE+"World Owner")
+					elif username in self.client.world.ops:
+						self.client.sendServerMessage(parts[1]+" - "+COLOUR_DARKCYAN+"Operator")
+					elif username in self.client.factory.advbuilders:
+						self.client.sendServerMessage(parts[1]+" - "+COLOUR_GREY+"Advanced Builder")
+					elif username in self.client.world.writers:
+						self.client.sendServerMessage(parts[1]+" - "+COLOUR_CYAN+"Builder")
+					else:
+						self.client.sendServerMessage(parts[1]+" - "+COLOUR_WHITE+"Guest")
+					if self.client.isAdmin():
+						self.client.sendServerMessage("IP: "+p.string("misc", "ip", "None recorded.")
+					self.client.sendServerMessage("Status: "+COLOUR_DARKRED+"Offline")
+					if username not in self.client.factory.lastseen:
+						self.client.sendServerMessage("Last Seen: N/A")
+					else:
+						t = time.time() - self.client.factory.lastseen[username]
+						days = t // 86400
+						hours = (t % 86400) // 3600
+						mins = (t % 3600) // 60
+						desc = "%id, %ih, %im" % (days, hours, mins)
+						self.client.sendServerMessage("Last Seen: %s ago." % (desc))
+						#self.commandLastseen(parts, byuser, overriderank)
+					if p.int("bank", "balance", -1) is not -1:
+						self.client.sendServerMessage("Balance: C%d." %(p.int("bank", "balance", 0)))
+					else:
+						self.client.sendServerMessage("Balance: N/A")
 	
 	@player_list
 	def commandQuitMsg(self, parts, byuser, overriderank):
