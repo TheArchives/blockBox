@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# Copyright (c) 2002 Zope Foundation and Contributors.
+# Copyright (c) 2004 Zope Foundation and Contributors.
 # All Rights Reserved.
 #
 # This software is subject to the provisions of the Zope Public License,
@@ -11,27 +11,13 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""Adapter-style interface registry
+"""Test module that declares an interface
 
-See Adapter class.
-
-$Id: _flatten.py 110536 2010-04-06 02:59:44Z tseaver $
+$Id: m1.py 110536 2010-04-06 02:59:44Z tseaver $
 """
-from zope.interface import Declaration
+from zope.interface import Interface, moduleProvides
 
-def _flatten(implements, include_None=0):
+class I1(Interface): pass
+class I2(Interface): pass
 
-    try:
-        r = implements.flattened()
-    except AttributeError:
-        if implements is None:
-            r=()
-        else:
-            r = Declaration(implements).flattened()
-
-    if not include_None:
-        return r
-
-    r = list(r)
-    r.append(None)
-    return r
+moduleProvides(I1, I2)

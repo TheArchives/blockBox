@@ -11,11 +11,17 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
+"""Interface-specific exceptions
+
+$Id: exceptions.py 110536 2010-04-06 02:59:44Z tseaver $
+"""
 
 class Invalid(Exception):
-
+    """A specification is violated
+    """
 
 class DoesNotImplement(Invalid):
+    """ This object does not implement """
     def __init__(self, interface):
         self.interface = interface
 
@@ -25,6 +31,8 @@ class DoesNotImplement(Invalid):
         """ % self.__dict__
 
 class BrokenImplementation(Invalid):
+    """An attribute is not completely implemented.
+    """
 
     def __init__(self, interface, name):
         self.interface=interface
@@ -37,6 +45,8 @@ class BrokenImplementation(Invalid):
         """ % self.__dict__
 
 class BrokenMethodImplementation(Invalid):
+    """An method is not completely implemented.
+    """
 
     def __init__(self, method, mess):
         self.method=method
@@ -48,7 +58,12 @@ class BrokenMethodImplementation(Invalid):
         """ % self.__dict__
 
 class InvalidInterface(Exception):
-
+    """The interface has invalid contents
+    """
 
 class BadImplements(TypeError):
+    """An implementation assertion is invalid
 
+    because it doesn't contain an interface or a sequence of valid
+    implementation assertions.
+    """

@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# Copyright (c) 2002 Zope Foundation and Contributors.
+# Copyright (c) 2001, 2002 Zope Foundation and Contributors.
 # All Rights Reserved.
 #
 # This software is subject to the provisions of the Zope Public License,
@@ -11,27 +11,14 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""Adapter-style interface registry
+"""Dummy Module
 
-See Adapter class.
-
-$Id: _flatten.py 110536 2010-04-06 02:59:44Z tseaver $
+$Id: dummy.py 110736 2010-04-11 10:59:30Z regebro $
 """
-from zope.interface import Declaration
+from zope.interface import moduleProvides
+from zope.interface.tests.ifoo import IFoo
 
-def _flatten(implements, include_None=0):
+moduleProvides(IFoo)
 
-    try:
-        r = implements.flattened()
-    except AttributeError:
-        if implements is None:
-            r=()
-        else:
-            r = Declaration(implements).flattened()
-
-    if not include_None:
-        return r
-
-    r = list(r)
-    r.append(None)
-    return r
+def bar(baz):
+    pass

@@ -11,13 +11,37 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
+"""Compute a resolution order for an object and its bases
+
+$Id: ro.py 110536 2010-04-06 02:59:44Z tseaver $
+"""
 __docformat__ = 'restructuredtext'
 
 
 def ro(object):
+    """Compute a "resolution order" for an object
+    """
     return mergeOrderings([_flatten(object)])
 
 def mergeOrderings(orderings, seen=None):
+    """Merge multiple orderings so that within-ordering order is preserved
+
+    Orderings are constrained in such a way that if an object appears
+    in two or more orderings, then the suffix that begins with the
+    object must be in both orderings.
+
+    For example:
+
+    >>> _mergeOrderings([
+    ... ['x', 'y', 'z'],
+    ... ['q', 'z'],
+    ... [1, 3, 5],
+    ... ['z']
+    ... ])
+    ['x', 'y', 'q', 1, 3, 5, 'z']
+
+    """
+
     if seen is None:
         seen = {}
     result = []
@@ -38,5 +62,10 @@ def _flatten(ob):
     i = 0
     for ob in iter(result):
         i += 1
+        # The recursive calls can be avoided by inserting the base classes
+        # into the dynamically growing list directly after the currently
+        # considered object;  the iterator makes sure this will keep working
+        # in the future, since it cannot rely on the length of the list
+        # by definition.
         result[i:i] = ob.__bases__
     return result

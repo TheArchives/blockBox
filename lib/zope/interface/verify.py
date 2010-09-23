@@ -11,17 +11,37 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
+"""Verify interface implementations
 
-from lib.zope.interface.exceptions import BrokenImplementation, DoesNotImplement
-from lib.zope.interface.exceptions import BrokenMethodImplementation
+$Id: verify.py 110699 2010-04-09 08:16:17Z regebro $
+"""
+from zope.interface.exceptions import BrokenImplementation, DoesNotImplement
+from zope.interface.exceptions import BrokenMethodImplementation
 from types import FunctionType, MethodType
-from lib.zope.interface.interface import fromMethod, fromFunction, Method
+from zope.interface.interface import fromMethod, fromFunction, Method
 import sys
 
+# This will be monkey-patched when running under Zope 2, so leave this
+# here:
 MethodTypes = (MethodType, )
 
 
 def _verify(iface, candidate, tentative=0, vtype=None):
+    """Verify that 'candidate' might correctly implements 'iface'.
+
+    This involves:
+
+      o Making sure the candidate defines all the necessary methods
+
+      o Making sure the methods have the correct signature
+
+      o Making sure the candidate asserts that it implements the interface
+
+    Note that this isn't the same as verifying that the class does
+    implement the interface.
+
+    If optional tentative is true, suppress the "is implemented by" test.
+    """
 
     if vtype == 'c':
         tester = iface.implementedBy
@@ -31,16 +51,20 @@ def _verify(iface, candidate, tentative=0, vtype=None):
     if not tentative and not tester(candidate):
         raise DoesNotImplement(iface)
 
+    # Here the `desc` is either an `Attribute` or `Method` instance
     for name, desc in iface.namesAndDescriptions(1):
         try:
             attr = getattr(candidate, name)
         except AttributeError:
             if (not isinstance(desc, Method)) and vtype == 'c':
+                # We can't verify non-methods on classes, since the
+                # class may provide attrs in it's __init__.
                 continue
 
             raise BrokenImplementation(iface, name)
 
         if not isinstance(desc, Method):
+            # If it's not a method, there's nothing else we can test
             continue
 
         if isinstance(attr, FunctionType):
@@ -56,8 +80,12 @@ def _verify(iface, candidate, tentative=0, vtype=None):
         else:
             if not callable(attr):
                 raise BrokenMethodImplementation(name, "Not a method")
+            # sigh, it's callable, but we don't know how to intrspect it, so
+            # we have to give it a pass.
             continue
 
+        # Make sure that the required and implemented method signatures are
+        # the same.
         desc = desc.getSignatureInfo()
         meth = meth.getSignatureInfo()
 
