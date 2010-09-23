@@ -31,6 +31,11 @@ def advbuilder_only(func):
 	func.advbuilder_only = True
 	return func
 
+def member_only(func):
+	"Decorator for advanced builder-only command methods."
+	func.advbuilder_only = True
+	return func
+
 def worldowner_only(func):
 	"Decorator for worldowner-only command methods."
 	func.worldowner_only = True
