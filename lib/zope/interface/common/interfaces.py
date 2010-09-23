@@ -15,8 +15,8 @@
 
 $Id: interfaces.py 110536 2010-04-06 02:59:44Z tseaver $
 """
-from zope.interface import Interface
-from zope.interface import classImplements
+from lib.zope.interface import Interface
+from lib.zope.interface import classImplements
 
 class IException(Interface): pass
 class IStandardError(IException): pass

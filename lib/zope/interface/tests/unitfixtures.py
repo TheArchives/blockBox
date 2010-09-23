@@ -15,9 +15,9 @@
 
 $Id: unitfixtures.py 110536 2010-04-06 02:59:44Z tseaver $
 """
-from zope.interface import Interface, invariant
-from zope.interface.interface import Attribute
-from zope.interface.exceptions import Invalid
+from lib.zope.interface import Interface, invariant
+from lib.zope.interface.interface import Attribute
+from lib.zope.interface.exceptions import Invalid
 
 class mytest(Interface):
     pass

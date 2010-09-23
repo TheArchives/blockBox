@@ -1,6 +1,6 @@
 # -*- test-case-name: twisted.test.test_stdio -*-
 import warnings, errno, os
-from zope.interface import implements
+from lib.zope.interface import implements
 from twisted.internet import process, error, interfaces
 from twisted.python import log, failure
 

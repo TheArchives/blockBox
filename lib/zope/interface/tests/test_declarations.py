@@ -18,9 +18,9 @@ $Id: test_declarations.py 110827 2010-04-13 20:33:31Z tseaver $
 import doctest
 import unittest
 
-from zope.interface import Interface, implements
-from zope.interface import directlyProvides, providedBy
-from zope.interface import classImplements, implementedBy, implementsOnly
+from lib.zope.interface import Interface, implements
+from lib.zope.interface import directlyProvides, providedBy
+from lib.zope.interface import classImplements, implementedBy, implementsOnly
 
 class I1(Interface): pass
 class I2(Interface): pass
@@ -108,7 +108,7 @@ class Test(unittest.TestCase):
         self.failIf(C3.__implemented__.__class__ is tuple)
 
     def test_module(self):
-        from zope.interface.tests import m1, m2
+        from lib.zope.interface.tests import m1, m2
         #import lib.zope.interface.tests.m2
         directlyProvides(m2,
                          m1.I1,
@@ -148,7 +148,7 @@ class Test(unittest.TestCase):
 
 def test_signature_w_no_class_interfaces():
     """
-    >>> from zope.interface import *
+    >>> from lib.zope.interface import *
     >>> class C(object):
     ...     pass
     >>> c = C()
@@ -166,7 +166,7 @@ def test_classImplement_on_deeply_nested_classes():
     """This test is in response to a bug found, which is why it's a bit
     contrived
 
-    >>> from zope.interface import *
+    >>> from lib.zope.interface import *
     >>> class B1(object):
     ...     pass
     >>> class B2(B1):
@@ -200,7 +200,7 @@ def test_pickle_provides_specs():
 
 def test_that_we_dont_inherit_class_provides():
     """
-    >>> from zope.interface import classProvides
+    >>> from lib.zope.interface import classProvides
     >>> class X(object):
     ...     classProvides(I1)
     >>> class Y(X):
@@ -266,7 +266,7 @@ def test_classProvides_before_implements():
 
         For example::
 
-          >>> from zope.interface import Interface, classProvides
+          >>> from lib.zope.interface import Interface, classProvides
           >>> class IFooFactory(Interface):
           ...     pass
           >>> class IFoo(Interface):
@@ -364,7 +364,7 @@ def test_declaration_get():
 def test_classImplements_after_classImplementsOnly_issue_402():
     """http://www.zope.org/Collectors/Zope3-dev/402
 
->>> from zope.interface import *
+>>> from lib.zope.interface import *
 >>> class I1(Interface):
 ...     pass
 >>> class I2(Interface):

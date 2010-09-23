@@ -15,8 +15,8 @@
 
 $Id: dummy.py 110736 2010-04-11 10:59:30Z regebro $
 """
-from zope.interface import moduleProvides
-from zope.interface.tests.ifoo import IFoo
+from lib.zope.interface import moduleProvides
+from lib.zope.interface.tests.ifoo import IFoo
 
 moduleProvides(IFoo)
 

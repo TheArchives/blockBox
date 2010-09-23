@@ -52,29 +52,29 @@ $Id: __init__.py 110699 2010-04-09 08:16:17Z regebro $
 """
 __docformat__ = 'restructuredtext'
 
-from zope.interface.interface import Interface, _wire
+from lib.zope.interface.interface import Interface, _wire
 
 # Need to actually get the interface elements to implement the right interfaces
 _wire()
 del _wire
 
-from zope.interface.interface import Attribute, invariant, taggedValue
+from lib.zope.interface.interface import Attribute, invariant, taggedValue
 
-from zope.interface.declarations import providedBy, implementedBy
-from zope.interface.declarations import classImplements, classImplementsOnly
-from zope.interface.declarations import directlyProvidedBy, directlyProvides
-from zope.interface.declarations import alsoProvides, provider
-from zope.interface.declarations import implementer, implementer_only
-from zope.interface.declarations import implements, implementsOnly
-from zope.interface.declarations import classProvides, moduleProvides
-from zope.interface.declarations import noLongerProvides, Declaration
-from zope.interface.exceptions import Invalid
+from lib.zope.interface.declarations import providedBy, implementedBy
+from lib.zope.interface.declarations import classImplements, classImplementsOnly
+from lib.zope.interface.declarations import directlyProvidedBy, directlyProvides
+from lib.zope.interface.declarations import alsoProvides, provider
+from lib.zope.interface.declarations import implementer, implementer_only
+from lib.zope.interface.declarations import implements, implementsOnly
+from lib.zope.interface.declarations import classProvides, moduleProvides
+from lib.zope.interface.declarations import noLongerProvides, Declaration
+from lib.zope.interface.exceptions import Invalid
 
 # The following are to make spec pickles cleaner
-from zope.interface.declarations import Provides
+from lib.zope.interface.declarations import Provides
 
 
-from zope.interface.interfaces import IInterfaceDeclaration
+from lib.zope.interface.interfaces import IInterfaceDeclaration
 
 moduleProvides(IInterfaceDeclaration)
 

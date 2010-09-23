@@ -18,10 +18,10 @@ $Id: test_verify.py 110536 2010-04-06 02:59:44Z tseaver $
 import doctest
 import unittest
 
-from zope.interface import Interface, implements, classImplements, Attribute
-from zope.interface.verify import verifyClass, verifyObject
-from zope.interface.exceptions import DoesNotImplement, BrokenImplementation
-from zope.interface.exceptions import BrokenMethodImplementation
+from lib.zope.interface import Interface, implements, classImplements, Attribute
+from lib.zope.interface.verify import verifyClass, verifyObject
+from lib.zope.interface.exceptions import DoesNotImplement, BrokenImplementation
+from lib.zope.interface.exceptions import BrokenMethodImplementation
 
 class Test(unittest.TestCase):
 
@@ -156,8 +156,8 @@ class Test(unittest.TestCase):
 
     def testModule(self):
 
-        from zope.interface.tests.ifoo import IFoo
-        from zope.interface.tests import dummy
+        from lib.zope.interface.tests.ifoo import IFoo
+        from lib.zope.interface.tests import dummy
 
         verifyObject(IFoo, dummy)
 

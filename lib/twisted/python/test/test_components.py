@@ -6,7 +6,7 @@
 Test cases for Twisted component architecture.
 """
 
-from zope.interface import Interface, implements, Attribute
+from lib.zope.interface import Interface, implements, Attribute
 
 from twisted.trial import unittest
 from twisted.python import components

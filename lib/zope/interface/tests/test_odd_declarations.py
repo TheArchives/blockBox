@@ -21,10 +21,10 @@ $Id: test_odd_declarations.py 110736 2010-04-11 10:59:30Z regebro $
 import doctest
 import unittest
 
-from zope.interface.tests import odd
-from zope.interface import Interface, implements, classProvides
-from zope.interface import directlyProvides, providedBy, directlyProvidedBy
-from zope.interface import classImplements, classImplementsOnly, implementedBy
+from lib.zope.interface.tests import odd
+from lib.zope.interface import Interface, implements, classProvides
+from lib.zope.interface import directlyProvides, providedBy, directlyProvidedBy
+from lib.zope.interface import classImplements, classImplementsOnly, implementedBy
 
 class I1(Interface): pass
 class I2(Interface): pass
@@ -42,7 +42,7 @@ class B(Odd): __implemented__ = I2
 #       classes. This will work in the next iteration. For now, we'll use
 #       a different mechanism.
 
-# from zope.interface import classProvides
+# from lib.zope.interface import classProvides
 
 class A(Odd):
     pass

@@ -2,7 +2,7 @@
 
 import win32api
 import os, msvcrt
-from zope.interface import implements
+from lib.zope.interface import implements
 from twisted.internet.interfaces import IHalfCloseableProtocol, ITransport, IAddress
 from twisted.internet.interfaces import IConsumer, IPushProducer
 from twisted.internet import _pollingfile, main

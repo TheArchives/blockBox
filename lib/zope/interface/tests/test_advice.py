@@ -30,8 +30,8 @@ $Id: test_advice.py 110736 2010-04-11 10:59:30Z regebro $
 
 import unittest
 from unittest import TestCase, makeSuite, TestSuite
-from zope.interface.advice import addClassAdvisor, determineMetaclass
-from zope.interface.advice import getFrameInfo
+from lib.zope.interface.advice import addClassAdvisor, determineMetaclass
+from lib.zope.interface.advice import getFrameInfo
 import sys
 
 def ping(log, value):

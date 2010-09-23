@@ -62,7 +62,7 @@ import sys
 import zipimport
 import inspect
 import warnings
-from zope.interface import Interface, implements
+from lib.zope.interface import Interface, implements
 
 from twisted.python.components import registerAdapter
 from twisted.python.filepath import FilePath, UnlistableError

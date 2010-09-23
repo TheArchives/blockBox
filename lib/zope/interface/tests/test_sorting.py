@@ -18,7 +18,7 @@ $Id: test_sorting.py 110699 2010-04-09 08:16:17Z regebro $
 
 from unittest import TestCase, TestSuite, main, makeSuite
 
-from zope.interface import Interface
+from lib.zope.interface import Interface
 
 class I1(Interface): pass
 class I2(I1): pass

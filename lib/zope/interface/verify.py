@@ -15,10 +15,10 @@
 
 $Id: verify.py 110699 2010-04-09 08:16:17Z regebro $
 """
-from zope.interface.exceptions import BrokenImplementation, DoesNotImplement
-from zope.interface.exceptions import BrokenMethodImplementation
+from lib.zope.interface.exceptions import BrokenImplementation, DoesNotImplement
+from lib.zope.interface.exceptions import BrokenMethodImplementation
 from types import FunctionType, MethodType
-from zope.interface.interface import fromMethod, fromFunction, Method
+from lib.zope.interface.interface import fromMethod, fromFunction, Method
 import sys
 
 # This will be monkey-patched when running under Zope 2, so leave this

@@ -15,7 +15,7 @@
 
 $Id: m1.py 110536 2010-04-06 02:59:44Z tseaver $
 """
-from zope.interface import Interface, moduleProvides
+from lib.zope.interface import Interface, moduleProvides
 
 class I1(Interface): pass
 class I2(Interface): pass

@@ -9,7 +9,7 @@ from threading import Thread
 from Queue import Queue, Empty
 from time import sleep
 import sys
-from zope.interface import implements
+from lib.zope.interface import implements
 from twisted.internet.interfaces import IReactorFDSet
 from twisted.internet import error
 from twisted.internet import posixbase

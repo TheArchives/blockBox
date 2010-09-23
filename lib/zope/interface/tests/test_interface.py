@@ -20,8 +20,8 @@ import sys
 class InterfaceTests(unittest.TestCase):
 
     def _makeDerivedInterface(self):
-        from zope.interface import Interface
-        from zope.interface import Attribute
+        from lib.zope.interface import Interface
+        from lib.zope.interface import Attribute
         class _I1(Interface):
 
             a1 = Attribute("This is an attribute")
@@ -48,21 +48,21 @@ class InterfaceTests(unittest.TestCase):
         return _I2
 
     def testInterfaceSetOnAttributes(self):
-        from zope.interface.tests.unitfixtures import FooInterface
+        from lib.zope.interface.tests.unitfixtures import FooInterface
         self.assertEqual(FooInterface['foobar'].interface,
                          FooInterface)
         self.assertEqual(FooInterface['aMethod'].interface,
                          FooInterface)
 
     def testClassImplements(self):
-        from zope.interface.tests.unitfixtures import A
-        from zope.interface.tests.unitfixtures import B
-        from zope.interface.tests.unitfixtures import C
-        from zope.interface.tests.unitfixtures import D
-        from zope.interface.tests.unitfixtures import E
-        from zope.interface.tests.unitfixtures import I1
-        from zope.interface.tests.unitfixtures import I2
-        from zope.interface.tests.unitfixtures import IC
+        from lib.zope.interface.tests.unitfixtures import A
+        from lib.zope.interface.tests.unitfixtures import B
+        from lib.zope.interface.tests.unitfixtures import C
+        from lib.zope.interface.tests.unitfixtures import D
+        from lib.zope.interface.tests.unitfixtures import E
+        from lib.zope.interface.tests.unitfixtures import I1
+        from lib.zope.interface.tests.unitfixtures import I2
+        from lib.zope.interface.tests.unitfixtures import IC
         self.assert_(IC.implementedBy(C))
 
         self.assert_(I1.implementedBy(A))
@@ -81,14 +81,14 @@ class InterfaceTests(unittest.TestCase):
         self.assert_(not I2.implementedBy(E))
 
     def testUtil(self):
-        from zope.interface import implementedBy
-        from zope.interface import providedBy
-        from zope.interface.tests.unitfixtures import A
-        from zope.interface.tests.unitfixtures import B
-        from zope.interface.tests.unitfixtures import C
-        from zope.interface.tests.unitfixtures import I1
-        from zope.interface.tests.unitfixtures import I2
-        from zope.interface.tests.unitfixtures import IC
+        from lib.zope.interface import implementedBy
+        from lib.zope.interface import providedBy
+        from lib.zope.interface.tests.unitfixtures import A
+        from lib.zope.interface.tests.unitfixtures import B
+        from lib.zope.interface.tests.unitfixtures import C
+        from lib.zope.interface.tests.unitfixtures import I1
+        from lib.zope.interface.tests.unitfixtures import I2
+        from lib.zope.interface.tests.unitfixtures import IC
         self.assert_(IC in implementedBy(C))
         self.assert_(I1 in implementedBy(A))
         self.assert_(not I1 in implementedBy(C))
@@ -103,14 +103,14 @@ class InterfaceTests(unittest.TestCase):
 
 
     def testObjectImplements(self):
-        from zope.interface.tests.unitfixtures import A
-        from zope.interface.tests.unitfixtures import B
-        from zope.interface.tests.unitfixtures import C
-        from zope.interface.tests.unitfixtures import D
-        from zope.interface.tests.unitfixtures import E
-        from zope.interface.tests.unitfixtures import I1
-        from zope.interface.tests.unitfixtures import I2
-        from zope.interface.tests.unitfixtures import IC
+        from lib.zope.interface.tests.unitfixtures import A
+        from lib.zope.interface.tests.unitfixtures import B
+        from lib.zope.interface.tests.unitfixtures import C
+        from lib.zope.interface.tests.unitfixtures import D
+        from lib.zope.interface.tests.unitfixtures import E
+        from lib.zope.interface.tests.unitfixtures import I1
+        from lib.zope.interface.tests.unitfixtures import I2
+        from lib.zope.interface.tests.unitfixtures import IC
         self.assert_(IC.providedBy(C()))
 
         self.assert_(I1.providedBy(A()))
@@ -129,17 +129,17 @@ class InterfaceTests(unittest.TestCase):
         self.assert_(not I2.providedBy(E()))
 
     def testDeferredClass(self):
-        from zope.interface.tests.unitfixtures import A
-        from zope.interface.exceptions import BrokenImplementation
+        from lib.zope.interface.tests.unitfixtures import A
+        from lib.zope.interface.exceptions import BrokenImplementation
         a = A()
         self.assertRaises(BrokenImplementation, a.ma)
 
 
     def testInterfaceExtendsInterface(self):
-        from zope.interface.tests.unitfixtures import BazInterface
-        from zope.interface.tests.unitfixtures import BarInterface
-        from zope.interface.tests.unitfixtures import BobInterface
-        from zope.interface.tests.unitfixtures import FunInterface
+        from lib.zope.interface.tests.unitfixtures import BazInterface
+        from lib.zope.interface.tests.unitfixtures import BarInterface
+        from lib.zope.interface.tests.unitfixtures import BobInterface
+        from lib.zope.interface.tests.unitfixtures import FunInterface
         self.assert_(BazInterface.extends(BobInterface))
         self.assert_(BazInterface.extends(BarInterface))
         self.assert_(BazInterface.extends(FunInterface))
@@ -149,11 +149,11 @@ class InterfaceTests(unittest.TestCase):
         self.assert_(not BarInterface.extends(BazInterface))
 
     def testVerifyImplementation(self):
-        from zope.interface.verify import verifyClass
-        from zope.interface import Interface
-        from zope.interface.tests.unitfixtures import Foo
-        from zope.interface.tests.unitfixtures import FooInterface
-        from zope.interface.tests.unitfixtures import I1
+        from lib.zope.interface.verify import verifyClass
+        from lib.zope.interface import Interface
+        from lib.zope.interface.tests.unitfixtures import Foo
+        from lib.zope.interface.tests.unitfixtures import FooInterface
+        from lib.zope.interface.tests.unitfixtures import I1
         self.assert_(verifyClass(FooInterface, Foo))
         self.assert_(Interface.providedBy(I1))
 
@@ -211,7 +211,7 @@ class InterfaceTests(unittest.TestCase):
 
     def testFunctionAttributes(self):
         # Make sure function attributes become tagged values.
-        from zope.interface import Interface
+        from lib.zope.interface import Interface
         class ITest(Interface):
             def method():
                 pass
@@ -221,13 +221,13 @@ class InterfaceTests(unittest.TestCase):
         self.assertEqual(method.getTaggedValue('optional'), 1)
 
     def testInvariant(self):
-        from zope.interface.exceptions import Invalid
-        from zope.interface import directlyProvides
-        from zope.interface.tests.unitfixtures import BarGreaterThanFoo
-        from zope.interface.tests.unitfixtures import ifFooThenBar
-        from zope.interface.tests.unitfixtures import IInvariant
-        from zope.interface.tests.unitfixtures import InvariantC
-        from zope.interface.tests.unitfixtures import ISubInvariant
+        from lib.zope.interface.exceptions import Invalid
+        from lib.zope.interface import directlyProvides
+        from lib.zope.interface.tests.unitfixtures import BarGreaterThanFoo
+        from lib.zope.interface.tests.unitfixtures import ifFooThenBar
+        from lib.zope.interface.tests.unitfixtures import IInvariant
+        from lib.zope.interface.tests.unitfixtures import InvariantC
+        from lib.zope.interface.tests.unitfixtures import ISubInvariant
         # set up
         o = InvariantC()
         directlyProvides(o, IInvariant)
@@ -319,8 +319,8 @@ class InterfaceTests(unittest.TestCase):
         IInvariant.setTaggedValue('invariants', old_invariants)
 
     def test___doc___element(self):
-        from zope.interface import Interface
-        from zope.interface import Attribute
+        from lib.zope.interface import Interface
+        from lib.zope.interface import Attribute
         class I(Interface):
             "xxx"
 
@@ -336,7 +336,7 @@ class InterfaceTests(unittest.TestCase):
         self.assertEqual(list(I), ['__doc__'])
 
     def testIssue228(self):
-        from zope.interface import Interface
+        from lib.zope.interface import Interface
         # Test for http://collector.zope.org/Zope3-dev/228
         if sys.version[0] == '3':
             # No old style classes in Python 3, so the test becomes moot.
@@ -355,11 +355,11 @@ if sys.version_info >= (2, 4):
     def test_invariant_as_decorator():
         """Invaiants can be deined in line
 
-          >>> from zope.interface.exceptions import Invalid
-          >>> from zope.interface import Interface
-          >>> from zope.interface import Attribute
-          >>> from zope.interface import implements
-          >>> from zope.interface import invariant
+          >>> from lib.zope.interface.exceptions import Invalid
+          >>> from lib.zope.interface import Interface
+          >>> from lib.zope.interface import Attribute
+          >>> from lib.zope.interface import implements
+          >>> from lib.zope.interface import invariant
           >>> class IRange(Interface):
           ...     min = Attribute("Lower bound")
           ...     max = Attribute("Upper bound")
@@ -376,7 +376,7 @@ if sys.version_info >= (2, 4):
           ...     def __init__(self, min, max):
           ...         self.min, self.max = min, max
 
-          >>> from zope.interface.exceptions import Invalid
+          >>> from lib.zope.interface.exceptions import Invalid
           >>> IRange.validateInvariants(Range(1,2))
           >>> IRange.validateInvariants(Range(1,1))
           >>> try:
@@ -395,8 +395,8 @@ def test_description_cache_management():
 There was a bug where the cache used by Specification.get() was not
 cleared when the bases were changed.
 
-    >>> from zope.interface import Interface
-    >>> from zope.interface import Attribute
+    >>> from lib.zope.interface import Interface
+    >>> from lib.zope.interface import Attribute
     >>> class I1(Interface):
     ...     a = Attribute('a')
 

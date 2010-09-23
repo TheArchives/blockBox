@@ -17,12 +17,12 @@ $Id: test_document.py 110536 2010-04-06 02:59:44Z tseaver $
 """
 from unittest import TestCase, main, makeSuite
 
-from zope.interface import Interface, Attribute
+from lib.zope.interface import Interface, Attribute
 
 class Test(TestCase):
 
     def testBlech(self):
-        from zope.interface.document import asStructuredText
+        from lib.zope.interface.document import asStructuredText
 
         self.assertEqual(asStructuredText(I2), '''\
 I2

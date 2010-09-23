@@ -1,7 +1,7 @@
 # -*- test-case-name: twisted.internet.test.test_pollingfile -*-
 # Copyright (c) 2001-2009 Twisted Matrix Laboratories.
 # See LICENSE for details.
-from zope.interface import implements
+from lib.zope.interface import implements
 from twisted.internet.interfaces import IConsumer, IPushProducer
 MIN_TIMEOUT = 0.000000001
 MAX_TIMEOUT = 0.1

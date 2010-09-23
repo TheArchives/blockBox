@@ -14,7 +14,7 @@ import warnings
 from datetime import datetime
 import logging
 
-from zope.interface import Interface
+from lib.zope.interface import Interface
 
 from twisted.python import util, context, reflect
 

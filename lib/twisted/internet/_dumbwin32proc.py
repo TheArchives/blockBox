@@ -13,7 +13,7 @@ import win32security
 import pywintypes
 PIPE_ATTRS_INHERITABLE = win32security.SECURITY_ATTRIBUTES()
 PIPE_ATTRS_INHERITABLE.bInheritHandle = 1
-from zope.interface import implements
+from lib.zope.interface import implements
 from twisted.internet.interfaces import IProcessTransport, IConsumer, IProducer
 from twisted.python.win32 import quoteArguments
 from twisted.internet import error

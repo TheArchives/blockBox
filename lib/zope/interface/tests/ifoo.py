@@ -15,7 +15,7 @@
 
 $Id: ifoo.py 110536 2010-04-06 02:59:44Z tseaver $
 """
-from zope.interface import Interface
+from lib.zope.interface import Interface
 
 class IFoo(Interface):
     """

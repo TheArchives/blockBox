@@ -17,7 +17,7 @@ $Id: test_element.py 110536 2010-04-06 02:59:44Z tseaver $
 """
 
 import unittest
-from zope.interface.interface import Element
+from lib.zope.interface.interface import Element
 
 class TestElement(unittest.TestCase):
 

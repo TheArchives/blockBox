@@ -18,11 +18,11 @@ $Id: test_idatetime.py 110536 2010-04-06 02:59:44Z tseaver $
 
 import unittest
 
-from zope.interface.verify import verifyObject, verifyClass
-from zope.interface.common.idatetime import ITimeDelta, ITimeDeltaClass
-from zope.interface.common.idatetime import IDate, IDateClass
-from zope.interface.common.idatetime import IDateTime, IDateTimeClass
-from zope.interface.common.idatetime import ITime, ITimeClass, ITZInfo
+from lib.zope.interface.verify import verifyObject, verifyClass
+from lib.zope.interface.common.idatetime import ITimeDelta, ITimeDeltaClass
+from lib.zope.interface.common.idatetime import IDate, IDateClass
+from lib.zope.interface.common.idatetime import IDateTime, IDateTimeClass
+from lib.zope.interface.common.idatetime import ITime, ITimeClass, ITZInfo
 from datetime import timedelta, date, datetime, time, tzinfo
 
 class TestDateTimeInterfaces(unittest.TestCase):

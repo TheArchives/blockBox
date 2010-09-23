@@ -19,8 +19,8 @@ import sys
 from types import FunctionType
 import weakref
 
-from zope.interface.exceptions import Invalid
-from zope.interface.ro import ro
+from lib.zope.interface.exceptions import Invalid
+from lib.zope.interface.ro import ro
 
 
 CO_VARARGS = 4
@@ -92,7 +92,7 @@ class SpecificationBasePy(object):
     def providedBy(self, ob):
         """Is the interface implemented by an object
 
-          >>> from zope.interface import *
+          >>> from lib.zope.interface import *
           >>> class I1(Interface):
           ...     pass
           >>> class C(object):
@@ -129,8 +129,8 @@ class SpecificationBasePy(object):
 
         Examples::
 
-          >>> from zope.interface import Interface
-          >>> from zope.interface.declarations import Declaration
+          >>> from lib.zope.interface import Interface
+          >>> from lib.zope.interface.declarations import Declaration
           >>> class I1(Interface): pass
           ...
           >>> class I2(I1): pass
@@ -228,7 +228,7 @@ class Specification(SpecificationBase):
 
     For example:
 
-    >>> from zope.interface import Interface
+    >>> from lib.zope.interface import Interface
     >>> class I1(Interface):
     ...     pass
     >>> class I2(I1):
@@ -332,7 +332,7 @@ class Specification(SpecificationBase):
 
         for example::
 
-          >>> from zope.interface import Interface
+          >>> from lib.zope.interface import Interface
           >>> class I1(Interface): pass
           ...
           >>> class I2(I1): pass
@@ -365,8 +365,8 @@ class Specification(SpecificationBase):
 
         Examples::
 
-          >>> from zope.interface import Interface
-          >>> from zope.interface.declarations import Declaration
+          >>> from lib.zope.interface import Interface
+          >>> from lib.zope.interface.declarations import Declaration
           >>> class I1(Interface): pass
           ...
           >>> class I2(I1): pass
@@ -503,7 +503,7 @@ class InterfaceClass(Element, InterfaceBase, Specification):
 
         for example::
 
-          >>> from zope.interface import Interface
+          >>> from lib.zope.interface import Interface
           >>> class I1(Interface): pass
           ...
           >>>
@@ -799,22 +799,22 @@ def fromMethod(meth, interface=None, name=None):
 
 # Now we can create the interesting interfaces and wire them up:
 def _wire():
-    from zope.interface.declarations import classImplements
+    from lib.zope.interface.declarations import classImplements
 
-    from zope.interface.interfaces import IAttribute
+    from lib.zope.interface.interfaces import IAttribute
     classImplements(Attribute, IAttribute)
 
-    from zope.interface.interfaces import IMethod
+    from lib.zope.interface.interfaces import IMethod
     classImplements(Method, IMethod)
 
-    from zope.interface.interfaces import IInterface
+    from lib.zope.interface.interfaces import IInterface
     classImplements(InterfaceClass, IInterface)
 
-    from zope.interface.interfaces import ISpecification
+    from lib.zope.interface.interfaces import ISpecification
     classImplements(Specification, ISpecification)
 
 # We import this here to deal with module dependencies.
-from zope.interface.declarations import implementedBy
-from zope.interface.declarations import providedBy
-from zope.interface.exceptions import InvalidInterface
-from zope.interface.exceptions import BrokenImplementation
+from lib.zope.interface.declarations import implementedBy
+from lib.zope.interface.declarations import providedBy
+from lib.zope.interface.exceptions import InvalidInterface
+from lib.zope.interface.exceptions import BrokenImplementation
