@@ -8,7 +8,7 @@ from blockbox.constants import *
 from blockbox.globals import *
 from blockbox.world import World
 
-class ModsPlugin(ProtocolPlugin):
+class RankPlugin(ProtocolPlugin):
 	
 	commands = {
 		"rank": "commandRank",

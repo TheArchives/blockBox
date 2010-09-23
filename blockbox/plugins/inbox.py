@@ -7,8 +7,8 @@ from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from lib.twisted.internet import reactor
 from blockbox.constants import *
-import pickle
-#TODO: Persist derp
+import cPickle as pickle
+
 class OfflineMessagePlugin(ProtocolPlugin):
 	
 	commands = {

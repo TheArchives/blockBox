@@ -9,7 +9,7 @@ from blockbox.constants import *
 import math
 from random import choice
 
-class LinePlugin(ProtocolPlugin):
+class LSystemPlugin(ProtocolPlugin):
 	
 	commands = {
 		"lbook": "commandLbook",

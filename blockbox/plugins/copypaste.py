@@ -10,7 +10,7 @@ from blockbox.constants import *
 
 import sys
 
-class BsavePlugin(ProtocolPlugin):
+class CopyPastePlugin(ProtocolPlugin):
 	
 	commands = {
 		"copy": "commandSave",

@@ -9,7 +9,7 @@ from blockbox.constants import *
 import math
 import random
 
-class ToolsPlugin(ProtocolPlugin):
+class NaturePlugin(ProtocolPlugin):
 	
 	commands = {
 		"dune": "commandDune",

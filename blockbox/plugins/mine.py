@@ -7,7 +7,7 @@ from blockbox.decorators import *
 from blockbox.constants import *
 from lib.twisted.internet import reactor
 
-class DynamitePlugin(ProtocolPlugin):
+class MinePlugin(ProtocolPlugin):
 
 	commands = {
 		"mine": "commandMine",

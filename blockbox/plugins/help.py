@@ -8,7 +8,7 @@ from blockbox.decorators import *
 from blockbox.constants import *
 from blockbox.globals import *
 
-class helpPlugin(ProtocolPlugin):
+class HelpPlugin(ProtocolPlugin):
 
 	commands = {
 		"help": "commandHelp",

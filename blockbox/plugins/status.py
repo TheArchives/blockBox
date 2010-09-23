@@ -7,7 +7,7 @@ from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 
-class WorldUtilPlugin(ProtocolPlugin):
+class StatusPlugin(ProtocolPlugin):
 	
 	commands = {
 		"status": "commandStatus",

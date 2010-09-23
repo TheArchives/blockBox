@@ -8,7 +8,7 @@ from blockbox.constants import *
 from lib.twisted.internet import reactor
 import logging
 
-class DynamitePlugin(ProtocolPlugin):
+class BackPlugin(ProtocolPlugin):
 	
 	commands = {
 		"b": "commandBack",

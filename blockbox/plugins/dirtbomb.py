@@ -7,7 +7,7 @@ from blockbox.decorators import *
 from blockbox.constants import *
 from twisted.internet import reactor
 
-class tntPlugin(ProtocolPlugin):
+class DirtBombPlugin(ProtocolPlugin):
 	
 	commands = {
 		"dirtbomb": "commanddirtbomb",

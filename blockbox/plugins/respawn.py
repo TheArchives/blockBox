@@ -6,7 +6,7 @@ from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 
-class FetchPlugin(ProtocolPlugin):
+class RespawnPlugin(ProtocolPlugin):
 	
 	commands = {
 		"respawn": "commandRespawn",

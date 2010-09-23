@@ -8,7 +8,7 @@ from blockbox.constants import *
 from twisted.internet import reactor
 maxundos = 3000
 
-class RecthirdPlugin(ProtocolPlugin):
+class UndoPlugin(ProtocolPlugin):
 	
 	commands = {
 		"undo": "commandUndo",
