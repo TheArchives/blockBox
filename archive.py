@@ -146,7 +146,7 @@ def rip(key, username, password):
 
 def main():
 	config = ConfigParser()
-	config.read(os.path.join(os.path.dirname(__file__), "client.ini"))
+	config.read(os.path.join(os.path.dirname(__file__), "conf/client.ini"))
 	rip(sys.argv[1], config.get("client", "username"), config.get("client", "password"))
 
 # this only runs if the module was *not* imported
