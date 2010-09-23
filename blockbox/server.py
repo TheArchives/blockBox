@@ -64,7 +64,7 @@ The Salt is also used to help verify users' identities.
 				if self.factory.console_delay == self.factory.delay_count:
 					self.logger.info("%s" % self.url)
 					self.logger.info("Saved URL to url.txt.")
-				open('url.txt', 'w').write(self.url)
+				open('data/url.txt', 'w').write(self.url)
 				if not self.factory.console.is_alive():
 					self.factory.console.run()
 			except:
@@ -81,7 +81,8 @@ class MyneFactory(Factory):
 	protocol = MyneServerProtocol
 
 	def __init__(self):
-		if  (os.path.exists("conf/server.dist.ini") and not os.path.exists("conf/server.ini")) or \
+		if  (os.path.exists("conf/plugins.dist.ini") and not os.path.exists("conf/plugins.ini")) or \
+			(os.path.exists("conf/server.dist.ini") and not os.path.exists("conf/server.ini")) or \
 			(os.path.exists("conf/wordfilter.dist.ini") and not os.path.exists("conf/wordfilter.ini")):
 			raise NotConfigured
 		self.logger = logging.getLogger("Server")
@@ -90,10 +91,23 @@ class MyneFactory(Factory):
 		self.last_heartbeat = time.time()
 		self.lastseen = ConfigParser()
 		self.config = ConfigParser()
+		self.conf_plugins = ConfigParser()
 		self.wordfilter = ConfigParser()
 		self.save_count = 1
 		self.delay_count = 1
 		self.config.read("conf/server.ini")
+		self.conf_plugins.read("conf/plugins.ini")
+		
+		if  (os.path.exists("conf/irc.ini")):
+			self.use_irc = True
+			self.conf_irc = ConfigParser()
+			self.conf_irc.read("conf/irc.ini")
+			
+		if  (os.path.exists("conf/email.ini")):
+			self.use_email = True
+			self.conf_email = ConfigParser()
+			self.conf_email.read("conf/email.ini")
+		
 		self.saving = False
 		self.max_clients = self.config.getint("main", "max_clients")
 		self.server_name = self.config.get("main", "name")
@@ -118,13 +132,13 @@ class MyneFactory(Factory):
 		if self.backup_auto:
 			reactor.callLater(float(self.backup_freq * 60),self.AutoBackup)
 		# Parse IRC section
-		if  self.config.getboolean("irc", "use_irc"):
-			self.irc_nick = self.config.get("irc", "nick")
-			self.irc_pass = self.config.get("irc", "password")
-			self.irc_channel = self.config.get("irc", "channel")
-			self.irc_cmdlogs = self.config.getboolean("irc", "cmdlogs")
+		if  self.use_irc:
+			self.irc_nick = self.conf_irc.get("irc", "nick")
+			self.irc_pass = self.conf_irc.get("irc", "password")
+			self.irc_channel = self.conf_irc.get("irc", "channel")
+			self.irc_cmdlogs = self.conf_irc.getboolean("irc", "cmdlogs")
 			self.irc_relay = ChatBotFactory(self)
-			reactor.connectTCP(self.config.get("irc", "server"), self.config.getint("irc", "port"), self.irc_relay)
+			reactor.connectTCP(self.conf_irc.get("irc", "server"), self.conf_irc.getint("irc", "port"), self.irc_relay)
 		else:
 			self.irc_relay = None
 		self.main_loaded = False
@@ -137,7 +151,7 @@ class MyneFactory(Factory):
 		# Salt, for the heartbeat server/verify-names
 		self.salt = hashlib.md5(hashlib.md5(str(random.getrandbits(128))).digest()).hexdigest()[-32:].strip("0")
 		# Load up the plugins specified
-		plugins = self.config.options("plugins")
+		plugins = self.conf_plugins.options("plugins")
 		self.logger.info("Loading %i plugins..." % len(plugins))
 		load_plugins(plugins)
 		# Open the chat log, ready for appending
@@ -198,11 +212,11 @@ class MyneFactory(Factory):
 	def loadMeta(self):
 		"Loads the 'meta' - variables that change with the server (worlds, admins, etc.)"
 		config = ConfigParser()
-		config.read("server.meta")
+		config.read("data/server.meta")
 		specs = ConfigParser()
-		specs.read("spectators.meta")
+		specs.read("data/spectators.meta")
 		lastseen = ConfigParser()
-		lastseen.read("lastseen.meta")
+		lastseen.read("data/lastseen.meta")
 		# Read in the worlds
 		if config.has_section("worlds"):
 			for name in config.options("worlds"):

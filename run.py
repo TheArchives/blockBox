@@ -35,21 +35,21 @@ rotate = logging.handlers.TimedRotatingFileHandler(
 )
 logging.root.addHandler(rotate)
 
-if factory.config.getboolean("email", "use_email"):
-	if factory.config.getboolean("email", "need_auth"):
+if factory.use_email:
+	if factory.conf_email.getboolean("email", "need_auth"):
 		email = logging.handlers.SMTPHandler(
-			(factory.config.get("email", "host"),factory.config.get("email", "port")),
-			factory.config.get("email", "from"),
-			[factory.config.get("email", "to")],
-			factory.config.get("email", "subject"),
-			(factory.config.get("email", "user"), factory.config.get("email", "pass")),
+			(factory.conf_email.get("email", "host"),factory.conf_email.get("email", "port")),
+			factory.conf_email.get("email", "from"),
+			[factory.conf_email.get("email", "to")],
+			factory.conf_email.get("email", "subject"),
+			(factory.conf_email.get("email", "user"), factory.conf_email.get("email", "pass")),
 		)
 	else:
 		email = logging.handlers.SMTPHandler(
-			(factory.config.get("email", "host"),factory.config.get("email", "port")),
-			factory.config.get("email", "from"),
-			[factory.config.get("email", "to")],
-			factory.config.get("email", "subject"),
+			(factory.conf_email.get("email", "host"),factory.conf_email.get("email", "port")),
+			factory.conf_email.get("email", "from"),
+			[factory.conf_email.get("email", "to")],
+			factory.conf_email.get("email", "subject"),
 		)
 	emh.setLevel(logging.ERROR)
 	logging.root.addHandler(email)

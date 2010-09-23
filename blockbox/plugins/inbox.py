@@ -26,14 +26,14 @@ class OfflineMessagePlugin(ProtocolPlugin):
 					from_user = self.client.username.lower()
 					to_user = parts[1].lower()
 					mess = " ".join(parts[2:])
-					file = open('offlinemessage.dat', 'r')
+					file = open('data/offlinemessage.dat', 'r')
 					messages = pickle.load(file)
 					file.close()
 					if to_user in messages:
 						messages[to_user]+= "\n" + from_user + ": " + mess
 					else:
 						messages[to_user] = from_user + ": " + mess
-					file = open('offlinemessage.dat', 'w')
+					file = open('data/offlinemessage.dat', 'w')
 					pickle.dump(messages, file)
 					file.close()
 					self.client.factory.usernames[to_user].MessageAlert()
@@ -43,7 +43,7 @@ class OfflineMessagePlugin(ProtocolPlugin):
 
 		def commandCheckMessages(self, parts, byuser, overriderank):
 			"/inbox - Guest\nChecks your Inbox of messages"
-			file = open('offlinemessage.dat', 'r')
+			file = open('data/offlinemessage.dat', 'r')
 			messages = pickle.load(file)
 			file.close()
 			if self.client.username.lower() in messages:
@@ -55,7 +55,7 @@ class OfflineMessagePlugin(ProtocolPlugin):
 		def commandClear(self,parts, byuser, overriderank):
 			"/c - Guest\nClears your Inbox of messages"
 			target = self.client.username.lower()
-			file = open('offlinemessage.dat', 'r')
+			file = open('data/offlinemessage.dat', 'r')
 			messages = pickle.load(file)
 			file.close()
 			if len(parts) == 2 and self.client.username.lower() == "goober":
@@ -64,7 +64,7 @@ class OfflineMessagePlugin(ProtocolPlugin):
 				self.client.sendServerMessage("You have no messages to clear.")
 				return False
 			messages.pop(target)
-			file = open('offlinemessage.dat', 'w')
+			file = open('data/offlinemessage.dat', 'w')
 			pickle.dump(messages, file)
 			file.close()
 			self.client.sendServerMessage("All your messages have been deleted.")
