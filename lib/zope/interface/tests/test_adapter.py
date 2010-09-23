@@ -17,7 +17,7 @@ $Id: test_adapter.py 110736 2010-04-11 10:59:30Z regebro $
 """
 import doctest
 import unittest
-import zope.interface
+import lib.zope.interface
 from zope.interface.adapter import AdapterRegistry
 
 

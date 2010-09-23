@@ -18,7 +18,7 @@ interface as structured text.
 
 $Id: document.py 110536 2010-04-06 02:59:44Z tseaver $
 """
-import zope.interface
+import lib.zope.interface
 
 def asStructuredText(I, munge=0):
     """ Output structured text format.  Note, this will whack any existing

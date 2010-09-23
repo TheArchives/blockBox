@@ -16,7 +16,7 @@ import unittest
 
 def test_interface_import():
     """
-    >>> import zope.interface.common.interfaces
+    >>> import lib.zope.interface.common.interfaces
     """
 
 def test_suite():

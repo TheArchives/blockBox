@@ -109,7 +109,7 @@ class Test(unittest.TestCase):
 
     def test_module(self):
         from zope.interface.tests import m1, m2
-        #import zope.interface.tests.m2
+        #import lib.zope.interface.tests.m2
         directlyProvides(m2,
                          m1.I1,
                          m1.I2,
@@ -298,7 +298,7 @@ def test_getting_spec_for_proxied_builtin_class():
 
     We'll create an implements specification:
 
-      >>> import zope.interface.declarations
+      >>> import lib.zope.interface.declarations
       >>> impl = zope.interface.declarations.Implements(I1, I2)
 
     Now, we'll emulate a declaration for a built-in type by putting
@@ -323,7 +323,7 @@ def test_declaration_get():
     """
     We can get definitions from a declaration:
 
-        >>> import zope.interface
+        >>> import lib.zope.interface
         >>> class I1(zope.interface.Interface):
         ...    a11 = zope.interface.Attribute('a11')
         ...    a12 = zope.interface.Attribute('a12')
@@ -412,7 +412,7 @@ def test_provided_by_with_slots():
     using providedBy() on that class should still work (this occurs, for
     example, when providing an adapter for a concrete class.)
 
-    >>> import zope.interface
+    >>> import lib.zope.interface
     >>> class Slotted(object):
     ...     __slots__ = ('__provides__')
     >>> class IFoo(zope.interface.Interface):
