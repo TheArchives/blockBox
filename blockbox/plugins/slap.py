@@ -7,7 +7,7 @@ from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 from blockbox.irc_client import *
-from myne import *
+from blockbox import *
 
 class SlapPlugin(ProtocolPlugin):
 

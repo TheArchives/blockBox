@@ -14,7 +14,7 @@ class ToolsPlugin(ProtocolPlugin):
 	commands = {
 		"ruler": "commandRuler",
 		"measure": "commandRuler",
-	   	"roll": "commandRoll"
+		"roll": "commandRoll"
 	}
 	
 	@world_list

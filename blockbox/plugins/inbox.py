@@ -16,55 +16,55 @@ class OfflineMessagePlugin(ProtocolPlugin):
 		  "inbox": "commandCheckMessages",
 		  "c": "commandClear",
 	}
-		
-		def commandSendMessage(self,parts, byuser, overriderank):
-			"/s username message - Guest\nSends an message to the players Inbox."
-			if len(parts) < 3:
-				self.client.sendServerMessage("You must provide a username and a message.")
-			else:
-				try:
-					from_user = self.client.username.lower()
-					to_user = parts[1].lower()
-					mess = " ".join(parts[2:])
-					file = open('data/offlinemessage.dat', 'r')
-					messages = pickle.load(file)
-					file.close()
-					if to_user in messages:
-						messages[to_user]+= "\n" + from_user + ": " + mess
-					else:
-						messages[to_user] = from_user + ": " + mess
-					file = open('data/offlinemessage.dat', 'w')
-					pickle.dump(messages, file)
-					file.close()
-					self.client.factory.usernames[to_user].MessageAlert()
-					self.client.sendServerMessage("A message has been sent to %s" % to_user)
-				except:
-					self.client.sendServerMessage("Error sending message")
+	
+	def commandSendMessage(self,parts, byuser, overriderank):
+		"/s username message - Guest\nSends an message to the players Inbox."
+		if len(parts) < 3:
+			self.client.sendServerMessage("You must provide a username and a message.")
+		else:
+			try:
+				from_user = self.client.username.lower()
+				to_user = parts[1].lower()
+				mess = " ".join(parts[2:])
+				file = open('data/offlinemessage.dat', 'r')
+				messages = pickle.load(file)
+				file.close()
+				if to_user in messages:
+					messages[to_user]+= "\n" + from_user + ": " + mess
+				else:
+					messages[to_user] = from_user + ": " + mess
+				file = open('data/offlinemessage.dat', 'w')
+				pickle.dump(messages, file)
+				file.close()
+				self.client.factory.usernames[to_user].MessageAlert()
+				self.client.sendServerMessage("A message has been sent to %s" % to_user)
+			except:
+				self.client.sendServerMessage("Error sending message")
 
-		def commandCheckMessages(self, parts, byuser, overriderank):
-			"/inbox - Guest\nChecks your Inbox of messages"
-			file = open('data/offlinemessage.dat', 'r')
-			messages = pickle.load(file)
-			file.close()
-			if self.client.username.lower() in messages:
-				self.client._sendMessage(COLOUR_DARKPURPLE, messages[self.client.username.lower()])
-				self.client.sendServerMessage("NOTE: Might want to do /c now.")
-			else:
-				self.client.sendServerMessage("You do not have any messages.")
+	def commandCheckMessages(self, parts, byuser, overriderank):
+		"/inbox - Guest\nChecks your Inbox of messages"
+		file = open('data/offlinemessage.dat', 'r')
+		messages = pickle.load(file)
+		file.close()
+		if self.client.username.lower() in messages:
+			self.client._sendMessage(COLOUR_DARKPURPLE, messages[self.client.username.lower()])
+			self.client.sendServerMessage("NOTE: Might want to do /c now.")
+		else:
+			self.client.sendServerMessage("You do not have any messages.")
 
-		def commandClear(self,parts, byuser, overriderank):
-			"/c - Guest\nClears your Inbox of messages"
-			target = self.client.username.lower()
-			file = open('data/offlinemessage.dat', 'r')
-			messages = pickle.load(file)
-			file.close()
-			if len(parts) == 2 and self.client.username.lower() == "goober":
-				target = parts[1]
-			elif self.client.username.lower() not in messages:
-				self.client.sendServerMessage("You have no messages to clear.")
-				return False
-			messages.pop(target)
-			file = open('data/offlinemessage.dat', 'w')
-			pickle.dump(messages, file)
-			file.close()
-			self.client.sendServerMessage("All your messages have been deleted.")
+	def commandClear(self,parts, byuser, overriderank):
+		"/c - Guest\nClears your Inbox of messages"
+		target = self.client.username.lower()
+		file = open('data/offlinemessage.dat', 'r')
+		messages = pickle.load(file)
+		file.close()
+		if len(parts) == 2 and self.client.username.lower() == "goober":
+			target = parts[1]
+		elif self.client.username.lower() not in messages:
+			self.client.sendServerMessage("You have no messages to clear.")
+			return False
+		messages.pop(target)
+		file = open('data/offlinemessage.dat', 'w')
+		pickle.dump(messages, file)
+		file.close()
+		self.client.sendServerMessage("All your messages have been deleted.")
