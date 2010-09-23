@@ -49,6 +49,8 @@ static PyObject *unquote(PyObject *self, PyObject *args, PyObject *kwargs)
     if (length == 0) {
         return PyString_FromStringAndSize("", 0);
     }
+    /* Allocating an output buffer of length will be sufficient,
+       as the output can only be smaller. We resize the output in the end. */
     str = PyString_FromStringAndSize(NULL, length);
     if (str == NULL) {
         return NULL;
@@ -117,8 +119,12 @@ DL_EXPORT(void) init_c_urlarg(void)
 
     m = Py_InitModule("_c_urlarg", _c_urlarg_methods);
     d = PyModule_GetDict(m);
+
+    /* add our base exception class */
     UrlargError = PyErr_NewException("urlarg.UrlargError", PyExc_Exception, NULL);
     PyDict_SetItemString(d, "UrlargError", UrlargError);
+
+    /* initialize hexdigits */
     for(i = 0; i < 255; i++) {
         hexdigits[i] = NOT_HEXDIGIT;
     }
@@ -132,6 +138,7 @@ DL_EXPORT(void) init_c_urlarg(void)
     for(i = 'A'; i <= 'F'; i++) {
         hexdigits[i] = 10 + (i - 'A');
     }
+    /* Check for errors */
     if (PyErr_Occurred()) {
         PyErr_Print();
         Py_FatalError("can't initialize module _c_urlarg");

@@ -10,7 +10,7 @@ You probably want to call L{startLogging}.
 
 syslog = __import__('syslog')
 
-from twisted.python import log
+from lib.twisted.python import log
 
 # These defaults come from the Python 2.3 syslog docs.
 DEFAULT_OPTIONS = 0

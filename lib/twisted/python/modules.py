@@ -44,7 +44,7 @@ the modules outside the standard library's python-files directory::
     import os
     stdlibdir = os.path.dirname(os.__file__)
 
-    from twisted.python.modules import iterModules
+    from lib.twisted.python.modules import iterModules
 
     for modinfo in iterModules():
         if (modinfo.pathEntry.filePath.path != stdlibdir
@@ -64,10 +64,10 @@ import inspect
 import warnings
 from lib.zope.interface import Interface, implements
 
-from twisted.python.components import registerAdapter
-from twisted.python.filepath import FilePath, UnlistableError
-from twisted.python.zippath import ZipArchive
-from twisted.python.reflect import namedAny
+from lib.twisted.python.components import registerAdapter
+from lib.twisted.python.filepath import FilePath, UnlistableError
+from lib.twisted.python.zippath import ZipArchive
+from lib.twisted.python.reflect import namedAny
 
 _nothing = object()
 

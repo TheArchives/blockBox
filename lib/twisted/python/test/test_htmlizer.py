@@ -7,8 +7,8 @@ Tests for L{twisted.python.htmlizer}.
 
 from StringIO import StringIO
 
-from twisted.trial.unittest import TestCase
-from twisted.python.htmlizer import filter
+from lib.twisted.trial.unittest import TestCase
+from lib.twisted.python.htmlizer import filter
 
 
 class FilterTests(TestCase):

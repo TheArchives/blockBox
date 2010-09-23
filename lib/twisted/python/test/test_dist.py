@@ -10,11 +10,11 @@ import os
 
 from distutils.core import Distribution
 
-from twisted.trial.unittest import TestCase
+from lib.twisted.trial.unittest import TestCase
 
-from twisted.python import dist
-from twisted.python.dist import get_setup_args, ConditionalExtension
-from twisted.python.filepath import FilePath
+from lib.twisted.python import dist
+from lib.twisted.python.dist import get_setup_args, ConditionalExtension
+from lib.twisted.python.filepath import FilePath
 
 
 class SetupTest(TestCase):
@@ -72,7 +72,7 @@ class GetVersionTest(TestCase):
         """
         f = open(os.path.join(self.dirname, "_version.py"), "w")
         f.write("""
-from twisted.python import versions
+from lib.twisted.python import versions
 version = versions.Version("twisted", 0, 1, 2)
 """)
         f.close()
@@ -86,7 +86,7 @@ version = versions.Version("twisted", 0, 1, 2)
         os.mkdir(os.path.join(self.dirname, "blat"))
         f = open(os.path.join(self.dirname, "blat", "_version.py"), "w")
         f.write("""
-from twisted.python import versions
+from lib.twisted.python import versions
 version = versions.Version("twisted.blat", 9, 8, 10)
 """)
         f.close()

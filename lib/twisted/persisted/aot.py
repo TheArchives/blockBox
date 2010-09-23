@@ -1,10 +1,27 @@
-# -*- test-case-name: lib.twisted.test.test_persisted -*-
+# -*- test-case-name: twisted.test.test_persisted -*-
 
 # Copyright (c) 2001-2004 Twisted Matrix Laboratories.
 # See LICENSE for details.
+
+
+
+"""
+AOT: Abstract Object Trees
+The source-code-marshallin'est abstract-object-serializin'est persister
+this side of Marmalade!
+"""
+
 import types, new, string, copy_reg, tokenize, re
+
 from lib.twisted.python import reflect, log
 from lib.twisted.persisted import crefutil
+
+###########################
+# Abstract Object Classes #
+###########################
+
+#"\0" in a getSource means "insert variable-width indention here".
+#see `indentify'.
 
 class Named:
     def __init__(self, name):
@@ -22,6 +39,7 @@ class Module(Named):
     def getSource(self):
         return "Module(%r)" % self.name
 
+
 class InstanceMethod:
     def __init__(self, name, klass, inst):
         if not (isinstance(inst, Ref) or isinstance(inst, Instance) or isinstance(inst, Deref)):
@@ -32,6 +50,7 @@ class InstanceMethod:
 
     def getSource(self):
         return "InstanceMethod(%r, %r, \n\0%s)" % (self.name, self.klass, prettify(self.instance))
+
 
 class _NoStateObj:
     pass
@@ -60,6 +79,7 @@ class Instance:
             self.stateIsDict = 1
 
     def getSource(self):
+        #XXX make state be foo=bar instead of a dict.
         if self.stateIsDict:
             stateDict = self.state
         elif isinstance(self.state, Ref) and isinstance(self.state.obj, types.DictType):
@@ -74,6 +94,7 @@ class Instance:
         return "Instance(%r, %s)" % (self.klass, prettify(self.state))
 
 class Ref:
+
     def __init__(self, *args):
         #blargh, lame.
         if len(args) == 2:
@@ -99,6 +120,7 @@ class Ref:
         if self.refnum:
             return "Ref(%d, \n\0%s)" % (self.refnum, prettify(self.obj))
         return prettify(self.obj)
+ 
 
 class Deref:
     def __init__(self, num):
@@ -106,7 +128,9 @@ class Deref:
 
     def getSource(self):
         return "Deref(%d)" % self.refnum
+
     __repr__ = getSource
+
 
 class Copyreg:
     def __init__(self, loadfunc, state):
@@ -116,10 +140,21 @@ class Copyreg:
     def getSource(self):
         return "Copyreg(%r, %s)" % (self.loadfunc, prettify(self.state))
 
+
+
+###############
+# Marshalling #
+###############
+
+
 def getSource(ao):
+    """Pass me an AO, I'll return a nicely-formatted source representation."""
     return indentify("app = " + prettify(ao))
 
+
 class NonFormattableDict(Exception):
+    """A dictionary was not formattable.
+    """
 
 r = re.compile('[a-zA-Z_][a-zA-Z0-9_]*$')
 
@@ -137,25 +172,31 @@ def dictToKW(d):
             )
     return string.join(out, '')
 
+
 def prettify(obj):
     if hasattr(obj, 'getSource'):
         return obj.getSource()
     else:
+        #basic type
         t = type(obj)
+
         if t in _SIMPLE_BUILTINS:
             return repr(obj)
+
         elif t is types.DictType:
             out = ['{']
             for k,v in obj.items():
                 out.append('\n\0%s: %s,' % (prettify(k), prettify(v)))
             out.append(len(obj) and '\n\0}' or '}')
             return string.join(out, '')
+
         elif t is types.ListType:
             out = ["["]
             for x in obj:
                 out.append('\n\0%s,' % prettify(x))
             out.append(len(obj) and '\n\0]' or ']')
             return string.join(out, '')
+
         elif t is types.TupleType:
             out = ["("]
             for x in obj:
@@ -169,6 +210,8 @@ def indentify(s):
     out = []
     stack = []
     def eater(type, val, r, c, l, out=out, stack=stack):
+        #import sys
+        #sys.stdout.write(val)
         if val in ['[', '(', '{']:
             stack.append(val)
         elif val in [']', ')', '}']:
@@ -181,10 +224,27 @@ def indentify(s):
     tokenize.tokenize(l.pop, eater)
     return string.join(out, '')
 
+
+
+
+
+###########
+# Unjelly #
+###########
+
 def unjellyFromAOT(aot):
+    """
+    Pass me an Abstract Object Tree, and I'll unjelly it for you.
+    """
     return AOTUnjellier().unjelly(aot)
 
 def unjellyFromSource(stringOrFile):
+    """
+    Pass me a string of code or a filename that defines an 'app' variable (in
+    terms of Abstract Objects!), and I'll execute it and unjelly the resulting
+    AOT for you, returning a newly unpersisted Application object!
+    """
+
     ns = {"Instance": Instance,
           "InstanceMethod": InstanceMethod,
           "Class": Class,
@@ -205,18 +265,30 @@ def unjellyFromSource(stringOrFile):
     else:
         raise ValueError("%s needs to define an 'app', it didn't!" % stringOrFile)
 
+
 class AOTUnjellier:
+    """I handle the unjellying of an Abstract Object Tree.
+    See AOTUnjellier.unjellyAO
+    """
     def __init__(self):
         self.references = {}
         self.stack = []
         self.afterUnjelly = []
 
+    ##
+    # unjelly helpers (copied pretty much directly from (now deleted) marmalade)
+    ##
     def unjellyLater(self, node):
+        """Unjelly a node, later.
+        """
         d = crefutil._Defer()
         self.unjellyInto(d, 0, node)
         return d
 
     def unjellyInto(self, obj, loc, ao):
+        """Utility method for unjellying one object into another.
+        This automates the handling of backreferences.
+        """
         o = self.unjellyAO(ao)
         obj[loc] = o
         if isinstance(o, crefutil.NotKnown):
@@ -232,12 +304,22 @@ class AOTUnjellier:
         self.afterUnjelly.append((callable, l))
 
     def unjellyAttribute(self, instance, attrName, ao):
+        #XXX this is unused????
+        """Utility method for unjellying into instances of attributes.
+        
+        Use this rather than unjellyAO unless you like surprising bugs!
+        Alternatively, you can use unjellyInto on your instance's __dict__.
+        """
         self.unjellyInto(instance.__dict__, attrName, ao)
 
     def unjellyAO(self, ao):
+        """Unjelly an Abstract Object and everything it contains.
+        I return the real object.
+        """
         self.stack.append(ao)
         t = type(ao)
         if t is types.InstanceType:
+            #Abstract Objects
             c = ao.__class__
             if c is Module:
                 return reflect.namedModule(ao.name)
@@ -281,6 +363,7 @@ class AOTUnjellier:
                     ref.resolveDependants(o)
                     self.references[refkey] = o
                 elif refkey is None:
+                    # This happens when you're unjellying from an AOT not read from source
                     pass
                 else:
                     raise ValueError("Multiple references with the same ID: %s, %s, %s!" % (ref, refkey, ao))
@@ -300,6 +383,9 @@ class AOTUnjellier:
                 d = self.unjellyLater(ao.state).addCallback(
                     lambda result, _l: apply(_l, result), loadfunc)
                 return d
+
+        #Types
+                
         elif t in _SIMPLE_BUILTINS:
             return ao
             
@@ -331,6 +417,7 @@ class AOTUnjellier:
             raise TypeError("Unsupported AOT type: %s" % t)
 
         del self.stack[-1]
+
         
     def unjelly(self, ao):
         try:
@@ -343,11 +430,22 @@ class AOTUnjellier:
             log.msg("Error jellying object! Stacktrace follows::")
             log.msg(string.join(map(repr, self.stack), "\n"))
             raise
+#########
+# Jelly #
+#########
+
 
 def jellyToAOT(obj):
+    """Convert an object to an Abstract Object Tree."""
     return AOTJellier().jelly(obj)
 
 def jellyToSource(obj, file=None):
+    """
+    Pass me an object and, optionally, a file object.
+    I'll convert the object to an AOT either return it (if no file was
+    specified) or write it to the file.
+    """
+
     aot = jellyToAOT(obj)
     if file:
         file.write(getSource(aot))
@@ -357,21 +455,29 @@ def jellyToSource(obj, file=None):
 
 class AOTJellier:
     def __init__(self):
+        # dict of {id(obj): (obj, node)}
         self.prepared = {}
         self._ref_id = 0
         self.stack = []
 
     def prepareForRef(self, aoref, object):
+        """I prepare an object for later referencing, by storing its id()
+        and its _AORef in a cache."""
         self.prepared[id(object)] = aoref
 
     def jellyToAO(self, obj):
+        """I turn an object into an AOT and return it."""
         objType = type(obj)
         self.stack.append(repr(obj))
 
+        #immutable: We don't care if these have multiple refs!
         if objType in _SIMPLE_BUILTINS:
             retval = obj
             
         elif objType is types.MethodType:
+            # TODO: make methods 'prefer' not to jelly the object internally,
+            # so that the object will show up where it's referenced first NOT
+            # by a method.
             retval = InstanceMethod(obj.im_func.__name__, reflect.qual(obj.im_class),
                                     self.jellyToAO(obj.im_self))
             
@@ -387,12 +493,24 @@ class AOTJellier:
         elif objType is types.FunctionType:
             retval = Function(reflect.fullFuncName(obj))
             
-        else:
+        else: #mutable! gotta watch for refs.
+
+#Marmalade had the nicety of being able to just stick a 'reference' attribute
+#on any Node object that was referenced, but in AOT, the referenced object
+#is *inside* of a Ref call (Ref(num, obj) instead of
+#<objtype ... reference="1">). The problem is, especially for built-in types,
+#I can't just assign some attribute to them to give them a refnum. So, I have
+#to "wrap" a Ref(..) around them later -- that's why I put *everything* that's
+#mutable inside one. The Ref() class will only print the "Ref(..)" around an
+#object if it has a Reference explicitly attached.
+
             if self.prepared.has_key(id(obj)):
                 oldRef = self.prepared[id(obj)]
                 if oldRef.refnum:
+                    # it's been referenced already
                     key = oldRef.refnum
                 else:
+                    # it hasn't been referenced yet
                     self._ref_id = self._ref_id + 1
                     key = self._ref_id
                     oldRef.setRef(key)

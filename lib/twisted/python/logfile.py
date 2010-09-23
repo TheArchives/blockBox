@@ -10,7 +10,7 @@ A rotating, browsable log file.
 # System Imports
 import os, glob, time, stat
 
-from twisted.python import threadable
+from lib.twisted.python import threadable
 
 
 

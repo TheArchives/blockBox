@@ -10,7 +10,7 @@ Maintainer: Glyph Lefkowitz
 
 # System imports
 import types
-from twisted.python import reflect
+from lib.twisted.python import reflect
 
 class NotSupportedError(NotImplementedError):
     """

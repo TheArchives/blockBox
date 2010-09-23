@@ -1,13 +1,21 @@
-# -*- test-case-name: lib.twisted.test.test_persisted -*-
+# -*- test-case-name: twisted.test.test_persisted -*-
 
 # Copyright (c) 2001-2008 Twisted Matrix Laboratories.
 # See LICENSE for details.
+
+
+"""
+Utility classes for dealing with circular references.
+"""
+
 from lib.twisted.python import log, reflect
+
 try:
     from new import instancemethod
 except:
     from org.python.core import PyMethod
     instancemethod = PyMethod
+
 
 class NotKnown:
     def __init__(self):
@@ -31,8 +39,21 @@ class NotKnown:
     def __hash__(self):
         assert 0, "I am not to be used as a dictionary key."
 
+
+
 class _Container(NotKnown):
+    """
+    Helper class to resolve circular references on container objects.
+    """
+
     def __init__(self, l, containerType):
+        """
+        @param l: The list of object which may contain some not yet referenced
+        objects.
+
+        @param containerType: A type of container objects (e.g., C{tuple} or
+            C{set}).
+        """
         NotKnown.__init__(self)
         self.containerType = containerType
         self.l = l
@@ -45,14 +66,26 @@ class _Container(NotKnown):
         if not self.locs:
             self.resolveDependants(self.containerType(self.l))
 
+
     def __setitem__(self, n, obj):
+        """
+        Change the value of one contained objects, and resolve references if
+        all objects have been referenced.
+        """
         self.l[n] = obj
         if not isinstance(obj, NotKnown):
             self.locs.remove(n)
             if not self.locs:
                 self.resolveDependants(self.containerType(self.l))
 
+
+
 class _Tuple(_Container):
+    """
+    Manage tuple containing circular references. Deprecated: use C{_Container}
+    instead.
+    """
+
     def __init__(self, l):
         """
         @param l: The list of object which may contain some not yet referenced
@@ -60,11 +93,14 @@ class _Tuple(_Container):
         """
         _Container.__init__(self, l, tuple)
 
+
+
 class _InstanceMethod(NotKnown):
     def __init__(self, im_name, im_self, im_class):
         NotKnown.__init__(self)
         self.my_class = im_class
         self.name = im_name
+        # im_self _must_ be a
         im_self.addDependant(self, 0)
 
     def __call__(self, *args, **kw):
@@ -94,12 +130,15 @@ class _DictKeyAndValue:
         if hasattr(self, "key") and hasattr(self, "value"):
             self.dict[self.key] = self.value
 
+
 class _Dereference(NotKnown):
     def __init__(self, id):
         NotKnown.__init__(self)
         self.id = id
 
+
 from lib.twisted.internet.defer import Deferred
+
 class _Catcher:
     def catch(self, value):
         self.value = value
@@ -120,6 +159,8 @@ class _Defer(Deferred, NotKnown):
         self.callback(obj)
 
     def addDependant(self, dep, key):
+        # by the time I'm adding a dependant, I'm *not* adding any more
+        # callbacks
         NotKnown.addDependant(self,  dep, key)
         self.unpause()
         resovd = self.result

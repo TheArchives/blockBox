@@ -1,9 +1,9 @@
 # Copyright (c) 2010 Twisted Matrix Laboratories.
 # See LICENSE for details.
 
-from twisted.trial import unittest
-from twisted.python.runtime import platform
-from twisted.python.win32 import cmdLineQuote
+from lib.twisted.trial import unittest
+from lib.twisted.python.runtime import platform
+from lib.twisted.python.win32 import cmdLineQuote
 
 
 class CommandLineQuotingTests(unittest.TestCase):

@@ -5,13 +5,13 @@
 Tests for L{twisted.python._inotify}.
 """
 
-from twisted.trial.unittest import TestCase
-from twisted.python.runtime import platform
+from lib.twisted.trial.unittest import TestCase
+from lib.twisted.python.runtime import platform
 
 if platform.supportsINotify():
     from ctypes import c_int, c_char_p
-    from twisted.python import _inotify
-    from twisted.python._inotify import (
+    from lib.twisted.python import _inotify
+    from lib.twisted.python._inotify import (
         INotifyError, initializeModule, init, add)
 else:
     _inotify = None

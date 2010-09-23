@@ -30,7 +30,7 @@ class EventDispatcher:
 
 
     def autoRegister(self, obj):
-        from twisted.python import reflect
+        from lib.twisted.python import reflect
         d = {}
         reflect.accumulateMethods(obj, d, self.prefix)
         for k,v in d.items():

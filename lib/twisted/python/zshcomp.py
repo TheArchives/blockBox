@@ -136,8 +136,8 @@ Have fun!
 """
 import itertools, sys, commands, os.path
 
-from twisted.python import reflect, util, usage
-from twisted.scripts.mktap import IServiceMaker
+from lib.twisted.python import reflect, util, usage
+from lib.twisted.scripts.mktap import IServiceMaker
 
 class MyOptions(usage.Options):
     """

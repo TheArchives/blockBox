@@ -13,9 +13,9 @@ except ImportError:
 
 from operator import getitem
 
-from twisted.trial.unittest import TestCase
-from twisted.python.fakepwd import UserDatabase
-from twisted.python.compat import set
+from lib.twisted.trial.unittest import TestCase
+from lib.twisted.python.fakepwd import UserDatabase
+from lib.twisted.python.compat import set
 
 
 class UserDatabaseTestsMixin:

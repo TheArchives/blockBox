@@ -1,18 +1,47 @@
 # Copyright (c) 2001-2004 Twisted Matrix Laboratories.
 # See LICENSE for details.
 
+
+"""
+This module provides support for Twisted to interact with CoreFoundation
+CFRunLoops.  This includes Cocoa's NSRunLoop.
+
+In order to use this support, simply do the following::
+
+    |  from lib.twisted.internet import cfreactor
+    |  cfreactor.install()
+
+Then use the twisted.internet APIs as usual.  The other methods here are not
+intended to be called directly under normal use.  However, install can take
+a runLoop kwarg, and run will take a withRunLoop arg if you need to explicitly
+pass a CFRunLoop for some reason.  Otherwise it will make a pretty good guess
+as to which runLoop you want (the current NSRunLoop if PyObjC is imported,
+otherwise the current CFRunLoop.  Either way, if one doesn't exist, it will
+be created).
+
+Maintainer: Bob Ippolito
+"""
+
 __all__ = ['install']
+
 import sys
+
+# hints for py2app
 import Carbon.CF
 import traceback
+
 import cfsupport as cf
+
 from lib.zope.interface import implements
+
 from lib.twisted.python import log, threadable, failure
 from lib.twisted.internet.interfaces import IReactorFDSet
 from lib.twisted.internet import posixbase, error
 from weakref import WeakKeyDictionary
 from Foundation import NSRunLoop
 from AppKit import NSApp
+
+# cache two extremely common "failures" without traceback info
 _faildict = {
     error.ConnectionDone: failure.Failure(error.ConnectionDone()),
     error.ConnectionLost: failure.Failure(error.ConnectionLost()),
@@ -20,6 +49,7 @@ _faildict = {
 
 class SelectableSocketWrapper(object):
     _objCache = WeakKeyDictionary()
+
     cf = None
     def socketWrapperForReactorAndObject(klass, reactor, obj):
         _objCache = klass._objCache
@@ -139,8 +169,13 @@ class SelectableSocketWrapper(object):
 
 class CFReactor(posixbase.PosixReactorBase):
     implements(IReactorFDSet)
+    # how long to poll if we're don't care about signals
     longIntervalOfTime = 60.0 
+
+    # how long we should poll if we do care about signals
     shortIntervalOfTime = 1.0
+
+    # don't set this
     pollInterval = longIntervalOfTime
 
     def __init__(self, runLoop=None):
@@ -181,11 +216,14 @@ class CFReactor(posixbase.PosixReactorBase):
             del self.writers[writer]
             wrapped.stopWriting()
 
+
     def getReaders(self):
         return self.readers.keys()
 
+
     def getWriters(self):
         return self.writers.keys()
+
 
     def removeAll(self):
         r = self.readers.keys()
@@ -209,6 +247,8 @@ class CFReactor(posixbase.PosixReactorBase):
 
         self.running = True
         if NSApp() is None and self.nsRunLoop.currentMode() is None:
+            # Most of the time the NSRunLoop will have already started,
+            # but in this case it wasn't.
             runLoop.run()
             self.crashing = False
             self.didStartRunLoop = True
@@ -293,6 +333,8 @@ class CFReactor(posixbase.PosixReactorBase):
         posixbase.PosixReactorBase.stop(self)
 
 def install(runLoop=None):
+    """Configure the twisted mainloop to be run inside CFRunLoop.
+    """
     reactor = CFReactor(runLoop=runLoop)
     reactor.addSystemEventTrigger('after', 'shutdown', reactor.cleanup)
     from lib.twisted.internet.main import installReactor

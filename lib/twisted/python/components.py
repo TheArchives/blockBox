@@ -36,8 +36,8 @@ from lib.zope.interface import interface, declarations
 from lib.zope.interface.adapter import AdapterRegistry
 
 # twisted imports
-from twisted.python import reflect
-from twisted.persisted import styles
+from lib.twisted.python import reflect
+from lib.twisted.persisted import styles
 
 
 class ComponentsDeprecationWarning(DeprecationWarning):

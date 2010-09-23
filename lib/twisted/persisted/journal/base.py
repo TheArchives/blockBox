@@ -1,39 +1,64 @@
-# -*- test-case-name: lib.twisted.test.test_journal -*-
+# -*- test-case-name: twisted.test.test_journal -*-
 #
 # Copyright (c) 2001-2004 Twisted Matrix Laboratories.
 # See LICENSE for details.
+
+# 
+
+
+"""Basic classes and interfaces for journal."""
+
 from __future__ import nested_scopes
+
+# system imports
 import os, time
+
 try:
     import cPickle as pickle
 except ImportError:
     import pickle
+
+# twisted imports
 from lib.zope.interface import implements, Interface
 
+
 class Journal:
+    """All commands to the system get routed through here.
+
+    Subclasses should implement the actual snapshotting capability.
+    """
+
     def __init__(self, log, journaledService):
         self.log = log
         self.journaledService = journaledService
         self.latestIndex = self.log.getCurrentIndex()
 
     def updateFromLog(self):
+        """Run all commands from log that haven't been run yet.
+
+        This method should be run on startup to ensure the snapshot
+        is up-to-date.
+        """
         snapshotIndex = self.getLastSnapshot()
         if snapshotIndex < self.latestIndex:
             for cmdtime, command in self.log.getCommandsSince(snapshotIndex + 1):
                 command.execute(self.journaledService, cmdtime)
 
     def executeCommand(self, command):
+        """Log and execute a command."""
         runTime = time.time()
         d = self.log.logCommand(command, runTime)
         d.addCallback(self._reallyExecute, command, runTime)
         return d
 
     def _reallyExecute(self, index, command, runTime):
+        """Callback called when logging command is done."""
         result = command.execute(self.journaledService, runTime)
         self.latestIndex = index
         return result
     
     def getLastSnapshot(self):
+        """Return command index of the last snapshot taken."""
         raise NotImplementedError
 
     def sync(self, *args, **kwargs):

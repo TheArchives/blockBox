@@ -22,14 +22,14 @@ import tarfile
 
 from subprocess import PIPE, STDOUT, Popen
 
-from twisted.python.versions import Version
-from twisted.python.filepath import FilePath
-from twisted.python.dist import twisted_subprojects
+from lib.twisted.python.versions import Version
+from lib.twisted.python.filepath import FilePath
+from lib.twisted.python.dist import twisted_subprojects
 
 # This import is an example of why you shouldn't use this module unless you're
 # radix
 try:
-    from twisted.lore.scripts import lore
+    from lib.twisted.lore.scripts import lore
 except ImportError:
     pass
 
@@ -250,7 +250,7 @@ def generateVersionFileData(version):
         prerelease = ""
     data = '''\
 # This is an auto-generated file. Do not edit it.
-from twisted.python import versions
+from lib.twisted.python import versions
 version = versions.Version(%r, %s, %s, %s%s)
 ''' % (version.package, version.major, version.minor, version.micro, prerelease)
     return data
@@ -965,7 +965,7 @@ class DistributionBuilder(object):
         built. The same list as C{PROJECT_BLACKLIST}.
     """
 
-    from twisted.python.dist import twisted_subprojects as subprojects
+    from lib.twisted.python.dist import twisted_subprojects as subprojects
     blacklist = PROJECT_BLACKLIST
 
     def __init__(self, rootDirectory, outputDirectory, apiBaseURL=None):

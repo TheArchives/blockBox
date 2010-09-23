@@ -1,9 +1,14 @@
 # Copyright (c) 2001-2004 Twisted Matrix Laboratories.
 # See LICENSE for details.
+
+
+"""The Finger User Information Protocol (RFC 1288)"""
+
 from lib.twisted.protocols import basic
 import string
 
 class Finger(basic.LineReceiver):
+
     def lineReceived(self, line):
         parts = string.split(line)
         if not parts:

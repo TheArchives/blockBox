@@ -29,10 +29,10 @@ try:
 except ImportError:
     from StringIO import StringIO
 
-from twisted.python.util import unsignedID
-from twisted.python.deprecate import deprecated
-from twisted.python.deprecate import _fullyQualifiedName as fullyQualifiedName
-from twisted.python.versions import Version
+from lib.twisted.python.util import unsignedID
+from lib.twisted.python.deprecate import deprecated
+from lib.twisted.python.deprecate import _fullyQualifiedName as fullyQualifiedName
+from lib.twisted.python.versions import Version
 
 
 

@@ -16,9 +16,9 @@ import os
 import time
 import errno
 
-from twisted.python.zipstream import ChunkingZipFile
+from lib.twisted.python.zipstream import ChunkingZipFile
 
-from twisted.python.filepath import FilePath, _PathHelper
+from lib.twisted.python.filepath import FilePath, _PathHelper
 
 # using FilePath here exclusively rather than os to make sure that we don't do
 # anything OS-path-specific here.

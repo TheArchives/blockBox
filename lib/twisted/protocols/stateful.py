@@ -1,14 +1,24 @@
-# -*- test-case-name: lib.twisted.test.test_stateful -*-
+# -*- test-case-name: twisted.test.test_stateful -*-
 
 # Copyright (c) 2001-2004 Twisted Matrix Laboratories.
 # See LICENSE for details.
+
+
 from lib.twisted.internet import protocol
+
 try:
     from cStringIO import StringIO
 except ImportError:
     from StringIO import StringIO
 
 class StatefulProtocol(protocol.Protocol):
+    """A Protocol that stores state for you.
+
+    state is a pair (function, num_bytes). When num_bytes bytes of data arrives
+    from the network, function is called. It is expected to return the next
+    state or None to keep same state. Initial state is returned by
+    getInitialState (override it).
+    """
     _sful_data = None, None, 0
 
     def makeConnection(self, transport):
@@ -39,3 +49,4 @@ class StatefulProtocol(protocol.Protocol):
             buffer.write(b)
             offset = 0
         self._sful_data = state, buffer, offset
+

@@ -8,9 +8,9 @@ Test cases for Twisted component architecture.
 
 from lib.zope.interface import Interface, implements, Attribute
 
-from twisted.trial import unittest
-from twisted.python import components
-from twisted.python.components import proxyForInterface
+from lib.twisted.trial import unittest
+from lib.twisted.python import components
+from lib.twisted.python.components import proxyForInterface
 
 
 class InterfacesTestCase(unittest.TestCase):

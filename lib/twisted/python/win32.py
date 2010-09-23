@@ -21,7 +21,7 @@ try:
 except ImportError:
     pass
 
-from twisted.python.runtime import platform
+from lib.twisted.python.runtime import platform
 
 # http://msdn.microsoft.com/library/default.asp?url=/library/en-us/debug/base/system_error_codes.asp
 ERROR_FILE_NOT_FOUND = 2

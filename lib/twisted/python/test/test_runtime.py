@@ -7,8 +7,8 @@ Tests for runtime checks.
 
 
 
-from twisted.python.runtime import Platform
-from twisted.trial.unittest import TestCase
+from lib.twisted.python.runtime import Platform
+from lib.twisted.trial.unittest import TestCase
 
 
 

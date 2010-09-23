@@ -8,10 +8,10 @@ import sys
 import random
 import zipfile
 
-from twisted.python.compat import set
-from twisted.python import zipstream, filepath
-from twisted.python.hashlib import md5
-from twisted.trial import unittest
+from lib.twisted.python.compat import set
+from lib.twisted.python import zipstream, filepath
+from lib.twisted.python.hashlib import md5
+from lib.twisted.trial import unittest
 
 class FileEntryMixin:
     """

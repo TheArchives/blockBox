@@ -1,14 +1,24 @@
-# -*- test-case-name: lib.twisted.test.test_socks -*-
+# -*- test-case-name: twisted.test.test_socks -*-
 # Copyright (c) 2001-2010 Twisted Matrix Laboratories.
 # See LICENSE for details.
+
+"""
+Implementation of the SOCKSv4 protocol.
+"""
+
+# python imports
 import struct
 import string
 import socket
 import time
+
+# twisted imports
 from lib.twisted.internet import reactor, protocol, defer
 from lib.twisted.python import log
 
+
 class SOCKSv4Outgoing(protocol.Protocol):
+
     def __init__(self,socks):
         self.socks=socks
 
@@ -27,7 +37,10 @@ class SOCKSv4Outgoing(protocol.Protocol):
         self.socks.log(self,data)
         self.transport.write(data)
 
+
+
 class SOCKSv4Incoming(protocol.Protocol):
+
     def __init__(self,socks):
         self.socks=socks
         self.socks.otherConn=self
@@ -42,7 +55,26 @@ class SOCKSv4Incoming(protocol.Protocol):
         self.socks.log(self,data)
         self.transport.write(data)
 
+
 class SOCKSv4(protocol.Protocol):
+    """
+    An implementation of the SOCKSv4 protocol.
+
+    @type logging: C{str} or C{None}
+    @ivar logging: If not C{None}, the name of the logfile to which connection
+        information will be written.
+
+    @type reactor: object providing L{twisted.internet.interfaces.IReactorTCP}
+    @ivar reactor: The reactor used to create connections.
+
+    @type buf: C{str}
+    @ivar buf: Part of a SOCKSv4 connection request.
+
+    @type otherConn: C{SOCKSv4Incoming}, C{SOCKSv4Outgoing} or C{None}
+    @ivar otherConn: Until the connection has been established, C{otherConn} is
+        C{None}. After that, it is the proxy-to-destination protocol instance
+        along which the client's connection is being forwarded.
+    """
     def __init__(self, logging=None, reactor=reactor):
         self.logging = logging
         self.reactor = reactor
@@ -52,6 +84,12 @@ class SOCKSv4(protocol.Protocol):
         self.otherConn = None
 
     def dataReceived(self, data):
+        """
+        Called whenever data is received.
+
+        @type data: C{str}
+        @param data: Part or all of a SOCKSv4 packet.
+        """
         if self.otherConn:
             self.otherConn.write(data)
             return
@@ -62,6 +100,10 @@ class SOCKSv4(protocol.Protocol):
             version, code, port = struct.unpack("!BBH", head[:4])
             user, self.buf = self.buf.split("\000", 1)
             if head[4:7] == "\000\000\000" and head[7] != "\000":
+                # An IP address of the form 0.0.0.X, where X is non-zero,
+                # signifies that this is a SOCKSv4a packet.
+                # If the complete packet hasn't been received, restore the
+                # buffer and wait for it.
                 if "\000" not in self.buf:
                     self.buf = completeBuffer
                     return
@@ -77,6 +119,28 @@ class SOCKSv4(protocol.Protocol):
             self._dataReceived2(server, user, version, code, port)
 
     def _dataReceived2(self, server, user, version, code, port):
+        """
+        The second half of the SOCKS connection setup. For a SOCKSv4 packet this
+        is after the server address has been extracted from the header. For a
+        SOCKSv4a packet this is after the host name has been resolved.
+
+        @type server: C{str}
+        @param server: The IP address of the destination, represented as a
+            dotted quad.
+
+        @type user: C{str}
+        @param user: The username associated with the connection.
+
+        @type version: C{int}
+        @param version: The SOCKS protocol version number.
+
+        @type code: C{int}
+        @param code: The comand code. 1 means establish a TCP/IP stream
+            connection, and 2 means establish a TCP/IP port binding.
+
+        @type port: C{int}
+        @param port: The port number associated with the connection.
+        """
         assert version == 4, "Bad version code: %s" % version
         if not self.authorize(code, server, port, user):
             self.makeReply(91)
@@ -136,17 +200,32 @@ class SOCKSv4(protocol.Protocol):
         f.write('\n')
         f.close()
 
+
+
 class SOCKSv4Factory(protocol.Factory):
+    """
+    A factory for a SOCKSv4 proxy.
+
+    Constructor accepts one argument, a log file name.
+    """
+
     def __init__(self, log):
         self.logging = log
 
     def buildProtocol(self, addr):
         return SOCKSv4(self.logging, reactor)
 
+
+
 class SOCKSv4IncomingFactory(protocol.Factory):
+    """
+    A utility class for building protocols for incoming connections.
+    """
+
     def __init__(self, socks, ip):
         self.socks = socks
         self.ip = ip
+
 
     def buildProtocol(self, addr):
         if addr[0] == self.ip:

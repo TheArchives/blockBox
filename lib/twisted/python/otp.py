@@ -60,7 +60,7 @@ def longToString(l):
         l = l / 256L
     return result
 
-from twisted.python.hashlib import md5, sha1
+from lib.twisted.python.hashlib import md5, sha1
 hashid = {md5: 'md5', sha1: 'sha1'}
 
 INITIALSEQUENCE = 1000

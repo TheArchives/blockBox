@@ -7,18 +7,18 @@ Tests for Twisted's deprecation framework, L{twisted.python.deprecate}.
 
 import sys, types
 
-from twisted.trial.unittest import TestCase
+from lib.twisted.trial.unittest import TestCase
 
-from twisted.python import deprecate
-from twisted.python.deprecate import _appendToDocstring
-from twisted.python.deprecate import _getDeprecationDocstring
-from twisted.python.deprecate import deprecated, getDeprecationWarningString
-from twisted.python.deprecate import _getDeprecationWarningString
-from twisted.python.deprecate import DEPRECATION_WARNING_FORMAT
-from twisted.python.reflect import fullyQualifiedName
-from twisted.python.versions import Version
+from lib.twisted.python import deprecate
+from lib.twisted.python.deprecate import _appendToDocstring
+from lib.twisted.python.deprecate import _getDeprecationDocstring
+from lib.twisted.python.deprecate import deprecated, getDeprecationWarningString
+from lib.twisted.python.deprecate import _getDeprecationWarningString
+from lib.twisted.python.deprecate import DEPRECATION_WARNING_FORMAT
+from lib.twisted.python.reflect import fullyQualifiedName
+from lib.twisted.python.versions import Version
 
-from twisted.python.test import deprecatedattributes
+from lib.twisted.python.test import deprecatedattributes
 
 
 

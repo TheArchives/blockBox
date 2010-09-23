@@ -54,8 +54,8 @@ __all__ = [
 import sys, inspect
 from warnings import warn
 
-from twisted.python.versions import getVersionString
-from twisted.python.util import mergeFunctionMetadata
+from lib.twisted.python.versions import getVersionString
+from lib.twisted.python.util import mergeFunctionMetadata
 
 
 

@@ -23,12 +23,12 @@ from stat import S_ISREG, S_ISDIR
 # things import this module, and it would be good if it could easily be
 # modified for inclusion in the standard library.  --glyph
 
-from twisted.python.runtime import platform
-from twisted.python.hashlib import sha1
+from lib.twisted.python.runtime import platform
+from lib.twisted.python.hashlib import sha1
 
-from twisted.python.win32 import ERROR_FILE_NOT_FOUND, ERROR_PATH_NOT_FOUND
-from twisted.python.win32 import ERROR_INVALID_NAME, ERROR_DIRECTORY, O_BINARY
-from twisted.python.win32 import WindowsError
+from lib.twisted.python.win32 import ERROR_FILE_NOT_FOUND, ERROR_PATH_NOT_FOUND
+from lib.twisted.python.win32 import ERROR_INVALID_NAME, ERROR_DIRECTORY, O_BINARY
+from lib.twisted.python.win32 import WindowsError
 
 _CREATE_FLAGS = (os.O_EXCL |
                  os.O_CREAT |

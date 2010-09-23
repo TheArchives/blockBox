@@ -18,28 +18,28 @@ from xml.dom import minidom as dom
 
 from datetime import date
 
-from twisted.trial.unittest import TestCase
+from lib.twisted.trial.unittest import TestCase
 
-from twisted.python.compat import set
-from twisted.python.procutils import which
-from twisted.python import release
-from twisted.python.filepath import FilePath
-from twisted.python.versions import Version
-from twisted.python._release import _changeVersionInFile, getNextVersion
-from twisted.python._release import findTwistedProjects, replaceInFile
-from twisted.python._release import replaceProjectVersion
-from twisted.python._release import updateTwistedVersionInformation, Project
-from twisted.python._release import generateVersionFileData
-from twisted.python._release import changeAllProjectVersions
-from twisted.python._release import VERSION_OFFSET, DocBuilder, ManBuilder
-from twisted.python._release import NoDocumentsFound, filePathDelta
-from twisted.python._release import CommandFailed, BookBuilder
-from twisted.python._release import DistributionBuilder, APIBuilder
-from twisted.python._release import BuildAPIDocsScript
-from twisted.python._release import buildAllTarballs, runCommand
-from twisted.python._release import UncleanWorkingDirectory, NotWorkingDirectory
-from twisted.python._release import ChangeVersionsScript, BuildTarballsScript
-from twisted.python._release import NewsBuilder
+from lib.twisted.python.compat import set
+from lib.twisted.python.procutils import which
+from lib.twisted.python import release
+from lib.twisted.python.filepath import FilePath
+from lib.twisted.python.versions import Version
+from lib.twisted.python._release import _changeVersionInFile, getNextVersion
+from lib.twisted.python._release import findTwistedProjects, replaceInFile
+from lib.twisted.python._release import replaceProjectVersion
+from lib.twisted.python._release import updateTwistedVersionInformation, Project
+from lib.twisted.python._release import generateVersionFileData
+from lib.twisted.python._release import changeAllProjectVersions
+from lib.twisted.python._release import VERSION_OFFSET, DocBuilder, ManBuilder
+from lib.twisted.python._release import NoDocumentsFound, filePathDelta
+from lib.twisted.python._release import CommandFailed, BookBuilder
+from lib.twisted.python._release import DistributionBuilder, APIBuilder
+from lib.twisted.python._release import BuildAPIDocsScript
+from lib.twisted.python._release import buildAllTarballs, runCommand
+from lib.twisted.python._release import UncleanWorkingDirectory, NotWorkingDirectory
+from lib.twisted.python._release import ChangeVersionsScript, BuildTarballsScript
+from lib.twisted.python._release import NewsBuilder
 
 if os.name != 'posix':
     skip = "Release toolchain only supported on POSIX."
@@ -49,7 +49,7 @@ else:
 
 # Check a bunch of dependencies to skip tests if necessary.
 try:
-    from twisted.lore.scripts import lore
+    from lib.twisted.lore.scripts import lore
 except ImportError:
     loreSkip = "Lore is not present."
 else:

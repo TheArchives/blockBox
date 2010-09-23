@@ -4,11 +4,11 @@
 import sys
 from cStringIO import StringIO
 
-from twisted.python.versions import getVersionString, IncomparableVersions
-from twisted.python.versions import Version, _inf
-from twisted.python.filepath import FilePath
+from lib.twisted.python.versions import getVersionString, IncomparableVersions
+from lib.twisted.python.versions import Version, _inf
+from lib.twisted.python.filepath import FilePath
 
-from twisted.trial import unittest
+from lib.twisted.trial import unittest
 
 
 
@@ -246,7 +246,7 @@ class FormatDiscoveryTests(unittest.TestCase):
         pkg = self.entry.child("twisted_python_versions_package")
         pkg.makedirs()
         pkg.child("__init__.py").setContent(
-            "from twisted.python.versions import Version\n"
+            "from lib.twisted.python.versions import Version\n"
             "version = Version('twisted_python_versions_package', 1, 0, 0)\n")
         self.svnEntries = pkg.child(".svn")
         self.svnEntries.makedirs()

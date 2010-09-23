@@ -19,7 +19,7 @@ try:
 except ImportError:
     local = None
 
-from twisted.python import threadable
+from lib.twisted.python import threadable
 
 defaultContextDict = {}
 

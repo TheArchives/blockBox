@@ -1,14 +1,31 @@
 # Copyright (c) 2001-2007 Twisted Matrix Laboratories.
 # See LICENSE for details.
+
+
+"""
+Serial Port Protocol
+"""
+
+# system imports
 import os, errno
+
+# dependent on pyserial ( http://pyserial.sf.net/ )
+# only tested w/ 1.18 (5 Dec 2002)
 import serial
 from serial import PARITY_NONE, PARITY_EVEN, PARITY_ODD
 from serial import STOPBITS_ONE, STOPBITS_TWO
 from serial import FIVEBITS, SIXBITS, SEVENBITS, EIGHTBITS
+
 from serialport import BaseSerialPort
-from twisted.internet import abstract, fdesc, main
+
+# twisted imports
+from lib.twisted.internet import abstract, fdesc, main
 
 class SerialPort(BaseSerialPort, abstract.FileDescriptor):
+    """
+    A select()able serial device, acting as a transport.
+    """
+
     connected = 1
 
     def __init__(self, protocol, deviceNameOrPortNumber, reactor, 
@@ -27,9 +44,15 @@ class SerialPort(BaseSerialPort, abstract.FileDescriptor):
         return self._serial.fd
 
     def writeSomeData(self, data):
+        """
+        Write some data to the serial device.
+        """
         return fdesc.writeToFD(self.fileno(), data)
 
     def doRead(self):
+        """
+        Some data's readable from serial device.
+        """
         return fdesc.readFromFD(self.fileno(), self.protocol.dataReceived)
 
     def connectionLost(self, reason):

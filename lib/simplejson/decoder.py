@@ -1,3 +1,5 @@
+"""Implementation of JSONDecoder
+"""
 import re
 import sys
 import struct
@@ -28,6 +30,18 @@ NaN, PosInf, NegInf = _floatconstants()
 
 
 class JSONDecodeError(ValueError):
+    """Subclass of ValueError with the following additional properties:
+    
+    msg: The unformatted error message
+    doc: The JSON document being parsed
+    pos: The start index of doc where parsing failed
+    end: The end index of doc where parsing failed (may be None)
+    lineno: The line corresponding to pos
+    colno: The column corresponding to pos
+    endlineno: The line corresponding to end (may be None)
+    endcolno: The column corresponding to end (may be None)
+    
+    """
     def __init__(self, msg, doc, pos, end=None):
         ValueError.__init__(self, errmsg(msg, doc, pos, end=end))
         self.msg = msg
@@ -81,6 +95,14 @@ DEFAULT_ENCODING = "utf-8"
 
 def py_scanstring(s, end, encoding=None, strict=True,
         _b=BACKSLASH, _m=STRINGCHUNK.match):
+    """Scan the string s for a JSON string. End is the index of the
+    character in s after the quote that started the JSON string.
+    Unescapes all valid JSON string escape sequences and raises ValueError
+    on attempt to decode an invalid string. If strict is False then literal
+    control characters are allowed in the string.
+
+    Returns a tuple of the decoded string and the index of the character in s
+    after the end quote."""
     if encoding is None:
         encoding = DEFAULT_ENCODING
     chunks = []
@@ -284,10 +306,81 @@ def JSONArray((s, end), scan_once, _w=WHITESPACE.match, _ws=WHITESPACE_STR):
     return values, end
 
 class JSONDecoder(object):
+    """Simple JSON <http://json.org> decoder
+
+    Performs the following translations in decoding by default:
+
+    +---------------+-------------------+
+    | JSON          | Python            |
+    +===============+===================+
+    | object        | dict              |
+    +---------------+-------------------+
+    | array         | list              |
+    +---------------+-------------------+
+    | string        | unicode           |
+    +---------------+-------------------+
+    | number (int)  | int, long         |
+    +---------------+-------------------+
+    | number (real) | float             |
+    +---------------+-------------------+
+    | true          | True              |
+    +---------------+-------------------+
+    | false         | False             |
+    +---------------+-------------------+
+    | null          | None              |
+    +---------------+-------------------+
+
+    It also understands ``NaN``, ``Infinity``, and ``-Infinity`` as
+    their corresponding ``float`` values, which is outside the JSON spec.
+
+    """
 
     def __init__(self, encoding=None, object_hook=None, parse_float=None,
             parse_int=None, parse_constant=None, strict=True,
             object_pairs_hook=None):
+        """
+        *encoding* determines the encoding used to interpret any
+        :class:`str` objects decoded by this instance (``'utf-8'`` by
+        default).  It has no effect when decoding :class:`unicode` objects.
+
+        Note that currently only encodings that are a superset of ASCII work,
+        strings of other encodings should be passed in as :class:`unicode`.
+
+        *object_hook*, if specified, will be called with the result of every
+        JSON object decoded and its return value will be used in place of the
+        given :class:`dict`.  This can be used to provide custom
+        deserializations (e.g. to support JSON-RPC class hinting).
+
+        *object_pairs_hook* is an optional function that will be called with
+        the result of any object literal decode with an ordered list of pairs.
+        The return value of *object_pairs_hook* will be used instead of the
+        :class:`dict`.  This feature can be used to implement custom decoders
+        that rely on the order that the key and value pairs are decoded (for
+        example, :func:`collections.OrderedDict` will remember the order of
+        insertion). If *object_hook* is also defined, the *object_pairs_hook*
+        takes priority.
+
+        *parse_float*, if specified, will be called with the string of every
+        JSON float to be decoded.  By default, this is equivalent to
+        ``float(num_str)``. This can be used to use another datatype or parser
+        for JSON floats (e.g. :class:`decimal.Decimal`).
+
+        *parse_int*, if specified, will be called with the string of every
+        JSON int to be decoded.  By default, this is equivalent to
+        ``int(num_str)``.  This can be used to use another datatype or parser
+        for JSON integers (e.g. :class:`float`).
+
+        *parse_constant*, if specified, will be called with one of the
+        following strings: ``'-Infinity'``, ``'Infinity'``, ``'NaN'``.  This
+        can be used to raise an exception if invalid JSON numbers are
+        encountered.
+
+        *strict* controls the parser's behavior when it encounters an
+        invalid control character in a string. The default setting of
+        ``True`` means that unescaped control characters are parse errors, if
+        ``False`` then control characters will be allowed in strings.
+
+        """
         self.encoding = encoding
         self.object_hook = object_hook
         self.object_pairs_hook = object_pairs_hook
@@ -302,6 +395,10 @@ class JSONDecoder(object):
         self.scan_once = make_scanner(self)
 
     def decode(self, s, _w=WHITESPACE.match):
+        """Return the Python representation of ``s`` (a ``str`` or ``unicode``
+        instance containing a JSON document)
+
+        """
         obj, end = self.raw_decode(s, idx=_w(s, 0).end())
         end = _w(s, end).end()
         if end != len(s):
@@ -309,6 +406,14 @@ class JSONDecoder(object):
         return obj
 
     def raw_decode(self, s, idx=0):
+        """Decode a JSON document from ``s`` (a ``str`` or ``unicode``
+        beginning with a JSON document) and return a 2-tuple of the Python
+        representation and the index in ``s`` where the document ended.
+
+        This can be used to decode a JSON document from a string that may
+        have extraneous data at the end.
+
+        """
         try:
             obj, end = self.scan_once(s, idx)
         except StopIteration:

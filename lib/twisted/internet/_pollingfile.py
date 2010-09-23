@@ -1,20 +1,37 @@
 # -*- test-case-name: twisted.internet.test.test_pollingfile -*-
 # Copyright (c) 2001-2009 Twisted Matrix Laboratories.
 # See LICENSE for details.
+
+"""
+Implements a simple polling interface for file descriptors that don't work with
+select() - this is pretty much only useful on Windows.
+"""
+
 from lib.zope.interface import implements
-from twisted.internet.interfaces import IConsumer, IPushProducer
+
+from lib.twisted.internet.interfaces import IConsumer, IPushProducer
+
+
 MIN_TIMEOUT = 0.000000001
 MAX_TIMEOUT = 0.1
 
+
+
 class _PollableResource:
     active = True
+
     def activate(self):
         self.active = True
+
 
     def deactivate(self):
         self.active = False
 
+
+
 class _PollingTimer:
+    # Everything is private here because it is really an implementation detail.
+
     def __init__(self, reactor):
         self.reactor = reactor
         self._resources = []
@@ -60,6 +77,7 @@ class _PollingTimer:
         for resource in self._resources:
             if resource.active:
                 workUnits += resource.checkWork()
+                # Check AFTER work has been done
                 if resource.active:
                     anyActive.append(resource)
 
@@ -76,14 +94,21 @@ class _PollingTimer:
         if anyActive:
             self._pollTimer = self._reschedule()
 
+
+# If we ever (let's hope not) need the above functionality on UNIX, this could
+# be factored into a different module.
+
 import win32pipe
 import win32file
 import win32api
 import pywintypes
 
 class _PollableReadPipe(_PollableResource):
+
     implements(IPushProducer)
+
     def __init__(self, pipe, receivedCallback, lostCallback):
+        # security attributes for pipes
         self.pipe = pipe
         self.receivedCallback = receivedCallback
         self.lostCallback = lostCallback
@@ -119,6 +144,7 @@ class _PollableReadPipe(_PollableResource):
         try:
             win32api.CloseHandle(self.pipe)
         except pywintypes.error:
+            # You can't close std handles...?
             pass
 
     def stopProducing(self):
@@ -130,10 +156,13 @@ class _PollableReadPipe(_PollableResource):
     def resumeProducing(self):
         self.activate()
 
+
 FULL_BUFFER_SIZE = 64 * 1024
 
 class _PollableWritePipe(_PollableResource):
+
     implements(IConsumer)
+
     def __init__(self, writePipe, lostCallback):
         self.disconnecting = False
         self.producer = None
@@ -148,6 +177,7 @@ class _PollableWritePipe(_PollableResource):
                                               None,
                                               None)
         except pywintypes.error:
+            # Maybe it's an invalid handle.  Who knows.
             pass
 
     def close(self):
@@ -166,7 +196,18 @@ class _PollableWritePipe(_PollableResource):
             return True
         return False
 
+    # almost-but-not-quite-exact copy-paste from abstract.FileDescriptor... ugh
+
     def registerProducer(self, producer, streaming):
+        """Register to receive data from a producer.
+
+        This sets this selectable to be a consumer for a producer.  When this
+        selectable runs out of data on a write() call, it will ask the producer
+        to resumeProducing(). A producer should implement the IProducer
+        interface.
+
+        FileDescriptor provides some infrastructure for producer methods.
+        """
         if self.producer is not None:
             raise RuntimeError(
                 "Cannot register producer %s, because producer %s was never "
@@ -180,6 +221,8 @@ class _PollableWritePipe(_PollableResource):
                 producer.resumeProducing()
 
     def unregisterProducer(self):
+        """Stop consuming data from a producer, without disconnecting.
+        """
         self.producer = None
 
     def writeConnectionLost(self):
@@ -187,6 +230,7 @@ class _PollableWritePipe(_PollableResource):
         try:
             win32api.CloseHandle(self.writePipe)
         except pywintypes.error:
+            # OMG what
             pass
         self.lostCallback()
 
@@ -223,6 +267,7 @@ class _PollableWritePipe(_PollableResource):
                 self.writeConnectionLost()
                 break
             else:
+                # assert not errCode, "wtf an error code???"
                 numBytesWritten += nBytesWritten
                 if len(data) > nBytesWritten:
                     self.outQueue.insert(0, data[nBytesWritten:])

@@ -9,16 +9,16 @@ try:
 except ImportError:
     pwd = grp = None
 
-from twisted.trial import unittest
+from lib.twisted.trial import unittest
 
-from twisted.python import util
-from twisted.internet import reactor
-from twisted.internet.interfaces import IReactorProcess
-from twisted.internet.protocol import ProcessProtocol
-from twisted.internet.defer import Deferred
-from twisted.internet.error import ProcessDone
+from lib.twisted.python import util
+from lib.twisted.internet import reactor
+from lib.twisted.internet.interfaces import IReactorProcess
+from lib.twisted.internet.protocol import ProcessProtocol
+from lib.twisted.internet.defer import Deferred
+from lib.twisted.internet.error import ProcessDone
 
-from twisted.test.test_process import MockOS
+from lib.twisted.test.test_process import MockOS
 
 
 
@@ -319,7 +319,7 @@ class GetPasswordTest(unittest.TestCase):
             [sys.executable,
              '-c',
              ('import sys\n'
-             'from twisted.python.util import getPassword\n'
+             'from lib.twisted.python.util import getPassword\n'
               'sys.stdout.write(getPassword())\n'
               'sys.stdout.flush()\n')],
             env={'PYTHONPATH': os.pathsep.join(sys.path)})

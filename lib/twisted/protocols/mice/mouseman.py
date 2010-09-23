@@ -1,15 +1,32 @@
 # Copyright (c) 2001-2004 Twisted Matrix Laboratories.
 # See LICENSE for details.
+
+#
+"""Logictech MouseMan serial protocol.
+
+http://www.softnco.demon.co.uk/SerialMouse.txt
+"""
+
 from lib.twisted.internet import protocol
 
 class MouseMan(protocol.Protocol):
+    """
+
+    Parser for Logitech MouseMan serial mouse protocol (compatible
+    with Microsoft Serial Mouse).
+
+    """
+
     state = 'initial'
+
     leftbutton=None
     rightbutton=None
     middlebutton=None
+
     leftold=None
     rightold=None
     middleold=None
+
     horiz=None
     vert=None
     horizold=None
@@ -60,6 +77,7 @@ class MouseMan(protocol.Protocol):
 
     def state_vert(self, byte):
         if byte & 1<<6:
+            # short packet
             return self.state_initial(byte)
         else:
             x = (self.word1 & 0x0c)<<4 | (byte & 0x3f)

@@ -1,7 +1,8 @@
-# -*- test-case-name: lib.twisted.words.test.test_xmpproutertap -*-
+# -*- test-case-name: twisted.words.test.test_xmpproutertap -*-
 #
 # Copyright (c) 2001-2008 Twisted Matrix Laboratories.
 # See LICENSE for details.
+
 from lib.twisted.application import strports
 from lib.twisted.python import usage
 from lib.twisted.words.protocols.jabber import component
@@ -16,6 +17,8 @@ class Options(usage.Options):
     optFlags = [
             ('verbose', 'v', 'Log traffic'),
     ]
+
+
 
 def makeService(config):
     router = component.Router()

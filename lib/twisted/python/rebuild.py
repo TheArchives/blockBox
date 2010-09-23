@@ -14,7 +14,7 @@ import time
 import linecache
 
 # Sibling Imports
-from twisted.python import log, reflect
+from lib.twisted.python import log, reflect
 
 lastRebuild = time.time()
 
@@ -141,7 +141,7 @@ def rebuild(module, doLog=1):
         log.msg('Rebuilding %s...' % str(module.__name__))
 
     ## Safely handle adapter re-registration
-    from twisted.python import components
+    from lib.twisted.python import components
     components.ALLOW_DUPLICATES = True
 
     d = module.__dict__

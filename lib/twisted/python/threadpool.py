@@ -19,9 +19,9 @@ import warnings
 
 
 # Twisted Imports
-from twisted.python import log, context, failure
-from twisted.python.deprecate import deprecatedModuleAttribute
-from twisted.python.versions import Version
+from lib.twisted.python import log, context, failure
+from lib.twisted.python.deprecate import deprecatedModuleAttribute
+from lib.twisted.python.versions import Version
 
 WorkerStop = object()
 

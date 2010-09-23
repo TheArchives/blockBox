@@ -100,7 +100,7 @@ class Platform:
         @since: 10.1
         """
         try:
-            from twisted.python._inotify import INotifyError, init
+            from lib.twisted.python._inotify import INotifyError, init
         except ImportError:
             return False
         try:

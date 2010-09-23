@@ -369,7 +369,7 @@ def makeStatBar(width, maxPosition, doneChar = '=', undoneChar = '-', currentCha
 
 def spewer(frame, s, ignored):
     """A trace function for sys.settrace that prints every function or method call."""
-    from twisted.python import reflect
+    from lib.twisted.python import reflect
     if frame.f_locals.has_key('self'):
         se = frame.f_locals['self']
         if hasattr(se, '__class__'):
@@ -578,7 +578,7 @@ def dsu(list, key):
 
 
 try:
-    from twisted.python._initgroups import initgroups as _c_initgroups
+    from lib.twisted.python._initgroups import initgroups as _c_initgroups
 except ImportError:
     _c_initgroups = None
 

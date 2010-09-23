@@ -5,9 +5,9 @@
 Tests for L{twisted.python.hashlib}
 """
 
-from twisted.trial.unittest import TestCase
+from lib.twisted.trial.unittest import TestCase
 
-from twisted.python.hashlib import md5, sha1
+from lib.twisted.python.hashlib import md5, sha1
 
 
 class HashObjectTests(TestCase):

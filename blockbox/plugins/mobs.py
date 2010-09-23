@@ -5,7 +5,7 @@
 from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
-from twisted.internet import reactor
+from lib.twisted.internet import reactor
 from random import randint
 import sys, traceback
 from time import time

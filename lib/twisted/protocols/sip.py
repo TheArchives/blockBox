@@ -1,19 +1,41 @@
-# -*- test-case-name: lib.twisted.test.test_sip -*-
+# -*- test-case-name: twisted.test.test_sip -*-
 
 # Copyright (c) 2001-2009 Twisted Matrix Laboratories.
 # See LICENSE for details.
+
+
+"""Session Initialization Protocol.
+
+Documented in RFC 2543.
+[Superceded by 3261]
+
+
+This module contains a deprecated implementation of HTTP Digest authentication.
+See L{twisted.cred.credentials} and L{twisted.cred._digest} for its new home.
+"""
+
+# system imports
 import socket, time, sys, random, warnings
 from lib.zope.interface import implements, Interface
+
+# twisted imports
 from lib.twisted.python import log, util
 from lib.twisted.python.deprecate import deprecated
 from lib.twisted.python.versions import Version
 from lib.twisted.python.hashlib import md5
 from lib.twisted.internet import protocol, defer, reactor
+
 from twisted import cred
 import lib.twisted.cred.error
 from lib.twisted.cred.credentials import UsernameHashedPassword, UsernamePassword
+
+
+# sibling imports
 from lib.twisted.protocols import basic
+
 PORT = 5060
+
+# SIP headers have short forms
 shortHeaders = {"call-id": "i",
                 "contact": "m",
                 "content-encoding": "e",
@@ -24,23 +46,28 @@ shortHeaders = {"call-id": "i",
                 "to": "t",
                 "via": "v",
                 }
+
 longHeaders = {}
 for k, v in shortHeaders.items():
     longHeaders[v] = k
 del k, v
+
 statusCodes = {
     100: "Trying",
     180: "Ringing",
     181: "Call Is Being Forwarded",
     182: "Queued",
     183: "Session Progress",
+
     200: "OK",
+
     300: "Multiple Choices",
     301: "Moved Permanently",
     302: "Moved Temporarily",
     303: "See Other",
     305: "Use Proxy",
     380: "Alternative Service",
+
     400: "Bad Request",
     401: "Unauthorized",
     402: "Payment Required",
@@ -71,6 +98,7 @@ statusCodes = {
     488: "Not Acceptable Here",
     491: "Request Pending",
     493: "Undecipherable",
+
     500: "Internal Server Error",
     501: "Not Implemented",
     502: "Bad Gateway", # no donut
@@ -78,17 +106,22 @@ statusCodes = {
     504: "Server Time-out",
     505: "SIP Version not supported",
     513: "Message Too Large",
+
     600: "Busy Everywhere",
     603: "Decline",
     604: "Does not exist anywhere",
     606: "Not Acceptable",
 }
+
 specialCases = {
     'cseq': 'CSeq',
     'call-id': 'Call-ID',
     'www-authenticate': 'WWW-Authenticate',
 }
+
+
 def dashCapitalize(s):
+    ''' Capitalize a string, making sure to treat - as a word seperator '''
     return '-'.join([ x.capitalize() for x in s.split('-')])
 
 def unq(s):
@@ -120,6 +153,7 @@ def DigestCalcHA1(
         m.update(pszCNonce)
         HA1 = m.digest()
     return HA1.encode('hex')
+
 
 DigestCalcHA1 = deprecated(Version("Twisted", 9, 0, 0))(DigestCalcHA1)
 
@@ -158,13 +192,60 @@ def DigestCalcResponse(
     hash = m.digest().encode('hex')
     return hash
 
+
 DigestCalcResponse = deprecated(Version("Twisted", 9, 0, 0))(DigestCalcResponse)
+
 _absent = object()
 
 class Via(object):
+    """
+    A L{Via} is a SIP Via header, representing a segment of the path taken by
+    the request.
+
+    See RFC 3261, sections 8.1.1.7, 18.2.2, and 20.42.
+
+    @ivar transport: Network protocol used for this leg. (Probably either "TCP"
+    or "UDP".)
+    @type transport: C{str}
+    @ivar branch: Unique identifier for this request.
+    @type branch: C{str}
+    @ivar host: Hostname or IP for this leg.
+    @type host: C{str}
+    @ivar port: Port used for this leg.
+    @type port C{int}, or None.
+    @ivar rportRequested: Whether to request RFC 3581 client processing or not.
+    @type rportRequested: C{bool}
+    @ivar rportValue: Servers wishing to honor requests for RFC 3581 processing
+    should set this parameter to the source port the request was received
+    from.
+    @type rportValue: C{int}, or None.
+
+    @ivar ttl: Time-to-live for requests on multicast paths.
+    @type ttl: C{int}, or None.
+    @ivar maddr: The destination multicast address, if any.
+    @type maddr: C{str}, or None.
+    @ivar hidden: Obsolete in SIP 2.0.
+    @type hidden: C{bool}
+    @ivar otherParams: Any other parameters in the header.
+    @type otherParams: C{dict}
+    """
+
     def __init__(self, host, port=PORT, transport="UDP", ttl=None,
                  hidden=False, received=None, rport=_absent, branch=None,
                  maddr=None, **kw):
+        """
+        Set parameters of this Via header. All arguments correspond to
+        attributes of the same name.
+
+        To maintain compatibility with old SIP
+        code, the 'rport' argument is used to determine the values of
+        C{rportRequested} and C{rportValue}. If None, C{rportRequested} is set
+        to True. (The deprecated method for doing this is to pass True.) If an
+        integer, C{rportValue} is set to the given value.
+
+        Any arguments not explicitly named here are collected into the
+        C{otherParams} dict.
+        """
         self.transport = transport
         self.host = host
         self.port = port
@@ -187,11 +268,16 @@ class Via(object):
         else:
             self.rportValue = rport
             self.rportRequested = False
+
         self.branch = branch
         self.maddr = maddr
         self.otherParams = kw
 
+
     def _getrport(self):
+        """
+        Returns the rport value expected by the old SIP code.
+        """
         if self.rportRequested == True:
             return True
         elif self.rportValue is not None:
@@ -199,13 +285,25 @@ class Via(object):
         else:
             return None
 
+
     def _setrport(self, newRPort):
+        """
+        L{Base._fixupNAT} sets C{rport} directly, so this method sets
+        C{rportValue} based on that.
+
+        @param newRPort: The new rport value.
+        @type newRPort: C{int}
+        """
         self.rportValue = newRPort
         self.rportRequested = False
+
 
     rport = property(_getrport, _setrport)
 
     def toString(self):
+        """
+        Serialize this header for use in a request or response.
+        """
         s = "SIP/2.0/%s %s:%s" % (self.transport, self.host, self.port)
         if self.hidden:
             s += ";hidden"
@@ -227,7 +325,14 @@ class Via(object):
                 s += ";%s=%s" % (k, v)
         return s
 
+
 def parseViaHeader(value):
+    """
+    Parse a Via header.
+
+    @return: The parsed version of this header.
+    @rtype: L{Via}
+    """
     parts = value.split(";")
     sent, params = parts[0], parts[1:]
     protocolinfo, by = sent.split(" ", 1)
@@ -244,6 +349,7 @@ def parseViaHeader(value):
     else:
         result["host"] = by
     for p in params:
+        # it's the comment-striping dance!
         p = p.strip().split(" ", 1)
         if len(p) == 1:
             p, comment = p[0], ""
@@ -262,7 +368,10 @@ def parseViaHeader(value):
         result[name] = value
     return Via(**result)
 
+
 class URL:
+    """A SIP URL."""
+
     def __init__(self, host, username=None, password=None, port=None,
                  transport=None, usertype=None, method=None,
                  ttl=None, maddr=None, tag=None, other=None, headers=None):
@@ -315,7 +424,12 @@ class URL:
     def __repr__(self):
         return '<URL %s:%s@%s:%r/%s>' % (self.username, self.password, self.host, self.port, self.transport)
 
+
 def parseURL(url, host=None, port=None):
+    """Return string into URL object.
+
+    URIs are of of form 'sip:user@example.com'.
+    """
     d = {}
     if not url.startswith("sip:"):
         raise ValueError("unsupported scheme: " + url[:4])
@@ -364,14 +478,22 @@ def parseURL(url, host=None, port=None):
             d.setdefault("other", []).append(p)
     return URL(**d)
 
+
 def cleanRequestURL(url):
+    """Clean a URL from a Request line."""
     url.transport = None
     url.maddr = None
     url.ttl = None
     url.headers = {}
 
+
 def parseAddress(address, host=None, port=None, clean=0):
+    """Return (name, uri, params) for From/To/Contact header.
+
+    @param clean: remove unnecessary info, usually for From and To headers.
+    """
     address = address.strip()
+    # simple 'sip:foo' case
     if address.startswith("sip:"):
         return "", parseURL(address, host=host, port=port), {}
     params = {}
@@ -391,11 +513,13 @@ def parseAddress(address, host=None, port=None, clean=0):
             k, v = l.split("=")
             params[k] = v
     if clean:
+        # rfc 2543 6.21
         url.ttl = None
         url.headers = {}
         url.transport = None
         url.maddr = None
     return name, url, params
+
 
 class SIPError(Exception):
     def __init__(self, code, phrase=None):
@@ -405,9 +529,14 @@ class SIPError(Exception):
         self.code = code
         self.phrase = phrase
 
+
 class RegistrationError(SIPError):
+    """Registration was not possible."""
+
 
 class Message:
+    """A SIP message."""
+
     length = None
 
     def __init__(self):
@@ -442,7 +571,11 @@ class Message:
     def _getHeaderLine(self):
         raise NotImplementedError
 
+
 class Request(Message):
+    """A Request for a URI"""
+
+
     def __init__(self, method, uri, version="SIP/2.0"):
         Message.__init__(self)
         self.method = method
@@ -458,7 +591,10 @@ class Request(Message):
     def _getHeaderLine(self):
         return "%s %s SIP/2.0" % (self.method, self.uri.toString())
 
+
 class Response(Message):
+    """A Response to a URI Request"""
+
     def __init__(self, code, phrase=None, version="SIP/2.0"):
         Message.__init__(self)
         self.code = code
@@ -472,11 +608,19 @@ class Response(Message):
     def _getHeaderLine(self):
         return "SIP/2.0 %s %s" % (self.code, self.phrase)
 
+
 class MessagesParser(basic.LineReceiver):
+    """A SIP messages parser.
+
+    Expects dataReceived, dataDone repeatedly,
+    in that order. Shouldn't be connected to actual transport.
+    """
+
     version = "SIP/2.0"
     acceptResponses = 1
     acceptRequests = 1
     state = "firstline" # or "headers", "body" or "invalid"
+
     debug = 0
 
     def __init__(self, messageReceivedCallback):
@@ -495,6 +639,7 @@ class MessagesParser(basic.LineReceiver):
         self.setRawMode()
 
     def dataDone(self):
+        # clear out any buffered data that may be hanging around
         self.clearLineBuffer()
         if self.state == "firstline":
             return
@@ -502,10 +647,13 @@ class MessagesParser(basic.LineReceiver):
             self.reset()
             return
         if self.length == None:
+            # no content-length header, so end of data signals message done
             self.messageDone()
         elif self.length < self.bodyReceived:
+            # aborted in the middle
             self.reset()
         else:
+            # we have enough data and message wasn't finished? something is wrong
             raise RuntimeError, "this should never happen"
 
     def dataReceived(self, data):
@@ -516,6 +664,7 @@ class MessagesParser(basic.LineReceiver):
             self.invalidMessage()
 
     def handleFirstLine(self, line):
+        """Expected to create self.message."""
         raise NotImplementedError
 
     def lineLengthExceeded(self, line):
@@ -533,6 +682,7 @@ class MessagesParser(basic.LineReceiver):
                 self.invalidMessage()
                 return
             if a == "SIP/2.0" and self.acceptResponses:
+                # response
                 try:
                     code = int(b)
                 except ValueError:
@@ -549,6 +699,7 @@ class MessagesParser(basic.LineReceiver):
         else:
             assert self.state == "headers"
         if line:
+            # XXX support multi-line headers
             try:
                 name, value = line.split(":", 1)
             except ValueError:
@@ -562,6 +713,9 @@ class MessagesParser(basic.LineReceiver):
                     self.invalidMessage()
                     return
         else:
+            # CRLF, we now have message body until self.length bytes,
+            # or if no length was given, until there is no more data
+            # from the connection sending us data.
             self.state = "body"
             if self.length == 0:
                 self.messageDone()
@@ -593,7 +747,10 @@ class MessagesParser(basic.LineReceiver):
                 if self.bodyReceived == self.length:
                     self.messageDone()
 
+
 class Base(protocol.DatagramProtocol):
+    """Base class for SIP clients and servers."""
+
     PORT = PORT
     debug = False
 
@@ -618,6 +775,7 @@ class Base(protocol.DatagramProtocol):
         self.messages[:] = []
 
     def _fixupNAT(self, message, (srcHost, srcPort)):
+        # RFC 2543 6.40.2,
         senderVia = parseViaHeader(message.headers["via"][0])
         if senderVia.host != srcHost:
             senderVia.received = srcHost
@@ -630,13 +788,18 @@ class Base(protocol.DatagramProtocol):
             message.headers["via"][0] = senderVia.toString()
 
     def deliverResponse(self, responseMessage):
+        """Deliver response.
+
+        Destination is based on topmost Via header."""
         destVia = parseViaHeader(responseMessage.headers["via"][0])
+        # XXX we don't do multicast yet
         host = destVia.received or destVia.host
         port = destVia.rport or destVia.port or self.PORT
         destAddr = URL(host=host, port=port)
         self.sendMessage(destAddr, responseMessage)
 
     def responseFromRequest(self, code, request):
+        """Create a response to a request message."""
         response = Response(code)
         for name in ("via", "to", "from", "call-id", "cseq"):
             response.headers[name] = request.headers.get(name, [])[:]
@@ -644,6 +807,11 @@ class Base(protocol.DatagramProtocol):
         return response
 
     def sendMessage(self, destURL, message):
+        """Send a message.
+
+        @param destURL: C{URL}. This should be a *physical* URL, not a logical one.
+        @param message: The message to send.
+        """
         if destURL.transport not in ("udp", None):
             raise RuntimeError, "only UDP currently supported"
         if self.debug:
@@ -651,12 +819,25 @@ class Base(protocol.DatagramProtocol):
         self.transport.write(message.toString(), (destURL.host, destURL.port or self.PORT))
 
     def handle_request(self, message, addr):
+        """Override to define behavior for requests received
+
+        @type message: C{Message}
+        @type addr: C{tuple}
+        """
         raise NotImplementedError
 
     def handle_response(self, message, addr):
+        """Override to define behavior for responses received.
+
+        @type message: C{Message}
+        @type addr: C{tuple}
+        """
         raise NotImplementedError
 
+
 class IContact(Interface):
+    """A user of a registrar or proxy"""
+
 
 class Registration:
     def __init__(self, secondsToExpiry, contactURL):
@@ -664,28 +845,62 @@ class Registration:
         self.contactURL = contactURL
 
 class IRegistry(Interface):
+    """Allows registration of logical->physical URL mapping."""
+
     def registerAddress(domainURL, logicalURL, physicalURL):
+        """Register the physical address of a logical URL.
+
+        @return: Deferred of C{Registration} or failure with RegistrationError.
+        """
 
     def unregisterAddress(domainURL, logicalURL, physicalURL):
+        """Unregister the physical address of a logical URL.
+
+        @return: Deferred of C{Registration} or failure with RegistrationError.
+        """
 
     def getRegistrationInfo(logicalURL):
+        """Get registration info for logical URL.
+
+        @return: Deferred of C{Registration} object or failure of LookupError.
+        """
+
 
 class ILocator(Interface):
+    """Allow looking up physical address for logical URL."""
+
     def getAddress(logicalURL):
+        """Return physical URL of server for logical URL of user.
+
+        @param logicalURL: a logical C{URL}.
+        @return: Deferred which becomes URL or fails with LookupError.
+        """
+
 
 class Proxy(Base):
+    """SIP proxy."""
+
     PORT = PORT
+
     locator = None # object implementing ILocator
 
     def __init__(self, host=None, port=PORT):
+        """Create new instance.
+
+        @param host: our hostname/IP as set in Via headers.
+        @param port: our port as set in Via headers.
+        """
         self.host = host or socket.getfqdn()
         self.port = port
         Base.__init__(self)
 
     def getVia(self):
+        """Return value of Via header for this proxy."""
         return Via(host=self.host, port=self.port)
 
     def handle_request(self, message, addr):
+        # send immediate 100/trying message before processing
+        #self.deliverResponse(self.responseFromRequest(100, message))
         f = getattr(self, "handle_%s_request" % message.method, None)
         if f is None:
             f = self.handle_request_default
@@ -703,17 +918,28 @@ class Proxy(Base):
                 )
 
     def handle_request_default(self, message, (srcHost, srcPort)):
+        """Default request handler.
+
+        Default behaviour for OPTIONS and unknown methods for proxies
+        is to forward message on to the client.
+
+        Since at the moment we are stateless proxy, thats basically
+        everything.
+        """
         def _mungContactHeader(uri, message):
             message.headers['contact'][0] = uri.toString()
             return self.sendMessage(uri, message)
 
         viaHeader = self.getVia()
         if viaHeader.toString() in message.headers["via"]:
+            # must be a loop, so drop message
             log.msg("Dropping looped message.")
             return
 
         message.headers["via"].insert(0, viaHeader.toString())
         name, uri, tags = parseAddress(message.headers["to"][0], clean=1)
+
+        # this is broken and needs refactoring to use cred
         d = self.locator.getAddress(uri)
         d.addCallback(self.sendMessage, message)
         d.addErrback(self._cantForwardRequest, message)
@@ -724,51 +950,85 @@ class Proxy(Base):
         self.deliverResponse(self.responseFromRequest(404, message))
 
     def deliverResponse(self, responseMessage):
+        """Deliver response.
+
+        Destination is based on topmost Via header."""
         destVia = parseViaHeader(responseMessage.headers["via"][0])
+        # XXX we don't do multicast yet
         host = destVia.received or destVia.host
         port = destVia.rport or destVia.port or self.PORT
+
         destAddr = URL(host=host, port=port)
         self.sendMessage(destAddr, responseMessage)
 
     def responseFromRequest(self, code, request):
+        """Create a response to a request message."""
         response = Response(code)
         for name in ("via", "to", "from", "call-id", "cseq"):
             response.headers[name] = request.headers.get(name, [])[:]
         return response
 
     def handle_response(self, message, addr):
+        """Default response handler."""
         v = parseViaHeader(message.headers["via"][0])
         if (v.host, v.port) != (self.host, self.port):
+            # we got a message not intended for us?
+            # XXX note this check breaks if we have multiple external IPs
+            # yay for suck protocols
             log.msg("Dropping incorrectly addressed message")
             return
         del message.headers["via"][0]
         if not message.headers["via"]:
+            # this message is addressed to us
             self.gotResponse(message, addr)
             return
         self.deliverResponse(message)
 
     def gotResponse(self, message, addr):
+        """Called with responses that are addressed at this server."""
         pass
 
 class IAuthorizer(Interface):
     def getChallenge(peer):
+        """Generate a challenge the client may respond to.
+
+        @type peer: C{tuple}
+        @param peer: The client's address
+
+        @rtype: C{str}
+        @return: The challenge string
+        """
 
     def decode(response):
+        """Create a credentials object from the given response.
+
+        @type response: C{str}
+        """
 
 class BasicAuthorizer:
+    """Authorizer for insecure Basic (base64-encoded plaintext) authentication.
+
+    This form of authentication is broken and insecure.  Do not use it.
+    """
+
     implements(IAuthorizer)
 
     def __init__(self):
+        """
+        This method exists solely to issue a deprecation warning.
+        """
         warnings.warn(
-            "lib.twisted.protocols.sip.BasicAuthorizer was deprecated "
+            "twisted.protocols.sip.BasicAuthorizer was deprecated "
             "in Twisted 9.0.0",
             category=DeprecationWarning,
             stacklevel=2)
+
 
     def getChallenge(self, peer):
         return None
 
     def decode(self, response):
+        # At least one SIP client improperly pads its Base64 encoded messages
         for i in range(3):
             try:
                 creds = (response + ('=' * i)).decode('base64')
@@ -777,16 +1037,21 @@ class BasicAuthorizer:
             else:
                 break
         else:
+            # Totally bogus
             raise SIPError(400)
         p = creds.split(':', 1)
         if len(p) == 2:
             return UsernamePassword(*p)
         raise SIPError(400)
 
+
+
 class DigestedCredentials(UsernameHashedPassword):
+    """Yet Another Simple Digest-MD5 authentication scheme"""
+
     def __init__(self, username, fields, challenges):
         warnings.warn(
-            "lib.twisted.protocols.sip.DigestedCredentials was deprecated "
+            "twisted.protocols.sip.DigestedCredentials was deprecated "
             "in Twisted 9.0.0",
             category=DeprecationWarning,
             stacklevel=2)
@@ -804,30 +1069,37 @@ class DigestedCredentials(UsernameHashedPassword):
         algo = self.fields.get('algorithm', 'MD5')
         qop = self.fields.get('qop-options', 'auth')
         opaque = self.fields.get('opaque')
+
         if opaque not in self.challenges:
             return False
         del self.challenges[opaque]
+
         user, domain = self.username.split('@', 1)
         if uri is None:
             uri = 'sip:' + domain
+
         expected = DigestCalcResponse(
             DigestCalcHA1(algo, user, domain, password, nonce, cnonce),
             nonce, nc, cnonce, qop, method, uri, None,
         )
+
         return expected == response
 
 class DigestAuthorizer:
     CHALLENGE_LIFETIME = 15
+
     implements(IAuthorizer)
 
     def __init__(self):
         warnings.warn(
-            "lib.twisted.protocols.sip.DigestAuthorizer was deprecated "
+            "twisted.protocols.sip.DigestAuthorizer was deprecated "
             "in Twisted 9.0.0",
             category=DeprecationWarning,
             stacklevel=2)
 
         self.outstanding = {}
+
+
 
     def generateNonce(self):
         c = tuple([random.randrange(sys.maxint) for _ in range(3)])
@@ -861,9 +1133,17 @@ class DigestAuthorizer:
         except:
             raise SIPError(400)
 
+
 class RegisterProxy(Proxy):
+    """A proxy that allows registration for a specific domain.
+
+    Unregistered users won't be handled.
+    """
+
     portal = None
+
     registry = None # should implement IRegistry
+
     authorizers = {}
 
     def __init__(self, *args, **kw):
@@ -873,12 +1153,23 @@ class RegisterProxy(Proxy):
             self.authorizers["digest"] = DigestAuthorizer()
 
     def handle_ACK_request(self, message, (host, port)):
+        # XXX
+        # ACKs are a client's way of indicating they got the last message
+        # Responding to them is not a good idea.
+        # However, we should keep track of terminal messages and re-transmit
+        # if no ACK is received.
         pass
 
     def handle_REGISTER_request(self, message, (host, port)):
+        """Handle a registration request.
+
+        Currently registration is not proxied.
+        """
         if self.portal is None:
+            # There is no portal.  Let anyone in.
             self.register(message, host, port)
         else:
+            # There is a portal.  Check for credentials.
             if not message.headers.has_key("authorization"):
                 return self.unauthorized(message, host, port)
             else:
@@ -894,6 +1185,7 @@ class RegisterProxy(Proxy):
                 value = '%s %s,realm="%s"' % (scheme.title(), chal, self.host)
             m.headers.setdefault('www-authenticate', []).append(value)
         self.deliverResponse(m)
+
 
     def login(self, message, host, port):
         parts = message.headers['authorization'][0].split(None, 1)
@@ -917,6 +1209,7 @@ class RegisterProxy(Proxy):
             self.deliverResponse(self.responseFromRequest(501, message))
 
     def _cbLogin(self, (i, a, l), message, host, port):
+        # It's stateless, matey.  What a joke.
         self.register(message, host, port)
 
     def _ebLogin(self, failure, message, host, port):
@@ -933,6 +1226,8 @@ class RegisterProxy(Proxy):
         if message.headers.get("expires", [None])[0] == "0":
             self.unregister(message, toURL, contact)
         else:
+            # XXX Check expires on appropriate URL, and pass it to registry
+            # instead of having registry hardcode it.
             if contact is not None:
                 name, contactURL, params = parseAddress(contact, host=host, port=port)
                 d = self.registry.registerAddress(message.uri, toURL, contactURL)
@@ -953,6 +1248,8 @@ class RegisterProxy(Proxy):
 
     def _ebRegister(self, error, message):
         error.trap(RegistrationError, LookupError)
+        # XXX return error message, and alter tests to deal with
+        # this, currently tests assume no message sent on failure
 
     def unregister(self, message, toURL, contact):
         try:
@@ -979,7 +1276,10 @@ class RegisterProxy(Proxy):
     def _ebUnregister(self, registration, message):
         pass
 
+
 class InMemoryRegistry:
+    """A simplistic registry for a specific domain."""
+
     implements(IRegistry, ILocator)
 
     def __init__(self, domain):

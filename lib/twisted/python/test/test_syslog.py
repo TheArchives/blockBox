@@ -1,15 +1,15 @@
 # Copyright (c) 2009 Twisted Matrix Laboratories.
 # See LICENSE for details.
 
-from twisted.trial.unittest import TestCase
-from twisted.python.failure import Failure
+from lib.twisted.trial.unittest import TestCase
+from lib.twisted.python.failure import Failure
 
 try:
     import syslog as stdsyslog
 except ImportError:
     stdsyslog = None
 else:
-    from twisted.python import syslog
+    from lib.twisted.python import syslog
 
 
 

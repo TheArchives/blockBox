@@ -1,8 +1,14 @@
-# -*- test-case-name: lib.twisted.test.test_sob -*-
+# -*- test-case-name: twisted.test.test_sob -*-
 # Copyright (c) 2001-2008 Twisted Matrix Laboratories.
 # See LICENSE for details.
 
 #
+"""
+Save and load Small OBjects to and from files, using various formats.
+
+Maintainer: Moshe Zadka
+"""
+
 import os, sys
 try:
     import cPickle as pickle
@@ -16,6 +22,11 @@ from lib.twisted.python import log, runtime
 from lib.twisted.python.hashlib import md5
 from lib.twisted.persisted import styles
 from lib.zope.interface import implements, Interface
+
+# Note:
+# These encrypt/decrypt functions only work for data formats
+# which are immune to having spaces tucked at the end.
+# All data formats which persist saves hold that condition.
 def _encrypt(passphrase, data):
     from Crypto.Cipher import AES as cipher
     leftover = len(data) % cipher.block_size
@@ -27,13 +38,30 @@ def _decrypt(passphrase, data):
     from Crypto.Cipher import AES
     return AES.new(md5(passphrase).digest()[:16]).decrypt(data)
 
+
 class IPersistable(Interface):
+
+    """An object which can be saved in several formats to a file"""
+
     def setStyle(style):
+        """Set desired format.
+
+        @type style: string (one of 'pickle' or 'source')
+        """
 
     def save(tag=None, filename=None, passphrase=None):
+        """Save object to file.
+
+        @type tag: string
+        @type filename: string
+        @type passphrase: string
+        """
+
 
 class Persistent:
+
     implements(IPersistable)
+
     style = "pickle"
 
     def __init__(self, original, name):
@@ -41,6 +69,10 @@ class Persistent:
         self.name = name
 
     def setStyle(self, style):
+        """Set desired format.
+
+        @type style: string (one of 'pickle' or 'source')
+        """
         self.style = style
 
     def _getFilename(self, filename, ext, tag):
@@ -76,6 +108,12 @@ class Persistent:
         return ext, dumpFunc
 
     def save(self, tag=None, filename=None, passphrase=None):
+        """Save object to file.
+
+        @type tag: string
+        @type filename: string
+        @type passphrase: string
+        """
         ext, dumpFunc = self._getStyle()
         if passphrase:
             ext = 'e' + ext
@@ -87,6 +125,7 @@ class Persistent:
         os.rename(filename, finalname)
         log.msg("Saved.")
 
+# "Persistant" has been present since 1.0.7, so retain it for compatibility
 Persistant = Persistent
 
 class _EverythingEphemeral(styles.Ephemeral):
@@ -94,6 +133,9 @@ class _EverythingEphemeral(styles.Ephemeral):
     initRun = 0
 
     def __init__(self, mainMod):
+        """
+        @param mainMod: The '__main__' module that this class will proxy.
+        """
         self.mainMod = mainMod
 
     def __getattr__(self, key):
@@ -108,6 +150,14 @@ class _EverythingEphemeral(styles.Ephemeral):
 
 
 def load(filename, style, passphrase=None):
+    """Load an object from a file.
+
+    Deserialize an object from a file. The file can be encrypted.
+
+    @param filename: string
+    @param style: string (one of 'pickle' or 'source')
+    @param passphrase: string
+    """
     mode = 'r'
     if style=='source':
         from lib.twisted.persisted.aot import unjellyFromSource as _load
@@ -124,6 +174,7 @@ def load(filename, style, passphrase=None):
     try:
         value = _load(fp)
     finally:
+        # restore __main__ if an exception is raised.
         sys.modules['__main__'] = ee.mainMod
 
     styles.doUpgrade()
@@ -135,6 +186,16 @@ def load(filename, style, passphrase=None):
 
 
 def loadValueFromFile(filename, variable, passphrase=None):
+    """Load the value of a variable in a Python file.
+
+    Run the contents of the file, after decrypting if C{passphrase} is
+    given, in a namespace and return the result of the variable
+    named C{variable}.
+
+    @param filename: string
+    @param variable: string
+    @param passphrase: string
+    """
     if passphrase:
         mode = 'rb'
     else:

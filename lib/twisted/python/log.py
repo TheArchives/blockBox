@@ -16,7 +16,7 @@ import logging
 
 from lib.zope.interface import Interface
 
-from twisted.python import util, context, reflect
+from lib.twisted.python import util, context, reflect
 
 
 
