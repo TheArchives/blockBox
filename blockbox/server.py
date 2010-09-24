@@ -305,13 +305,13 @@ class MyneFactory(Factory):
 			config.set("ipbanned", ipban, reason)
 		for username, ls in self.lastseen.items():
 			lastseen.set("lastseen", username, str(ls))
-		fp = open("server.meta", "w")
+		fp = open("data/server.meta", "w")
 		config.write(fp)
 		fp.close()
-		fp = open("spectators.meta", "w")
+		fp = open("data/spectators.meta", "w")
 		specs.write(fp)
 		fp.close()
-		fp = open("lastseen.meta", "w")
+		fp = open("data/lastseen.meta", "w")
 		lastseen.write(fp)
 		fp.close()
 
