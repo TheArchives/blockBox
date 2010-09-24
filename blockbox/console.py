@@ -253,7 +253,7 @@ class StdinPlugin(threading.Thread):
 									self.adlog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+" | STAFF | Console: "+text+"\n")
 									self.adlog.flush()
 						else:
-							self.server.queue.put((self, TASK_MESSAGE, (255, "", "Console", message[0:len(message)-1])))
+							self.server.queue.put((self, TASK_MESSAGE, (255, COLOUR_DARKGREEN, "Console", message[0:len(message)-1])))
 			except:
 				self.logger.error(traceback.format_exc())
 		finally:

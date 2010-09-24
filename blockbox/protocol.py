@@ -163,7 +163,7 @@ class MyneServerProtocol(Protocol):
 		self.factory.releaseId(self.id)
 		self.factory.queue.put((self, TASK_PLAYERLEAVE, (self.id,)))
 		if self.username:
-			self.logger.info("Disconnected '%s'" % (self.username,))
+			self.logger.info("Disconnected.")
 			self.runHook("playerquit",self.username)
 			self.logger.debug("(reason: %s)" % (reason,))
 		# Kill all plugins
