@@ -111,7 +111,7 @@ class PlayersPlugin(ProtocolPlugin):
 					else:
 						self.client.sendServerMessage(parts[1]+" - "+COLOUR_WHITE+"Guest")
 					if self.client.isAdmin():
-						self.client.sendServerMessage("IP: "+p.string("misc", "ip", "None recorded.")
+						self.client.sendServerMessage("IP: "+p.string("misc", "ip", "None recorded."))
 					self.client.sendServerMessage("Status: "+COLOUR_DARKRED+"Offline")
 					if username not in self.client.factory.lastseen:
 						self.client.sendServerMessage("Last Seen: N/A")

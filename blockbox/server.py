@@ -98,11 +98,13 @@ class MyneFactory(Factory):
 		self.config.read("conf/server.ini")
 		self.conf_plugins.read("conf/plugins.ini")
 		
+		self.use_irc = False
 		if  (os.path.exists("conf/irc.ini")):
 			self.use_irc = True
 			self.conf_irc = ConfigParser()
 			self.conf_irc.read("conf/irc.ini")
-			
+		
+		self.use_email = False
 		if  (os.path.exists("conf/email.ini")):
 			self.use_email = True
 			self.conf_email = ConfigParser()
