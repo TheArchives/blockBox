@@ -57,7 +57,6 @@ class CommandPlugin(ProtocolPlugin):
 		self.customvars = dict({})
 		self.cmdinfolines = None
 		self.infoindex = None
-		return bank_dic
 
 	def message(self, message):
 		if self.cmdinfolines is not None:

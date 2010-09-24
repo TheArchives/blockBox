@@ -742,7 +742,7 @@ class MyneServerProtocol(Protocol):
 			self.sendServerMessage("You are no longer a Builder in this world.")
 		self.runHook("rankchange")
 		self.respawn()
- 
+
 	def respawn(self):
 		"Respawns the player in-place for other players, updating their nick."
 		self.queueTask(TASK_PLAYERRESPAWN, [self.id, self.colouredUsername(), self.x, self.y, self.z, self.h, self.p])
@@ -776,12 +776,12 @@ class MyneServerProtocol(Protocol):
 				if action:
 					prefix = "%s*<%s%s>%s " % (COLOUR_YELLOW, colour, username, COLOUR_WHITE)
 				else:
-					prefix = "<%s%s>%s " % (colour, username, COLOUR_WHITE)
+					prefix = "<%s%s%s> " % (colour, username, COLOUR_WHITE)
 			else:
 				if action:
 					prefix = "%s*<%s%s>%s " % (COLOUR_YELLOW, COLOUR_WHITE, username, COLOUR_WHITE)
 				else:
-					prefix = "<%s> " % username
+					prefix = "<%s%s> " % (COLOUR_WHITE, username)
 		else:
 			if self.world.highlight_ops:
 				if action:
@@ -824,6 +824,9 @@ class MyneServerProtocol(Protocol):
 
 	def sendAction(self, id, colour, username, text):
 		self.sendMessage(id, colour, username, text, action=True)
+
+	def sendIrcMessage(self, id, colour, username, text):
+		self.sendMessage(id, colour, username, text, irc=True)
 
 	def sendWhisper(self, username, text):
 		if self.world.highlight_ops:
