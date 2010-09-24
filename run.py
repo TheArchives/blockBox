@@ -6,7 +6,7 @@
 import sys
 if not sys.version_info[:2] == (2, 6):
 	print "Python 2.6.x is required in order to run blockBox."
-	exit(1)
+	sys.exit(1)
 
 import logging
 from blockbox.constants import *

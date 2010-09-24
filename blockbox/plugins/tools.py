@@ -40,4 +40,4 @@ class ToolsPlugin(ProtocolPlugin):
 				except ValueError:
 					self.client.sendServerMessage("Please enter an integer as the maximum roll.")
 				else:
-				self.client.sendWorldMessage("%s rolled a %s" % (self.client.username, roll))
+					self.client.sendWorldMessage("%s rolled a %s" % (self.client.username, roll))
