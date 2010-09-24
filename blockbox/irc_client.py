@@ -532,4 +532,4 @@ class ChatBotFactory(protocol.ClientFactory):
 			message = message.replace(".!", " !")
 			message = message.replace(".@", " @")
 			message = message.replace(".#", " #")
-			self.instance.sendServerMessage(message,admin,user,IRC)
+			self.instance.sendServerMessage(message,admin,user)

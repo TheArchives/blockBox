@@ -30,14 +30,14 @@ class ToolsPlugin(ProtocolPlugin):
 		xRange, yRange, zRange = abs(x - x2) + 1 , abs(y-y2) + 1, abs(z-z2) + 1
 		self.client.sendServerMessage("X = %d, Y = %d, Z = %d" % (xRange, yRange, zRange) )
 
-		def commandRoll(self, parts, byuser, overriderank):
-			"/roll max - Guest\nRolls a random number from 1 to max. Announces to world."
-			if len(parts) == 1:
-				self.client.sendServerMessage("Please enter a number as the maximum roll.")
+	def commandRoll(self, parts, byuser, overriderank):
+		"/roll max - Guest\nRolls a random number from 1 to max. Announces to world."
+		if len(parts) == 1:
+			self.client.sendServerMessage("Please enter a number as the maximum roll.")
+		else:
+			try:
+				roll = roll = int(math.floor((random.random()*(int(parts[1])-1)+1)))
+			except ValueError:
+				self.client.sendServerMessage("Please enter an integer as the maximum roll.")
 			else:
-				try:
-					roll = roll = int(math.floor((random.random()*(int(parts[1])-1)+1)))
-				except ValueError:
-					self.client.sendServerMessage("Please enter an integer as the maximum roll.")
-				else:
-					self.client.sendWorldMessage("%s rolled a %s" % (self.client.username, roll))
+				self.client.sendWorldMessage("%s rolled a %s" % (self.client.username, roll))
