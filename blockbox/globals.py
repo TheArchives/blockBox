@@ -272,7 +272,10 @@ def Credits(self, server=None):
 	else:
 		factory = self.client.factory
 	Temp.append ("Thanks to the following people for making blockBox possible...")
+	Temp.append ("(a full list is available on the blockBox website, which can be found at blockbox.bradness.info)")
 	Temp.append ("Creators: aera (Myne), PixelEater (MyneCraft and blockBox), iKJames (iCraft)")
-	Temp.append ("Devs: Adam01, revenant, gdude2002, gothfox, AndrewPH, Varriount, erronjason, destroyerx1, ntfwc, Dwarfy, goober, willempiee")
-	Temp.append ("Others: Bidoof_King, Rils, fragmer, PyroPyro, TkTech, the Users, the Testers, the Modders, the Community, ...")
+	#Temp.append ("Devs: Adam01, revenant, gdude2002, gothfox, AndrewPH, Varriount, erronjason, destroyerx1, ntfwc, Dwarfy, goober, willempiee")
+	#Temp.append ("Others: Bidoof_King, Rils, fragmer, PyroPyro, TkTech, the Users, the Testers, the Modders, the Community, ...")
+	Temp.append ("Devs: tyteen4a03, mmavipc")
+	Temp.append ("Others: Ginger879, Gear3215")
 	return Temp
