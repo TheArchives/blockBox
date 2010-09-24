@@ -67,8 +67,12 @@ The Salt is also used to help verify users' identities.
 				open('data/url.txt', 'w').write(self.url)
 				if not self.factory.console.is_alive():
 					self.factory.console.run()
+			except SystemExit:
+				pass
 			except:
 				self.logger.error(traceback.format_exc())
+		except SystemExit:
+			pass
 		except:
 			self.logger.error(traceback.format_exc())
 		finally:
@@ -208,7 +212,7 @@ class MyneFactory(Factory):
 
 	def cleanGarbage(self):
 		count = gc.collect()
-		logging.log(logging.INFO, "%i garbage objects collected, %i were uncollected." % ( count, len(gc.garbage)))
+		self.logger.info("%i garbage objects collected, %i were uncollected." % ( count, len(gc.garbage)))
 		reactor.callLater(60*15, self.cleanGarbage)
 
 	def loadMeta(self):
