@@ -1148,4 +1148,4 @@ class MyneServerProtocol(Protocol):
 		if block is 0:
 			self.sendServerMessage("Your " + command +" has finished.")
 		else:
-			self.sendServerMessage("Your " + command +" has finished, with %s blocks." % block)
+			self.sendServerMessage("Your " + command +" has finished, with %d blocks." % abs(block))
