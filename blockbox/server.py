@@ -85,7 +85,8 @@ class MyneFactory(Factory):
 	protocol = MyneServerProtocol
 
 	def __init__(self):
-		if  (os.path.exists("conf/plugins.dist.ini") and not os.path.exists("conf/plugins.ini")) or \
+		if  (os.path.exists("conf/performance.dist.ini") and not os.path.exists("conf/performance.ini")) or \
+			(os.path.exists("conf/plugins.dist.ini") and not os.path.exists("conf/plugins.ini")) or \
 			(os.path.exists("conf/server.dist.ini") and not os.path.exists("conf/server.ini")) or \
 			(os.path.exists("conf/wordfilter.dist.ini") and not os.path.exists("conf/wordfilter.ini")):
 			raise NotConfigured
@@ -95,11 +96,13 @@ class MyneFactory(Factory):
 		self.last_heartbeat = time.time()
 		self.lastseen = ConfigParser()
 		self.config = ConfigParser()
+		self.conf_performance = ConfigParser()
 		self.conf_plugins = ConfigParser()
 		self.wordfilter = ConfigParser()
 		self.save_count = 1
 		self.delay_count = 1
 		self.config.read("conf/server.ini")
+		self.conf_performance.read("conf/performance.ini")
 		self.conf_plugins.read("conf/plugins.ini")
 		
 		self.use_irc = False
@@ -123,9 +126,9 @@ class MyneFactory(Factory):
 		self.enable_archives = self.config.getboolean("worlds", "enable_archives")
 		self.duplicate_logins = self.config.getboolean("options", "duplicate_logins")
 		self.verify_names = self.config.getboolean("options", "verify_names")
-		self.asd_delay = self.config.getint("worlds", "asd_delay")
+		self.asd_delay = self.conf_performance.getint("worlds", "asd_delay")
 		self.api_password = self.config.get("network", "api_password")
-		self.physics_limit = self.config.getint("options", "physics_limit")
+		self.physics_limit = self.conf_performance.getint("worlds", "physics_limit")
 		self.console_delay = self.config.getint("options", "console_delay")
 		self.info_url = self.config.get("info", "info_url")
 		#Idea: again default

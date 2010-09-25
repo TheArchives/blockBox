@@ -9,17 +9,29 @@ if not sys.version_info[:2] == (2, 6):
 	sys.exit(1)
 
 import logging
+import lib.psyco
+from lib.psyco.classes import *
 from blockbox.constants import *
 from logging.handlers import SMTPHandler
 from lib.twisted.internet import reactor
 from blockbox.server import MyneFactory
 from blockbox.api import APIFactory
+from ConfigParser import RawConfigParser as ConfigParser
 
 logging.basicConfig(
 	format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 	level=("--debug" in sys.argv) and logging.DEBUG or logging.INFO,
 	datefmt="%m/%d/%Y %H:%M:%S",
 )
+
+if  (os.path.exists("conf/performance.dist.ini") and not os.path.exists("conf/performance.ini")):
+	raise NotConfigured
+
+performance = ConfigParser()
+performance.read("conf/performance.ini")
+psyco_max_mem = performance.getint("psyco", "max_mem")
+del performance
+psyco.full(memory=psyco_max_mem)
 
 logger = logging.getLogger("blockBox")
 logger.info("Starting up blockBox %s..." % VERSION)
