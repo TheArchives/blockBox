@@ -39,6 +39,14 @@ The Salt is also used to help verify users' identities.
 		self.factory = factory
 		self.logger = logging.getLogger("Heartbeat")
 		self.turl()
+		self.bb_turl()
+
+	def bb_turl(self):
+		try:
+			threading.Thread(target=self.get_url).start()
+		except:
+			self.logger.error(traceback.format_exc())
+			reactor.callLater(1, self.turl)
 
 	def turl(self):
 		try:
@@ -48,39 +56,72 @@ The Salt is also used to help verify users' identities.
 			reactor.callLater(1, self.turl)
 
 	def get_url(self):
-		try:
+		if self.factory.config.getboolean("heartbeat", "use_flist"):
 			try:
-				self.factory.last_heartbeat = time.time()
-				fh = urllib.urlopen("http://www.minecraft.net/heartbeat.jsp", urllib.urlencode({
-				"port": self.factory.config.getint("network", "port"),
-				"users": len(self.factory.clients),
-				"max": self.factory.max_clients,
-				"name": self.factory.server_name,
-				"public": self.factory.public,
-				"version": 7,
-				"salt": self.factory.salt,
-				}))
-				self.url = fh.read().strip()
-				if self.factory.console_delay == self.factory.delay_count:
-					self.logger.info("%s" % self.url)
-					#self.logger.info("Saved URL to url.txt.")
-				open('data/url.txt', 'w').write(self.url)
-				if not self.factory.console.is_alive():
-					self.factory.console.run()
-			except IOError:
-				pass
-			except SystemExit:
+				try:
+					self.factory.last_heartbeat = time.time()
+					fh = urllib.urlopen("http://www.minecraft.net/heartbeat.jsp", urllib.urlencode({
+					"port": self.factory.config.getint("network", "port"),
+					"users": len(self.factory.clients),
+					"max": self.factory.max_clients,
+					"name": self.factory.server_name,
+					"public": self.factory.public,
+					"version": 7,
+					"salt": self.factory.salt,
+					}))
+					self.url = fh.read().strip()
+					self.hash = self.url.partition("server=")[2]
+					if self.factory.console_delay == self.factory.delay_count:
+						self.logger.info("%s" % self.url)
+						#self.logger.info("Saved URL to url.txt.")
+					open('data/url.txt', 'w').write(self.url)
+					if not self.factory.console.is_alive():
+						self.factory.console.run()
+				except IOError,SystemExit:
+					pass
+				except:
+					self.logger.error(traceback.format_exc())
+			except IOError,SystemExit:
 				pass
 			except:
 				self.logger.error(traceback.format_exc())
-		except IOError:
-			pass
-		except SystemExit:
+			finally:
+				reactor.callLater(60, self.turl)
+
+	def bb_get_url(self):
+		try:
+			try:
+				self.factory.last_heartbeat = time.time()
+				fh = urllib.urlopen("http://blockbeat.bradness.info/announce.php", urllib.urlencode({
+					"users": len(self.factory.clients),
+					"hash": self.hash,
+					"max": self.factory.max_clients,
+					"port": self.factory.config.getint("network", "port"),
+					"name": self.factory.server_name,
+					"software": 'blockbox',
+					"public": self.factory.public,
+					"motd": self.factory.config.get("server", "description"),
+					"website": self.factory.config.get("info", "info_url"),
+					"owner": self.factory.config.get("info", "owner"),
+					"irc": self.factory.config.get("irc", "channel")+"@"+self.factory.config.get("irc", "server"),
+				}))
+				self.response = fh.read().strip()
+				self.hash = self.url.partition("server=")[2]
+				if self.factory.console_delay == self.factory.delay_count:
+					self.logger.info("%s" % self.url)
+				#TODO: Response handling, more info coming soon
+				if not self.factory.console.is_alive():
+					self.factory.console.run()
+			except IOError,SystemExit:
+				pass
+			except:
+				self.logger.error(traceback.format_exc())
+		except IOError,SystemExit:
 			pass
 		except:
 			self.logger.error(traceback.format_exc())
 		finally:
-			reactor.callLater(60, self.turl)
+			reactor.callLater(60, self.bb_turl)
 
 class MyneFactory(Factory):
 	"""

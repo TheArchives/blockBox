@@ -3,7 +3,7 @@
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
 from lib.twisted.internet import reactor
-import math
+import cmath
 from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
@@ -98,7 +98,7 @@ class ShapesPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)
 				except StopIteration:
 					if byuser:
-						count = (4/3)*math.pi*(parts[2]^3) + 4*math.pi*(parts[2]^2)
+						count = int(round((4/3)*cmath.pi*(parts[2]^3) + 4*cmath.pi*(parts[2]^2)))
 						self.client.finalizeMassCMD('sphere', count)
 					pass
 			do_step()
@@ -177,7 +177,7 @@ class ShapesPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)
 				except StopIteration:
 					if byuser:	
-						count = 4*math.pi*(parts[2]^2)
+						count = int(round(4*cmath.pi*(parts[2]^2)))
 						self.client.finalizeMassCMD('hsphere', count)
 					pass
 			do_step()
@@ -627,7 +627,7 @@ class ShapesPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)
 				except StopIteration:
 					if byuser:
-						count = 4*math.pi*(parts[2]^2)
+						count = int(round(4*cmath.pi*(parts[2]^2)))
 						self.client.finalizeMassCMD('csphere', count)
 					pass
 			do_step()
@@ -636,7 +636,7 @@ class ShapesPlugin(ProtocolPlugin):
 	@op_only
 	def commandCircle(self, parts, byuser, overriderank):
 		"/circle blocktype x y z radius axis - Op\nPlace/delete a block and /circle block radius axis"
-		if len(parts) < 7 and len(parts) != 4: #bugfix 5/22/10
+		if len(parts) < 7 and len(parts) != 4:
 			self.client.sendServerMessage("Please enter a type, radius, axis(and possibly a coord triple)")
 		else:
 			# Try getting the normal axis
@@ -693,7 +693,7 @@ class ShapesPlugin(ProtocolPlugin):
 				limit = 55296
 			else:
 				limit = 4062
-			if 2*3.14*(radius)**2>limit:
+			if 2*cmath.pi*(radius)**2>limit:
 				self.client.sendServerMessage("Sorry, that area is too big for you to circle.")
 				return
 			# Draw all the blocks on, I guess
@@ -906,7 +906,7 @@ class ShapesPlugin(ProtocolPlugin):
 			var_x = int(round(float(x+x2)/2))
 			var_y = int(round(float(y+y2)/2))
 			var_z = int(round(float(z+z2)/2))
-			if int(4/3*3.14*radius**2*endradius)>limit:
+			if int(4/3*cmath.pi*radius**2*endradius)>limit:
 				self.client.sendServerMessage("Sorry, that area is too big for you to ellipsoid.")
 				return
 			# Draw all the blocks on, I guess
@@ -928,6 +928,7 @@ class ShapesPlugin(ProtocolPlugin):
 									return
 								self.client.queueTask(TASK_BLOCKSET, (var_x+i, var_y+j, var_z+k, block), world=world)
 								self.client.sendBlock(var_x+i, var_y+j, var_z+k, block)
+								self.total = self.total+1
 								#TODO: Not so retarded to use self.total here :3
 								yield
 			# Now, set up a loop delayed by the reactor
