@@ -378,7 +378,7 @@ VIPS = set(["notch", "dock", "pixeleater", "andrewph", "ikjames", "goober", "got
 class ServerFull(Exception):
 	pass
 
-class TemplateDoesntExist(Exception):
+class TemplateDoesNotExist(Exception):
 	pass
 
 class NotConfigured(Exception):

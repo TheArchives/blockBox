@@ -179,6 +179,7 @@ class StairsPlugin(ProtocolPlugin):
 							return
 						self.client.queueTask(TASK_BLOCKSET, (i, j, k, stepblock), world=world)
 						self.client.sendBlock(i, j, k, stepblock)
+						self.total = self.total+1
 						yield
 			
 			# Now, set up a loop delayed by the reactor
@@ -191,6 +192,7 @@ class StairsPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if byuser:
-						self.client.sendServerMessage("Your stairs just completed.")
+						self.client.finalizeMassCMD('stairs', self.total)
+						del self.total
 					pass
 			do_step()

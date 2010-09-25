@@ -200,6 +200,8 @@ class MultiWorldPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("Worldname in use")
 		elif len(parts) < 5:
 			self.client.sendServerMessage("Please specify dimensions. (width, length, height)")
+		elif not int(parts[2]) or not int(parts[3]) or not int(parts[4]):
+			self.client.sendServerMessage("Dimensions must be intergers")
 		elif int(parts[2]) < 16 or int(parts[3]) < 16 or int(parts[4]) < 16:
 			self.client.sendServerMessage("No dimension may be smaller than 16.")
 		elif int(parts[2]) > 1024 or int(parts[3]) > 1024 or int(parts[4]) > 1024:

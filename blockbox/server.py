@@ -700,7 +700,7 @@ class MyneFactory(Factory):
 			try:
 				shutil.copyfile("templates/%s/%s" % (template, filename), "worlds/%s/%s" % (new_name, filename))
 			except:
-				raise TemplateDoesntExist
+				raise TemplateDoesNotExist
 
 	def renameWorld(self, old_worldid, new_worldid):
 		"Renames a world."

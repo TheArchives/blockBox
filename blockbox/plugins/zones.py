@@ -440,7 +440,8 @@ class ZonesPlugin(ProtocolPlugin):
 						reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 					except StopIteration:
 						if byuser:
-							self.client.sendServerMessage("Your zone clear just completed.")
+							count = ((1+(x2 - x)) * (1+(y2 - y)) * (1+(z2 - z))/3)
+							self.client.finalizeMassCMD('zone clear', count)
 						pass
 				do_step()
 			else:

@@ -109,11 +109,10 @@ class BlbPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if byuser:
-						self.client.sendServerMessage("Your blb just completed.")
+						count = ((1+(x2 - x)) * (1+(y2 - y)) * (1+(z2 - z))/3)
+						self.client.finalizeMassCMD('blb', count)
 					pass
 			do_step()
-		#count = ((1+(x2 - x)) * (1+(y2 - y)) * (1+(z2 - z))/3)
-		#self.client.sendServerMessage("Your blb finished, with %s blocks." % count)
 
 	@build_list
 	@writer_only
@@ -202,7 +201,8 @@ class BlbPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if byuser:
-						self.client.sendServerMessage("Your bhb just completed.")
+						count = (((1+(x2 - x)) * (1+(y2 - y)) * (1+(z2 - z))/3) - ((x2 - x) * (y2 - y) * (z2 - z)/3))
+						self.client.finalizeMassCMD('bhb', count)
 					pass
 			do_step()
 
@@ -293,7 +293,9 @@ class BlbPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if byuser:
-						self.client.sendServerMessage("Your bwb just completed.")
+						#TODO: Fix the formula
+						count = (((1+(x2 - x)) * (1+(y2 - y)) * (1+(z2 - z))/3) - ((x2 - x) * (y2 - y) * (2+(z2 - z))/3))
+						self.client.finalizeMassCMD('bwb', count)
 					pass
 			do_step()
 
@@ -423,8 +425,10 @@ class BlbPlugin(ProtocolPlugin):
 									ticker = 0
 								if ticker == 0:
 									world[i, j, k] = block
+									self.total_a = self.total_a+1
 								else:
 									world[i, j, k] = block2
+									self.total_b = self.total_b+1
 							except AssertionError:
 								self.client.sendServerMessage("Out of bounds bcb error.")
 								return
@@ -446,7 +450,11 @@ class BlbPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if byuser:
-						self.client.sendServerMessage("Your bcb just completed.")
+						#TODO: Speed up blockcount in ticker
+						count = ((1+(x2 - x)) * (1+(y2 - y)) * (1+(z2 - z))/3)
+						self.client.finalizeMassCMD('bcb', count)
+						self.client.sendServerMessage(self.total_a + " " + block + "s, " + self.total_b + " " +block2 + "s.")
+						del self.total_a, self.total_b
 					pass
 			do_step()
 
@@ -553,8 +561,10 @@ class BlbPlugin(ProtocolPlugin):
 										ticker = 0
 									if ticker == 0:
 										world[i, j, k] = block
+										self.total_a = self.total_a+1
 									else:
 										world[i, j, k] = block2
+										self.total_b = self.total_b+1
 
 								except AssertionError:
 									self.client.sendServerMessage("Out of bounds bhcb error.")
@@ -577,7 +587,10 @@ class BlbPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if byuser:
-						self.client.sendServerMessage("Your bhcb just completed.")
+						count = (((1+(x2 - x)) * (1+(y2 - y)) * (1+(z2 - z))/3) - ((x2 - x) * (y2 - y) * (z2 - z)/3))
+						self.client.finalizeMassCMD('bhb', count)
+						self.client.sendServerMessage(self.total_a + " " + block + "s, " + self.total_b + " " +block2 + "s.")
+						del self.total_a, self.total_b
 					pass
 			do_step()
 
@@ -684,6 +697,8 @@ class BlbPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if byuser:
-						self.client.sendServerMessage("Your bfb just completed.")
+						#TODO: Fix the formula
+						count = (2*(1+(x2 - x)) + 2*(1+(y2 - y)) + 2*(z2 - z))
+						self.client.finalizeMassCMD('bfb', count)
 					pass
 			do_step()

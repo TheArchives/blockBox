@@ -5,10 +5,14 @@ glob:logs/console/*.log
 glob:url.txt
 glob:conf/client.ini
 glob:conf/server.ini
+glob:conf/plugins.ini
 glob:conf/wordfilter.ini
 glob:*.bak
 glob:*.orig
+glob:data/*.meta
 glob:persist/*.ini
 glob:conf/email.ini
 glob:conf/irc.ini
 glob:conf/performance.ini
+glob:mapdata/worlds/*
+glob:mapdata/archives/*

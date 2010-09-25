@@ -116,6 +116,7 @@ class NaturePlugin(ProtocolPlugin):
 							pass
 						self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 						self.client.sendBlock(i, j, k, block)
+						self.total = self.total+1
 						yield
 		# Now, set up a loop delayed by the reactor
 		block_iter = iter(generate_changes())
@@ -127,7 +128,8 @@ class NaturePlugin(ProtocolPlugin):
 				reactor.callLater(0.01, do_step)
 			except StopIteration:
 				if byuser:
-					self.client.sendServerMessage("Your dune just completed.")
+					self.client.finalizeMassCMD('dune', self.total)
+					del self.total
 				pass
 		do_step()
 
@@ -171,6 +173,7 @@ class NaturePlugin(ProtocolPlugin):
 							pass
 						self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 						self.client.sendBlock(i, j, k, block)
+						self.total = self.total+1
 						yield
 		# Now, set up a loop delayed by the reactor
 		block_iter = iter(generate_changes())
@@ -182,7 +185,8 @@ class NaturePlugin(ProtocolPlugin):
 				reactor.callLater(0.01, do_step)
 			except StopIteration:
 				if byuser:
-					self.client.sendServerMessage("Your hill just completed.")
+					self.client.finalizeMassCMD('hill', self.total)
+					del self.total
 				pass
 		do_step()
 
@@ -225,6 +229,7 @@ class NaturePlugin(ProtocolPlugin):
 							pass
 						self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world = world)
 						self.client.sendBlock(x, y, z, block)
+						self.total = self.total+1
 						yield
 		# Now, set up a loop delayed by the reactor
 		block_iter = iter(generate_changes())
@@ -236,7 +241,8 @@ class NaturePlugin(ProtocolPlugin):
 				reactor.callLater(0.01, do_step)
 			except StopIteration:
 				if byuser:
-					self.client.sendServerMessage("Your hole just completed.")
+					self.client.finalizeMassCMD('hole', self.total)
+					del self.total
 				pass
 		do_step()
 
@@ -277,6 +283,7 @@ class NaturePlugin(ProtocolPlugin):
 							pass
 						self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world = world)
 						self.client.sendBlock(x, y, z, block)
+						self.total = self.total+1
 						yield
 		# Now, set up a loop delayed by the reactor
 		block_iter = iter(generate_changes())
@@ -288,7 +295,8 @@ class NaturePlugin(ProtocolPlugin):
 				reactor.callLater(0.01, do_step)
 			except StopIteration:
 				if byuser:
-					self.client.sendServerMessage("Your lake just completed.")
+					self.client.finalizeMassCMD('lake', self.total)
+					del self.total
 				pass
 		do_step()
 
@@ -350,6 +358,7 @@ class NaturePlugin(ProtocolPlugin):
 							pass
 						self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 						self.client.sendBlock(i, j, k, block)
+						self.total = self.total+1
 						yield
 		# Now, set up a loop delayed by the reactor
 		block_iter = iter(generate_changes())
@@ -361,7 +370,8 @@ class NaturePlugin(ProtocolPlugin):
 				reactor.callLater(0.01, do_step)
 			except StopIteration:
 				if byuser:
-					self.client.sendServerMessage("Your mountain just completed.")
+					self.client.finalizeMassCMD('mountain', self.total)
+					del self.total
 				pass
 		do_step()
 
@@ -402,6 +412,7 @@ class NaturePlugin(ProtocolPlugin):
 							pass
 						self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world = world)
 						self.client.sendBlock(x, y, z, block)
+						self.total = self.total+1
 						yield
 		# Now, set up a loop delayed by the reactor
 		block_iter = iter(generate_changes())
@@ -413,6 +424,7 @@ class NaturePlugin(ProtocolPlugin):
 				reactor.callLater(0.01, do_step)
 			except StopIteration:
 				if byuser:
-					self.client.sendServerMessage("Your pit just completed.")
+					self.client.finalizeMassCMD('pit', self.total)
+					del self.total
 				pass
 		do_step()

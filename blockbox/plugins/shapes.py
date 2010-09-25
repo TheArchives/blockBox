@@ -3,7 +3,7 @@
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
 from lib.twisted.internet import reactor
-
+import math
 from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
@@ -98,7 +98,8 @@ class ShapesPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)
 				except StopIteration:
 					if byuser:
-						self.client.sendServerMessage("Your sphere just completed.")
+						count = (4/3)*math.pi*(parts[2]^3) + 4*math.pi*(parts[2]^2)
+						self.client.finalizeMassCMD('sphere', count)
 					pass
 			do_step()
 
@@ -176,7 +177,8 @@ class ShapesPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)
 				except StopIteration:
 					if byuser:	
-						self.client.sendServerMessage("Your hsphere just completed.")
+						count = 4*math.pi*(parts[2]^2)
+						self.client.finalizeMassCMD('hsphere', count)
 					pass
 			do_step()
 
@@ -274,6 +276,7 @@ class ShapesPlugin(ProtocolPlugin):
 						return
 					self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 					self.client.sendBlock(i, j, k, block)
+					self.total = self.total+1
 					yield
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
@@ -285,7 +288,8 @@ class ShapesPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if byuser:
-						self.client.sendServerMessage("Your curve just completed.")
+						self.client.finalizeMassCMD('curve', self.total)
+						del self.total
 					pass
 			do_step()
 
@@ -388,6 +392,7 @@ class ShapesPlugin(ProtocolPlugin):
 										return
 									self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 									self.client.sendBlock(i, j, k, block)
+									self.total = self.total+1
 									yield
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
@@ -399,7 +404,8 @@ class ShapesPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if byuser:
-						self.client.sendServerMessage("Your pyramid just completed.")
+						self.client.finalizeMassCMD('pyramid', self.total)
+						del self.total
 					pass
 			do_step()
 
@@ -490,6 +496,8 @@ class ShapesPlugin(ProtocolPlugin):
 						return
 					self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 					self.client.sendBlock(i, j, k, block)
+					#TODO: Yes I am retarted for using self.total in line
+					self.total = self.total+1
 					yield
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
@@ -501,7 +509,8 @@ class ShapesPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if byuser:
-						self.client.sendServerMessage("Your line just completed.")
+						self.client.finalizeMassCMD('line', self.total)
+						del self.total
 					pass
 			do_step()
 
@@ -599,7 +608,7 @@ class ShapesPlugin(ProtocolPlugin):
 									else:
 										world[x+i, y+j, z+k] = block2
 								except AssertionError:
-									self.client.sendServerMessage("Out of bounds sphere error.")
+									self.client.sendServerMessage("Out of bounds csphere error.")
 									return
 								if ticker == 0:
 									self.client.queueTask(TASK_BLOCKSET, (x+i, y+j, z+k, block2), world=world)
@@ -618,7 +627,8 @@ class ShapesPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)
 				except StopIteration:
 					if byuser:
-						self.client.sendServerMessage("Your csphere just completed.")
+						count = 4*math.pi*(parts[2]^2)
+						self.client.finalizeMassCMD('csphere', count)
 					pass
 			do_step()
 			
@@ -714,6 +724,8 @@ class ShapesPlugin(ProtocolPlugin):
 										return
 									self.client.queueTask(TASK_BLOCKSET, (x+i, y+j, z+k, block), world=world)
 									self.client.sendBlock(x+i, y+j, z+k, block)
+									#TODO: Yes, I am retarded in using self.total in circles.
+									self.total = self.total+1
 									yield
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
@@ -725,7 +737,8 @@ class ShapesPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)
 				except StopIteration:
 					if byuser:
-						self.client.sendServerMessage("Your circle just completed.")
+						self.client.finalizeMassCMD('circle', self.total)
+						del self.total
 					pass
 			do_step()
 
@@ -734,7 +747,7 @@ class ShapesPlugin(ProtocolPlugin):
 	def commandDome(self, parts, byuser, overriderank):
 		"/dome blocktype x y z radius - Op\nPlace/delete a block and /sphere block radius"
 		if len(parts) < 7 and len(parts) != 4:
-			self.client.sendServerMessage("Please enter a type radius fill?(and possibly a coord triple)")
+			self.client.sendServerMessage("Please enter a type, the radius and whether to fill (and possibly a coord triple)")
 		else:
 			# Try getting the fill
 			fill = parts[3]
@@ -747,7 +760,7 @@ class ShapesPlugin(ProtocolPlugin):
 			try:
 				radius = int(parts[2])
 			except ValueError:
-				self.client.sendServerMessage("Radius must be a Number.")
+				self.client.sendServerMessage("Radius must be a integer.")
 				return
 			# Try getting the block as a direct integer type.
 			try:
@@ -763,7 +776,7 @@ class ShapesPlugin(ProtocolPlugin):
 			if ord(block) > 49:
 				self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
 				return
-			# If they only provided the type argument, use the last two block places
+			# If they only provided the type argument, use the last block place
 			if len(parts) == 4:
 				try:
 					x, y, z = self.client.last_block_changes[0]
@@ -813,6 +826,8 @@ class ShapesPlugin(ProtocolPlugin):
 									return
 								self.client.queueTask(TASK_BLOCKSET, (x+i, y+j, z+k, block), world=world)
 								self.client.sendBlock(x+i, y+j, z+k, block)
+								#TODO: Yes, I am retarded for using self.total in domes.
+								self.total = self.total+1
 								yield
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
@@ -824,7 +839,8 @@ class ShapesPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)
 				except StopIteration:
 					if byuser:
-						self.client.sendServerMessage("Your dome just completed.")
+						self.client.finalizeMassCMD('dome', self.total)
+						del self.total
 					pass
 			do_step()
 
@@ -912,6 +928,7 @@ class ShapesPlugin(ProtocolPlugin):
 									return
 								self.client.queueTask(TASK_BLOCKSET, (var_x+i, var_y+j, var_z+k, block), world=world)
 								self.client.sendBlock(var_x+i, var_y+j, var_z+k, block)
+								#TODO: Not so retarded to use self.total here :3
 								yield
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
@@ -923,7 +940,8 @@ class ShapesPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)
 				except StopIteration:
 					if byuser:
-						self.client.sendServerMessage("Your ellipsoid just completed.")
+						self.client.finalizeMassCMD('ellpsoid', self.total)
+						del self.total
 					pass
 			do_step()
 
@@ -1058,6 +1076,7 @@ class ShapesPlugin(ProtocolPlugin):
 						return
 					self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 					self.client.sendBlock(i, j, k, block)
+					self.total = self.total+1
 					yield
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
@@ -1069,6 +1088,7 @@ class ShapesPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if byuser:
-						self.client.sendServerMessage("Your polytri just completed.")
+						self.client.finalizeMassCMD('polytri', self.total)
+						del self.total
 					pass
 			do_step()

@@ -91,6 +91,7 @@ class BrepPlugin(ProtocolPlugin):
 									self.client.runHook("blockchange", x, y, z, ord(block), ord(block), byuser)
 									self.client.queueTask(TASK_BLOCKSET, (i, j, k, blockB), world=world)
 									self.client.sendBlock(i, j, k, blockB)
+									self.total = self.total+1
 							except AssertionError:
 								self.client.sendServerMessage("Out of bounds replace error.")
 								return
@@ -105,7 +106,8 @@ class BrepPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)
 				except StopIteration:
 					if byuser:
-						self.client.sendServerMessage("Your replace just completed.")
+						self.client.finalizeMassCMD('replace', self.total)
+						del self.total
 					pass
 			do_step()
 
@@ -218,6 +220,7 @@ class BrepPlugin(ProtocolPlugin):
 									world[i, j, k] = var_block
 									self.client.queueTask(TASK_BLOCKSET, (i, j, k, var_block), world=world)
 									self.client.sendBlock(i, j, k, var_block)
+									self.total = self.total+1
 							except AssertionError:
 								self.client.sendServerMessage("Out of bounds creplace error.")
 								return
@@ -232,7 +235,8 @@ class BrepPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)
 				except StopIteration:
 					if byuser:
-						self.client.sendServerMessage("Your creplace just completed.")
+						self.client.finalizeMassCMD('creplace', self.total)
+						del self.total
 					pass
 			do_step()
 
@@ -356,6 +360,7 @@ class BrepPlugin(ProtocolPlugin):
 									self.client.queueTask(TASK_BLOCKSET, (ri, rj, rk, block), world=world)
 									self.client.sendBlock(ri, rj, rk, block)
 									self.var_blocklist.append((ri, rj, rk,(i,j,k)))
+									self.total = self.total+1
 							except AssertionError:
 								pass
 							yield
@@ -370,6 +375,7 @@ class BrepPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if byuser:
-						self.client.sendServerMessage("Your fill just completed.")
+						self.client.finalizeMassCMD('fill', self.total)
+						del self.total
 					pass
 			do_step()

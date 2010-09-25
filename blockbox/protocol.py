@@ -1143,3 +1143,9 @@ class MyneServerProtocol(Protocol):
 		self.quitmsg = self.persist.string("misc", "quitmsg", "Goodbye.")
 		self.homeworld = self.persist.string("misc", "homeworld", "main")
 		self.factory.joinWorld(self.homeworld, self)
+
+	def finalizeMassCMD(self, command, block=0):
+		if block is 0:
+			self.client.sendServerMessage("Your " + command +" has finished.")
+		else:
+			self.client.sendServerMessage("Your " + command +" has finished, with %s blocks." % block)

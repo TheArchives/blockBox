@@ -8,7 +8,7 @@ from blockbox.decorators import *
 from blockbox.constants import *
 import math
 from random import choice
-
+#TODO: Add FinalizeMassCMD support
 class LSystemPlugin(ProtocolPlugin):
 	
 	commands = {
