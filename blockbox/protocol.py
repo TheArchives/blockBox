@@ -1146,6 +1146,6 @@ class MyneServerProtocol(Protocol):
 
 	def finalizeMassCMD(self, command, block=0):
 		if block is 0:
-			self.client.sendServerMessage("Your " + command +" has finished.")
+			self.sendServerMessage("Your " + command +" has finished.")
 		else:
-			self.client.sendServerMessage("Your " + command +" has finished, with %s blocks." % block)
+			self.sendServerMessage("Your " + command +" has finished, with %s blocks." % block)
