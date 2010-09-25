@@ -378,6 +378,9 @@ VIPS = set(["notch", "dock", "pixeleater", "andrewph", "ikjames", "goober", "got
 class ServerFull(Exception):
 	pass
 
+class TemplateDoesntExist(Exception):
+	pass
+
 class NotConfigured(Exception):
 	def __init__(self):
 		self.msg = "blockBox is not configured. Read the installation guide if you wish to proceed."

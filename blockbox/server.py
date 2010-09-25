@@ -697,7 +697,7 @@ class MyneFactory(Factory):
 			try:
 				shutil.copyfile("templates/%s/%s" % (template, filename), "worlds/%s/%s" % (new_name, filename))
 			except:
-				client.sendServerMessage("That template doesn't exist.")
+				raise TemplateDoesntExist
 
 	def renameWorld(self, old_worldid, new_worldid):
 		"Renames a world."

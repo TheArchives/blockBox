@@ -50,7 +50,11 @@ class MultiWorldPlugin(ProtocolPlugin):
 			elif len(parts) == 3 or len(parts) == 4:
 				template = parts[2]
 			world_id = parts[1].lower()
-			self.client.factory.newWorld(world_id, template)
+			try:
+				self.client.factory.newWorld(world_id, template)
+			except:
+				self.client.sendServerMessage("Template '%s' does not exist." % template)
+				return
 			self.client.factory.loadWorld("mapdata/worlds/%s" % world_id, world_id)
 			self.client.factory.worlds[world_id].all_write = False
 			if len(parts) < 4:
