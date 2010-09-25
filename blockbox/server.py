@@ -63,14 +63,18 @@ The Salt is also used to help verify users' identities.
 				self.url = fh.read().strip()
 				if self.factory.console_delay == self.factory.delay_count:
 					self.logger.info("%s" % self.url)
-					self.logger.info("Saved URL to url.txt.")
+					#self.logger.info("Saved URL to url.txt.")
 				open('data/url.txt', 'w').write(self.url)
 				if not self.factory.console.is_alive():
 					self.factory.console.run()
+			except IOError:
+				pass
 			except SystemExit:
 				pass
 			except:
 				self.logger.error(traceback.format_exc())
+		except IOError:
+			pass
 		except SystemExit:
 			pass
 		except:
