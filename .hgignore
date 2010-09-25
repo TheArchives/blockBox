@@ -1,7 +1,6 @@
 glob:*.pyc
 glob:_build
-glob:logs/*.log
-glob:logs/console/*.log
+glob:*.log
 glob:url.txt
 glob:conf/client.ini
 glob:conf/server.ini
