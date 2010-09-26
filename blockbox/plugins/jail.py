@@ -17,13 +17,13 @@ J_WORLD = 2
 class JailPlugin(ProtocolPlugin):
 
 	def loadJail(self):
-		file = open('jail.dat', 'r')
+		file = open('data/jail.dat', 'r')
 		dic = cPickle.load(file)
 		file.close()
 		return dic
 
 	def dumpJail(self, dic):
-		file = open('jail.dat', 'w')
+		file = open('data/jail.dat', 'w')
 		cPickle.dump(dic, file)
 		file.close()
 

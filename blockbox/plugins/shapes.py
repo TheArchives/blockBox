@@ -276,7 +276,7 @@ class ShapesPlugin(ProtocolPlugin):
 						return
 					self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 					self.client.sendBlock(i, j, k, block)
-					self.total = self.total+1
+					self.client.total = self.client.total+1
 					yield
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
@@ -288,8 +288,8 @@ class ShapesPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if byuser:
-						self.client.finalizeMassCMD('curve', self.total)
-						del self.total
+						self.client.finalizeMassCMD('curve', self.client.total)
+						self.client.total = 0
 					pass
 			do_step()
 
@@ -392,7 +392,7 @@ class ShapesPlugin(ProtocolPlugin):
 										return
 									self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 									self.client.sendBlock(i, j, k, block)
-									self.total = self.total+1
+									self.client.total = self.client.total+1
 									yield
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
@@ -404,8 +404,8 @@ class ShapesPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if byuser:
-						self.client.finalizeMassCMD('pyramid', self.total)
-						del self.total
+						self.client.finalizeMassCMD('pyramid', self.client.total)
+						self.client.total = 0
 					pass
 			do_step()
 
@@ -496,8 +496,8 @@ class ShapesPlugin(ProtocolPlugin):
 						return
 					self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 					self.client.sendBlock(i, j, k, block)
-					#TODO: Yes I am retarted for using self.total in line
-					self.total = self.total+1
+					#TODO: Yes I am retarted for using self.client.total in line
+					self.client.total = self.client.total+1
 					yield
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
@@ -509,8 +509,8 @@ class ShapesPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if byuser:
-						self.client.finalizeMassCMD('line', self.total)
-						del self.total
+						self.client.finalizeMassCMD('line', self.client.total)
+						self.client.total = 0
 					pass
 			do_step()
 
@@ -724,8 +724,8 @@ class ShapesPlugin(ProtocolPlugin):
 										return
 									self.client.queueTask(TASK_BLOCKSET, (x+i, y+j, z+k, block), world=world)
 									self.client.sendBlock(x+i, y+j, z+k, block)
-									#TODO: Yes, I am retarded in using self.total in circles.
-									self.total = self.total+1
+									#TODO: Yes, I am retarded in using self.client.total in circles.
+									self.client.total = self.client.total+1
 									yield
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
@@ -737,8 +737,8 @@ class ShapesPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)
 				except StopIteration:
 					if byuser:
-						self.client.finalizeMassCMD('circle', self.total)
-						del self.total
+						self.client.finalizeMassCMD('circle', self.client.total)
+						self.client.total = 0
 					pass
 			do_step()
 
@@ -826,8 +826,8 @@ class ShapesPlugin(ProtocolPlugin):
 									return
 								self.client.queueTask(TASK_BLOCKSET, (x+i, y+j, z+k, block), world=world)
 								self.client.sendBlock(x+i, y+j, z+k, block)
-								#TODO: Yes, I am retarded for using self.total in domes.
-								self.total = self.total+1
+								#TODO: Yes, I am retarded for using self.client.total in domes.
+								self.client.total = self.client.total+1
 								yield
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
@@ -839,8 +839,8 @@ class ShapesPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)
 				except StopIteration:
 					if byuser:
-						self.client.finalizeMassCMD('dome', self.total)
-						del self.total
+						self.client.finalizeMassCMD('dome', self.client.total)
+						self.client.total = 0
 					pass
 			do_step()
 
@@ -928,8 +928,8 @@ class ShapesPlugin(ProtocolPlugin):
 									return
 								self.client.queueTask(TASK_BLOCKSET, (var_x+i, var_y+j, var_z+k, block), world=world)
 								self.client.sendBlock(var_x+i, var_y+j, var_z+k, block)
-								self.total = self.total+1
-								#TODO: Not so retarded to use self.total here :3
+								self.client.total = self.client.total+1
+								#TODO: Not so retarded to use self.client.total here :3
 								yield
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
@@ -941,8 +941,8 @@ class ShapesPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)
 				except StopIteration:
 					if byuser:
-						self.client.finalizeMassCMD('ellpsoid', self.total)
-						del self.total
+						self.client.finalizeMassCMD('ellpsoid', self.client.total)
+						self.client.total = 0
 					pass
 			do_step()
 
@@ -1077,7 +1077,7 @@ class ShapesPlugin(ProtocolPlugin):
 						return
 					self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 					self.client.sendBlock(i, j, k, block)
-					self.total = self.total+1
+					self.client.total = self.client.total+1
 					yield
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
@@ -1089,7 +1089,7 @@ class ShapesPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if byuser:
-						self.client.finalizeMassCMD('polytri', self.total)
-						del self.total
+						self.client.finalizeMassCMD('polytri', self.client.total)
+						self.client.total = 0
 					pass
 			do_step()

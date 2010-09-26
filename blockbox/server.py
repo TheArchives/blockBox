@@ -39,14 +39,14 @@ The Salt is also used to help verify users' identities.
 		self.factory = factory
 		self.logger = logging.getLogger("Heartbeat")
 		self.turl()
-		self.bb_turl()
+		#self.bb_turl()
 
 	def bb_turl(self):
 		try:
 			threading.Thread(target=self.get_url).start()
 		except:
 			self.logger.error(traceback.format_exc())
-			reactor.callLater(1, self.turl)
+			reactor.callLater(1, self.bb_turl)
 
 	def turl(self):
 		try:
