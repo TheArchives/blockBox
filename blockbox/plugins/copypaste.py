@@ -61,7 +61,7 @@ class CopyPastePlugin(ProtocolPlugin):
 						world[rx, ry, rz] = block
 						self.client.queueTask(TASK_BLOCKSET, (rx, ry, rz, block), world=world)
 						self.client.sendBlock(rx, ry, rz, block)
-						self.total = self.total+1
+						self.client.total = self.client.total+1
 					except AssertionError:
 						self.client.sendServerMessage("Out of bounds paste error.")
 						return
@@ -76,8 +76,8 @@ class CopyPastePlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)
 				except StopIteration:
 					if byuser:
-						self.client.finalizeMassCMD('paste', self.total)
-						del self.total
+						self.client.finalizeMassCMD('paste', self.client.total)
+						self.client.total = 0
 					pass
 			do_step()
 
@@ -140,7 +140,7 @@ class CopyPastePlugin(ProtocolPlugin):
 								check_offset = world.blockstore.get_offset(i, j, k)
 								block = world.blockstore.raw_blocks[check_offset]
 								self.client.bsaved_blocks.add((i -x, j - y, k -z, block))
-								self.total = self.total+1
+								self.client.total = self.client.total+1
 							except AssertionError:
 								self.client.sendServerMessage("Out of bounds copy error.")
 								return
@@ -155,8 +155,8 @@ class CopyPastePlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)
 				except StopIteration:
 					if byuser:
-						self.client.finalizeMassCMD('copy', self.total)
-						del self.total
+						self.client.finalizeMassCMD('copy', self.client.total)
+						self.client.total = 0
 					pass
 			do_step()
 
@@ -195,8 +195,8 @@ class CopyPastePlugin(ProtocolPlugin):
 				x = zmax-tempz
 				z = tempx
 				tempblocks.add((x,y,z,block))
-				self.total+1
+				self.client.total+1
 			self.client.bsaved_blocks = tempblocks
 		if byuser:
-			self.client.finalizeMassCMD('dune', self.total)
-			del self.total
+			self.client.finalizeMassCMD('rotate', self.client.total)
+			self.client.total = 0

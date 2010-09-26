@@ -163,7 +163,7 @@ class UndoPlugin(ProtocolPlugin):
 								return
 							self.client.queueTask(TASK_BLOCKSET, (i, j, k, originalblock), world=world)
 							self.client.sendBlock(i, j, k, originalblock)
-							self.total = self.total+1
+							self.client.total = self.client.total+1
 							yield
 						self.client.var_undolist = self.client.sublist
 		# Now, set up a loop delayed by the reactor
@@ -176,8 +176,8 @@ class UndoPlugin(ProtocolPlugin):
 				reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 			except StopIteration:
 				if byuser:
-					self.client.finalizeMassCMD('undo', self.total)
-					del self.total
+					self.client.finalizeMassCMD('undo', self.client.total)
+					self.client.total = 0
 				pass
 		do_step()
 
@@ -217,7 +217,7 @@ class UndoPlugin(ProtocolPlugin):
 								return
 							user.queueTask(TASK_BLOCKSET, (i, j, k, originalblock), world=world)
 							user.sendBlock(i, j, k, originalblock)
-							self.total = self.total+1
+							self.client.total = self.client.total+1
 							yield
 						user.var_redolist = var_sublist
 					except:
@@ -250,7 +250,7 @@ class UndoPlugin(ProtocolPlugin):
 								return
 							user.queueTask(TASK_BLOCKSET, (i, j, k, originalblock), world=world)
 							user.sendBlock(i, j, k, originalblock)
-							self.total = self.total+1
+							self.client.total = self.client.total+1
 							yield
 						user.var_redolist = var_sublist
 					except:
@@ -281,7 +281,7 @@ class UndoPlugin(ProtocolPlugin):
 								return
 							self.client.queueTask(TASK_BLOCKSET, (i, j, k, originalblock), world=world)
 							self.client.sendBlock(i, j, k, originalblock)
-							self.total = self.total+1
+							self.client.total = self.client.total+1
 							yield
 						self.client.var_redolist = self.client.sublist
 				else:
@@ -310,7 +310,7 @@ class UndoPlugin(ProtocolPlugin):
 								return
 							self.client.queueTask(TASK_BLOCKSET, (i, j, k, originalblock), world=world)
 							self.client.sendBlock(i, j, k, originalblock)
-							self.total = self.total+1
+							self.client.total = self.client.total+1
 							yield
 						self.client.var_redolist = self.client.sublist
 		# Now, set up a loop delayed by the reactor
@@ -323,7 +323,7 @@ class UndoPlugin(ProtocolPlugin):
 				reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 			except StopIteration:
 				if byuser:
-					self.client.finalizeMassCMD('redo', self.total)
-					del self.total
+					self.client.finalizeMassCMD('redo', self.client.total)
+					self.client.total = 0
 				pass
 		do_step()

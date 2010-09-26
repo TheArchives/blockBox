@@ -455,7 +455,8 @@ class BlbPlugin(ProtocolPlugin):
 						count = ((1+(x2 - x)) * (1+(y2 - y)) * (1+(z2 - z))/3)
 						self.client.finalizeMassCMD('bcb', count)
 						self.client.sendServerMessage(self.total_a + " " + block + "s, " + self.total_b + " " +block2 + "s.")
-						del self.total_a, self.total_b
+						self.total_a = 0
+						self.total_b = 0
 					pass
 			do_step()
 
