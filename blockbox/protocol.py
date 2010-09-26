@@ -119,7 +119,7 @@ class MyneServerProtocol(Protocol):
 			# If they return False, we can skip over and return
 			if result is not None:
 				return result
-#		return None
+		return None
 	
 	def queueTask(self, task, data=[], world=None):
 		"Adds the given task to the factory's queue."
