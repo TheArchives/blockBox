@@ -8,6 +8,8 @@ glob:conf/plugins.ini
 glob:conf/wordfilter.ini
 glob:*.bak
 glob:*.orig
+glob:mapdata/worlds/*
+glob:mapdata/archives/*
 glob:data/*.meta
 glob:persist/*.ini
 glob:conf/email.ini
