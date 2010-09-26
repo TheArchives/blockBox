@@ -454,7 +454,7 @@ class BlbPlugin(ProtocolPlugin):
 						#TODO: Speed up blockcount in ticker
 						count = ((1+(x2 - x)) * (1+(y2 - y)) * (1+(z2 - z))/3)
 						self.client.finalizeMassCMD('bcb', count)
-						self.client.sendServerMessage(self.total_a + " " + block + "s, " + self.total_b + " " +block2 + "s.")
+						self.client.sendServerMessage("%a %ac, %b %bc" % self.total_a, block, self.total_b, block2)
 						self.total_a = 0
 						self.total_b = 0
 					pass
@@ -591,8 +591,8 @@ class BlbPlugin(ProtocolPlugin):
 				except StopIteration:
 					if byuser:
 						count = (((1+(x2 - x)) * (1+(y2 - y)) * (1+(z2 - z))/3) - ((x2 - x) * (y2 - y) * (z2 - z)/3))
-						self.client.finalizeMassCMD('bhb', count)
-						self.client.sendServerMessage(self.total_a + " " + block + "s, " + self.total_b + " " +block2 + "s.")
+						self.client.finalizeMassCMD('bhcb', count)
+						self.client.sendServerMessage("%a %ac, %b %bc" % self.total_a, block, self.total_b, block2)
 						self.total_a = 0
 						self.total_b = 0
 					pass
