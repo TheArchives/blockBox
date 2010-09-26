@@ -303,7 +303,8 @@ class BlbPlugin(ProtocolPlugin):
 	@writer_only
 	def commandBcb(self, parts, byuser, overriderank):
 		"/bcb blockname blockname2 [x y z x2 y2 z2] - Builder\nSets all blocks in this area to block, checkered."
-		
+		self.total_a = 0
+		self.total_b = 0
 		if len(parts) < 9 and len(parts) != 3:
 			self.client.sendServerMessage("Please enter two types (and possibly two coord triples)")
 		else:
@@ -462,7 +463,8 @@ class BlbPlugin(ProtocolPlugin):
 	@writer_only
 	def commandBhcb(self, parts, byuser, overriderank):
 		"/bhcb blockname blockname2 [x y z x2 y2 z2] - Builder\nSets all blocks in this area to blocks, checkered hollow."
-
+		self.total_a = 0
+		self.total_b = 0
 		if len(parts) < 9 and len(parts) != 3:
 			self.client.sendServerMessage("Please enter two block types")
 		else:
@@ -590,7 +592,8 @@ class BlbPlugin(ProtocolPlugin):
 						count = (((1+(x2 - x)) * (1+(y2 - y)) * (1+(z2 - z))/3) - ((x2 - x) * (y2 - y) * (z2 - z)/3))
 						self.client.finalizeMassCMD('bhb', count)
 						self.client.sendServerMessage(self.total_a + " " + block + "s, " + self.total_b + " " +block2 + "s.")
-						del self.total_a, self.total_b
+						self.total_a = 0
+						self.total_b = 0
 					pass
 			do_step()
 
