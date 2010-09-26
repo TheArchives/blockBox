@@ -81,6 +81,7 @@ class NaturePlugin(ProtocolPlugin):
 	def commandDune(self, parts, byuser, overriderank):
 		"/dune - Member\nCreates a sand dune between the two blocks you touched last."
 		# Use the last two block places
+		self.total = 0
 		try:
 			x, y, z = self.client.last_block_changes[0]
 			x2, y2, z2 = self.client.last_block_changes[1]
@@ -138,6 +139,7 @@ class NaturePlugin(ProtocolPlugin):
 	def commandHill(self, parts, byuser, overriderank):
 		"/hill - Member\nCreates a hill between the two blocks you touched last."
 		# Use the last two block places
+		self.total = 0
 		try:
 			x, y, z = self.client.last_block_changes[0]
 			x2, y2, z2 = self.client.last_block_changes[1]
@@ -195,6 +197,7 @@ class NaturePlugin(ProtocolPlugin):
 	def commandHole(self, parts, byuser, overriderank):
 		"/hole - Member\ncreates a hole between two blocks"
 		#Use the last two block places
+		self.total = 0
 		try:
 			x1, y1, z1 = self.client.last_block_changes[0]
 			x2, y2, z2 = self.client.last_block_changes[1]
@@ -251,6 +254,7 @@ class NaturePlugin(ProtocolPlugin):
 	def commandLake(self, parts, byuser, overriderank):
 		"/lake - Member\ncreates a lake between two blocks"
 		#Use the last two block places
+		self.total = 0
 		try:
 			x1, y1, z1 = self.client.last_block_changes[0]
 			x2, y2, z2 = self.client.last_block_changes[1]
@@ -304,6 +308,7 @@ class NaturePlugin(ProtocolPlugin):
 	@member_only
 	def commandMountain(self, parts, byuser, overriderank):
 		"/mountain blockname - Member\nCreates a mountain between the two blocks you touched last."
+		self.total = 0
 		if len(parts) < 8 and len(parts) != 2:
 			self.client.sendServerMessage("Please enter a type.")
 			return
@@ -380,6 +385,7 @@ class NaturePlugin(ProtocolPlugin):
 	def commandPit(self, parts, byuser, overriderank):
 		"/pit - Member\ncreates a lava pit between two blocks"
 		#Use the last two block places
+		self.total = 0
 		try:
 			x1, y1, z1 = self.client.last_block_changes[0]
 			x2, y2, z2 = self.client.last_block_changes[1]
