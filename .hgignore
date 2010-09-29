@@ -1,7 +1,7 @@
 glob:*.pyc
 glob:_build
 glob:*.log
-glob:url.txt
+glob:data/url.txt
 glob:conf/client.ini
 glob:conf/server.ini
 glob:conf/plugins.ini
@@ -17,3 +17,4 @@ glob:conf/irc.ini
 glob:conf/performance.ini
 glob:mapdata/worlds/*
 glob:mapdata/archives/*
+glob:logs/*
