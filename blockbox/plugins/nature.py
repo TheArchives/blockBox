@@ -244,7 +244,7 @@ class NaturePlugin(ProtocolPlugin):
 			except StopIteration:
 				if byuser:
 					self.client.finalizeMassCMD('hole', self.client.total)
-					del self.client.total
+					self.client.total = 0
 				pass
 		do_step()
 
@@ -374,7 +374,7 @@ class NaturePlugin(ProtocolPlugin):
 			except StopIteration:
 				if byuser:
 					self.client.finalizeMassCMD('mountain', self.client.total)
-					del self.client.total
+					self.client.total = 0
 				pass
 		do_step()
 
@@ -428,6 +428,6 @@ class NaturePlugin(ProtocolPlugin):
 			except StopIteration:
 				if byuser:
 					self.client.finalizeMassCMD('pit', self.client.total)
-					del self.client.total
+					self.client.total = 0
 				pass
 		do_step()
