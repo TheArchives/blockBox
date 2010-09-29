@@ -34,6 +34,7 @@ class MyneServerProtocol(Protocol):
 		self.logger = logging.getLogger("Client")
 		self.quitmsg = "Goodbye."
 		self.homeworld = "main"
+		self.total = 0
 		self.ip = self.transport.getPeer().host
 		self.commands = {}
 		self.hooks = {}
