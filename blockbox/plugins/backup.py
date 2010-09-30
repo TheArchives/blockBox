@@ -76,7 +76,7 @@ class BackupPlugin(ProtocolPlugin):
 				if not os.path.exists(world_dir+"blocks.gz.new"):
 					shutil.copy( world_dir+"backup/%s/blocks.gz" %backup_number,world_dir)
 				else:
-					reactor.callLater(1, self.commandRestore(self, parts, byuser, overriderank))
+					reactor.callLater(1, self.commandRestore(parts, byuser, overriderank))
 				self.client.factory.loadWorld("mapdata/worlds/%s" % world_id, world_id)
 				self.client.sendServerMessage("%s has been restored to %s and booted." %(world_id,backup_number))
 				self.client.factory.worlds[world_id].clients = old_clients
