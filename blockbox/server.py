@@ -390,7 +390,7 @@ class MyneFactory(Factory):
 			i += 1
 		world_id = "a-%i" % i
 		# Copy and boot
-		self.newWorld(world_id, "../mapdata/archives/%s" % filename)
+		self.newWorld(world_id, "mapdata/archives/%s" % filename)
 		self.loadWorld("mapdata/worlds/%s" % world_id, world_id)
 		world = self.worlds[world_id]
 		world.is_archive = True
