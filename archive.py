@@ -69,7 +69,7 @@ class RipClient(MyneServerProtocol):
 				naff, nick, x, y, z, h, nafftoo = parts
 
 				basename = "mapdata/archives/"+"/".join([self.name, datetime.datetime.utcnow().strftime("%Y-%m-%d_%H_%M")])
-				basename = basename.replace("/", "\\")
+				#basename = basename.replace("/", "\\")
 				try:
 					os.makedirs(basename)
 				except OSError:
