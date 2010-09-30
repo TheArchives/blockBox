@@ -862,8 +862,8 @@ class MyneFactory(Factory):
 	def loadArchives(self):
 		self.archives = {}
 		for name in os.listdir("mapdata/archives/"):
-			if os.path.isdir(os.path.join("archives", name)):
-				for subfilename in os.listdir(os.path.join("archives", name)):
+			if os.path.isdir(os.path.join("mapdata/archives", name)):
+				for subfilename in os.listdir(os.path.join("mapdata/archives", name)):
 					match = re.match(r'^(\d\d\d\d\-\d\d\-\d\d_\d?\d\_\d\d)$', subfilename)
 					if match:
 						when = match.groups()[0]
@@ -876,4 +876,4 @@ class MyneFactory(Factory):
 							self.archives[name] = {}
 						self.archives[name][when] = "%s/%s" % (name, subfilename)
 		self.logger.info("Loaded %s discrete archives." % len(self.archives))
-		reactor.callLater(300, self.loadArchives)		
+		reactor.callLater(60, self.loadArchives)		

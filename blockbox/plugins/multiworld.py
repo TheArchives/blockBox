@@ -152,7 +152,7 @@ class MultiWorldPlugin(ProtocolPlugin):
 			return
 		else:
 			if parts[1] == 'all':
-				self.client.sendServerList(["Worlds:"] + os.listdir("worlds/"))
+				self.client.sendServerList(["Worlds:"] + os.listdir("mapdata/worlds/"))
 				return
 			if len(parts[1]) != 1:
 				self.client.sendServerMessage("Only specify one starting letter per entry, not multiple")
