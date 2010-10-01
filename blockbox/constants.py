@@ -386,3 +386,9 @@ class NotConfigured(Exception):
 		self.msg = "blockBox is not configured. Read the installation guide if you wish to proceed."
 	def __str__(self):
 		return self.msg
+
+class StoreMethodNotSupported(Exception):
+	def __init__(self):
+		self.msg = "blockBox currently does not support the storing method supplied. Please refer to the installation guide about the storing methods."
+	def __str__(self):
+		return self.msg

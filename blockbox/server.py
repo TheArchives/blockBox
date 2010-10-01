@@ -130,9 +130,10 @@ class MyneFactory(Factory):
 	protocol = MyneServerProtocol
 
 	def __init__(self):
-		self.initEverything()
+		self.initVariables()
+		self.initLoops()
 		
-	def initEverything(self):
+	def initVariables(self):
 		if  (os.path.exists("conf/performance.dist.ini") and not os.path.exists("conf/performance.ini")) or \
 			(os.path.exists("conf/plugins.dist.ini") and not os.path.exists("conf/plugins.ini")) or \
 			(os.path.exists("conf/server.dist.ini") and not os.path.exists("conf/server.ini")) or \
@@ -181,7 +182,8 @@ class MyneFactory(Factory):
 		self.console_delay = self.config.getint("options", "console_delay")
 		self.info_url = self.config.get("info", "info_url")
 		self.credit_name = self.config.get("options", "credit_name")
-		#Idea: again default
+		self.info_store = self.config.get("options", "info_store")
+		self.table_prefix = self.config.get("options", "table_prefix")
 		self.default_backup = self.config.get("worlds", "default_backup")
 		self.owner = self.config.get("info", "owner").lower()
 		self.backup_freq = self.config.getint("backup", "backup_freq")
