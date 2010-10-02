@@ -19,16 +19,16 @@ class TitlePlugin(ProtocolPlugin):
 		with Persist(parts[1]) as p:
 			if len(parts)==3:
 				if len(parts[2])<6:
-					p.set("misc", "title", parts[2])
+					p.set("main", "title", parts[2])
 					self.client.sendServerMessage("Added title.")
 				else:
 					self.client.sendServerMessage("A title must be 5 character or less")
 			elif len(parts)==2:
-				if p.string("misc", "title") is None:
+				if p.string("main", "title") is None:
 					self.client.sendServerMessage("Syntax: /title username title")
 					return False
 				else:
-					p.set("misc", "title", "")
+					p.set("main", "title", "")
 					self.client.sendServerMessage("Removed title.")
 			elif len(parts)>3:
 				self.client.sendServerMessage("You may only set one word as a title.")

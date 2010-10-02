@@ -111,7 +111,7 @@ class PlayersPlugin(ProtocolPlugin):
 					else:
 						self.client.sendServerMessage(parts[1]+" - "+COLOUR_WHITE+"Guest")
 					if self.client.isAdmin():
-						self.client.sendServerMessage("IP: "+p.string("misc", "ip", "None recorded."))
+						self.client.sendServerMessage("IP: "+p.string("main", "ip", "None recorded."))
 					self.client.sendServerMessage("Status: "+COLOUR_DARKRED+"Offline")
 					if username not in self.client.factory.lastseen:
 						self.client.sendServerMessage("Last Seen: N/A")
@@ -130,7 +130,7 @@ class PlayersPlugin(ProtocolPlugin):
 	
 	@player_list
 	def commandQuitMsg(self, parts, byuser, overriderank):
-		self.client.persist.set("misc", "quitmsg", " ".join(parts[1:]))
+		self.client.persist.set("main", "quitmsg", " ".join(parts[1:]))
 		self.client.quitmsg = " ".join(parts[1:])
 		self.client.sendServerMessage("Your quit message is now: %s" % " ".join(parts[1:]))
 	

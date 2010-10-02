@@ -187,7 +187,7 @@ class MultiWorldPlugin(ProtocolPlugin):
 			self.client.changeToWorld(self.client.homeworld)
 		else:
 			self.client.homeworld = parts[1]
-			self.client.persist.set("misc", "homeworld", parts[1])
+			self.client.persist.set("main", "homeworld", parts[1])
 			self.client.sendServerMessage("Your home world is now %s!" % parts[1])
 
 	@world_list
