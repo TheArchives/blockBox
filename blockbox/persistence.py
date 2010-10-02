@@ -18,7 +18,7 @@ class PersistenceEngine(object):
 			global self.cur
 			self.cur = self.db.cursor()
 		else:
-			raise StoringMethodNotSupport
+			raise StoringMethodNotSupported
 		reactor.callLater(.1, self.reload, username)
 	
 	def __str__(self):
