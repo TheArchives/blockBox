@@ -183,7 +183,6 @@ class MyneFactory(Factory):
 		self.info_url = self.config.get("info", "info_url")
 		self.credit_name = self.config.get("options", "credit_name")
 		self.info_store = self.config.get("options", "info_store")
-		self.table_prefix = self.config.get("options", "table_prefix")
 		self.default_backup = self.config.get("worlds", "default_backup")
 		self.owner = self.config.get("info", "owner").lower()
 		self.backup_freq = self.config.getint("backup", "backup_freq")
