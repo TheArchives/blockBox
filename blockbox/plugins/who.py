@@ -27,10 +27,11 @@ class PlayersPlugin(ProtocolPlugin):
 	@only_username_command
 	def commandLastseen(self, username, byuser, overriderank):
 		"/lastseen username - Guest\nTells you when 'username' was last seen."
-		if username not in self.client.factory.lastseen:
+		#TOFIX: Lastseen
+		if self.persist.string("main", "lastseen", -1):
 			self.client.sendServerMessage("There are no records of %s." % username)
 		else:
-			t = time.time() - self.client.factory.lastseen[username]
+			t = time.time() - self.persist.string("main", "lastseen", -1)
 			days = t // 86400
 			hours = (t % 86400) // 3600
 			mins = (t % 3600) // 60
@@ -130,7 +131,7 @@ class PlayersPlugin(ProtocolPlugin):
 	
 	@player_list
 	def commandQuitMsg(self, parts, byuser, overriderank):
-		self.client.persist.set("misc", "quitmsg", " ".join(parts[1:]))
+		self.client.persist.set("main", "quitmsg", " ".join(parts[1:]))
 		self.client.quitmsg = " ".join(parts[1:])
 		self.client.sendServerMessage("Your quit message is now: %s" % " ".join(parts[1:]))
 	
