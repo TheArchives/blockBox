@@ -5,7 +5,6 @@
 from ConfigParser import RawConfigParser as ConfigParser
 from lib.twisted.internet import reactor
 import sqlite3
-from blockbox.server import MyneServerFactory
 
 class PersistenceEngine(object):
 	def __init__(self, username):
