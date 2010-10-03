@@ -27,6 +27,7 @@ from blockbox.irc_client import ChatBotFactory
 from blockbox.constants import *
 from blockbox.plugins import *
 from blockbox.timer import ResettableTimer
+from blockbox.persistence import PersistenceEngine as Persist
 import logging
 
 class Heartbeat(object):
@@ -520,7 +521,8 @@ class MyneFactory(Factory):
 		"""
 		Records a sighting of 'username' in the lastseen dict.
 		"""
-		self.persist.set("main", "lastseen", time.time())
+		with p as Persist(username):
+			p.set("main", "lastseen", time.time())
 
 	def unloadPlugin(self, plugin_name):
 		"Reloads the plugin with the given module name."
