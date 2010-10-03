@@ -16,20 +16,18 @@ class MoneyPlugin(ProtocolPlugin):
 		"setbank":		"commandSetAccount",
 		"removebank":	"commandRemoveAccount",
 	}
-	#TOFIX: How does this thing work ugh
-	credit_name = "Cubits"
 	money_logger = logging.getLogger('TransactionLogger')
 	
 	def commandBalance(self, parts, byuser, overriderank):	
 		"/bank - Guest\nAliases: balance\nFirst time: Creates you a account.\nOtherwise: Checks your balance."
 		if self.client.persist.int("bank", "balance", -1) is not -1:
 			self.client.sendServerMessage("Welcome to the Bank!")
-			self.client.sendServerMessage("Your current balance is %d %s." % (self.client.persist.int("bank", "balance", -1), self.credit_name))
+			self.client.sendServerMessage("Your current balance is %d %s." % (self.client.persist.int("bank", "balance", -1), self.client.factory.credit_name))
 		else:
-			self.client.persist.set("bank", "balance", 5000)
+			self.client.persist.set("bank", "balance", self.client.factory.initial_amount)
 			self.client.sendServerMessage("Welcome to the Bank!")
 			self.client.sendServerMessage("We have created your account.")
-			self.client.sendServerMessage("Your current balance is %d %s." % (self.client.persist.int("bank", "balance", -1), self.credit_name))
+			self.client.sendServerMessage("Your current balance is %d %s." % (self.client.persist.int("bank", "balance", -1), self.client.factory.credit_name))
 			self.client.sendServerMessage("NOTE: We CAN detect cheating. Do NOT try it.")
 			self.money_logger.info("%s has created an account." % self.client.username)
 
@@ -52,7 +50,7 @@ class MoneyPlugin(ProtocolPlugin):
 			return False
 		with Persist(target) as p:
 			p.set("bank", "balance", amount)
-		self.client.sendServerMessage("Set player balance to %d %s." % (amount, self.credit_name))
+		self.client.sendServerMessage("Set player balance to %d %s." % (amount, self.client.factory.credit_name))
 			
 	def commandPay(self, parts, byuser, overriderank):
 		"/pay username amount - Guest\nThis lets you send money to other people."
@@ -80,7 +78,7 @@ class MoneyPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("Error: Amount must be positive.")
 			return False		
 		elif amount > ubalance or amount < -(tbalance):
-			self.client.sendServerMessage("Error: Not enough %s." % self.credit_name)
+			self.client.sendServerMessage("Error: Not enough %s." % self.client.factory.credit_name)
 			return False
 		else:
 			with Persist(target) as p:
@@ -88,7 +86,7 @@ class MoneyPlugin(ProtocolPlugin):
 			self.client.persist.set("bank", "balance", ubalance - amount)
 			self.client.sendServerMessage("You sent %d ." % amount)
 			if target in self.client.factory.usernames:
-				self.client.factory.usernames[target].sendServerMessage("You received %(amount)d %(creditname)s from %(user)s." % {'amount': amount, 'creditname': self.credit_name, 'user': user})
+				self.client.factory.usernames[target].sendServerMessage("You received %(amount)d %(creditname)s from %(user)s." % {'amount': amount, 'creditname': self.client.factory.credit_name, 'user': user})
 			self.money_logger.info("%(user)s sent %(amount)d to %(target)s" % {'user': user, 'amount': amount, 'target': target})
 
 	@director_only

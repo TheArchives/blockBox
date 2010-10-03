@@ -9,9 +9,9 @@ import sqlite3
 class PersistenceEngine(object):
 	def __init__(self, username):
 		self.username = username
-		if self.factory.info_store = "flatfile":
+		if self.factory.info_store == "flatfile":
 			self.ini = ConfigParser()
-		elif self.factory.info_store = "sqlite":
+		elif self.factory.info_store == "sqlite":
 			global self.db
 			self.db = sqlite3.connect('../data/db.s3db')
 			global self.cur
@@ -33,14 +33,14 @@ class PersistenceEngine(object):
 		self.db = None
 	
 	def reload(self, username):
-		if self.factory.info_store = "flatfile":
+		if self.factory.info_store == "flatfile":
 			try:
 				self.ini.read("persist/%s.ini" % username.lower())
 			except:
 				pass
 			else:
 				reactor.callLater(10, self.reload, username)
-		elif self.factory.info_store = "sqlite":
+		elif self.factory.info_store == "sqlite":
 			try:
 				self.cur.execute("SELECT * FROM " + self.factory.table_prefix + "user WHERE username='" + username.lower + "'")
 				row = self.cur.fetchall()
