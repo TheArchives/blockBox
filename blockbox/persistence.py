@@ -9,9 +9,9 @@ import sqlite3
 class PersistenceEngine(object):
 	def __init__(self, username):
 		self.username = username
-		if self.factory.info_store == "flatfile":
+		if self.factory.info_store = "flatfile":
 			self.ini = ConfigParser()
-		elif self.factory.info_store == "sqlite":
+		elif self.factory.info_store = "sqlite":
 			global self.db
 			self.db = sqlite3.connect('../data/db.s3db')
 			global self.cur

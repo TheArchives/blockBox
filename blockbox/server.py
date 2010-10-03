@@ -179,8 +179,7 @@ class MyneFactory(Factory):
 		self.physics_limit = self.conf_performance.getint("worlds", "physics_limit")
 		self.console_delay = self.config.getint("options", "console_delay")
 		self.info_url = self.config.get("info", "info_url")
-		self.credit_name = self.config.get("bank", "credit_name")
-		self.initial_amount = self.config.get("bank", "initial_amount")
+		self.credit_name = self.config.get("options", "credit_name")
 		self.info_store = self.config.get("options", "info_store")
 		self.table_prefix = self.config.get("options", "table_prefix")
 		self.default_backup = self.config.get("worlds", "default_backup")
@@ -252,7 +251,6 @@ class MyneFactory(Factory):
 		# Boot worlds that got loaded
 		for world in self.worlds:
 			self.loadWorld("mapdata/worlds/%s" % world, world)
-	def initLoops(self):
 		# Set up tasks to run during execution
 		reactor.callLater(0.1, self.sendMessages)
 		reactor.callLater(1, self.printInfo)
