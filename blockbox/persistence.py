@@ -8,10 +8,7 @@ from lib.twisted.internet import reactor
 class PersistenceEngine(object):
 	def __init__(self, username):
 		self.username = username
-		if self.factory.info_store == "flatfile":
-			self.ini = ConfigParser()
-		else:
-			raise StoringMethodNotSupported
+		self.ini = ConfigParser()
 		reactor.callLater(.1, self.reload, username)
 	
 	def __str__(self):
@@ -23,8 +20,6 @@ class PersistenceEngine(object):
 	def __exit__(self, type, value, traceback):
 		self.username = None
 		self.ini = None
-		self.cur = None
-		self.db = None
 	
 	def reload(self, username):
 		try:
