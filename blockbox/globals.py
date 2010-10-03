@@ -21,7 +21,7 @@ def Rank(self, parts, byuser, overriderank,server=None):
 				return "You must provide a world"
 		#Make builder
 		if not server:
-			if not (self.client.username in world.ops or self.client.isMod()) and not overriderank:
+			if not (self.client.username.lower() in world.ops or self.client.isMod() or self.client.isWorldOwner()) and not overriderank:
 				return ("You are not high enough rank!")
 		else:
 			if not parts[-1] == "console":
@@ -255,8 +255,6 @@ def Staff(self, server=None):
 		factory = server
 	else:
 		factory = self.client.factory
-	if len(factory.owner):
-		Temp.append (["Owner: "+factory.owner])
 	if len(factory.directors):
 		Temp.append (["Directors:"] + list(factory.directors))
 	if len(factory.admins):

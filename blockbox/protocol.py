@@ -419,32 +419,32 @@ class MyneServerProtocol(Protocol):
 				message = message.replace("%d", "&d")
 				message = message.replace("%e", "&e")
 				message = message.replace("%f", "&f")
-				message = message.replace("1", "&0")
-				message = message.replace("2", "&1")
-				message = message.replace("3", "&2")
-				message = message.replace("10", "&3")
-				message = message.replace("5", "&4")
-				message = message.replace("4", "&5")
-				message = message.replace("7", "&6")
-				message = message.replace("15", "&7")
-				message = message.replace("14", "&8")
-				message = message.replace("12", "&9")
-				message = message.replace("9", "&a")
-				message = message.replace("11", "&b")
-				message = message.replace("4", "&c")
-				message = message.replace("13", "&d")
-				message = message.replace("8", "&e")
 				message = message.replace("0", "&f")
-				message = message.replace("01", "&0")
-				message = message.replace("02", "&1")
-				message = message.replace("03", "&2")
-				message = message.replace("05", "&4")
-				message = message.replace("04", "&5")
-				message = message.replace("07", "&6")
-				message = message.replace("09", "&a")
-				message = message.replace("04", "&c")
-				message = message.replace("08", "&e")
 				message = message.replace("00", "&f")
+				message = message.replace("1", "&0")
+				message = message.replace("01", "&0")
+				message = message.replace("2", "&1")
+				message = message.replace("02", "&1")
+				message = message.replace("3", "&2")
+				message = message.replace("03", "&2")
+				message = message.replace("4", "&c")
+				message = message.replace("04", "&c")
+				message = message.replace("5", "&4")
+				message = message.replace("05", "&4")
+				message = message.replace("6", "&5")
+				message = message.replace("06", "&5")
+				message = message.replace("7", "&6")
+				message = message.replace("07", "&6")
+				message = message.replace("8", "&e")
+				message = message.replace("08", "&e")
+				message = message.replace("9", "&a")
+				message = message.replace("09", "&a")
+				message = message.replace("10", "&3")
+				message = message.replace("11", "&b")
+				message = message.replace("12", "&9")
+				message = message.replace("13", "&d")
+				message = message.replace("14", "&8")
+				message = message.replace("15", "&7")
 				message = message.replace("./", " /")
 				message = message.replace(".!", " !")
 				message = message.replace(".@", " @")
@@ -463,6 +463,7 @@ class MyneServerProtocol(Protocol):
 					return
 				if message.startswith("/"):
 					# It's a command
+					#message = message.lower()
 					parts = [x.strip() for x in message.split() if x.strip()]
 					command = parts[0].strip("/")
 					if not message.startswith("/tlog "):
@@ -587,11 +588,14 @@ class MyneServerProtocol(Protocol):
 								self.wclog.flush()
 							else:
 								self.factory.queue.put((self, TASK_MESSAGE, (self.id, self.userColour(), self.usertitlename, message)))
-			elif type == 2:
-				#Experimental SMP boot-em-out
-				self.sendError("blockBox is designed to be used with Minecraft Creative!")
 			else:
-				self.logger.warning("Unhandleable type %s" % type)
+				if type == 2:
+					self.logger.warn("Alpha Client Attempted to Connect")
+					#Experimental SMP Boot-em-out
+					self.sendError("blockBox does not currently support Alpha Clinet.")
+					self.transport.loseConnection()
+				else:
+					self.log("Unhandleable type %s" % type, logging.WARN)
 
 	def userColour(self):
 		#Idea: Back to original please
@@ -799,16 +803,26 @@ class MyneServerProtocol(Protocol):
 
 	def _sendMessage(self, prefix, message, id=127):
 		"Utility function for sending messages, which does line splitting."
-		linelen = 63 - len(prefix)
 		lines = []
+		temp = []
 		thisline = ""
 		words = message.split()
+		linelen = 63 - len(prefix)
 		for x in words:
 			if len(thisline + " " + x) < linelen:
 				thisline = thisline + " " + x
 			else:
-				lines.append(thisline)
-				thisline = x
+				if len(x) > linelen:
+					if not thisline == "":
+						lines.append(thisline)
+					while len(x) > linelen:
+						temp.append(x[:linelen])
+						x=x[linelen:]
+					lines = lines + temp
+					thisline = x
+				else:
+					lines.append(thisline)
+					thisline = x
 		if thisline != "":
 			lines.append(thisline)
 		for line in lines:
@@ -817,6 +831,8 @@ class MyneServerProtocol(Protocol):
 					newline = line[1:]
 				else:
 					newline = line
+				if newline[len(newline)-2] == "&":
+					newline = newline[:len(newline)-2]
 				newline = newline.replace("%name%", self.username)
 				newline = newline.replace("%ip%", self.ip)
 				newline = newline.replace("%rcolor%", self.userColour())

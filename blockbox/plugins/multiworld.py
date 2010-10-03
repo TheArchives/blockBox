@@ -39,22 +39,19 @@ class MultiWorldPlugin(ProtocolPlugin):
 	@world_list
 	@admin_only
 	def commandNew(self, parts, byuser, overriderank):
-		"/new worldname [templatename] - Admin\nAliases: mapadd\nMakes a new world, and boots it."
+		"/new worldname templatename - Admin\nAliases: mapadd\nMakes a new world, and boots it."
 		if len(parts) == 1:
 			self.client.sendServerMessage("Please specify a new worldname.")
 		elif self.client.factory.world_exists(parts[1]):
 			self.client.sendServerMessage("Worldname in use")
 		else:
 			if len(parts) == 2:
-				template = "default"
+				self.client.sendServerMessage("Sorry, but you need to specify a template.")
+				return
 			elif len(parts) == 3 or len(parts) == 4:
 				template = parts[2]
 			world_id = parts[1].lower()
-			try:
-				self.client.factory.newWorld(world_id, template)
-			except:
-				self.client.sendServerMessage("Template '%s' does not exist." % template)
-				return
+			self.client.factory.newWorld(world_id, template)
 			self.client.factory.loadWorld("mapdata/worlds/%s" % world_id, world_id)
 			self.client.factory.worlds[world_id].all_write = False
 			if len(parts) < 4:
@@ -149,6 +146,7 @@ class MultiWorldPlugin(ProtocolPlugin):
 		if len(parts) != 2 and len(parts) != 3:
 			self.client.sendServerMessage("Do /worlds all for all worlds or choose a letter.")
 			self.client.sendServerList(["Online:"] + [id for id, world in self.client.factory.worlds.items() if self.client.canEnter(world)])
+
 			return
 		else:
 			if parts[1] == 'all':
@@ -177,6 +175,7 @@ class MultiWorldPlugin(ProtocolPlugin):
 					newlist.append(world)
 			self.client.sendServerList(["Worlds:"] + newlist)
 
+	@world_list
 	def commandTemplates(self, parts, byuser, overriderank):
 		"/templates - Guest\nLists available templates"
 		self.client.sendServerList(["Templates:"] + os.listdir("mapdata/templates/"))
@@ -200,8 +199,6 @@ class MultiWorldPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("Worldname in use")
 		elif len(parts) < 5:
 			self.client.sendServerMessage("Please specify dimensions. (width, length, height)")
-		elif not int(parts[2]) or not int(parts[3]) or not int(parts[4]):
-			self.client.sendServerMessage("Dimensions must be intergers")
 		elif int(parts[2]) < 16 or int(parts[3]) < 16 or int(parts[4]) < 16:
 			self.client.sendServerMessage("No dimension may be smaller than 16.")
 		elif int(parts[2]) > 1024 or int(parts[3]) > 1024 or int(parts[4]) > 1024:
@@ -244,8 +241,8 @@ class MultiWorldPlugin(ProtocolPlugin):
 						name = name+extra
 						break
 			shutil.copytree("mapdata/worlds/%s" %parts[1], "mapdata/worlds/.trash/%s" %parts[1])
-			shutil.rmtree("mapdata/mworlds/%s" % parts[1])
-			self.client.sendServerMessage("World deleted.")
+			shutil.rmtree("mapdata/worlds/%s" % parts[1])
+			self.client.sendServerMessage("World deleted as %s." %(name))
 	
 	@world_list
 	@admin_only

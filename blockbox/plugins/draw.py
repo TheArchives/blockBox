@@ -6,7 +6,7 @@ from lib.twisted.internet import reactor
 from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
-import Image
+import lib.Image
 import urllib
 import StringIO
 
@@ -275,7 +275,7 @@ class ImagedrawPlugin(ProtocolPlugin):
 				except StopIteration:
 					if byuser:
 						#TODO: Fix the formula (isn't images 2D only)
-						count = ((1+(x2 - x)) * (1+(y2 - y)) * (1+(z2 - z))/3)
+						count = (((1+(x2 - x)) * (1+(y2 - y)) * 1)/3)
 						self.client.finalizeMassCMD('imagedraw', count)
 					pass
 			do_step()

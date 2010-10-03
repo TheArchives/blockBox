@@ -68,7 +68,7 @@ The Salt is also used to help verify users' identities.
 				"public": self.factory.public,
 				"version": 7,
 				"salt": self.factory.salt,
-				}))
+				}), timeout=15)
 				self.url = fh.read().strip()
 				self.hash = self.url.partition("server=")[2]
 				if self.factory.console_delay == self.factory.delay_count:
@@ -80,7 +80,7 @@ The Salt is also used to help verify users' identities.
 			except IOError,SystemExit:
 				pass
 			except:
-				self.logger.error(traceback.format_exc())
+				self.logger.error("Minecraft.net seems to be offline.")
 		except IOError,SystemExit:
 			pass
 		except:
@@ -472,12 +472,17 @@ class MyneFactory(Factory):
 		"""
 		try:
 			if ASD and len(self.worlds[world_id].clients)>0:
-				self.logger.error("AUTOSHUTDOWN ERROR DETECTED, PLEASE REPORT THIS ERROR TO BLOCKBOX TEAM")
+				#self.logger.error("AUTOSHUTDOWN ERROR DETECTED, PLEASE REPORT THIS ERROR TO BLOCKBOX TEAM")
+				self.worlds[world_id].ASD.kill()
+				self.worlds[world_id].ASD = None
 				return
 		except KeyError:
 			return
-		assert world_id != "main"
-		if  not self.worlds[world_id].ASD == None:
+		try:
+			assert world_id != self.default_name
+		except:
+			client.sendServerMessage("You can't shutdown "+self.default_name+".")
+		if not self.worlds[world_id].ASD == None:
 			self.worlds[world_id].ASD.kill()
 			self.worlds[world_id].ASD = None
 		for client in list(list(self.worlds[world_id].clients))[:]:

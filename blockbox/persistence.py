@@ -11,11 +11,6 @@ class PersistenceEngine(object):
 		self.username = username
 		if self.factory.info_store == "flatfile":
 			self.ini = ConfigParser()
-		elif self.factory.info_store == "sqlite":
-			global self.db
-			self.db = sqlite3.connect('../data/db.s3db')
-			global self.cur
-			self.cur = self.db.cursor()
 		else:
 			raise StoringMethodNotSupported
 		reactor.callLater(.1, self.reload, username)
@@ -29,22 +24,14 @@ class PersistenceEngine(object):
 	def __exit__(self, type, value, traceback):
 		self.username = None
 		self.ini = None
-		self.cur = None
-		self.db = None
 	
 	def reload(self, username):
-		if self.factory.info_store == "flatfile":
-			try:
-				self.ini.read("persist/%s.ini" % username.lower())
-			except:
-				pass
-			else:
-				reactor.callLater(10, self.reload, username)
-		elif self.factory.info_store == "sqlite":
-			try:
-				self.cur.execute("SELECT * FROM " + self.factory.table_prefix + "user WHERE username='" + username.lower + "'")
-				row = self.cur.fetchall()
-				username = row[1]
+		try:
+			self.ini.read("persist/%s.ini" % username.lower())
+		except:
+			pass
+		else:
+			reactor.callLater(10, self.reload, username)
 			
 	def string(self, section, name, default=None):
 		try:

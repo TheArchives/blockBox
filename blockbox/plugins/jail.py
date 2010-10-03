@@ -8,7 +8,7 @@ from blockbox.decorators import *
 from blockbox.constants import *
 from time import *
 import cPickle
-#TODO: Persist derp
+
 # jail constants for jail.dat
 J_USERS = 0
 J_ZONE = 1
@@ -251,7 +251,7 @@ class JailPlugin(ProtocolPlugin):
 
 	@op_only
 	def commandFree(self, parts, byuser, overriderank):
-		"/free username Op\nLets a user out of jail"
+		"/free username - Op\nLets a user out of jail"
 
 		self.prepJail()
 		jail = self.loadJail()
