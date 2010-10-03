@@ -8,7 +8,7 @@ from lib.twisted.internet import reactor
 class PersistenceEngine(object):
 	def __init__(self, username):
 		self.username = username
-		if self.factory.info_store is "flatfile":
+		if self.factory.info_store == "flatfile":
 			self.ini = ConfigParser()
 		else:
 			raise StoringMethodNotSupported
