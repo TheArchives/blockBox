@@ -526,7 +526,7 @@ class MyneFactory(Factory):
 		"""
 		Records a sighting of 'username' in the lastseen dict.
 		"""
-		with p as Persist(username):
+		with Persist(username) as p:
 			p.set("main", "lastseen", time.time())
 
 	def unloadPlugin(self, plugin_name):
