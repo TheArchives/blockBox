@@ -589,9 +589,8 @@ class MyneServerProtocol(Protocol):
 								self.factory.queue.put((self, TASK_MESSAGE, (self.id, self.userColour(), self.usertitlename, message)))
 			else:
 				if type == 2:
-					self.logger.warn("Alpha Client Attempted to Connect")
-					#Experimental SMP Boot-em-out
-					self.sendError("blockBox does not currently support Alpha Clinet.")
+					self.logger.warn("Alpha Client attempted to connect.")
+					self.sendError("blockBox does not currently support the SMP Protocol.")
 					self.transport.loseConnection()
 				else:
 					self.log("Unhandleable type %s" % type, logging.WARN)

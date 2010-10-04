@@ -30,7 +30,7 @@ class ChatBot(irc.IRCClient):
 
 	def connectionLost(self, reason):
 		irc.IRCClient.connectionLost(self, reason)
-		self.logger.info("IRC client disconnected. (%s)" % reason)
+		self.logger.info("Disconnected. (%s)" % reason)
 
 	# callbacks for events
 
@@ -40,7 +40,7 @@ class ChatBot(irc.IRCClient):
 
 	def joined(self, channel):
 		"""This will get called when the bot joins the channel."""
-		self.logger.info("IRC client joined %s." % channel)
+		self.logger.info("Joined %s." % channel)
 		self.msg("NickServ", "IDENTIFY %s" % self.password)
 
 	def sendError(self, error):
@@ -554,7 +554,7 @@ class ChatBotFactory(protocol.ClientFactory):
 		connector.connect()
 
 	def clientConnectionFailed(self, connector, reason):
-		self.logger.warning("IRC connection failed: %s" % reason)
+		self.logger.warning("Connection failed: %s" % reason)
 		self.instance = None
 
 	def sendMessage(self, username, message):
