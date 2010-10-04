@@ -512,9 +512,8 @@ class MyneServerProtocol(Protocol):
 					try:
 						func(parts, True, False) #byuser is true, overriderank is false
 					except Exception, e:
-						self.sendServerMessage("Internal server error.")
-						if self.isDirector():
-							self.sendSplitServerMessage(traceback.format_exc(0).replace("Traceback (most recent call last):", ""))
+						self.sendSplitServerMessage(traceback.format_exc().replace("Traceback (most recent call last):", ""))
+						self.sendSplitServerMessage("Internal Server Error - Traceback (Please report this to the Server Staff or the blockBox Team, see /about for contact info)")
 						self.logger.error(traceback.format_exc())
 				elif message.startswith("@"):
 					# It's a whisper

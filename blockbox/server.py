@@ -68,7 +68,7 @@ The Salt is also used to help verify users' identities.
 				"public": self.factory.public,
 				"version": 7,
 				"salt": self.factory.salt,
-				}), timeout=15)
+				}))
 				self.url = fh.read().strip()
 				self.hash = self.url.partition("server=")[2]
 				if self.factory.console_delay == self.factory.delay_count:

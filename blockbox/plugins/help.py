@@ -170,4 +170,4 @@ class HelpPlugin(ProtocolPlugin):
 		"/motd - Guest\nAliases: greeting\nShows the greeting."
 		self.client.sendServerMessage("MOTD for "+self.client.factory.server_name+":")
 		for line in self.client.factory.initial_greeting.split("\n"):
-			self.client.sendServerMessage(line)
+			self.client.sendNormalMessage(line)
