@@ -19,20 +19,20 @@ class RankPlugin(ProtocolPlugin):
 		"spec": "commandSpec",
 		"unspec": "commandDeSpec",
 		"specced": "commandSpecced",
-		"writer": "commandOldRanks",
-		"builder": "commandOldRanks",
-		"advbuilder": "commandOldRanks",
-		"op": "commandOldRanks",
-		"mod": "commandOldRanks",
-		"admin": "commandOldRanks",
-		"director": "commandOldRanks",
-		"dewriter": "commandOldDeRanks",
-		"debuilder": "commandOldDeRanks",
-		"deadvbuilder": "commandOldDeRanks",
-		"deop": "commandOldDeRanks",
-		"demod": "commandOldDeRanks",
-		"deadmin": "commandOldDeRanks",
-		"dedirector": "commandOldDeRanks",
+		#"writer": "commandOldRanks",
+		#"builder": "commandOldRanks",
+		#"advbuilder": "commandOldRanks",
+		#"op": "commandOldRanks",
+		#"mod": "commandOldRanks",
+		#"admin": "commandOldRanks",
+		#"director": "commandOldRanks",
+		#"dewriter": "commandOldDeRanks",
+		#"debuilder": "commandOldDeRanks",
+		#"deadvbuilder": "commandOldDeRanks",
+		#"deop": "commandOldDeRanks",
+		#"demod": "commandOldDeRanks",
+		#"deadmin": "commandOldDeRanks",
+		#"dedirector": "commandOldDeRanks",
 	}
 
 	@player_list
@@ -104,7 +104,7 @@ class RankPlugin(ProtocolPlugin):
 	def commandSpec(self, username, byuser, overriderank):
 		"/spec username - Mod\nMakes the player as a spec."
 		self.client.sendServerMessage(Spec(self, username, byuser, overriderank))
-	 
+	
 	@player_list
 	@mod_only
 	@only_username_command

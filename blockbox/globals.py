@@ -53,7 +53,7 @@ def Rank(self, parts, byuser, overriderank,server=None):
 		world.ops.add(username)
 		return ("Opped %s" % username)
 		#make op
-	elif parts[1] == "member":
+	elif parts[1] == "advbuilder":
 		#make them a member
 		if not server:
 			if not self.client.isMod():
@@ -62,10 +62,10 @@ def Rank(self, parts, byuser, overriderank,server=None):
 			if not parts[-1] == "console":
 				if not factory.isMod(parts[-1]):
 					return ("You are not high enough rank!")
-		factory.members.add(username)
+		factory.advbuilders.add(username)
 		if username in factory.usernames:
-			factory.usernames[username].sendMemberUpdate()
-		return ("%s is now a Member." % username)
+			factory.usernames[username].sendAdvBuilderUpdate()
+		return ("%s is now an Advanced Builder." % username)
 	elif parts[1] == "mod":
 		#make them a mod
 		if not server:
