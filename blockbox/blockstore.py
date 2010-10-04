@@ -25,7 +25,8 @@ class BlockStore(Thread):
 		self.blocks_path = blocks_path
 		self.in_queue = Queue()
 		self.out_queue = Queue()
-	
+		self.saving = False
+
 	def run(self):
 		# Initialise variables
 		self.physics = False
@@ -173,42 +174,59 @@ class BlockStore(Thread):
 		Needed before sending gzipped block data to clients.
 		"""
 		# Don't flush if there's nothing to do
-		if not self.queued_blocks:
-			return
-		self.logger.debug("Flushing %s..." % self.blocks_path)
-		# Open the old and the new file
-		gz = gzip.GzipFile(self.blocks_path)
-		new_gz = gzip.GzipFile(self.blocks_path + ".new", 'wb', compresslevel=4)
-		# Copy over the size header
-		new_gz.write(gz.read(4))
-		# Order the blocks we're going to write
-		ordered_blocks = sorted(self.queued_blocks.items())
-		# Start writing out the blocks in chunks, replacing as we go.
-		chunk_size = 1024
-		chunk = list(gz.read(chunk_size))
-		pos = 0
-		blocks_pos = 0
-		chunk_end = len(chunk)
-		while chunk:
-			while blocks_pos < len(ordered_blocks) and ordered_blocks[blocks_pos][0] < chunk_end:
-				offset, value = ordered_blocks[blocks_pos]
-				chunk[offset - pos] = value
-				blocks_pos += 1
-			chunk_str = "".join(chunk)
-			new_gz.write(chunk_str)
-			pos += len(chunk)
-			chunk = list(gz.read(chunk_size))
-			chunk_end = pos + len(chunk)
-		# Safety first. If this isn't true, there's a bug.
-		assert blocks_pos == len(ordered_blocks)
-		# OK, close up shop.
-		gz.close()
-		new_gz.close()
-		self.queued_blocks = {}
-		# Copy the new level over the old.
-		os.remove(self.blocks_path)
-		os.rename(self.blocks_path + ".new", self.blocks_path)
-	
+		if not self.saving:
+			try:
+				if not self.queued_blocks:
+					return
+				self.logger.debug("Flushing %s..." % self.blocks_path)
+				# Open the old and the new file
+				if os.path.exists(self.blocks_path + ".new"):
+					os.remove(self.blocks_path + ".new")
+				gz = gzip.GzipFile(self.blocks_path)
+				new_gz = gzip.GzipFile(self.blocks_path + ".new", 'wb', compresslevel=4)
+				# Copy over the size header
+				new_gz.write(gz.read(4))
+				# Order the blocks we're going to write
+				ordered_blocks = sorted(self.queued_blocks.items())
+				# Start writing out the blocks in chunks, replacing as we go.
+				chunk_size = 1024
+				chunk = list(gz.read(chunk_size))
+				pos = 0
+				blocks_pos = 0
+				chunk_end = len(chunk)
+				while chunk:
+					while blocks_pos < len(ordered_blocks) and ordered_blocks[blocks_pos][0] < chunk_end:
+						offset, value = ordered_blocks[blocks_pos]
+						chunk[offset - pos] = value
+						blocks_pos += 1
+					chunk_str = "".join(chunk)
+					new_gz.write(chunk_str)
+					pos += len(chunk)
+					chunk = list(gz.read(chunk_size))
+					chunk_end = pos + len(chunk)
+				# Safety first. If this isn't true, there's a bug.
+				assert blocks_pos == len(ordered_blocks)
+				# OK, close up shop.
+				gz.close()
+				new_gz.close()
+
+				# Copy the new level over the old.
+				os.remove(self.blocks_path)
+				os.rename(self.blocks_path + ".new", self.blocks_path)
+				self.queued_blocks = {}
+			except:
+				self.logger.error("Problem saving map %s" %self.blocks_path)
+				self.saving = True
+				reactor.callLater(3, self.flush)
+		else:
+			try:
+				os.remove(self.blocks_path)
+				os.rename(self.blocks_path + ".new", self.blocks_path)
+				self.saving = False
+			except:
+				self.saving = True
+				reactor.callLater(3, self.flush)
+				
 	@classmethod
 	def create_new(cls, blocks_path, sx, sy, sz, levels):
 		"""

@@ -17,6 +17,8 @@ class HelpPlugin(ProtocolPlugin):
 		"commands": "commandCmdlist",
 		"about": "commandAbout",
 		"credits": "commandCredits",
+		"motd": "commandMOTD",
+		"greeting": "commandMOTD",
 	}
 
 	@info_list
@@ -162,3 +164,10 @@ class HelpPlugin(ProtocolPlugin):
 		list = Credits(self)
 		for each in list:
 			self.client.sendSplitServerMessage(each)
+
+	@info_list
+	def commandMOTD(self, parts, byuser, overriderank):
+		"/motd - Guest\nAliases: greeting\nShows the greeting."
+		self.client.sendServerMessage("MOTD for "+self.client.factory.server_name+":")
+		for line in self.client.factory.initial_greeting.split("\n"):
+			self.client.sendServerMessage(line)

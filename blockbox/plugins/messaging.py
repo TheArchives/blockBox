@@ -14,6 +14,7 @@ class MessagingPlugin(ProtocolPlugin):
 		"msg": "commandSay",
 		"me": "commandMe",
 		"srb": "commandSRB",
+		"srs": "commandSRS",
 		"u": "commandUrgent",
 		"urgent": "commandUrgent",
 		"away": "commandAway",
@@ -62,8 +63,19 @@ class MessagingPlugin(ProtocolPlugin):
 	
 	@director_only
 	def commandSRB(self, parts, byuser, overriderank):
-		"/srb - Director\nPrints out a reboot message."
-		self.client.factory.queue.put((self.client, TASK_SERVERURGENTMESSAGE, ("[URGENT] Server Reboot - Back in a Flash")))
+		"/srb [reason] - Director\nPrints out a reboot message."
+		if len(parts) == 1:
+			self.client.factory.queue.put((self.client, TASK_SERVERURGENTMESSAGE, ("[Server Reboot] Be back in a few.")))
+		else:
+			self.client.factory.queue.put((self.client, TASK_SERVERURGENTMESSAGE, ("[Server Reboot] Be back in a few: "+(" ".join(parts[1:])))))
+
+	@director_only
+	def commandSRS(self, parts, byuser, overriderank):
+		"/srs [reason] - Director\nPrints out a shutdown message."
+		if len(parts) == 1:
+			self.client.factory.queue.put((self.client, TASK_SERVERURGENTMESSAGE, ("[Server Shutdown] See you later.")))
+		else:
+			self.client.factory.queue.put((self.client, TASK_SERVERURGENTMESSAGE, ("[Server Shutdown] See you later: "+(" ".join(parts[1:])))))
 
 	@admin_only
 	def commandUrgent(self, parts, byuser, overriderank):

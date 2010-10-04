@@ -68,7 +68,7 @@ class CommandPlugin(ProtocolPlugin):
 				cmdlist = self.cmdinfolines[index:index+10]
 				if len(cmdlist) < 10:
 					print cmdlist
-					print "Reached the end."
+					print ("Reached the end.")
 					if len(cmdlist) > 0:
 						print len(self.cmdinfolines)
 						self.client.sendServerMessage("Page %s of %s:" %(int((index+11)/10), int((len(self.cmdinfolines)/10)+1)))
@@ -150,7 +150,7 @@ class CommandPlugin(ProtocolPlugin):
 					if runcmd:
 						func(parts, False, guest)
 				except UnboundLocalError:
-					self.client.sendServerMessage("Internal server error.")
+					self.client.sendServerMessage("Internal Server Error")
 			elif message.lower() == "n" or message.lower() == "no":
 				self.listeningforpay = False
 				self.runningcmdlist = list({})
@@ -713,12 +713,14 @@ class CommandPlugin(ProtocolPlugin):
 		with Persist(user) as p:
 			balance = p.int("bank", "balance", 0)
 		thiscmd = thiscmd.replace("$bank", str(balance))
-		thiscmd = thiscmd.replace("$first", str(self.client.username in self.client.factory.lastseen))
+		with Persist(user) as p:
+			lastseen = p.string("main", "lastseen", time.time())
+		thiscmd = thiscmd.replace("$first", str(lastseen))
 		thiscmd = thiscmd.replace("$server", self.client.factory.server_name)
 		if self.client.factory.irc_relay:
-			thiscmd = thiscmd.replace("$irc", self.client.factory.config.get("irc", "server") + " " + self.client.factory.irc_channel)
+			thiscmd = thiscmd.replace("$irc", self.client.factory.conf_irc.get("irc", "server") + " " + self.client.factory.irc_channel)
 			thiscmd = thiscmd.replace("$ircchan", self.client.factory.irc_channel)
-			thiscmd = thiscmd.replace("$ircnet", self.client.factory.config.get("irc", "server"))
+			thiscmd = thiscmd.replace("$ircnet", self.client.factory.conf_irc.get("irc", "server"))
 		thiscmd = thiscmd.replace("$owner", self.client.factory.owner)
 		thiscmd = thiscmd.replace("$rcolor", self.client.userColour())
 		thiscmd = thiscmd.replace("$rname", self.client.rankName())
@@ -760,7 +762,7 @@ class CommandPlugin(ProtocolPlugin):
 		thiscmd = thiscmd.replace("$posy", str(ry))
 		thiscmd = thiscmd.replace("$posz", str(rz))
 		thiscmd = thiscmd.replace("$posa", str(rx)+" "+str(ry)+" "+str(rx))
-		thiscmd = thiscmd.replace("$rid", myrank)
+		thiscmd = thiscmd.replace("$rank", myrank)
 		thiscmd = thiscmd.replace("$rnum", str(myranknum))
 		for variable in self.customvars.keys():
 			thiscmd = thiscmd.replace("$"+variable, str(self.customvars[variable]))
@@ -841,9 +843,9 @@ class CommandPlugin(ProtocolPlugin):
 
 					self.client.sendWhisper(self.client.username, text)
 
-					self.client.log("WHISPER - "+self.client.username+" to "+username+": "+text)
+					self.client.log("@"+self.client.username+" to "+username+": "+text)
 
-					self.client.whisperlog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+" | WHISPER | "+self.client.username+" to "+username+": "+text+"\n")
+					self.client.whisperlog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+" | @"+self.client.username+" to "+username+": "+text+"\n")
 
 					self.client.whisperlog.flush()
 

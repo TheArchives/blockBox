@@ -27,6 +27,7 @@ from blockbox.irc_client import ChatBotFactory
 from blockbox.constants import *
 from blockbox.plugins import *
 from blockbox.timer import ResettableTimer
+from blockbox.persistence import PersistenceEngine as Persist
 import logging
 
 class Heartbeat(object):
@@ -67,7 +68,7 @@ The Salt is also used to help verify users' identities.
 				"public": self.factory.public,
 				"version": 7,
 				"salt": self.factory.salt,
-				}))
+				}), timeout=15)
 				self.url = fh.read().strip()
 				self.hash = self.url.partition("server=")[2]
 				if self.factory.console_delay == self.factory.delay_count:
@@ -79,7 +80,7 @@ The Salt is also used to help verify users' identities.
 			except IOError,SystemExit:
 				pass
 			except:
-				self.logger.error(traceback.format_exc())
+				self.logger.error("Minecraft.net seems to be offline.")
 		except IOError,SystemExit:
 			pass
 		except:
@@ -143,8 +144,6 @@ class MyneFactory(Factory):
 		self.ServerVars = dict()
 		self.specs = ConfigParser()
 		self.last_heartbeat = time.time()
-		#TODO: Make lastseen use persistence
-		self.lastseen = ConfigParser()
 		self.config = ConfigParser()
 		self.conf_performance = ConfigParser()
 		self.conf_plugins = ConfigParser()
@@ -277,8 +276,6 @@ class MyneFactory(Factory):
 		config.read("data/server.meta")
 		specs = ConfigParser()
 		specs.read("data/spectators.meta")
-		lastseen = ConfigParser()
-		lastseen.read("data/lastseen.meta")
 		# Read in the worlds
 		if config.has_section("worlds"):
 			for name in config.options("worlds"):
@@ -319,16 +316,11 @@ class MyneFactory(Factory):
 		if config.has_section("ipbanned"):
 			for ip in config.options("ipbanned"):
 				self.ipbanned[ip] = config.get("ipbanned", ip)
-		# Read in the lastseen
-		if lastseen.has_section("lastseen"):
-			for username in lastseen.options("lastseen"):
-				self.lastseen[username] = lastseen.getfloat("lastseen", username)
 
 	def saveMeta(self):
 		"Saves the server's meta back to a file."
 		config = ConfigParser()
 		specs = ConfigParser()
-		lastseen = ConfigParser()
 		# Make the sections
 		config.add_section("worlds")
 		config.add_section("directors")
@@ -339,7 +331,6 @@ class MyneFactory(Factory):
 		config.add_section("banned")
 		config.add_section("ipbanned")
 		specs.add_section("spectators")
-		lastseen.add_section("lastseen")
 		# Write out things
 		for world in self.worlds:
 			config.set("worlds", world, "true")
@@ -359,16 +350,11 @@ class MyneFactory(Factory):
 			config.set("silenced", silence, "true")
 		for ipban, reason in self.ipbanned.items():
 			config.set("ipbanned", ipban, reason)
-		for username, ls in self.lastseen.items():
-			lastseen.set("lastseen", username, str(ls))
 		fp = open("data/server.meta", "w")
 		config.write(fp)
 		fp.close()
 		fp = open("data/spectators.meta", "w")
 		specs.write(fp)
-		fp.close()
-		fp = open("data/lastseen.meta", "w")
-		lastseen.write(fp)
 		fp.close()
 
 	def printInfo(self):
@@ -485,12 +471,17 @@ class MyneFactory(Factory):
 		"""
 		try:
 			if ASD and len(self.worlds[world_id].clients)>0:
-				self.logger.error("AUTOSHUTDOWN ERROR DETECTED, PLEASE REPORT THIS ERROR TO BLOCKBOX TEAM")
+				#self.logger.error("AUTOSHUTDOWN ERROR DETECTED, PLEASE REPORT THIS ERROR TO BLOCKBOX TEAM")
+				self.worlds[world_id].ASD.kill()
+				self.worlds[world_id].ASD = None
 				return
 		except KeyError:
 			return
-		assert world_id != "main"
-		if  not self.worlds[world_id].ASD == None:
+		try:
+			assert world_id != "main"
+		except:
+			client.sendServerMessage("You can't shutdown main.")
+		if not self.worlds[world_id].ASD == None:
 			self.worlds[world_id].ASD.kill()
 			self.worlds[world_id].ASD = None
 		for client in list(list(self.worlds[world_id].clients))[:]:
@@ -534,7 +525,8 @@ class MyneFactory(Factory):
 		"""
 		Records a sighting of 'username' in the lastseen dict.
 		"""
-		self.lastseen[username.lower()] = time.time()
+		with Persist(username) as p:
+			p.set("main", "lastseen", time.time())
 
 	def unloadPlugin(self, plugin_name):
 		"Reloads the plugin with the given module name."

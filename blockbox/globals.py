@@ -21,7 +21,7 @@ def Rank(self, parts, byuser, overriderank,server=None):
 				return "You must provide a world"
 		#Make builder
 		if not server:
-			if not (self.client.username in world.ops or self.client.isMod()) and not overriderank:
+			if not (self.client.username.lower() in world.ops or self.client.isMod() or self.client.isWorldOwner()) and not overriderank:
 				return ("You are not high enough rank!")
 		else:
 			if not parts[-1] == "console":
@@ -53,8 +53,8 @@ def Rank(self, parts, byuser, overriderank,server=None):
 		world.ops.add(username)
 		return ("Opped %s" % username)
 		#make op
-	elif parts[1] == "member":
-		#make them a member
+	elif parts[1] == "advbuilder":
+		#make them an advanced builder
 		if not server:
 			if not self.client.isMod():
 				return ("You are not high enough rank!")
@@ -62,10 +62,10 @@ def Rank(self, parts, byuser, overriderank,server=None):
 			if not parts[-1] == "console":
 				if not factory.isMod(parts[-1]):
 					return ("You are not high enough rank!")
-		factory.members.add(username)
+		factory.advbuilders.add(username)
 		if username in factory.usernames:
-			factory.usernames[username].sendMemberUpdate()
-		return ("%s is now a Member." % username)
+			factory.usernames[username].sendAdvBuilderUpdate()
+		return ("%s is now an Advanced Builder." % username)
 	elif parts[1] == "mod":
 		#make them a mod
 		if not server:
@@ -255,8 +255,6 @@ def Staff(self, server=None):
 		factory = server
 	else:
 		factory = self.client.factory
-	if len(factory.owner):
-		Temp.append (["Owner: "+factory.owner])
 	if len(factory.directors):
 		Temp.append (["Directors:"] + list(factory.directors))
 	if len(factory.admins):

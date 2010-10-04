@@ -7,6 +7,8 @@ from lib import simplejson
 from lib.twisted.protocols.basic import LineReceiver
 from lib.twisted.internet.protocol import Factory
 import logging
+import os
+import lib.simplejson
 
 class APIProtocol(LineReceiver):
 	"""

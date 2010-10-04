@@ -89,7 +89,10 @@ def username_command(func):
 				self.client.sendServerMessage("No such Player '%s'" % user)
 			else:
 				if len(parts) > 2:
-					func(self, self.client.factory.usernames[names[0]], byuser, overriderank, parts[2:])
+					try:
+						func(self, self.client.factory.usernames[names[0]], byuser, overriderank, parts[2:])
+					except:
+						self.client.sendServerMessage("You specificed too many arguments.")
 				else:
 					func(self, self.client.factory.usernames[names[0]], byuser, overriderank)
 	inner.__doc__ = func.__doc__
