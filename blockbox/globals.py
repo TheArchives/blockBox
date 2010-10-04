@@ -54,7 +54,7 @@ def Rank(self, parts, byuser, overriderank,server=None):
 		return ("Opped %s" % username)
 		#make op
 	elif parts[1] == "advbuilder":
-		#make them a member
+		#make them an advanced builder
 		if not server:
 			if not self.client.isMod():
 				return ("You are not high enough rank!")

@@ -479,9 +479,9 @@ class MyneFactory(Factory):
 		except KeyError:
 			return
 		try:
-			assert world_id != self.default_name
+			assert world_id != "main"
 		except:
-			client.sendServerMessage("You can't shutdown "+self.default_name+".")
+			client.sendServerMessage("You can't shutdown main.")
 		if not self.worlds[world_id].ASD == None:
 			self.worlds[world_id].ASD.kill()
 			self.worlds[world_id].ASD = None

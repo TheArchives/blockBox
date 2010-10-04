@@ -192,7 +192,7 @@ class StdinPlugin(threading.Thread):
 								print ("StaffChat: #message")
 								print ("Commands: /cmdlist")
 							elif message[0] == ("cmdlist"):
-								print ("about boot ban cmdlist cpr derank help kick me new pll plr plu rank say shutdown spec srb srs u")
+								print ("about boot ban cmdlist cpr derank irc_cpr help kick me new pll plr plu rank say shutdown spec srb srs u")
 							elif message[0] == ("about"):
 								print ("About The Server")
 								print ("Powered by blockBox %s - http://blockbox.bradness.info/"%VERSION)

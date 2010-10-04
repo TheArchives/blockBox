@@ -713,7 +713,6 @@ class CommandPlugin(ProtocolPlugin):
 		with Persist(user) as p:
 			balance = p.int("bank", "balance", 0)
 		thiscmd = thiscmd.replace("$bank", str(balance))
-		#TOFIX: Test this thing
 		with Persist(user) as p:
 			lastseen = p.string("main", "lastseen", time.time())
 		thiscmd = thiscmd.replace("$first", str(lastseen))

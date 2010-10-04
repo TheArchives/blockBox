@@ -30,7 +30,7 @@ class ChatBot(irc.IRCClient):
 
 	def connectionLost(self, reason):
 		irc.IRCClient.connectionLost(self, reason)
-		self.logger.info(logging.INFO,"IRC client disconnected. (%s)" % reason)
+		self.logger.info("IRC client disconnected. (%s)" % reason)
 
 	# callbacks for events
 
