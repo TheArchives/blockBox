@@ -120,7 +120,7 @@ class StdinPlugin(threading.Thread):
 									print ("Please specify a username.")
 								else:
 									try:
-									print Rank(self, message, False, True, self.server)
+										print Rank(self, message, False, True, self.server)
 									except:
 										print ("You must specify a rank and username.")
 							elif message[0] == "derank":
