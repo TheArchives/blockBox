@@ -215,9 +215,12 @@ class MyneFactory(Factory):
 		plugins = self.conf_plugins.options("plugins")
 		self.logger.info("Loading %i plugins..." % len(plugins))
 		load_plugins(plugins)
-		# Open the chat log, ready for appending
+		
+		self.create_if_not("logs/server.log")
+		self.create_if_not("logs/server.log")
 		self.chatlog = open("logs/server.log", "a")
 		self.chatlog = open("logs/chat.log", "a")
+		
 		# Create a default world, if there isn't one.
 		if not os.path.isdir("mapdata/worlds/main"):
 			self.logger.info("Generating main world...")
@@ -873,3 +876,13 @@ class MyneFactory(Factory):
 						self.archives[name][when] = "%s/%s" % (name, subfilename)
 		self.logger.info("Loaded %s discrete archives." % len(self.archives))
 		reactor.callLater(60, self.loadArchives)		
+	
+	def create_if_not(self, filename):
+		dir = os.path.dirname(filename)
+		try:
+			os.stat(dir)
+		except:
+			os.path.mkdir(dir)
+		if not os.path.exists(filename):
+			with open(filename, "w") as f:
+				f.write("")
