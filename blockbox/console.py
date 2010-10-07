@@ -17,11 +17,8 @@ class StdinPlugin(threading.Thread):
 		threading.Thread.__init__(self)
 		self.server = server
 		self.stop = False
-		self.whisperlog = open("logs/server.log", "a")
 		self.whisperlog = open("logs/whisper.log", "a")
-		self.wclog = open("logs/server.log", "a")
 		self.wclog = open("logs/staff.log", "a")
-		self.adlog = open("logs/server.log", "a")
 		self.adlog = open("logs/world.log", "a")
 		self.logger = logging.getLogger("Console")
 
