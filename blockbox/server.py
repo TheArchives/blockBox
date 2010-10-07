@@ -882,7 +882,10 @@ class MyneFactory(Factory):
 		try:
 			os.stat(dir)
 		except:
-			os.path.mkdir(dir)
+			try:
+				os.path.mkdirs(dir)
+			except OSError:
+				pass
 		if not os.path.exists(filename):
 			with open(filename, "w") as f:
 				f.write("")
