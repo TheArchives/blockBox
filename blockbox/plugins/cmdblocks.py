@@ -719,7 +719,7 @@ class CommandPlugin(ProtocolPlugin):
 				lastseen = "?"
 		thiscmd = thiscmd.replace("$first", lastseen)
 		thiscmd = thiscmd.replace("$server", self.client.factory.server_name)
-		if self.client.factory.enable_irc:
+		if self.client.factory.use_irc:
 			thiscmd = thiscmd.replace("$irc", self.client.factory.conf_irc.get("irc", "server") + " " + self.client.factory.irc_channel)
 			thiscmd = thiscmd.replace("$ircchan", self.client.factory.irc_channel)
 			thiscmd = thiscmd.replace("$ircnet", self.client.factory.conf_irc.get("irc", "server"))
