@@ -883,7 +883,7 @@ class MyneFactory(Factory):
 			os.stat(dir)
 		except:
 			try:
-				os.path.mkdirs(dir)
+				os.mkdir(dir)
 			except OSError:
 				pass
 		if not os.path.exists(filename):
