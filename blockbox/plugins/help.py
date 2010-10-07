@@ -154,8 +154,8 @@ class HelpPlugin(ProtocolPlugin):
 		self.client.sendServerMessage("Name: "+self.client.factory.server_name)
 		self.client.sendServerMessage("URL: "+self.client.factory.info_url)
 		self.client.sendServerMessage("Owner: "+self.client.factory.owner)
-		if self.client.factory.config.getboolean("irc", "use_irc"):
-			self.client.sendServerMessage("IRC: "+self.client.factory.config.get("irc", "server")+" "+self.client.factory.irc_channel)
+		if self.client.factory.use_irc:
+			self.client.sendServerMessage("IRC: "+self.client.factory.conf_irc.get("irc", "server")+" "+self.client.factory.irc_channel)
 
 	@info_list
 	def commandCredits(self, parts, byuser, overriderank):

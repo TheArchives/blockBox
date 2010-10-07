@@ -30,6 +30,8 @@ api = APIFactory(factory)
 reactor.listenTCP(factory.config.getint("network", "port"), factory)
 reactor.listenTCP(factory.config.getint("network", "api_port"), api)
 
+factory.create_if_not("logs/console/console.log")
+
 rotate = logging.handlers.TimedRotatingFileHandler(
 	filename="logs/console/console.log", when="H",
 	interval=6, backupCount=14,

@@ -714,10 +714,12 @@ class CommandPlugin(ProtocolPlugin):
 			balance = p.int("bank", "balance", 0)
 		thiscmd = thiscmd.replace("$bank", str(balance))
 		with Persist(user) as p:
-			lastseen = p.string("main", "lastseen", time.time())
-		thiscmd = thiscmd.replace("$first", str(lastseen))
+			lastseen = p.string("main", "lastseen", 0)
+			if lastseen is 0:
+				lastseen = "?"
+		thiscmd = thiscmd.replace("$first", lastseen)
 		thiscmd = thiscmd.replace("$server", self.client.factory.server_name)
-		if self.client.factory.irc_relay:
+		if self.client.factory.use_irc:
 			thiscmd = thiscmd.replace("$irc", self.client.factory.conf_irc.get("irc", "server") + " " + self.client.factory.irc_channel)
 			thiscmd = thiscmd.replace("$ircchan", self.client.factory.irc_channel)
 			thiscmd = thiscmd.replace("$ircnet", self.client.factory.conf_irc.get("irc", "server"))

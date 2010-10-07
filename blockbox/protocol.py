@@ -49,12 +49,12 @@ class MyneServerProtocol(Protocol):
 			self.sendError("No availible player slots.")
 			return
 		# Open the Whisper Log, Adminchat log and WorldChat Log
-		self.whisperlog = open("logs/server.log", "a")
-		self.wclog = open("logs/server.log", "a")
-		self.adlog = open("logs/server.log", "a")
+		self.factory.create_if_not("logs/whisper.log")
+		self.factory.create_if_not("logs/staff.log")
+		self.factory.create_if_not("logs/world.log")
 		self.whisperlog = open("logs/whisper.log", "a")
-		self.wclog = open("logs/staff.log", "a")
-		self.adlog = open("logs/world.log", "a")
+		self.wclog = open("logs/world.log", "a")
+		self.adlog = open("logs/staff.log", "a")
 		# Check for IP bans
 		if self.factory.isIpBanned(self.ip):
 			self.sendError("Banned: %s" % self.factory.ipBanReason(self.ip))
