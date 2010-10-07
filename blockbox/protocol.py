@@ -362,9 +362,9 @@ class MyneServerProtocol(Protocol):
 				else:
 					self.factory.queue.put((self, TASK_BLOCKSET, (x, y, z, block)))
 					if len(self.last_block_changes) >= 3:
-						self.last_block_changes = [(x, y, z)] + self.last_block_changes[:1]+self.last_block_changes[1:2]
+						self.last_block_changes = [(x, y, z)] + self.last_block_changes[:1]+self.last_block_changes[1:3]
 					else:
-						self.last_block_changes = [(x, y, z)] + self.last_block_changes[:1]
+						self.last_block_changes = [(x, y, z)] + self.last_block_changes[:2]
 			elif type == TYPE_PLAYERPOS:
 				# If we're loading a world, ignore these.
 				if self.loading_world:
