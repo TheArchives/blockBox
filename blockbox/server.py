@@ -217,6 +217,7 @@ class MyneFactory(Factory):
 		load_plugins(plugins)
 		# Open the chat log, ready for appending
 		self.create_if_not("logs/server.log")
+		self.create_if_not("logs/chat.log")
 		self.chatlog = open("logs/server.log", "a")
 		self.chatlog = open("logs/chat.log", "a")
 		

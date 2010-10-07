@@ -53,8 +53,8 @@ class MyneServerProtocol(Protocol):
 		self.factory.create_if_not("logs/staff.log")
 		self.factory.create_if_not("logs/world.log")
 		self.whisperlog = open("logs/whisper.log", "a")
-		self.wclog = open("logs/staff.log", "a")
-		self.adlog = open("logs/world.log", "a")
+		self.wclog = open("logs/world.log", "a")
+		self.adlog = open("logs/staff.log", "a")
 		# Check for IP bans
 		if self.factory.isIpBanned(self.ip):
 			self.sendError("Banned: %s" % self.factory.ipBanReason(self.ip))
