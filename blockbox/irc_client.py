@@ -319,16 +319,16 @@ class ChatBot(irc.IRCClient):
 						moddedmsg = msg[:51].replace(" ", "")
 						if moddedmsg[len(moddedmsg)-2] == "&":
 							msg = msg.replace("&", "*")
-					self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, user, msg)))
+					self.factory.queue.put((self, TASK_IRCMESSAGE, (127, userColour(user), user, msg)))
 		except:
 			self.logger.error(traceback.format_exc())
 			self.msg(self.factory.irc_channel,"ERROR " + traceback.format_exc())
 
 	def userColour(self, user):
+		if user is self.factory.owner:
+			color = COLOUR_DARKGREEN
 		if user in self.factory.spectators:
 			color = COLOUR_BLACK
-		elif user is self.factory.owner:
-			color = COLOUR_DARKGREEN
 		elif user in self.factory.directors:
 			color = COLOUR_GREEN
 		elif user in self.factory.admins:

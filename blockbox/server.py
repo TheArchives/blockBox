@@ -183,6 +183,7 @@ class MyneFactory(Factory):
 		self.credit_name = self.config.get("bank", "credit_name")
 		self.initial_amount = self.config.get("bank", "initial_amount")
 		self.info_store = self.config.get("options", "info_store")
+		self.table_prefix = self.config.get("options", "table_prefix")
 		self.default_backup = self.config.get("worlds", "default_backup")
 		self.owner = self.config.get("info", "owner").lower()
 		self.backup_freq = self.config.getint("backup", "backup_freq")
@@ -217,8 +218,10 @@ class MyneFactory(Factory):
 		# Open the chat log, ready for appending
 		self.create_if_not("logs/server.log")
 		self.create_if_not("logs/chat.log")
+		self.create_if_not("data/balances.sql")
 		self.chatlog = open("logs/server.log", "a")
 		self.chatlog = open("logs/chat.log", "a")
+		self.balancesqllog = open("data/balances.sql", "a")
 		
 		# Create a default world, if there isn't one.
 		if not os.path.isdir("mapdata/worlds/main"):
