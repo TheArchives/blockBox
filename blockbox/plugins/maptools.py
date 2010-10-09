@@ -18,7 +18,7 @@ class PrivatePlugin(ProtocolPlugin):
 	@world_list
 	@op_only
 	@on_off_command
-	def commandPrivate(self, onoff, byuser, overriderank):
+	def commandPrivate(self, onoff, fromloc, overriderank):
 		"/private on|off - Op\nEnables or disables the private status for this world."
 		if onoff == "on":
 			self.client.world.private = True
@@ -32,7 +32,7 @@ class PrivatePlugin(ProtocolPlugin):
 	@world_list
 	@op_only
 	@on_off_command
-	def commandLock(self, onoff, byuser, overriderank):
+	def commandLock(self, onoff, fromloc, overriderank):
 		"/lock on|off - Op\nEnables or disables the world lock."
 		if onoff == "on":
 			self.client.world.all_write = False
@@ -46,14 +46,14 @@ class PrivatePlugin(ProtocolPlugin):
 	@world_list
 	@mod_only
 	@on_off_command
-	def commandGChat(self, onoff, byuser, rankoverride):
+	def commandGChat(self, onoff, fromloc, rankoverride):
 		"/gchat on|off - Mod\nTurns Global Chat on or off in this world.\nWorldChat is used instead if off."
 		self.client.world.global_chat = onoff == "on"
 		self.client.sendServerMessage("Global chat is now %s for this world." %onoff)
 
 	#@op_only
 	#@on_off_command
-	#def commandPOnly(self, onoff, byuser, rankoverride):
+	#def commandPOnly(self, onoff, fromloc, rankoverride):
 		#"/ponly on/off - Makes the world only accessable by portals."
 		#if onoff == "on":
 			#self.client.world.portal_only = True

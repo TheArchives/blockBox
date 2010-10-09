@@ -19,13 +19,13 @@ class PaintPlugin(ProtocolPlugin):
 	def gotClient(self):
 		self.painting = False
 	
-	def blockChanged(self, x, y, z, block, selected_block, byuser):
+	def blockChanged(self, x, y, z, block, selected_block, fromloc):
 		"Hook trigger for block changes."
 		if block is BLOCK_AIR and self.painting:
 			return selected_block
 	
 	@build_list
-	def commandPaint(self, parts, byuser, overriderank):
+	def commandPaint(self, parts, fromloc, overriderank):
 		"/paint - Guest\nLets you break-and-build in one move. Toggle."
 		if self.painting:
 			self.painting = False

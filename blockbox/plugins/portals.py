@@ -34,7 +34,7 @@ class PortalPlugin(ProtocolPlugin):
 		self.portals_on = True
 		self.last_block_position = None
 	
-	def blockChanged(self, x, y, z, block, selected_block, byuser):
+	def blockChanged(self, x, y, z, block, selected_block, fromloc):
 		"Hook trigger for block changes."
 		if self.client.world.has_teleport(x, y, z):
 			if self.portal_remove:
@@ -92,7 +92,7 @@ class PortalPlugin(ProtocolPlugin):
 			self.portals_on = True
 	
 	@op_only
-	def commandPortal(self, parts, byuser, overriderank):
+	def commandPortal(self, parts, fromloc, overriderank):
 		"/p worldname x y z [r] - Op\nAliases: tpbox\nMakes the next block you place a portal."
 		if len(parts) < 5:
 			self.client.sendServerMessage("Please enter a worldname, x, y and z.")
@@ -118,26 +118,26 @@ class PortalPlugin(ProtocolPlugin):
 				self.client.sendServerMessage("You are now placing portal blocks. /portalend to stop")
 	
 	@op_only
-	def commandPortalhere(self, parts, byuser, overriderank):
+	def commandPortalhere(self, parts, fromloc, overriderank):
 		"/phere - Op\nEnables portal-building mode, to here."
 		self.portal_dest = self.client.world.id, self.client.x>>5, self.client.y>>5, self.client.z>>5, self.client.h
 		self.client.sendServerMessage("You are now placing portal blocks to here.")
 	
 	@op_only
-	def commandPortalend(self, parts, byuser, overriderank):
+	def commandPortalend(self, parts, fromloc, overriderank):
 		"/pend - Op\nStops placing portal blocks."
 		self.portal_dest = None
 		self.portal_remove = False
 		self.client.sendServerMessage("You are no longer placing portal blocks.")
 	
 	@op_only
-	def commandClearportals(self, parts, byuser, overriderank):
+	def commandClearportals(self, parts, fromloc, overriderank):
 		"/pclear - Op\nRemoves all portals from the map."
 		self.client.world.clear_teleports()
 		self.client.sendServerMessage("All portals in this world removed.")
 	
 	@op_only
-	def commandShowportals(self, parts, byuser, overriderank):
+	def commandShowportals(self, parts, fromloc, overriderank):
 		"/pshow - Op\nAliases: tpshow\nShows all portal blocks as blue, only to you."
 		for offset in self.client.world.teleports.keys():
 			x, y, z = self.client.world.get_coords(offset)
@@ -145,19 +145,19 @@ class PortalPlugin(ProtocolPlugin):
 		self.client.sendServerMessage("All portals appearing blue temporarily.")
 	
 	@op_only
-	def commandPortaldel(self, parts, byuser, overriderank):
+	def commandPortaldel(self, parts, fromloc, overriderank):
 		"/pdel - Op\nAliases: deltp\nEnables portal-deleting mode"
 		self.client.sendServerMessage("You are now able to delete portals. /pdelend to stop")
 		self.portal_remove = True
 	
 	@op_only
-	def commandPortaldelend(self, parts, byuser, overriderank):
+	def commandPortaldelend(self, parts, fromloc, overriderank):
 		"/pdelend - Op\nDisables portal-deleting mode"
 		self.client.sendServerMessage("Portal deletion mode ended.")
 		self.portal_remove = False
 	
 	@on_off_command
-	def commandUseportals(self, onoff, byuser, overriderank):
+	def commandUseportals(self, onoff, fromloc, overriderank):
 		"/puse on|off - Guest\nAllows you to enable or diable portal usage."
 		if onoff == "on":
 			self.portals_on = True

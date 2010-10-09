@@ -16,7 +16,7 @@ class StairsPlugin(ProtocolPlugin):
 	
 	@build_list
 	@writer_only
-	def commandStairs(self, parts, byuser, overriderank):
+	def commandStairs(self, parts, fromloc, overriderank):
 		"/stairs blockname height (c) [x y z x2 y2 z2] - Builder\nBuilds a spiral staircase."
 		
 		if len(parts) < 9 and len(parts) != 3 and len(parts) != 4:
@@ -191,7 +191,7 @@ class StairsPlugin(ProtocolPlugin):
 						block_iter.next()
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
-					if byuser:
+					if fromloc == 'user':
 						self.client.finalizeMassCMD('stairs', self.total)
 						self.client.total = 0
 					pass

@@ -79,8 +79,8 @@ class EntityPlugin(ProtocolPlugin):
 		"Hook to reset entity making in new worlds."
 		self.var_entityselected = "None"
 
-	def blockChanged(self, x, y, z, block, selected_block, byuser):
-		if not byuser:
+	def blockChanged(self, x, y, z, block, selected_block, fromloc):
+		if fromloc != 'user':
 			#People shouldnt be blbing mobs :P
 			return
 		"Hook trigger for block changes."
@@ -2450,7 +2450,7 @@ class EntityPlugin(ProtocolPlugin):
 					entitylist.append(entitylist.pop(0))
 				
 	@op_only
-	def commandEntity(self, parts, byuser, overriderank):
+	def commandEntity(self, parts, fromloc, overriderank):
 		"/entity entityname- Op\nAliases: mob\nCreates the specified entity."
 		if len(parts) < 2:
 			if self.var_entityselected == "None":
@@ -2557,14 +2557,14 @@ class EntityPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("To deselect just type /entity")
 
 	@op_only
-	def commandNumentities(self, parts, byuser, overriderank):
+	def commandNumentities(self, parts, fromloc, overriderank):
 		"/numentities - Op\nAliases: nummobs\nTells you the number of entities in the map"
 		world = self.client.world
 		entitylist = world.entitylist
 		self.client.sendServerMessage(str(len(entitylist)))
 		
 	@op_only
-	def commandEntityclear(self, parts, byuser, overriderank):
+	def commandEntityclear(self, parts, fromloc, overriderank):
 		"/entityclear - Op\nAliases: mobclear\nClears the entities from the map"
 		world = self.client.world
 		for entity in self.client.world.entitylist:
@@ -2612,7 +2612,7 @@ class EntityPlugin(ProtocolPlugin):
 		self.client.sendWorldMessage("Entities cleared.")
 		
 	@op_only
-	def commandEntities(self, parts, byuser, overriderank):
+	def commandEntities(self, parts, fromloc, overriderank):
 		"/entities - Op\nAliases: mobs\nDisplays available entities"
 		var_listofvalidentities = ["blob","jumpingshroom","trippyshroom","zombie","aquabie","fastzombie","creeper","tnt","person","proxmine","var","spawner","paintballgun","cannon","cloud","bird","slime","trippyflower","fish","rainbowfish","noob"]
 		self.client.sendServerList(["Available entities:"] + var_listofvalidentities)

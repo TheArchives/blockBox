@@ -18,7 +18,7 @@ class CountPlugin(ProtocolPlugin):
 		self.num = int(0)
 
 	@writer_only
-	def commandCount(self, parts, byuser, overriderank):
+	def commandCount(self, parts, fromloc, overriderank):
 		"/count [number] - Builder\nAliases: countdown\nCounts down from 3 or from number given (up to 15)"
 		if self.num != 0:
 			self.client.sendServerMessage("You can only have one count at a time!")

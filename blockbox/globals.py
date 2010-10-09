@@ -2,7 +2,7 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-def Rank(self, parts, byuser, overriderank,server=None):
+def Rank(self, parts, fromloc, overriderank,server=None):
 	username = parts[2].lower()
 	if server:
 		factory = server
@@ -108,7 +108,7 @@ def Rank(self, parts, byuser, overriderank,server=None):
 	else:
 		return ("Unknown rank \"%s\""%parts[1])
 
-def DeRank(self, parts, byuser, overriderank, server=None):
+def DeRank(self, parts, fromloc, overriderank, server=None):
 	username = parts[2].lower()
 	if server:
 		factory = server
@@ -237,7 +237,7 @@ def DeRank(self, parts, byuser, overriderank, server=None):
 	else:
 		return ("Unknown rank \"%s\""%parts[1])
 
-def Spec(self, username, byuser, overriderank, server=None):
+def Spec(self, username, fromloc, overriderank, server=None):
 	if server:
 		factory = server
 	else:

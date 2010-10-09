@@ -24,7 +24,7 @@ class MessagingPlugin(ProtocolPlugin):
 	}
 
 	@player_list
-	def commandBack(self, parts, byuser, overriderank):
+	def commandBack(self, parts, fromloc, overriderank):
 		"/back - Guest\nPrints out message of you coming back."
 		if len(parts) != 1:
 			self.client.sendServerMessage("This command doesn't need arguments")
@@ -33,7 +33,7 @@ class MessagingPlugin(ProtocolPlugin):
 			self.client.gone = 0
 	
 	@player_list
-	def commandAway(self, parts, byuser, overriderank):
+	def commandAway(self, parts, fromloc, overriderank):
 		 "/away reason - Guest\nAliases: afk, brb\nPrints out message of you going away."
 		 if len(parts) == 1:
 			 self.client.factory.queue.put((self.client, TASK_AWAYMESSAGE, self.client.username + " has gone: Away."))
@@ -43,7 +43,7 @@ class MessagingPlugin(ProtocolPlugin):
 			 self.client.gone = 1
 
 	@player_list
-	def commandMe(self, parts, byuser, overriderank):
+	def commandMe(self, parts, fromloc, overriderank):
 		"/me action - Guest\nPrints 'username action'"
 		if len(parts) == 1:
 			self.client.sendServerMessage("Please type an action.")
@@ -54,7 +54,7 @@ class MessagingPlugin(ProtocolPlugin):
 				self.client.factory.queue.put((self.client, TASK_ACTION, (self.client.id, self.client.userColour(), self.client.username, " ".join(parts[1:]))))
 	
 	@mod_only
-	def commandSay(self, parts, byuser, overriderank):
+	def commandSay(self, parts, fromloc, overriderank):
 		"/say message - Mod\nAliases: msg\nPrints out message in the server color."
 		if len(parts) == 1:
 			self.client.sendServerMessage("Please type a message.")
@@ -62,7 +62,7 @@ class MessagingPlugin(ProtocolPlugin):
 			self.client.factory.queue.put((self.client, TASK_SERVERMESSAGE, ("[MSG] "+(" ".join(parts[1:])))))
 	
 	@director_only
-	def commandSRB(self, parts, byuser, overriderank):
+	def commandSRB(self, parts, fromloc, overriderank):
 		"/srb [reason] - Director\nPrints out a reboot message."
 		if len(parts) == 1:
 			self.client.factory.queue.put((self.client, TASK_SERVERURGENTMESSAGE, ("[Server Reboot] Be back in a few.")))
@@ -70,7 +70,7 @@ class MessagingPlugin(ProtocolPlugin):
 			self.client.factory.queue.put((self.client, TASK_SERVERURGENTMESSAGE, ("[Server Reboot] Be back in a few: "+(" ".join(parts[1:])))))
 
 	@director_only
-	def commandSRS(self, parts, byuser, overriderank):
+	def commandSRS(self, parts, fromloc, overriderank):
 		"/srs [reason] - Director\nPrints out a shutdown message."
 		if len(parts) == 1:
 			self.client.factory.queue.put((self.client, TASK_SERVERURGENTMESSAGE, ("[Server Shutdown] See you later.")))
@@ -78,7 +78,7 @@ class MessagingPlugin(ProtocolPlugin):
 			self.client.factory.queue.put((self.client, TASK_SERVERURGENTMESSAGE, ("[Server Shutdown] See you later: "+(" ".join(parts[1:])))))
 
 	@admin_only
-	def commandUrgent(self, parts, byuser, overriderank):
+	def commandUrgent(self, parts, fromloc, overriderank):
 		"/u message - Admin\nAliases: urgent\nPrints out message in the server color."
 		if len(parts) == 1:
 			self.client.sendServerMessage("Please type a message.")

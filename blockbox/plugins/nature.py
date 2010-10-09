@@ -36,7 +36,7 @@ class NaturePlugin(ProtocolPlugin):
 		if not self.client.isWriter():
 			self.build_trees = False
 	
-	def blockChanged(self, x, y, z, block, selected_block, byuser):
+	def blockChanged(self, x, y, z, block, selected_block, fromloc):
 		"Hook trigger for block changes."
 		tobuild = []
 		# Randomise the variables
@@ -67,7 +67,7 @@ class NaturePlugin(ProtocolPlugin):
 	@build_list
 	@op_only
 	@on_off_command
-	def commandTree(self, onoff, byuser, overriderank):
+	def commandTree(self, onoff, fromloc, overriderank):
 		"/tree on|off - Builder\nBuilds trees, save the earth!"
 		if onoff == "on":
 			self.build_trees = True
@@ -78,7 +78,7 @@ class NaturePlugin(ProtocolPlugin):
 	
 	@build_list
 	@member_only
-	def commandDune(self, parts, byuser, overriderank):
+	def commandDune(self, parts, fromloc, overriderank):
 		"/dune - Member\nCreates a sand dune between the two blocks you touched last."
 		# Use the last two block places
 		try:
@@ -127,7 +127,7 @@ class NaturePlugin(ProtocolPlugin):
 					block_iter.next()
 				reactor.callLater(0.01, do_step)
 			except StopIteration:
-				if byuser:
+				if fromloc == 'user':
 					self.client.finalizeMassCMD('dune', self.client.total)
 					#Flush after use
 					self.client.total = 0
@@ -136,7 +136,7 @@ class NaturePlugin(ProtocolPlugin):
 
 	@build_list
 	@member_only
-	def commandHill(self, parts, byuser, overriderank):
+	def commandHill(self, parts, fromloc, overriderank):
 		"/hill - Member\nCreates a hill between the two blocks you touched last."
 		# Use the last two block places
 		try:
@@ -185,7 +185,7 @@ class NaturePlugin(ProtocolPlugin):
 					block_iter.next()
 				reactor.callLater(0.01, do_step)
 			except StopIteration:
-				if byuser:
+				if fromloc == 'user':
 					self.client.finalizeMassCMD('hill', self.client.total)
 					#Flush after use
 					self.client.total = 0
@@ -194,7 +194,7 @@ class NaturePlugin(ProtocolPlugin):
 
 	@build_list
 	@member_only
-	def commandHole(self, parts, byuser, overriderank):
+	def commandHole(self, parts, fromloc, overriderank):
 		"/hole - Member\ncreates a hole between two blocks"
 		#Use the last two block places
 		try:
@@ -242,7 +242,7 @@ class NaturePlugin(ProtocolPlugin):
 					block_iter.next()
 				reactor.callLater(0.01, do_step)
 			except StopIteration:
-				if byuser:
+				if fromloc == 'user':
 					self.client.finalizeMassCMD('hole', self.client.total)
 					self.client.total = 0
 				pass
@@ -250,7 +250,7 @@ class NaturePlugin(ProtocolPlugin):
 
 	@build_list
 	@member_only
-	def commandLake(self, parts, byuser, overriderank):
+	def commandLake(self, parts, fromloc, overriderank):
 		"/lake - Member\ncreates a lake between two blocks"
 		#Use the last two block places
 		try:
@@ -296,7 +296,7 @@ class NaturePlugin(ProtocolPlugin):
 					block_iter.next()
 				reactor.callLater(0.01, do_step)
 			except StopIteration:
-				if byuser:
+				if fromloc == 'user':
 					self.client.finalizeMassCMD('lake', self.client.total)
 					#Flush after use
 					self.client.total = 0
@@ -305,7 +305,7 @@ class NaturePlugin(ProtocolPlugin):
 
 	@build_list
 	@member_only
-	def commandMountain(self, parts, byuser, overriderank):
+	def commandMountain(self, parts, fromloc, overriderank):
 		"/mountain blockname - Member\nCreates a mountain between the two blocks you touched last."
 		if len(parts) < 8 and len(parts) != 2:
 			self.client.sendServerMessage("Please enter a type.")
@@ -372,7 +372,7 @@ class NaturePlugin(ProtocolPlugin):
 					block_iter.next()
 				reactor.callLater(0.01, do_step)
 			except StopIteration:
-				if byuser:
+				if fromloc == 'user':
 					self.client.finalizeMassCMD('mountain', self.client.total)
 					self.client.total = 0
 				pass
@@ -380,7 +380,7 @@ class NaturePlugin(ProtocolPlugin):
 
 	@build_list
 	@member_only
-	def commandPit(self, parts, byuser, overriderank):
+	def commandPit(self, parts, fromloc, overriderank):
 		"/pit - Member\ncreates a lava pit between two blocks"
 		#Use the last two block places
 		try:
@@ -426,7 +426,7 @@ class NaturePlugin(ProtocolPlugin):
 					block_iter.next()
 				reactor.callLater(0.01, do_step)
 			except StopIteration:
-				if byuser:
+				if fromloc == 'user':
 					self.client.finalizeMassCMD('pit', self.client.total)
 					self.client.total = 0
 				pass

@@ -26,7 +26,7 @@ class ShapesPlugin(ProtocolPlugin):
 	
 	@build_list
 	@writer_only
-	def commandSphere(self, parts, byuser, overriderank):
+	def commandSphere(self, parts, fromloc, overriderank):
 		"/sphere blocktype [x y z] radius - Builder\nPlace/delete a block and /sphere block radius"
 		if len(parts) < 6 and len(parts) != 3:
 			self.client.sendServerMessage("Please enter a type (and possibly two coord triples)")
@@ -97,7 +97,7 @@ class ShapesPlugin(ProtocolPlugin):
 						block_iter.next()
 					reactor.callLater(0.01, do_step)
 				except StopIteration:
-					if byuser:
+					if fromloc == 'user':
 						count = int(round((4/3)*cmath.pi*(parts[2]^3) + 4*cmath.pi*(parts[2]^2)))
 						self.client.finalizeMassCMD('sphere', count)
 					pass
@@ -105,7 +105,7 @@ class ShapesPlugin(ProtocolPlugin):
 
 	@build_list
 	@writer_only
-	def commandHSphere(self, parts, byuser, overriderank):
+	def commandHSphere(self, parts, fromloc, overriderank):
 		"/hsphere blocktype [x y z] radius - Builder\nPlace/delete a block, makes a hollow /sphere"
 		if len(parts) < 6 and len(parts) != 3:
 			self.client.sendServerMessage("Please enter a type (and possibly two coord triples)")
@@ -176,7 +176,7 @@ class ShapesPlugin(ProtocolPlugin):
 						block_iter.next()
 					reactor.callLater(0.01, do_step)
 				except StopIteration:
-					if byuser:	
+					if fromloc == 'user':	
 						count = int(round(4*cmath.pi*(parts[2]^2)))
 						self.client.finalizeMassCMD('hsphere', count)
 					pass
@@ -184,7 +184,7 @@ class ShapesPlugin(ProtocolPlugin):
 
 	@build_list
 	@advbuilder_only
-	def commandCurve(self, parts, byuser, overriderank):
+	def commandCurve(self, parts, fromloc, overriderank):
 		"/curve blockname [x y z x2 y2 z2 x3 y3 z3] - Advaced Builder\nSets a line of blocks along three points to block."
 		if len(parts) < 11 and len(parts) != 2:
 			self.client.sendServerMessage("Please enter a type (and possibly three coord triples)")
@@ -287,7 +287,7 @@ class ShapesPlugin(ProtocolPlugin):
 						block_iter.next()
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
-					if byuser:
+					if fromloc == 'user':
 						self.client.finalizeMassCMD('curve', self.client.total)
 						self.client.total = 0
 					pass
@@ -295,7 +295,7 @@ class ShapesPlugin(ProtocolPlugin):
 
 	@build_list
 	@advbuilder_only
-	def commandPyramid(self, parts, byuser, overriderank):
+	def commandPyramid(self, parts, fromloc, overriderank):
 		"/pyramid blockname height [x y z] - Advanced Builder\nSets all blocks in this area to be a pyramid."
 		if len(parts) < 7 and len(parts) != 4:
 			self.client.sendServerMessage("Please enter a block type height and fill?")
@@ -403,7 +403,7 @@ class ShapesPlugin(ProtocolPlugin):
 						block_iter.next()
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
-					if byuser:
+					if fromloc == 'user':
 						self.client.finalizeMassCMD('pyramid', self.client.total)
 						self.client.total = 0
 					pass
@@ -411,7 +411,7 @@ class ShapesPlugin(ProtocolPlugin):
 
 	@build_list
 	@writer_only
-	def commandLine(self, parts, byuser, overriderank):
+	def commandLine(self, parts, fromloc, overriderank):
 		"/line blockname [x y z x2 y2 z2] - Builder\nSets all blocks between two points to be a line."
 		if len(parts) < 8 and len(parts) != 2:
 			self.client.sendServerMessage("Please enter a type (and possibly two coord triples)")
@@ -508,7 +508,7 @@ class ShapesPlugin(ProtocolPlugin):
 						block_iter.next()
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
-					if byuser:
+					if fromloc == 'user':
 						self.client.finalizeMassCMD('line', self.client.total)
 						self.client.total = 0
 					pass
@@ -516,7 +516,7 @@ class ShapesPlugin(ProtocolPlugin):
 
 	@build_list
 	@op_only
-	def commandCsphere(self, parts, byuser, overriderank):
+	def commandCsphere(self, parts, fromloc, overriderank):
 		"/csphere blocktype blocktype x y z radius - Op\nPlace/delete a block and /csphere block radius"
 		if len(parts) < 7 and len(parts) != 4:
 			self.client.sendServerMessage("Please enter two types a radius(and possibly a coord triple)")
@@ -626,7 +626,7 @@ class ShapesPlugin(ProtocolPlugin):
 						block_iter.next()
 					reactor.callLater(0.01, do_step)
 				except StopIteration:
-					if byuser:
+					if fromloc == 'user':
 						count = int(round(4*cmath.pi*(parts[2]^2)))
 						self.client.finalizeMassCMD('csphere', count)
 					pass
@@ -634,7 +634,7 @@ class ShapesPlugin(ProtocolPlugin):
 			
 	@build_list
 	@op_only
-	def commandCircle(self, parts, byuser, overriderank):
+	def commandCircle(self, parts, fromloc, overriderank):
 		"/circle blocktype x y z radius axis - Op\nPlace/delete a block and /circle block radius axis"
 		if len(parts) < 7 and len(parts) != 4:
 			self.client.sendServerMessage("Please enter a type, radius, axis(and possibly a coord triple)")
@@ -736,7 +736,7 @@ class ShapesPlugin(ProtocolPlugin):
 						block_iter.next()
 					reactor.callLater(0.01, do_step)
 				except StopIteration:
-					if byuser:
+					if fromloc == 'user':
 						self.client.finalizeMassCMD('circle', self.client.total)
 						self.client.total = 0
 					pass
@@ -744,7 +744,7 @@ class ShapesPlugin(ProtocolPlugin):
 
 	@build_list
 	@op_only
-	def commandDome(self, parts, byuser, overriderank):
+	def commandDome(self, parts, fromloc, overriderank):
 		"/dome blocktype x y z radius - Op\nPlace/delete a block and /sphere block radius"
 		if len(parts) < 7 and len(parts) != 4:
 			self.client.sendServerMessage("Please enter a type, the radius and whether to fill (and possibly a coord triple)")
@@ -838,7 +838,7 @@ class ShapesPlugin(ProtocolPlugin):
 						block_iter.next()
 					reactor.callLater(0.01, do_step)
 				except StopIteration:
-					if byuser:
+					if fromloc == 'user':
 						self.client.finalizeMassCMD('dome', self.client.total)
 						self.client.total = 0
 					pass
@@ -846,7 +846,7 @@ class ShapesPlugin(ProtocolPlugin):
 
 	@build_list
 	@op_only
-	def commandEllipsoid(self, parts, byuser, overriderank):
+	def commandEllipsoid(self, parts, fromloc, overriderank):
 		"/ellipsoid blocktype x y z x2 y2 z2 endradius - Op\nAliases: ell\nPlace/delete two blocks and block endradius"
 		if len(parts) < 9 and len(parts) != 3:
 			self.client.sendServerMessage("Please enter a type endradius (and possibly two coord triples)")
@@ -940,7 +940,7 @@ class ShapesPlugin(ProtocolPlugin):
 						block_iter.next()
 					reactor.callLater(0.01, do_step)
 				except StopIteration:
-					if byuser:
+					if fromloc == 'user':
 						self.client.finalizeMassCMD('ellpsoid', self.client.total)
 						self.client.total = 0
 					pass
@@ -948,7 +948,7 @@ class ShapesPlugin(ProtocolPlugin):
 
 	@build_list
 	@op_only
-	def commandPolytri(self, parts, byuser, overriderank):
+	def commandPolytri(self, parts, fromloc, overriderank):
 		"/Polytri blockname [x y z x2 y2 z2 x3 y3 z3] - Op\nSets all blocks between three points to block."
 		if len(parts) < 11 and len(parts) != 2:
 			self.client.sendServerMessage("Please enter a type (and possibly three coord triples)")
@@ -1088,7 +1088,7 @@ class ShapesPlugin(ProtocolPlugin):
 						block_iter.next()
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
-					if byuser:
+					if fromloc == 'user':
 						self.client.finalizeMassCMD('polytri', self.client.total)
 						self.client.total = 0
 					pass

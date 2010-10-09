@@ -203,10 +203,10 @@ class CommandPlugin(ProtocolPlugin):
 				self.client.sendServerMessage("Please answer yes or no.")
 				return True
 
-	def blockChanged(self, x, y, z, block, byUser):
+	def blockChanged(self, x, y, z, block, fromloc):
 		"Hook trigger for block changes."
 		#avoid infinite loops by making blocks unaffected by commands
-		if not byUser:
+		if fromloc != 'user':
 			return False
 		if self.client.world.has_command(x, y, z):
 			if self.cmdinfo:
@@ -273,7 +273,7 @@ class CommandPlugin(ProtocolPlugin):
 
 	@info_list
 	@writer_only
-	def commandCmdHelp(self, parts, byuser, overriderank):
+	def commandCmdHelp(self, parts, fromloc, overriderank):
 		"/cmdhelp category [subcategory] - Builder\ncmdblocks help, learn what you can do in them."
 		if len(parts) > 1:
 			if parts[1].lower() == "types":
@@ -371,7 +371,7 @@ class CommandPlugin(ProtocolPlugin):
 			self.client.sendSplitServerMessage("Categories: types functions variables")
 
 	@writer_only
-	def commandCommand(self, parts, byuser, permissionoverride):
+	def commandCommand(self, parts, fromloc, permissionoverride):
 		"/cmd command [arguments] - Builder\nStarts creating a command block, or adds a command to the command block.\nThe command can be any server command.\nAfter you have entered all commands, type /cmd again to begin placing.\nOnce placed, the blocks will run the command when clicked\nas if the one clicking had typed the commands."
 		if len(parts) < 2:
 			if self.command_cmd == list({}):
@@ -415,7 +415,7 @@ class CommandPlugin(ProtocolPlugin):
 						self.client.sendServerMessage("Type /cmd with no args to start placing the block.")
 
 	@mod_only					
-	def commandGuestCommand(self, parts, byuser, permissionoverride):
+	def commandGuestCommand(self, parts, fromloc, permissionoverride):
 		"/gcmd command [arguments] - Mod\nMakes the next block you place a guest command block."
 		if len(parts) < 2:
 			if self.command_cmd == list({}):
@@ -499,7 +499,7 @@ class CommandPlugin(ProtocolPlugin):
 						self.client.sendServerMessage("Type /gcmd with no args to start placing the block.")
 						
 	@writer_only
-	def commandSensorCommand(self, parts, byuser, permissionoverride):
+	def commandSensorCommand(self, parts, fromloc, permissionoverride):
 		"/scmd command [arguments] - Builder\nStarts creating a command block, or adds a command to the command block.\nThe command can be any server command.\nAfter you have entered all commands, type /cmd again to begin placing.\nOnce placed, the blocks will run the command when clicked\nas if the one clicking had typed the commands."
 		if len(parts) < 2:
 			if self.command_cmd == list({}):
@@ -545,7 +545,7 @@ class CommandPlugin(ProtocolPlugin):
 						self.client.sendServerMessage("Type /scmd with no args to start placing the block.")
 						
 	@mod_only					
-	def commandGuestSensorCommand(self, parts, byuser, permissionoverride):
+	def commandGuestSensorCommand(self, parts, fromloc, permissionoverride):
 		"/gscmd command [arguments] - Mod\nMakes the next block you place a guest sensor command block."
 		if len(parts) < 2:
 			if self.command_cmd == list({}):
@@ -645,7 +645,7 @@ class CommandPlugin(ProtocolPlugin):
 						self.client.sendServerMessage("Type /gscmd with no args to start placing the block.")
 
 	@writer_only
-	def commandCommandend(self, parts, byuser, permissionoverride):
+	def commandCommandend(self, parts, fromloc, permissionoverride):
 		"/cmdend - Builder\nStops placing command blocks."
 		self.command_cmd =  self.command_cmd = list({})
 		self.command_remove = False
@@ -654,19 +654,19 @@ class CommandPlugin(ProtocolPlugin):
 	
 	
 	@writer_only
-	def commandCommanddel(self, parts, byuser, permissionoverride):
+	def commandCommanddel(self, parts, fromloc, permissionoverride):
 		"/cmddel - Builder\nEnables Command-deleting mode"
 		self.client.sendServerMessage("You are now able to delete command blocks. /cmddelend to stop")
 		self.command_remove = True
 	
 	@writer_only
-	def commandCommanddelend(self, parts, byuser, permissionoverride):
+	def commandCommanddelend(self, parts, fromloc, permissionoverride):
 		"/cmddelend - Builder\nDisables Command-deleting mode"
 		self.client.sendServerMessage("Command deletion mode ended.")
 		self.command_remove = False
 		
 	@writer_only
-	def commandShowcmdblocks(self, parts, byuser, permissionoverride):
+	def commandShowcmdblocks(self, parts, fromloc, permissionoverride):
 	   "/cmdshow - Builder\nShows all command blocks as yellow, only to you."
 	   for offset in self.client.world.commands.keys():
 		   x, y, z = self.client.world.get_coords(offset)
@@ -675,7 +675,7 @@ class CommandPlugin(ProtocolPlugin):
 	
 	@writer_only
 	@on_off_command
-	def commandcmdinfo(self, onoff, byuser, permissionoverride):
+	def commandcmdinfo(self, onoff, fromloc, permissionoverride):
 	   "/cmdinfo - Builder\nTells you the commands in a cmdblock"
 	   self.cmdinfo = onoff == "on"
 	   self.client.sendServerMessage("Command block info is now %s." %onoff)

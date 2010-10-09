@@ -18,7 +18,7 @@ class BanishPlugin(ProtocolPlugin):
 
 	@player_list
 	@op_only
-	def commandWorldBanned(self, user, byuser, overriderank):
+	def commandWorldBanned(self, user, fromloc, overriderank):
 		"/worldbanned - Op\nShows who is worldbanned."
 		done = ""
 		for element in self.client.world.worldbans.keys():
@@ -31,7 +31,7 @@ class BanishPlugin(ProtocolPlugin):
 	@player_list
 	@op_only
 	@username_command
-	def commandBanish(self, user, byuser, overriderank):
+	def commandBanish(self, user, fromloc, overriderank):
 		"/worldkick username - Op\nAliases: banish\nBanishes the Player to the default world."
 		if user.world == self.client.world:
 			user.sendServerMessage("You were WorldKicked from '%s'." % self.client.world.id)
@@ -43,7 +43,7 @@ class BanishPlugin(ProtocolPlugin):
 	@player_list
 	@op_only
 	@only_username_command
-	def commandWorldBan(self, username, byuser, overriderank):
+	def commandWorldBan(self, username, fromloc, overriderank):
 		"/worldban username - Op\nWorldBan a Player from this Map."
 		if self.client.world.isworldbanned(username):
 			self.client.sendServerMessage("%s is already WorldBanned." % username)
@@ -58,7 +58,7 @@ class BanishPlugin(ProtocolPlugin):
 	@player_list
 	@op_only
 	@only_username_command
-	def commandUnWorldban(self, username, byuser, overriderank):
+	def commandUnWorldban(self, username, fromloc, overriderank):
 		"/unworldban username - Op\nAliases: deworldban\nRemoves the WorldBan on the Player."
 		if not self.client.world.isworldbanned(username):
 			self.client.sendServerMessage("%s is not WorldBanned." % username)

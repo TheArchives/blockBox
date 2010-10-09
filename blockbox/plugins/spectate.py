@@ -39,7 +39,7 @@ class SpectatePlugin(ProtocolPlugin):
 	@player_list
 	@op_only
 	@username_command
-	def commandSpectate(self, user, byuser, overriderank):
+	def commandSpectate(self, user, fromloc, overriderank):
 		"/spectate username - Guest\nAliases: follow, watch\nFollows specified player around"
 
 		nospec_check = True

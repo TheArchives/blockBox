@@ -31,14 +31,14 @@ class MutePlugin(ProtocolPlugin):
 	
 	@player_list
 	@only_username_command
-	def commandMute(self, username, byuser, overriderank):
+	def commandMute(self, username, fromloc, overriderank):
 		"/mute username - Guest\nStops you hearing messages from 'username'."
 		self.muted.add(username)
 		self.client.sendServerMessage("%s muted." % username)
 	
 	@player_list
 	@only_username_command
-	def commandUnmute(self, username, byuser, overriderank):
+	def commandUnmute(self, username, fromloc, overriderank):
 		"/unmute username - Guest\nLets you hear messages from this player again"
 		if username in self.muted:
 			self.muted.remove(username)
@@ -47,7 +47,7 @@ class MutePlugin(ProtocolPlugin):
 			self.client.sendServerMessage("%s wasn't muted to start with" % username)
 	
 	@player_list
-	def commandMuted(self, username, byuser, overriderank):
+	def commandMuted(self, username, fromloc, overriderank):
 		"/muted - Guest\nLists people you have muted."
 		if self.muted:
 			self.client.sendServerList(["Muted:"] + list(self.muted))
@@ -57,7 +57,7 @@ class MutePlugin(ProtocolPlugin):
 	@player_list
 	@mod_only
 	@only_username_command
-	def commandSilence(self, username, byuser, overriderank):
+	def commandSilence(self, username, fromloc, overriderank):
 		"/silence username - Mod\nDisallows the Player to talk."
 		if self.client.factory.usernames[username].isMod():
 			self.client.sendServerMessage("You cannot silence staff!")
@@ -68,7 +68,7 @@ class MutePlugin(ProtocolPlugin):
 	@player_list
 	@mod_only
 	@only_username_command
-	def commandDesilence(self, username, byuser, overriderank):
+	def commandDesilence(self, username, fromloc, overriderank):
 		"/desilence username - Mod\nAliases: unsilence\nAllows the Player to talk."
 		if self.client.factory.isSilenced(username):
 			self.client.factory.silenced.remove(username)

@@ -83,7 +83,7 @@ class FlyPlugin(ProtocolPlugin):
 	
 	@player_list
 	@on_off_command
-	def commandFly(self, onoff, byuser, overriderank):
+	def commandFly(self, onoff, fromloc, overriderank):
 		"/fly on|off - Guest\nEnables or disables bad server-side flying"
 		if onoff == "on":
 			self.flying = True

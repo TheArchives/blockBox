@@ -14,7 +14,7 @@ class NickPlugin(ProtocolPlugin):
 	
 	@player_list
 	@director_only
-	def commandNick(self, params, byuser, rankoverride):
+	def commandNick(self, params, fromloc, rankoverride):
 		"/nick - Changes your username and skin. Use with great care."
 		if len(params) < 1:
 			self.client.sendServerMessage("Please enter a username.")

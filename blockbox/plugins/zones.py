@@ -25,7 +25,7 @@ class ZonesPlugin(ProtocolPlugin):
 
 	@op_only
 	@on_off_command
-	def commandZones(self,onoff, byuser, overriderank):
+	def commandZones(self,onoff, fromloc, overriderank):
 		"/zones on|off - Op\nEnables or disables building zones in this world."
 		if onoff == "on":
 			if self.client.world.zoned:
@@ -41,7 +41,7 @@ class ZonesPlugin(ProtocolPlugin):
 				self.client.sendWorldMessage("This world now has building zones disabled.")
 
 	@op_only
-	def commandNewZone(self, parts, byuser, overriderank):
+	def commandNewZone(self, parts, fromloc, overriderank):
 		"/znew zonename user|rank [creator/rankname] - Op\nAliases: rbox\nCreates a new zone with the name you gave.\nUsers are added with /zone name player1 player2 ...\nRank Example: '/znew GuestArea rank all'\nUser Example: '/znew hotel1 user'. then '/zone hotel1 add <player1> <player2>'"
 		parts = parts.lower()
 		if len(parts) < 3:
@@ -123,7 +123,7 @@ class ZonesPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("You need to provide a zone type. (ie user or rank)")
 
 	@op_only
-	def commandZone(self,parts, byuser, overriderank):
+	def commandZone(self,parts, fromloc, overriderank):
 		"/zone name - Op\nShows users assigned to this zone\n'/zone name add|remove [player1 player2 ...]' to edit users."
 		parts = parts.lower()
 		if len(parts)== 2:
@@ -172,7 +172,7 @@ class ZonesPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("You must at least provide a zone name.")
 
 	@op_only
-	def commandDeZone(self, parts, byuser, overriderank):
+	def commandDeZone(self, parts, fromloc, overriderank):
 		"/zremove name - Op\nRemoves a zone"
 		parts = parts.lower()
 		if len(parts)==2:
@@ -214,12 +214,12 @@ class ZonesPlugin(ProtocolPlugin):
 		else:
 			self.client.sendServerMessage("You must provide a zone name.")
 
-	def commandListZones(self, parts, byuser, overriderank):
+	def commandListZones(self, parts, fromloc, overriderank):
 		"zlist - Guest\nLists all the zones on this map."
 		self.client.sendServerList(["User Zones:"] + [zone[0] for id, zone in self.client.world.userzones.items()])
 		self.client.sendServerList(["Rank Zones:"] + [zone[0] for id, zone in self.client.world.rankzones.items()])
 
-	def commandZshow(self, parts, byuser, overriderank):
+	def commandZshow(self, parts, fromloc, overriderank):
 		"/zshow [all|name] - Guest\nOutlnes the zone in water temporary."
 		parts = parts.lower()
 		if not len(parts)==2:
@@ -360,7 +360,7 @@ class ZonesPlugin(ProtocolPlugin):
 				self.client.sendServerMessage("That zone does not exist.")
 
 	@op_only
-	def commandClearZone(self,parts, byuser, overriderank):
+	def commandClearZone(self,parts, fromloc, overriderank):
 		"/zclear name - Op\nClears everything within the zone."
 		parts = parts.lower()
 		if not len(parts)==2:
@@ -444,7 +444,7 @@ class ZonesPlugin(ProtocolPlugin):
 							block_iter.next()
 						reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 					except StopIteration:
-						if byuser:
+						if fromloc == 'user':
 							count = ((1+(x2 - x)) * (1+(y2 - y)) * (1+(z2 - z))/3)
 							self.client.finalizeMassCMD('zone clear', count)
 						pass
@@ -462,7 +462,7 @@ class ZonesPlugin(ProtocolPlugin):
 		return False
 
 	@op_only
-	def commandZdelall(self, parts, byuser, overriderank):
+	def commandZdelall(self, parts, fromloc, overriderank):
 		"/zdelall - Op\nRemoves all zones in a map (if you can delete them)"
 		parts = parts.lower()
 		match = False
@@ -497,7 +497,7 @@ class ZonesPlugin(ProtocolPlugin):
 
 	@info_list
 	@op_only
-	def commandZoneWho(self, parts, byuser, overriderank):
+	def commandZoneWho(self, parts, fromloc, overriderank):
 		"/zwho - Op\nTells you whose zone you're currently in, if any."
 		parts = parts.lower()
 		x = self.client.x >> 5
@@ -523,7 +523,7 @@ class ZonesPlugin(ProtocolPlugin):
 
 
 	@op_only
-	def commandRename(self,parts, byuser, overriderank):
+	def commandRename(self,parts, fromloc, overriderank):
 		"/zrename oldname newname - Op\nRenames a zone."
 		parts = parts.lower()
 		if not len(parts)==3:

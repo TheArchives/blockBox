@@ -18,7 +18,7 @@ class OverloadPlugin(ProtocolPlugin):
 	@player_list
 	@admin_only
 	@username_command
-	def commandOverload(self, client, byuser, overriderank):
+	def commandOverload(self, client, fromloc, overriderank):
 		"/overload username - Admin\nSends the players client a massive fake map."
 		client.sendOverload()
 		self.client.sendServerMessage("Overload sent to %s" % client.username)
@@ -26,7 +26,7 @@ class OverloadPlugin(ProtocolPlugin):
 	#@player_list
 	#@mod_only
 	#@username_command
-	#def commandSend(self, client, byuser, overriderank):
+	#def commandSend(self, client, fromloc, overriderank):
 		#"/send username [world] - Mod\nSends the players client another world."
 		#if user.isMod():
 			#self.client.sendServerMessage("You cannot send Staff!")
@@ -43,7 +43,7 @@ class OverloadPlugin(ProtocolPlugin):
 			#self.client.sendServerMessage("Your Player is in another world!")
 
 	@mod_only
-	def commandBlazer(self, parts, byuser, overriderank):
+	def commandBlazer(self, parts, fromloc, overriderank):
 		"/blazer - Mod\nBlazer!"
 		for i in range(10):
 			self.client.sendServerMessage("SPAM!")

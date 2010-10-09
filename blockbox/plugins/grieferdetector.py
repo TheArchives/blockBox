@@ -20,7 +20,7 @@ class GreiferDetectorPlugin(ProtocolPlugin):
 		self.var_blockchcount = 0
 		self.in_publicworld = False
 	
-	def blockChanged(self, x, y, z, block, selected_block, byuser):
+	def blockChanged(self, x, y, z, block, selected_block, fromloc):
 		"Hook trigger for block changes."
 		world = self.client.world
 		if block is BLOCK_AIR and self.in_publicworld:

@@ -218,8 +218,10 @@ class MyneFactory(Factory):
 		# Open the chat log, ready for appending
 		self.create_if_not("logs/server.log")
 		self.create_if_not("logs/chat.log")
+		self.create_if_not("data/balances.sql")
 		self.chatlog = open("logs/server.log", "a")
 		self.chatlog = open("logs/chat.log", "a")
+		self.balancesqllog = open("data/balances.sql", "a")
 		
 		# Create a default world, if there isn't one.
 		if not os.path.isdir("mapdata/worlds/main"):

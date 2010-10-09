@@ -29,7 +29,7 @@ class DynamitePlugin(ProtocolPlugin):
 		if not self.client.isOp():
 			self.build_dynamite = False
 
-	def blockChanged(self, x, y, z, block, selected_block, byuser):
+	def blockChanged(self, x, y, z, block, selected_block, fromloc):
 		"Hook trigger for block changes."
 		tobuild = []
 		world = self.client.world
@@ -104,7 +104,7 @@ class DynamitePlugin(ProtocolPlugin):
 	@build_list
 	@op_only
 	@on_off_command
-	def commandDynamite(self, onoff, byuser, overriderank):
+	def commandDynamite(self, onoff, fromloc, overriderank):
 		"/tnt on|off - Op\nAliases: dynamite\nExplodes a radius around the TNT."
 		if onoff == "on":
 			self.build_dynamite = True
