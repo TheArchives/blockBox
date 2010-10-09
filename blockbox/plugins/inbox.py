@@ -18,7 +18,7 @@ class OfflineMessagePlugin(ProtocolPlugin):
 		  "clear": "commandClear",
 	}
 	
-	def commandSendMessage(self,parts, byuser, overriderank):
+	def commandSendMessage(self,parts, fromloc, overriderank):
 		"/s username message - Guest\nSends an message to the players Inbox."
 		if len(parts) < 3:
 			self.client.sendServerMessage("You must provide a username and a message.")
@@ -42,7 +42,7 @@ class OfflineMessagePlugin(ProtocolPlugin):
 			except:
 				self.client.sendServerMessage("Error sending message")
 
-	def commandCheckMessages(self, parts, byuser, overriderank):
+	def commandCheckMessages(self, parts, fromloc, overriderank):
 		"/inbox - Guest\nChecks your Inbox of messages"
 		file = open('data/offlinemessage.dat', 'r')
 		messages = pickle.load(file)
@@ -53,7 +53,7 @@ class OfflineMessagePlugin(ProtocolPlugin):
 		else:
 			self.client.sendServerMessage("You do not have any messages.")
 
-	def commandClear(self,parts, byuser, overriderank):
+	def commandClear(self,parts, fromloc, overriderank):
 		"/c - Guest\nAliases: clear\nClears your Inbox of messages"
 		target = self.client.username.lower()
 		file = open('data/offlinemessage.dat', 'r')

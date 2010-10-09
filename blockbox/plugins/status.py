@@ -24,7 +24,7 @@ class StatusPlugin(ProtocolPlugin):
 
 	@player_list
 	@mod_only
-	def commandSetOwner(self, parts, byuser, overriderank):
+	def commandSetOwner(self, parts, fromloc, overriderank):
 		"/setowner username - Mod\nAliases: owner, worldowner\nSets the world's owner string"
 		if len(parts) == 1:
 			self.client.sendServerMessage("Please specify an World Owner.")
@@ -35,7 +35,7 @@ class StatusPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("The World Owner has been set.")
 
 	@info_list
-	def commandOps(self, parts, byuser, overriderank):
+	def commandOps(self, parts, fromloc, overriderank):
 		"/ops - Guest\nLists this world's ops"
 		if not self.client.world.ops:
 			self.client.sendServerMessage("This world has no Ops.")
@@ -43,7 +43,7 @@ class StatusPlugin(ProtocolPlugin):
 			self.client.sendServerList(["Ops for %s:" % self.client.world.id] + list(self.client.world.ops))
 
 	@info_list
-	def commandWriters(self, parts, byuser, overriderank):
+	def commandWriters(self, parts, fromloc, overriderank):
 		"/writers - Guest\nAliases: builders\nLists this world's writers"
 		if not self.client.world.writers:
 			self.client.sendServerMessage("This world has no Builders.")
@@ -51,7 +51,7 @@ class StatusPlugin(ProtocolPlugin):
 			self.client.sendServerList(["Builders for %s:" % self.client.world.id] + list(self.client.world.writers))
 	
 	@info_list
-	def commandStatus(self, parts, byuser, overriderank):
+	def commandStatus(self, parts, fromloc, overriderank):
 		"/status - Guest\nAliases: mapinfo\nReturns info about the current world"
 		self.client.sendServerMessage("World: %s" % (self.client.world.id))
 		self.client.sendServerMessage("Owner: %s" % self.client.world.owner)
@@ -79,7 +79,7 @@ class StatusPlugin(ProtocolPlugin):
   
 	@world_list
 	@op_only
-	def commandSetspawn(self, parts, byuser, overriderank):
+	def commandSetspawn(self, parts, fromloc, overriderank):
 		"/setspawn - Op\nSets this world's spawn point to the current location."
 		x = self.client.x >> 5
 		y = self.client.y >> 5
@@ -89,7 +89,7 @@ class StatusPlugin(ProtocolPlugin):
 		self.client.sendServerMessage("Set spawn point to %s, %s, %s" % (x, y, z))
 	
 	@info_list
-	def commandWhere(self, parts, byuser, overriderank):
+	def commandWhere(self, parts, fromloc, overriderank):
 		"/where - Guest\nReturns your current coordinates"
 		x = self.client.x >> 5
 		y = self.client.y >> 5

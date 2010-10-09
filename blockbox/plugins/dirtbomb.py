@@ -28,7 +28,7 @@ class DirtBombPlugin(ProtocolPlugin):
 		if not self.client.isOp():
 			self.build_tnt = False
 	
-	def blockChanged(self, x, y, z, block, selected_block, byuser):
+	def blockChanged(self, x, y, z, block, selected_block, fromloc):
 		"Hook trigger for block changes."
 		tobuild = []
 		# Randomise the variables
@@ -54,7 +54,7 @@ class DirtBombPlugin(ProtocolPlugin):
 	@build_list
 	@op_only
 	@on_off_command
-	def commanddirtbomb(self, onoff, byuser, overriderank):
+	def commanddirtbomb(self, onoff, fromloc, overriderank):
 		"/dirtbomb on|off - Builder\nThis is some kind of bomb involving dirt."
 		if onoff == "on":
 			self.build_tnt = True

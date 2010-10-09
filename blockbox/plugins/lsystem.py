@@ -22,7 +22,7 @@ class LSystemPlugin(ProtocolPlugin):
 		self.var_production = {}
 
 	@info_list
-	def commandLbook(self, parts, byuser, overriderank):
+	def commandLbook(self, parts, fromloc, overriderank):
 		"/lbook pagenumber - Guest\nExplains lsystem in book form."
 		if len(parts) > 1:
 			if parts[1].lower() == "1":
@@ -68,7 +68,7 @@ class LSystemPlugin(ProtocolPlugin):
 
 	@build_list
 	@op_only
-	def commandRec_Axiom(self, parts, byuser, overriderank):
+	def commandRec_Axiom(self, parts, fromloc, overriderank):
 		"/rec_axiom axiom - Op\nRecords an axiom for lsystems."
 		if len(parts) != 2:
 			self.client.sendSplitServerMessage("Please enter an axiom to save (use //rec_axiom to add to an existing axiom)")
@@ -93,7 +93,7 @@ class LSystemPlugin(ProtocolPlugin):
 
 	@build_list
 	@op_only
-	def commandRec_Production(self, parts, byuser, overriderank):
+	def commandRec_Production(self, parts, fromloc, overriderank):
 		"/rec_production item production - Op\nRecords production recipes for lsystems."
 		if len(parts) != 3:
 			if len(parts) == 2:
@@ -127,7 +127,7 @@ class LSystemPlugin(ProtocolPlugin):
 
 	@build_list
 	@op_only
-	def commandLsystem(self, parts, byuser, overriderank):
+	def commandLsystem(self, parts, fromloc, overriderank):
 		"/lsystem blocktype standarddistance\nzxrotation yzrotation xyrotation level [x y z x2 y2 z2] - Op\nDraws an lsystem."
 		try:
 			axiom = self.client.var_axiom
@@ -486,7 +486,7 @@ class LSystemPlugin(ProtocolPlugin):
 						block_iter.next()
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
-					if byuser:
+					if fromloc == 'user':
 						self.client.sendServerMessage("Your lsystem just completed.")
 					pass
 			do_step()

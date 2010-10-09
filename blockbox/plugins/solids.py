@@ -22,7 +22,7 @@ class AdminBlocksPlugin(ProtocolPlugin):
 	def gotClient(self):
 		self.building_solid = False
 	
-	def blockChanged(self, x, y, z, block, selected_block, byuser):
+	def blockChanged(self, x, y, z, block, selected_block, fromloc):
 		"Hook trigger for block changes."
 		# Admincrete hack check
 		if not self.canBreakAdminBlocks():
@@ -49,7 +49,7 @@ class AdminBlocksPlugin(ProtocolPlugin):
 	@world_list
 	@op_only
 	@on_off_command
-	def commandAdminblocks(self, onoff, byuser, overriderank):
+	def commandAdminblocks(self, onoff, fromloc, overriderank):
 		"/solids on|off - Op\nTurns on/off unbreakable admin/op blocks."
 		if onoff == "on":
 			self.client.world.admin_blocks = True
@@ -64,7 +64,7 @@ class AdminBlocksPlugin(ProtocolPlugin):
 	
 	@build_list
 	@op_only
-	def commandSolid(self, parts, byuser, overriderank):
+	def commandSolid(self, parts, fromloc, overriderank):
 		"/solid - Op\nToggles admincrete creation."
 		if self.building_solid:
 			self.client.sendServerMessage("You are now placing normal rock.")

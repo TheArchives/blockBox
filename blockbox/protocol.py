@@ -112,7 +112,7 @@ class MyneServerProtocol(Protocol):
 	
 	def loadPlugin(self, plugin_class):
 		self.plugins.append(plugin_class(self))
-	
+
 	def runHook(self, hook, *args, **kwds):
 		"Runs the hook 'hook'."
 		for func in self.hooks.get(hook, []):
@@ -510,7 +510,7 @@ class MyneServerProtocol(Protocol):
 						self.sendServerMessage("'%s' is a Builder-only command!" % command)
 						return
 					try:
-						func(parts, True, False) #byuser is true, overriderank is false
+						func(parts, 'user', False) #fromloc is user, overriderank is false
 					except Exception, e:
 						self.sendSplitServerMessage(traceback.format_exc().replace("Traceback (most recent call last):", ""))
 						self.sendSplitServerMessage("Internal Server Error - Traceback (Please report this to the Server Staff or the blockBox Team, see /about for contact info)")

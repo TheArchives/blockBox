@@ -18,3 +18,4 @@ glob:conf/performance.ini
 glob:mapdata/worlds/*
 glob:mapdata/archives/*
 glob:logs/*
+glob:data/*.sql

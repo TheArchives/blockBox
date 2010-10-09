@@ -6,7 +6,7 @@ from lib.twisted.internet import reactor
 from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
-import lib.Image
+import lib.pil
 import urllib
 import StringIO
 
@@ -19,7 +19,7 @@ class ImagedrawPlugin(ProtocolPlugin):
 
 	@build_list
 	@admin_only
-	def commandRec_url(self, parts, byuser, overriderank):
+	def commandRec_url(self, parts, fromloc, overriderank):
 		"/rec_url URL - Builder\nRecords an url to later imagedraw it."
 		if len(parts) == 1:
 			self.client.sendServerMessage("Please specify an url (and '//' in the beginning to")
@@ -42,7 +42,7 @@ class ImagedrawPlugin(ProtocolPlugin):
 
 	@build_list
 	@admin_only
-	def commandImagedraw(self, parts, byuser, overriderank):
+	def commandImagedraw(self, parts, fromloc, overriderank):
 		"/imagedraw [x y z x2 y2 z2] - Builder\nSets all blocks in this area to image."
 		if len(parts) < 8 and len(parts) != 2 and len(parts) != 3:
 			self.client.sendServerMessage("Please enter whether to flip? (rotation)")
@@ -273,7 +273,7 @@ class ImagedrawPlugin(ProtocolPlugin):
 						block_iter.next()
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
-					if byuser:
+					if fromloc == 'user':
 						#TODO: Fix the formula (isn't images 2D only)
 						count = (((1+(x2 - x)) * (1+(y2 - y)) * 1)/3)
 						self.client.finalizeMassCMD('imagedraw', count)

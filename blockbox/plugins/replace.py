@@ -20,7 +20,7 @@ class BrepPlugin(ProtocolPlugin):
 	
 	@build_list
 	@writer_only
-	def commandBrep(self, parts, byuser, overriderank):
+	def commandBrep(self, parts, fromloc, overriderank):
 		"/replace blockA blockB [x y z x2 y2 z2] - Builder\nAliases: brep\nReplaces all blocks of blockA in this area to blockB."
 		if len(parts) < 9 and len(parts) != 3:
 			self.client.sendServerMessage("Please enter types (and possibly two coord triples)")
@@ -81,14 +81,14 @@ class BrepPlugin(ProtocolPlugin):
 				for i in range(x, x2+1):
 					for j in range(y, y2+1):
 						for k in range(z, z2+1):
-							if not self.client.AllowedToBuild(i, j, k) and byuser==False:
+							if not self.client.AllowedToBuild(i, j, k) and fromloc != 'user':
 								return
 							try:
 								check_offset = world.blockstore.get_offset(i, j, k)
 								block = world.blockstore.raw_blocks[check_offset]
 								if block == blockA:
 									world[i, j, k] = blockB
-									self.client.runHook("blockchange", x, y, z, ord(block), ord(block), byuser)
+									self.client.runHook("blockchange", x, y, z, ord(block), ord(block), fromloc)
 									self.client.queueTask(TASK_BLOCKSET, (i, j, k, blockB), world=world)
 									self.client.sendBlock(i, j, k, blockB)
 									self.client.total = self.client.total+1
@@ -105,7 +105,7 @@ class BrepPlugin(ProtocolPlugin):
 						block_iter.next()
 					reactor.callLater(0.01, do_step)
 				except StopIteration:
-					if byuser:
+					if fromloc == 'user':
 						self.client.finalizeMassCMD('replace', self.client.total)
 						self.client.total = 0
 					pass
@@ -113,7 +113,7 @@ class BrepPlugin(ProtocolPlugin):
 
 	@build_list
 	@op_only
-	def commandCreplace(self, parts, byuser, overriderank):
+	def commandCreplace(self, parts, fromloc, overriderank):
 		"/creplace typeA typeB typeC [x y z x2 y2 z2] - Op\nAliases: crep\nReplaces all blocks of typeA in this cuboid to typeB and typeC."
 		if len(parts) < 10 and len(parts) != 4:
 			self.client.sendServerMessage("Please enter the type to replace and two other types")
@@ -234,7 +234,7 @@ class BrepPlugin(ProtocolPlugin):
 						block_iter.next()
 					reactor.callLater(0.01, do_step)
 				except StopIteration:
-					if byuser:
+					if fromloc == 'user':
 						self.client.finalizeMassCMD('creplace', self.client.total)
 						self.client.total = 0
 					pass
@@ -242,7 +242,7 @@ class BrepPlugin(ProtocolPlugin):
 
 	@build_list
 	@op_only
-	def commandFill(self, parts, byuser, overriderank):
+	def commandFill(self, parts, fromloc, overriderank):
 		"/fill blockname repblock [x y z x2 y2 z2] - Op\nFills the area with the block."
 		if len(parts) < 9 and len(parts) != 3:
 			self.client.sendServerMessage("Please enter a type and a type to replace")
@@ -374,7 +374,7 @@ class BrepPlugin(ProtocolPlugin):
 						block_iter.next()
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
-					if byuser:
+					if fromloc == 'user':
 						self.client.finalizeMassCMD('fill', self.client.total)
 						self.client.total = 0
 					pass

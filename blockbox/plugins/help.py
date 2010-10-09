@@ -22,7 +22,7 @@ class HelpPlugin(ProtocolPlugin):
 	}
 
 	@info_list
-	def commandHelp(self, parts, byuser, overriderank):
+	def commandHelp(self, parts, fromloc, overriderank):
 		"/help [document/command] - Guest\nHelp for this server and commands."
 		if len(parts) > 1:
 			try:
@@ -72,7 +72,7 @@ class HelpPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("About: /about | Credits: /credits")
 
 	@info_list
-	def commandCmdlist(self, parts, byuser, overriderank):
+	def commandCmdlist(self, parts, fromloc, overriderank):
 		"/cmdlist category - Guest\nThe command list of your rank, categories."
 		if len(parts) > 1:
 			if parts[1].lower() == "all":
@@ -149,7 +149,7 @@ class HelpPlugin(ProtocolPlugin):
 			self.client.sendServerList(sorted(commands))
 
 	@info_list
-	def commandAbout(self, parts, byuser, overriderank):
+	def commandAbout(self, parts, fromloc, overriderank):
 		self.client.sendServerMessage("About The Server - blockBox %s" % VERSION)
 		self.client.sendServerMessage("Name: "+self.client.factory.server_name)
 		self.client.sendServerMessage("URL: "+self.client.factory.info_url)
@@ -158,7 +158,7 @@ class HelpPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("IRC: "+self.client.factory.conf_irc.get("irc", "server")+" "+self.client.factory.irc_channel)
 
 	@info_list
-	def commandCredits(self, parts, byuser, overriderank):
+	def commandCredits(self, parts, fromloc, overriderank):
 		"/credits - Guest\nCredits for the creators, devs and testers."
 		self.client.sendServerMessage("The Credits")
 		list = Credits(self)
@@ -166,7 +166,7 @@ class HelpPlugin(ProtocolPlugin):
 			self.client.sendSplitServerMessage(each)
 
 	@info_list
-	def commandMOTD(self, parts, byuser, overriderank):
+	def commandMOTD(self, parts, fromloc, overriderank):
 		"/motd - Guest\nAliases: greeting\nShows the greeting."
 		self.client.sendServerMessage("MOTD for "+self.client.factory.server_name+":")
 		for line in self.client.factory.initial_greeting.split("\n"):

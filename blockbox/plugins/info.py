@@ -80,7 +80,7 @@ class InfoPlugin(ProtocolPlugin):
 	def gotClient(self):
 		self.binfo = 0
 	
-	def blockChanged(self, x, y, z, block, selected_block, byuser):
+	def blockChanged(self, x, y, z, block, selected_block, fromloc):
 		if self.binfo == 1:
 			check_offset = self.client.world.blockstore.get_offset(x, y, z)
 			block2 = ord(self.client.world.blockstore.raw_blocks[check_offset])
@@ -92,18 +92,18 @@ class InfoPlugin(ProtocolPlugin):
 				self.client.sendServerMessage("x: %s y: %s z: %s" % (x, y, z))
 				return False
 	@build_list
-	def commandInfo(self,parts,byuser,overriderank):
+	def commandInfo(self,parts,fromloc,overriderank):
 			self.binfo = 1
 			self.client.sendServerMessage("You are now getting info about blocks.")
 			self.client.sendServerMessage("Use '/infoend' to stop.")
 
 	@build_list
-	def commandInfoEnd(self,parts,byuser,overriderank):
+	def commandInfoEnd(self,parts,fromloc,overriderank):
 			self.binfo = 0
 			self.client.sendServerMessage("You are no longer getting info about blocks.")
 
 	@build_list
-	def commandBlockindex(self, parts, byuser, overriderank):
+	def commandBlockindex(self, parts, fromloc, overriderank):
 		"/blockindex blockname - Guest\nAliases: bindex\nGives you the index of the block."
 		if len(parts) != 2:
 			self.client.sendServerMessage("Please enter a block to check the index of.")

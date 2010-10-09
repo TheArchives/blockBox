@@ -37,7 +37,7 @@ class MultiWorldPlugin(ProtocolPlugin):
 	
 	@world_list
 	@admin_only
-	def commandNew(self, parts, byuser, overriderank):
+	def commandNew(self, parts, fromloc, overriderank):
 		"/new worldname templatename - Admin\nMakes a new world, and boots it."
 		if len(parts) == 1:
 			self.client.sendServerMessage("Please specify a new worldname.")
@@ -58,7 +58,7 @@ class MultiWorldPlugin(ProtocolPlugin):
 
 	@world_list
 	@mod_only
-	def commandRename(self, parts, byuser, overriderank):
+	def commandRename(self, parts, fromloc, overriderank):
 		"/rename worldname newworldname - Mod\nRenames a SHUT DOWN world."
 		if len(parts) < 3:
 			self.client.sendServerMessage("Please specify two worldnames.")
@@ -77,7 +77,7 @@ class MultiWorldPlugin(ProtocolPlugin):
 	
 	@world_list
 	@mod_only
-	def commandShutdown(self, parts, byuser, overriderank):
+	def commandShutdown(self, parts, fromloc, overriderank):
 		"/shutdown worldname - Mod\nTurns off the named world."
 		if len(parts) == 1:
 			self.client.sendServerMessage("Please specify a worldname.")
@@ -90,7 +90,7 @@ class MultiWorldPlugin(ProtocolPlugin):
 
 	@world_list
 	@mod_only
-	def commandReboot(self, parts, byuser, overriderank):
+	def commandReboot(self, parts, fromloc, overriderank):
 		"/reboot worldname - Mod\nReboots a map"
 		if len(parts) == 1:
 			self.client.sendServerMessage("Please specify a worldname.")
@@ -103,7 +103,7 @@ class MultiWorldPlugin(ProtocolPlugin):
 
 	@world_list
 	@mod_only
-	def commandBoot(self, parts, byuser, overriderank):
+	def commandBoot(self, parts, fromloc, overriderank):
 		"/boot worldname - Mod\nStarts up a new world."
 		if len(parts) == 1:
 			self.client.sendServerMessage("Please specify a worldname.")
@@ -119,7 +119,7 @@ class MultiWorldPlugin(ProtocolPlugin):
 	
 	@world_list
 	@only_string_command("world name")
-	def commandLoad(self, world_id, byuser, overriderank, params=None):
+	def commandLoad(self, world_id, fromloc, overriderank, params=None):
 		"/l worldname - Guest\nAliases: join, load\nMoves you into world 'worldname'"
 		if world_id not in self.client.factory.worlds:
 			self.client.sendServerMessage("Attempting to boot and join '%s'" % world_id)
@@ -140,7 +140,7 @@ class MultiWorldPlugin(ProtocolPlugin):
 		self.client.changeToWorld(world_id)
 	
 	@world_list
-	def commandWorlds(self, parts, byuser, overriderank):
+	def commandWorlds(self, parts, fromloc, overriderank):
 		"/worlds [letter|all] - Guest\nAliases: maps, levels\nLists available worlds - by letter, online, or all."
 		if len(parts) != 2 and len(parts) != 3:
 			self.client.sendServerMessage("Do /worlds all for all worlds or choose a letter.")
@@ -175,11 +175,11 @@ class MultiWorldPlugin(ProtocolPlugin):
 			self.client.sendServerList(["Worlds:"] + newlist)
 
 	@world_list
-	def commandTemplates(self, parts, byuser, overriderank):
+	def commandTemplates(self, parts, fromloc, overriderank):
 		"/templates - Guest\nLists available templates"
 		self.client.sendServerList(["Templates:"] + os.listdir("mapdata/templates/"))
 
-	def commandHome(self, parts, byuser, overriderank):
+	def commandHome(self, parts, fromloc, overriderank):
 		"/home [worldname] - Guest\nGoes to and/or changes your home world."
 		if not len(parts) > 1:
 			self.client.changeToWorld(self.client.homeworld)
@@ -190,7 +190,7 @@ class MultiWorldPlugin(ProtocolPlugin):
 
 	@world_list
 	@admin_only
-	def commandCreate(self, parts, byuser, overriderank):
+	def commandCreate(self, parts, fromloc, overriderank):
 		"/create worldname width height length - Admin\nCreates a new world with specified dimensions."
 		if len(parts) == 1:
 			self.client.sendServerMessage("Please specify a world name.")
@@ -220,7 +220,7 @@ class MultiWorldPlugin(ProtocolPlugin):
 	
 	@world_list
 	@admin_only
-	def commandDelete(self, parts, byuser, overriderank):
+	def commandDelete(self, parts, fromloc, overriderank):
 		"/delete worldname - Admin\nSets the specified world to 'ignored'."
 		if len(parts) == 1:
 			self.client.sendServerMessage("Please specify a worldname.")
@@ -245,7 +245,7 @@ class MultiWorldPlugin(ProtocolPlugin):
 	
 	@world_list
 	@admin_only
-	def commandUnDelete(self, parts, byuser, overriderank):
+	def commandUnDelete(self, parts, fromloc, overriderank):
 		"/undelete worldname - Admin\nRestores a deleted map."
 		if len(parts) < 2:
 			self.client.sendServerMessage("Please specify a worldname.")
@@ -269,7 +269,7 @@ class MultiWorldPlugin(ProtocolPlugin):
 
 	@world_list
 	@admin_only
-	def commandDeleted(self, parts, byuser, overriderank):
+	def commandDeleted(self, parts, fromloc, overriderank):
 		"/deleted [letter] - Admin\nLists deleted worlds - by letter or all."
 		if len(parts) != 2 and len(parts) != 3:
 			self.client.sendServerMessage("Do '/deleted letter' for all starting with a letter.")

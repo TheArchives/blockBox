@@ -26,7 +26,7 @@ class BlbPlugin(ProtocolPlugin):
 	
 	@build_list
 	@writer_only
-	def commandBlb(self, parts, byuser, overriderank):
+	def commandBlb(self, parts, fromloc, overriderank):
 		"/blb blockname [x y z x2 y2 z2] - Builder\nAliases: box, cub, cuboid, draw\nSets all blocks in this area to block."
 		
 		if len(parts) < 8 and len(parts) != 2:
@@ -91,7 +91,7 @@ class BlbPlugin(ProtocolPlugin):
 								return
 							try:
 								world[i, j, k] = block
-								self.client.runHook("blockchange", x, y, z, ord(block), ord(block), byuser)
+								self.client.runHook("blockchange", x, y, z, ord(block), ord(block), fromloc)
 							except AssertionError:
 								self.client.sendServerMessage("Out of bounds blb error.")
 								return
@@ -109,7 +109,7 @@ class BlbPlugin(ProtocolPlugin):
 						block_iter.next()
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
-					if byuser:
+					if fromloc == 'user':
 						#count = ((1+(x2 - x)) * (1+(y2 - y)) * (1+(z2 - z))/3)
 						self.client.finalizeMassCMD('blb', self.client.total)
 						self.client.total = 0
@@ -118,7 +118,7 @@ class BlbPlugin(ProtocolPlugin):
 
 	@build_list
 	@writer_only
-	def commandHBlb(self, parts, byuser, overriderank):
+	def commandHBlb(self, parts, fromloc, overriderank):
 		"/bhb blockname [x y z x2 y2 z2] - Builder\nAliases: hbox\nSets all blocks in this area to block, hollow."
 
 		if len(parts) < 8 and len(parts) != 2:
@@ -185,7 +185,7 @@ class BlbPlugin(ProtocolPlugin):
 							if i==x or i==x2 or j==y or j==y2 or k==z or k==z2:
 								try:
 								   world[i, j, k] = block
-								   self.client.runHook("blockchange", x, y, z, ord(block), ord(block), byuser)
+								   self.client.runHook("blockchange", x, y, z, ord(block), ord(block), fromloc)
 								except AssertionError:
 									self.client.sendServerMessage("Out of bounds bhb error.")
 									return
@@ -203,7 +203,7 @@ class BlbPlugin(ProtocolPlugin):
 						block_iter.next()
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
-					if byuser:
+					if fromloc == 'user':
 						#count = (((1+(x2 - x)) * (1+(y2 - y)) * (1+(z2 - z))/3) - ((x2 - x) * (y2 - y) * (z2 - z)/3))
 						self.client.finalizeMassCMD('bhb', self.client.total)
 						self.client.total = 0
@@ -212,7 +212,7 @@ class BlbPlugin(ProtocolPlugin):
 
 	@build_list
 	@writer_only
-	def commandWBlb(self, parts, byuser, overriderank):
+	def commandWBlb(self, parts, fromloc, overriderank):
 		"/bwb blockname [x y z x2 y2 z2] - Builder\nBuilds four walls between the two areas.\nHollow, with no roof or floor."
 
 		if len(parts) < 8 and len(parts) != 2:
@@ -279,7 +279,7 @@ class BlbPlugin(ProtocolPlugin):
 							if i==x or i==x2 or k==z or k==z2:
 								try:
 								   world[i, j, k] = block
-								   self.client.runHook("blockchange", x, y, z, ord(block), ord(block), byuser)
+								   self.client.runHook("blockchange", x, y, z, ord(block), ord(block), fromloc)
 								except AssertionError:
 									self.client.sendServerMessage("Out of bounds bwb error.")
 									return
@@ -296,7 +296,7 @@ class BlbPlugin(ProtocolPlugin):
 						block_iter.next()
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
-					if byuser:
+					if fromloc == 'user':
 						#TODO: Fix the formula
 						count = (((1+(x2 - x)) * (1+(y2 - y)) * (1+(z2 - z))/3) - ((x2 - x) * (y2 - y) * (2+(z2 - z))/3))
 						self.client.finalizeMassCMD('bwb', count)
@@ -305,7 +305,7 @@ class BlbPlugin(ProtocolPlugin):
 
 	@build_list
 	@writer_only
-	def commandBcb(self, parts, byuser, overriderank):
+	def commandBcb(self, parts, fromloc, overriderank):
 		"/bcb blockname blockname2 [x y z x2 y2 z2] - Builder\nSets all blocks in this area to block, checkered."
 		self.total_a = 0
 		self.total_b = 0
@@ -453,7 +453,7 @@ class BlbPlugin(ProtocolPlugin):
 						block_iter.next()
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
-					if byuser:
+					if fromloc == 'user':
 						#TODO: Speed up blockcount in ticker
 						#count = ((1+(x2 - x)) * (1+(y2 - y)) * (1+(z2 - z))/3)
 						self.client.finalizeMassCMD('bcb', self.client.total)
@@ -463,7 +463,7 @@ class BlbPlugin(ProtocolPlugin):
 
 	@build_list
 	@writer_only
-	def commandBhcb(self, parts, byuser, overriderank):
+	def commandBhcb(self, parts, fromloc, overriderank):
 		"/bhcb blockname blockname2 [x y z x2 y2 z2] - Builder\nSets all blocks in this area to blocks, checkered hollow."
 		self.total_a = 0
 		self.total_b = 0
@@ -590,7 +590,7 @@ class BlbPlugin(ProtocolPlugin):
 						block_iter.next()
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
-					if byuser:
+					if fromloc == 'user':
 						count = (((1+(x2 - x)) * (1+(y2 - y)) * (1+(z2 - z))/3) - ((x2 - x) * (y2 - y) * (z2 - z)/3))
 						self.client.finalizeMassCMD('bhcb', count)
 						self.client.sendServerMessage("%i %s, %i %s" % (self.total_a, block, self.total_b, block2))
@@ -601,7 +601,7 @@ class BlbPlugin(ProtocolPlugin):
 
 	@build_list
 	@writer_only
-	def commandFBlb(self, parts, byuser, overriderank):
+	def commandFBlb(self, parts, fromloc, overriderank):
 		"/bfb blockname [x y z x2 y2 z2] - Builder\nSets all blocks in this area to block, wireframe."
 
 		if len(parts) < 8 and len(parts) != 2:
@@ -701,7 +701,7 @@ class BlbPlugin(ProtocolPlugin):
 						block_iter.next()
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
-					if byuser:
+					if fromloc == 'user':
 						#TODO: Fix the formula
 						count = (2*(1+(x2 - x)) + 2*(1+(y2 - y)) + 2*(z2 - z))
 						self.client.finalizeMassCMD('bfb', count)

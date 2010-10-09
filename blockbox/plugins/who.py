@@ -25,7 +25,7 @@ class PlayersPlugin(ProtocolPlugin):
 	}
 
 	@only_username_command
-	def commandLastseen(self, username, byuser, overriderank):
+	def commandLastseen(self, username, fromloc, overriderank):
 		"/lastseen username - Guest\nTells you when 'username' was last seen."
 		#TOFIX: Lastseen
 		if self.persist.string("main", "lastseen", -1):
@@ -39,12 +39,12 @@ class PlayersPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("%s was last seen %s ago." % (username, desc))
 
 	@username_command
-	def commandLocate(self, user, byuser, overriderank):
+	def commandLocate(self, user, fromloc, overriderank):
 		"/locate username - Guest\nAliases: find\nTells you what world a user is in."
 		self.client.sendServerMessage("%s is in %s" % (user.username, user.world.id))
 
 	@player_list
-	def commandWho(self, parts, byuser, overriderank):
+	def commandWho(self, parts, fromloc, overriderank):
 		"/who [username] - Guest\nAliases: pinfo, players, whois\nOnline players, or player lookup."
 		if len(parts) < 2:
 			self.client.sendServerMessage("Do '/who username' for more info.")
@@ -123,20 +123,20 @@ class PlayersPlugin(ProtocolPlugin):
 						mins = (t % 3600) // 60
 						desc = "%id, %ih, %im" % (days, hours, mins)
 						self.client.sendServerMessage("Last Seen: %s ago." % (desc))
-						#self.commandLastseen(parts, byuser, overriderank)
+						#self.commandLastseen(parts, fromloc, overriderank)
 					if p.int("bank", "balance", -1) is not -1:
 						self.client.sendServerMessage("Balance: C%d." %(p.int("bank", "balance", 0)))
 					else:
 						self.client.sendServerMessage("Balance: N/A")
 	
 	@player_list
-	def commandQuitMsg(self, parts, byuser, overriderank):
+	def commandQuitMsg(self, parts, fromloc, overriderank):
 		self.client.persist.set("main", "quitmsg", " ".join(parts[1:]))
 		self.client.quitmsg = " ".join(parts[1:])
 		self.client.sendServerMessage("Your quit message is now: %s" % " ".join(parts[1:]))
 	
 	@player_list
-	def commandQuit(self, parts, byuser, overriderank):
+	def commandQuit(self, parts, fromloc, overriderank):
 		if not len(parts) > 1:
 			self.client.sendError("Quit: %s" % self.client.quitmsg)
 		else:

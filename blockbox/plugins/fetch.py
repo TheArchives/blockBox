@@ -40,7 +40,7 @@ class FetchPlugin(ProtocolPlugin):
 	@player_list
 	@op_only
 	@username_command
-	def commandFetch(self, user, byuser, overriderank):
+	def commandFetch(self, user, fromloc, overriderank):
 		"/fetch username - Op\nAliases: bring\nTeleports a player to be where you are"
 		# Shift the locations right to make them into block coords
 		rx = self.client.x >> 5
@@ -60,7 +60,7 @@ class FetchPlugin(ProtocolPlugin):
 
 	@player_list
 	@username_command
-	def commandInvite(self, user, byuser, overriderank):
+	def commandInvite(self, user, fromloc, overriderank):
 		rx = self.client.x >> 5
 		ry = self.client.y >> 5
 		rz = self.client.z >> 5

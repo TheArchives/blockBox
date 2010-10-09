@@ -22,9 +22,9 @@ class TwitterPlugin(ProtocolPlugin):
 	twlog = open("logs/twitter.log", "a")
 
 	@info_list
-	def commandTlogin(self, parts, byuser, overriderank):
+	def commandTlogin(self, parts, fromloc, overriderank):
 		"/tlog username password - Guest\nReplace username and password to login to Twitter."
-		if not byuser:
+		if fromloc != 'user':
 			try:
 				if len(parts[1]) < 1:
 					self.client.sendServerMessage("Please input a username and password.")
@@ -44,9 +44,9 @@ class TwitterPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("You can't use twitter from a cmdblock!")
 
 	@info_list
-	def commandTweet(self, parts, byuser, overriderank):
+	def commandTweet(self, parts, fromloc, overriderank):
 		"/tweet tweet - Guest\nSend a tweet to Twitter after using /tlog."
-		if not byuser:
+		if fromloc != 'user':
 			if len(self.tuser) < 1:
 				self.client.sendServerMessage("Please do /tlog first.")
 			else:
@@ -60,9 +60,9 @@ class TwitterPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("You can't use twitter from a cmdblock!")
 
 	@info_list
-	def commandDetails(self, parts, byuser, overriderank):
+	def commandDetails(self, parts, fromloc, overriderank):
 		"/tdetails - Guest\nGives you your Twitter login details, from /tlog."
-		if not byuser:
+		if fromloc != 'user':
 			if len(self.tuser) < 1:
 				self.client.sendServerMessage("Username: "+COLOUR_RED+"Not entered!")
 			else:

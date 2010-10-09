@@ -18,7 +18,7 @@ class MoneyPlugin(ProtocolPlugin):
 	}
 	money_logger = logging.getLogger('TransactionLogger')
 	
-	def commandBalance(self, parts, byuser, overriderank):	
+	def commandBalance(self, parts, fromloc, overriderank):	
 		"/bank - Guest\nAliases: balance\nFirst time: Creates you a account.\nOtherwise: Checks your balance."
 		if self.client.persist.int("bank", "balance", -1) is not -1:
 			self.client.sendServerMessage("Welcome to the Bank!")
@@ -34,7 +34,7 @@ class MoneyPlugin(ProtocolPlugin):
 			self.money_logger.info("%s has created an account." % self.client.username)
 
 	@director_only
-	def commandSetAccount(self, parts, byuser, overriderank):
+	def commandSetAccount(self, parts, fromloc, overriderank):
 		"/setbank username amount - Director\nEdits Bank Account"
 		if len(parts) != 3:
 			self.client.sendServerMessage("Syntax: /set <target> <amount>")	
@@ -56,7 +56,7 @@ class MoneyPlugin(ProtocolPlugin):
 		self.client.factory.balancesqllog.flush()
 		self.client.sendServerMessage("Set player balance to %d %s." % (amount, self.client.factory.credit_name))
 			
-	def commandPay(self, parts, byuser, overriderank):
+	def commandPay(self, parts, fromloc, overriderank):
 		"/pay username amount - Guest\nThis lets you send money to other people."
 		if len(parts) != 3:
 			self.client.sendServerMessage("/pay <target> <amount>")
@@ -98,7 +98,7 @@ class MoneyPlugin(ProtocolPlugin):
 			self.money_logger.info("%(user)s sent %(amount)d to %(target)s" % {'user': user, 'amount': amount, 'target': target})
 
 	@director_only
-	def commandRemoveAccount(self, parts, byuser, overriderank):
+	def commandRemoveAccount(self, parts, fromloc, overriderank):
 		"/removebank username - Director\nRemoves Bank Account"
 		if len(parts) != 2:
 			self.client.sendServerMessage("Syntax: /removebank <target>")	

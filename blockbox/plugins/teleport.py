@@ -14,7 +14,7 @@ class TeleportPlugin(ProtocolPlugin):
 	}
 
 	@world_list
-	def commandGoto(self, parts, byuser, overriderank):
+	def commandGoto(self, parts, fromloc, overriderank):
 		"/goto x y z - Guest\nTeleports you to coords. NOTE: y is up."
 		try:
 			x = int(parts[1])
@@ -26,7 +26,7 @@ class TeleportPlugin(ProtocolPlugin):
 	
 	@player_list
 	@username_command
-	def commandTeleport(self, user, byuser, overriderank):
+	def commandTeleport(self, user, fromloc, overriderank):
 		"/tp username - Guest\nAliases: teleport\nTeleports you to the players location."
 		x = user.x >> 5
 		y = user.y >> 5

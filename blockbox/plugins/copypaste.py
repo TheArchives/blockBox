@@ -20,7 +20,7 @@ class CopyPastePlugin(ProtocolPlugin):
 	
 	@build_list
 	@writer_only
-	def commandLoad(self, parts, byuser, overriderank):
+	def commandLoad(self, parts, fromloc, overriderank):
 		"/paste [x y z] - Builder\nRestore blocks saved earlier using /copy"
 		if len(parts) < 4 and len(parts) != 1:
 			self.client.sendServerMessage("Please enter coordinates.")
@@ -75,7 +75,7 @@ class CopyPastePlugin(ProtocolPlugin):
 						block_iter.next()
 					reactor.callLater(0.01, do_step)
 				except StopIteration:
-					if byuser:
+					if fromloc == 'user':
 						self.client.finalizeMassCMD('paste', self.client.total)
 						self.client.total = 0
 					pass
@@ -83,7 +83,7 @@ class CopyPastePlugin(ProtocolPlugin):
 
 	@build_list
 	@writer_only
-	def commandSave(self, parts, byuser, overriderank):
+	def commandSave(self, parts, fromloc, overriderank):
 		"/copy [x y z x2 y2 z2] - Builder\nCopy blocks using specified offsets."
 		if len(parts) < 7 and len(parts) != 1:
 			self.client.sendServerMessage("Please enter coordinates.")
@@ -154,7 +154,7 @@ class CopyPastePlugin(ProtocolPlugin):
 						block_iter.next()
 					reactor.callLater(0.01, do_step)
 				except StopIteration:
-					if byuser:
+					if fromloc == 'user':
 						self.client.finalizeMassCMD('copy', self.client.total)
 						self.client.total = 0
 					pass
@@ -162,7 +162,7 @@ class CopyPastePlugin(ProtocolPlugin):
 
 	@build_list
 	@writer_only
-	def commandRotate(self, parts, byuser, overriderank):
+	def commandRotate(self, parts, fromloc, overriderank):
 		"/rotate angle - Builder\nAllows you to rotate what you copied."
 		if len(parts)<2:
 			self.client.sendServerMessage("You must give an angle to rotate!")
@@ -197,6 +197,6 @@ class CopyPastePlugin(ProtocolPlugin):
 				tempblocks.add((x,y,z,block))
 				self.client.total+1
 			self.client.bsaved_blocks = tempblocks
-		if byuser:
+		if fromloc == 'user':
 			self.client.finalizeMassCMD('rotate', self.client.total)
 			self.client.total = 0

@@ -26,7 +26,7 @@ class BindPlugin(ProtocolPlugin):
 	def gotClient(self):
 		self.block_overrides = {}
 	
-	def blockChanged(self, x, y, z, block, selected_block, byuser):
+	def blockChanged(self, x, y, z, block, selected_block, fromloc):
 		"Hook trigger for block changes."
 		if block in self.block_overrides:
 			return self.block_overrides[block]
@@ -43,7 +43,7 @@ class BindPlugin(ProtocolPlugin):
 		self.client.sendPacked(TYPE_INITIAL, 6, "Admincrete Update", "Reloading the server...", self.canBreakAdminBlocks() and 100 or 0)
 
 	@build_list
-	def commandBind(self, parts, byuser, overriderank):
+	def commandBind(self, parts, fromloc, overriderank):
 		"/bind blockA blockB - Guest\nAliases: build, material\nBinds blockB to blockA."
 		if len(parts) == 1:
 			if self.block_overrides:
@@ -81,6 +81,6 @@ class BindPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("%s will turn into %s." % (old_name, name))
 
 	@build_list
-	def commandAir(self, params, byuser, overriderank):
+	def commandAir(self, params, fromloc, overriderank):
 		"/air - Guest\nAliases: place, stand\nPuts a block under you for easier building in the air."
 		self.client.sendPacked(TYPE_BLOCKSET, self.client.x>>5, (self.client.y>>5)-3, (self.client.z>>5), BLOCK_WHITE)

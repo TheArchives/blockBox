@@ -18,7 +18,7 @@ class ToolsPlugin(ProtocolPlugin):
 	}
 	
 	@world_list
-	def commandRuler(self, parts, byuser, overriderank):
+	def commandRuler(self, parts, fromloc, overriderank):
 		"/ruler - Guest\nAliases: measure\nCounts the amount of blocks between two clicks."
 		# Use the last two block places
 		try:
@@ -30,7 +30,7 @@ class ToolsPlugin(ProtocolPlugin):
 		xRange, yRange, zRange = abs(x - x2) + 1 , abs(y-y2) + 1, abs(z-z2) + 1
 		self.client.sendServerMessage("X = %d, Y = %d, Z = %d" % (xRange, yRange, zRange) )
 
-	def commandRoll(self, parts, byuser, overriderank):
+	def commandRoll(self, parts, fromloc, overriderank):
 		"/roll max - Guest\nRolls a random number from 1 to max. Announces to world."
 		if len(parts) == 1:
 			self.client.sendServerMessage("Please enter a number as the maximum roll.")

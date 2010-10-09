@@ -19,7 +19,7 @@ class PhysicsControlPlugin(ProtocolPlugin):
 	
 	@world_list
 	@op_only
-	def commandUnflood(self, parts, byuser, overriderank):
+	def commandUnflood(self, parts, fromloc, overriderank):
 		"/unflood worldname - Op\nAliases: deflood\nSlowly removes all water and lava from the map."
 		self.client.world.start_unflooding()
 		self.client.sendWorldMessage("Unflooding has been initiated.")
@@ -27,7 +27,7 @@ class PhysicsControlPlugin(ProtocolPlugin):
 	@world_list
 	@admin_only
 	@on_off_command
-	def commandPhysics(self, onoff, byuser, overriderank):
+	def commandPhysics(self, onoff, fromloc, overriderank):
 		"/physics on|off - Admin\nEnables or disables physics in this world."
 		if onoff == "on":
 			if self.client.world.physics:
@@ -48,7 +48,7 @@ class PhysicsControlPlugin(ProtocolPlugin):
 	@world_list
 	@op_only
 	@on_off_command
-	def commandFwater(self, onoff, byuser, overriderank):
+	def commandFwater(self, onoff, fromloc, overriderank):
 		"/fwater on|off - Op\nEnables or disables finite water in this world."
 		if onoff == "on":
 			self.client.world.finite_water = True
@@ -60,7 +60,7 @@ class PhysicsControlPlugin(ProtocolPlugin):
 	@world_list
 	@admin_only
 	@on_off_command
-	def commandASD(self, onoff, byuser, overriderank):
+	def commandASD(self, onoff, fromloc, overriderank):
 		"/asd on|off - Admin\nEnables or disables whether the world shuts down if no one is on it."
 		if onoff == "on":
 			self.client.world.autoshutdown = True

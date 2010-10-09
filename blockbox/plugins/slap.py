@@ -17,7 +17,7 @@ class SlapPlugin(ProtocolPlugin):
 	}
 
 	@player_list
-	def commandSlap(self, parts, byuser, overriderank):
+	def commandSlap(self, parts, fromloc, overriderank):
 		"/slap username [with object] - Guest\nSlap username [with object]."
 		if len(parts) == 1:
 			self.client.sendServerMessage("Enter the name for the slappee")
@@ -45,7 +45,7 @@ class SlapPlugin(ProtocolPlugin):
 						self.client.factory.irc_relay.sendServerMessage("* %s slaps %s with a giant smelly trout!" % (self.client.username,name))
 
 	@player_list
-	def commandPunch(self, parts, byuser, overriderank):
+	def commandPunch(self, parts, fromloc, overriderank):
 		"/punch username [by bodypart] - Punch username [by bodypart]."
 		if len(parts) == 1:
 			self.client.sendServerMessage("Enter the name for the punchee")

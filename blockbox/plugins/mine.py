@@ -19,8 +19,8 @@ class MinePlugin(ProtocolPlugin):
 		"poschange": "posChanged",
 	}
 
-	def blockChanged(self, x, y, z, block, selected_block, byuser):
-		if not byuser:
+	def blockChanged(self, x, y, z, block, selected_block, fromloc):
+		if fromloc != 'user':
 			#People shouldnt be blbing mines :P
 			return
 		if self.client.world.has_mine(x, y, z):
@@ -108,7 +108,7 @@ class MinePlugin(ProtocolPlugin):
 
 	@build_list
 	@op_only
-	def commandMine(self, parts, byuser, rankoverride):
+	def commandMine(self, parts, fromloc, rankoverride):
 		"/mine - Op\nMakes the next black block you place a mine."
 		self.placingmines = True
 		self.client.sendServerMessage("You are now placing mine blocks.")
@@ -116,7 +116,7 @@ class MinePlugin(ProtocolPlugin):
 
 	@build_list
 	@admin_only
-	def commandClear(self, parts, byuser, rankoverride):
+	def commandClear(self, parts, fromloc, rankoverride):
 		self.client.world.clear_mines()
 		self.client.sendServerMessage("You cleared all mines")
 

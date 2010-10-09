@@ -23,7 +23,7 @@ class UndoPlugin(ProtocolPlugin):
 		self.client.var_undolist = []
 		self.client.var_redolist = []
 	
-	def blockChanged(self, x, y, z, block, selected_block, byuser):
+	def blockChanged(self, x, y, z, block, selected_block, fromloc):
 		"Hook trigger for block changes."
 		world = self.client.world
 		originalblock = world.blockstore.raw_blocks[world.blockstore.get_offset(x, y, z)]
@@ -38,7 +38,7 @@ class UndoPlugin(ProtocolPlugin):
 		self.client.var_undolist = []
 
 	@build_list
-	def commandUndo(self, parts, byuser, overriderank):
+	def commandUndo(self, parts, fromloc, overriderank):
 		"/undo numchanges [username] - Guest\nUndoes yours or other people's changes (If Mod+)"
 		world = self.client.world
 		if len(parts) == 3:
@@ -175,14 +175,14 @@ class UndoPlugin(ProtocolPlugin):
 					block_iter.next()
 				reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 			except StopIteration:
-				if byuser:
+				if fromloc == 'user':
 					self.client.finalizeMassCMD('undo', self.client.total)
 					self.client.total = 0
 				pass
 		do_step()
 
 	@build_list
-	def commandRedo(self, parts, byuser, overriderank):
+	def commandRedo(self, parts, fromloc, overriderank):
 		"/redo numchanges [username] - Guest\nRedoes yours or other people's changes (If Mod+)"
 		world = self.client.world
 		if len(parts) == 3:
@@ -322,7 +322,7 @@ class UndoPlugin(ProtocolPlugin):
 					block_iter.next()
 				reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 			except StopIteration:
-				if byuser:
+				if fromloc == 'user':
 					self.client.finalizeMassCMD('redo', self.client.total)
 					self.client.total = 0
 				pass

@@ -138,7 +138,7 @@ class JailPlugin(ProtocolPlugin):
 				self.client.teleportTo(jx, jy, jz)
 
 	@op_only
-	def commandSetJail(self, parts, byuser, overriderank):
+	def commandSetJail(self, parts, fromloc, overriderank):
 		"/setjail zonename - Op\nSpecifies the jails zone name"
 
 		if len(parts) != 2:
@@ -170,7 +170,7 @@ class JailPlugin(ProtocolPlugin):
 		self.dumpJail(jail)
 
 	@op_only
-	def commandJail(self, parts, byuser, overriderank):
+	def commandJail(self, parts, fromloc, overriderank):
 		"/jail user [minutes] - Op\nPuts a user in jail\nYou can specify a time limit, or leave blank for permajail!"
 
 		if len(parts) == 3:
@@ -250,7 +250,7 @@ class JailPlugin(ProtocolPlugin):
 		self.client.sendWorldMessage("%s has been jailed %s." % (name, jailtime))
 
 	@op_only
-	def commandFree(self, parts, byuser, overriderank):
+	def commandFree(self, parts, fromloc, overriderank):
 		"/free username - Op\nLets a user out of jail"
 
 		self.prepJail()
@@ -277,7 +277,7 @@ class JailPlugin(ProtocolPlugin):
 		self.client.sendWorldMessage("%s has been set free." % name)
 
 	@op_only
-	def commandPrisoners(self, parts, byuser, overriderank):
+	def commandPrisoners(self, parts, fromloc, overriderank):
 		"/prisoners - Op\nLists prisoners and their sentences."
 
 		self.prepJail()

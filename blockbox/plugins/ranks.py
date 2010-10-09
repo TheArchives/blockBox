@@ -37,7 +37,7 @@ class RankPlugin(ProtocolPlugin):
 
 	@player_list
 	@mod_only
-	def commandSpecced(self, user, byuser, overriderank):
+	def commandSpecced(self, user, fromloc, overriderank):
 		"/specced - Mod\nShows who is Specced."
 		if len(self.client.factory.spectators):
 			self.client.sendServerList(["Specced:"] + list(self.client.factory.spectators))
@@ -46,25 +46,25 @@ class RankPlugin(ProtocolPlugin):
 
 	@player_list
 	@op_only
-	def commandRank(self, parts, byuser, overriderank):
+	def commandRank(self, parts, fromloc, overriderank):
 		"/rank rankname username - Op\nAliases: setrank\nMakes username the rank of rankname."
 		if len(parts) < 3:
 			self.client.sendServerMessage("You must specify a rank and username.")
 		else:
-			self.client.sendServerMessage(Rank(self, parts, byuser, overriderank))
+			self.client.sendServerMessage(Rank(self, parts, fromloc, overriderank))
 
 	@player_list
 	@op_only
-	def commandDeRank(self, parts, byuser, overriderank):
+	def commandDeRank(self, parts, fromloc, overriderank):
 		"/derank rankname username - Op\nMakes playername lose the rank of rankname."
 		if len(parts) < 3:
 			self.client.sendServerMessage("You must specify a rank and username.")
 		else:
-			self.client.sendServerMessage(DeRank(self, parts, byuser, overriderank))
+			self.client.sendServerMessage(DeRank(self, parts, fromloc, overriderank))
 
 	@player_list
 	@op_only
-	def commandOldRanks(self, parts, byuser, overriderank):
+	def commandOldRanks(self, parts, fromloc, overriderank):
 		"/rankname username [world] - Op\nAliases: writer, builder, op, mod, admin, director\nThis is here for Myne users."
 		if len(parts) < 2:
 			self.client.sendServerMessage("You must specify a rank and username.")
@@ -72,11 +72,11 @@ class RankPlugin(ProtocolPlugin):
 			if parts[0] == "/writer":
 				parts[0] = "/builder"
 			parts = ["/rank", parts[0][1:]] + parts[1:]
-			self.client.sendServerMessage(Rank(self, parts, byuser, overriderank))
+			self.client.sendServerMessage(Rank(self, parts, fromloc, overriderank))
 
 	@player_list
 	@op_only
-	def commandOldDeRanks(self, parts, byuser, overriderank):
+	def commandOldDeRanks(self, parts, fromloc, overriderank):
 		"/derankname username [world] - Op\nAliases: dewriter, debuilder, deop, demod, deadmin, dedirector\nThis is here for Myne users."
 		if len(parts) < 2:
 			self.client.sendServerMessage("You must specify a rank and username.")
@@ -84,12 +84,12 @@ class RankPlugin(ProtocolPlugin):
 			if parts[0] == "/dewriter":
 				parts[0] = "/debuilder"
 			parts = ["/derank", parts[0][1:]] + parts[1:]
-			self.client.sendServerMessage(DeRank(self, parts, byuser, overriderank))
+			self.client.sendServerMessage(DeRank(self, parts, fromloc, overriderank))
 				
 	@player_list
 	@op_only
 	@on_off_command
-	def commandColors(self, onoff, byuser, overriderank):
+	def commandColors(self, onoff, fromloc, overriderank):
 		"/colors on|off - Op\nAliases: showops\nEnables or disables colors in this world."
 		if onoff == "on":
 			self.client.world.highlight_ops = True
@@ -101,14 +101,14 @@ class RankPlugin(ProtocolPlugin):
 	@player_list
 	@mod_only
 	@only_username_command
-	def commandSpec(self, username, byuser, overriderank):
+	def commandSpec(self, username, fromloc, overriderank):
 		"/spec username - Mod\nMakes the player as a spec."
-		self.client.sendServerMessage(Spec(self, username, byuser, overriderank))
+		self.client.sendServerMessage(Spec(self, username, fromloc, overriderank))
 	
 	@player_list
 	@mod_only
 	@only_username_command
-	def commandDeSpec(self, username, byuser, overriderank):
+	def commandDeSpec(self, username, fromloc, overriderank):
 		"/unspec username - Mod\nRemoves the player as a spec."
 		self.client.factory.spectators.remove(username)
 		self.client.sendServerMessage("%s is no longer a spec." % username)

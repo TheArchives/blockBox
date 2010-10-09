@@ -17,7 +17,7 @@ class CorePlugin(ProtocolPlugin):
 	
 	@admin_only
 	@only_string_command("plugin name")
-	def commandPluginreload(self, plugin_name, byuser, overriderank):
+	def commandPluginreload(self, plugin_name, fromloc, overriderank):
 		"/plr plugin - Admin\nReloads the plugin."
 		try:
 			self.client.factory.unloadPlugin(plugin_name)
@@ -29,7 +29,7 @@ class CorePlugin(ProtocolPlugin):
 	
 	@director_only
 	@only_string_command("plugin name")
-	def commandPluginload(self, plugin_name, byuser, overriderank):
+	def commandPluginload(self, plugin_name, fromloc, overriderank):
 		"/pll plugin - Director\nLoads the plugin."
 		try:
 			self.client.factory.loadPlugin(plugin_name)
@@ -40,7 +40,7 @@ class CorePlugin(ProtocolPlugin):
 	
 	@director_only
 	@only_string_command("plugin name")
-	def commandPluginunload(self, plugin_name, byuser, overriderank):
+	def commandPluginunload(self, plugin_name, fromloc, overriderank):
 		"/plu plugin - Director\nUnloads the plugin."
 		try:
 			self.client.factory.unloadPlugin(plugin_name)

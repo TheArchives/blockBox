@@ -15,7 +15,7 @@ class RespawnPlugin(ProtocolPlugin):
 	@player_list
 	@mod_only
 	@only_username_command
-	def commandRespawn(self, username, byuser, rankoverride):
+	def commandRespawn(self, username, fromloc, rankoverride):
 			"/respawn username - Respawns player."
 			if username in self.client.factory.usernames:
 				self.client.factory.usernames[username].respawn()

@@ -14,7 +14,7 @@ class TitlePlugin(ProtocolPlugin):
 
 	@player_list
 	@director_only
-	def commandSetTitle(self, parts, byuser, overriderank):
+	def commandSetTitle(self, parts, fromloc, overriderank):
 		"/title username [title] - Director\nAliases: settitle\nGives or removes a title to username."
 		with Persist(parts[1]) as p:
 			if len(parts)==3:
