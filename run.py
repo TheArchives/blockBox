@@ -54,7 +54,7 @@ if factory.use_email:
 			[factory.conf_email.get("email", "to")],
 			factory.conf_email.get("email", "subject"),
 		)
-	emh.setLevel(logging.ERROR)
+	email.setLevel(logging.ERROR)
 	logging.root.addHandler(email)
 
 money_logger = logging.getLogger('TransactionLogger')
