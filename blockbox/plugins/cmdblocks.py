@@ -206,8 +206,8 @@ class CommandPlugin(ProtocolPlugin):
 	def blockChanged(self, x, y, z, block, fromloc):
 		"Hook trigger for block changes."
 		#avoid infinite loops by making blocks unaffected by commands
-		if fromloc != 'user':
-			return False
+		#if fromloc != 'user':
+		#	return False
 		if self.client.world.has_command(x, y, z):
 			if self.cmdinfo:
 				cmdlist = self.client.world.get_command(x, y, z)
