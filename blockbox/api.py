@@ -3,12 +3,11 @@
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
 import traceback
-from lib import simplejson
 from lib.twisted.protocols.basic import LineReceiver
 from lib.twisted.internet.protocol import Factory
 import logging
 import os
-import lib.simplejson
+import json
 
 class APIProtocol(LineReceiver):
 	"""
@@ -24,10 +23,10 @@ class APIProtocol(LineReceiver):
 		self.api_factory.logger.info("Connection lost from %s:%s" % (peer.host, peer.port))
 	
 	def sendJson(self, data):
-		self.sendLine(simplejson.dumps(data))
+		self.sendLine(json.dumps(data))
 	
 	def lineReceived(self, line):
-		data = simplejson.loads(line)
+		data = json.loads(line)
 		peer = self.transport.getPeer()
 		if data['password'] != self.factory.api_password:
 			self.sendJson({"error": "invalid password"})
