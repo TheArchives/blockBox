@@ -87,10 +87,11 @@ class InfoPlugin(ProtocolPlugin):
 			if block2 == 0:
 				self.client.sendServerMessage("Block Info: %s (%s)" % (self.BlockList[block], block))
 				self.client.sendServerMessage("x: %s y: %s z: %s" % (x, y, z))
+				return block2
 			else:
 				self.client.sendServerMessage("Block Info: %s (%s)" % (self.BlockList[block2], block2))
 				self.client.sendServerMessage("x: %s y: %s z: %s" % (x, y, z))
-				return False
+				return block2
 	@build_list
 	def commandInfo(self,parts,fromloc,overriderank):
 			self.binfo = 1

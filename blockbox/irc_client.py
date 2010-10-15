@@ -36,12 +36,14 @@ class ChatBot(irc.IRCClient):
 
 	def signedOn(self):
 		"""Called when bot has succesfully signed on to server."""
+		self.logger.info("Connected.")
+		self.msg("NickServ", "IDENTIFY %s" % self.password)
+		self.msg("ChanServ", "INVITE %s" % self.factory.irc_channel)
 		self.join(self.factory.irc_channel)
 
 	def joined(self, channel):
 		"""This will get called when the bot joins the channel."""
 		self.logger.info("Joined %s." % channel)
-		self.msg("NickServ", "IDENTIFY %s" % self.password)
 
 	def sendError(self, error):
 		self.log("Sending error: %s" % error)

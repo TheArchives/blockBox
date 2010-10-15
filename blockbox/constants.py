@@ -373,7 +373,7 @@ BLOCK_MOSSYROCK = 48
 BLOCK_OBSIDIAN = 49
 BLOCK_OPSIDIAN = 49
 
-VIPS = set(["notch", "dock", "pixeleater", "andrewph", "ikjames", "goober", "gothfox", "destroyerx1", "willempiee", "dwarfy", "erronjason", "adam01", "aera", "andrewgodwin", "revenant", "gdude2002", "varriount", "notmeh", "bidoof_king", "rils", "fragmer", "tktech", "pyropyro", "mmavipc", "tyteen4a03"])
+VIPS = set(["notch", "ez", "dock", "pixeleater", "andrewph", "ikjames", "goober", "gothfox", "destroyerx1", "willempiee", "dwarfy", "erronjason", "adam01", "aera", "andrewgodwin", "revenant", "gdude2002", "varriount", "notmeh", "bidoof_king", "rils", "fragmer", "tktech", "pyropyro", "mmavipc", "tyteen4a03"])
 
 class ServerFull(Exception):
 	pass

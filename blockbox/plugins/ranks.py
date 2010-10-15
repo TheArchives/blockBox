@@ -110,7 +110,10 @@ class RankPlugin(ProtocolPlugin):
 	@only_username_command
 	def commandDeSpec(self, username, fromloc, overriderank):
 		"/unspec username - Mod\nRemoves the player as a spec."
-		self.client.factory.spectators.remove(username)
+		try:
+			self.client.factory.spectators.remove(username)
+		except:
+			self.client.sendServerMessage("%s was never a spec." % username)
 		self.client.sendServerMessage("%s is no longer a spec." % username)
 		if username in self.client.factory.usernames:
 			self.client.factory.usernames[username].sendSpectatorUpdate()

@@ -27,7 +27,7 @@ class MyneServerProtocol(Protocol):
 	def connectionMade(self):
 		"We've got a TCP connection, let's set ourselves up."
 		# We use the buffer because TCP is a stream protocol :)
-		self.console = False
+		self.console = False # Really hacky way to fix a bug.
 		self.buffer = ""
 		self.loading_world = False
 		# Load plugins for ourselves

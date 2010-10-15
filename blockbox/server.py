@@ -598,8 +598,9 @@ class MyneFactory(Factory):
 						text = self.messagestrip(text)
 						data = (id,colour,username,text)
 						for client in self.clients.values():
-							if (client.world.global_chat or client.world is source_client.world):
-								client.sendMessage(*data)
+							if not client.console:
+								if (client.world.global_chat or client.world is source_client.world):
+									client.sendMessage(*data)
 						id, colour, username, text = data
 						self.logger.info("%s: %s" % (username, text))
 						self.chatlog.write("%s - %s: %s\n" % (datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M"), username, text))
