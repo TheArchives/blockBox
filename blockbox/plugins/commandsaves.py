@@ -23,7 +23,7 @@ class BackPlugin(ProtocolPlugin):
 		self.savedcommands = list({})
 
 	def Message(self, message):
-		if message.startswith("/") and not message.split()[0] == "/b":
+		if message.startswith("/") and not message.split()[0].lower() == "/b":
 			self.lastcommand = message
 	
 	@info_list
