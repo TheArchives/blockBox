@@ -18,3 +18,4 @@ conf/performance.ini
 mapdata/worlds/*
 mapdata/archives/*
 logs/*
+data/*.sql
