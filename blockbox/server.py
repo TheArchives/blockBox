@@ -486,7 +486,10 @@ class MyneFactory(Factory):
 		try:
 			assert world_id != "main"
 		except:
-			client.sendServerMessage("You can't shutdown main.")
+			if not client.console:
+				client.sendServerMessage("You can't shutdown main.")
+			else:
+				self.logger.info("You can't shutdown main.")
 		if not self.worlds[world_id].ASD == None:
 			self.worlds[world_id].ASD.kill()
 			self.worlds[world_id].ASD = None
