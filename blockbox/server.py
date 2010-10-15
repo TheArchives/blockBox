@@ -486,7 +486,10 @@ class MyneFactory(Factory):
 		try:
 			assert world_id != "main"
 		except:
-			client.sendServerMessage("You can't shutdown main.")
+			if not client.console:
+				client.sendServerMessage("You can't shutdown main.")
+			else:
+				self.logger.info("You can't shutdown main.")
 		if not self.worlds[world_id].ASD == None:
 			self.worlds[world_id].ASD.kill()
 			self.worlds[world_id].ASD = None
@@ -595,8 +598,9 @@ class MyneFactory(Factory):
 						text = self.messagestrip(text)
 						data = (id,colour,username,text)
 						for client in self.clients.values():
-							if (client.world.global_chat or client.world is source_client.world):
-								client.sendMessage(*data)
+							if not client.console:
+								if (client.world.global_chat or client.world is source_client.world):
+									client.sendMessage(*data)
 						id, colour, username, text = data
 						self.logger.info("%s: %s" % (username, text))
 						self.chatlog.write("%s - %s: %s\n" % (datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M"), username, text))
