@@ -23,6 +23,20 @@ In order to install blockBox, just extract it to a directory of your choice. Not
 
 Configuration
 -------------
+=====================
+Configuration Files
+---------------------
+=============== =================
+ Name            Required? 
+=============== =================
+client.ini      No
+email.ini       If Feature Wanted
+irc.ini         If Feature Wanted
+performance.ini Yes
+plugins.ini     Yes
+server.ini      Yes
+wordfilter.ini  Yes
+=============== =================
 
 Running
 -------
