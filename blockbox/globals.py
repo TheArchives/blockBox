@@ -275,6 +275,6 @@ def Credits(self, server=None):
 	Temp.append ("Creators: aera (Myne), PixelEater (MyneCraft and blockBox), iKJames (iCraft)")
 	#Temp.append ("Devs: Adam01, revenant, gdude2002, gothfox, AndrewPH, Varriount, erronjason, destroyerx1, ntfwc, Dwarfy, goober, willempiee")
 	#Temp.append ("Others: Bidoof_King, Rils, fragmer, PyroPyro, TkTech, the Users, the Testers, the Modders, the Community, ...")
-	Temp.append ("Devs: tyteen4a03, mmavipc")
+	Temp.append ("Devs: tyteen4a03, ntfwc")
 	Temp.append ("Others: Ginger879, Gear3215")
 	return Temp
