@@ -2,7 +2,7 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-VERSION = "v1.0.0 RC3"
+VERSION = "v1.0.0 RC4"
 
 FORMAT_LENGTHS = {
 	"b": 1,
