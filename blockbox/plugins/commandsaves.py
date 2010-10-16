@@ -31,7 +31,7 @@ class BackPlugin(ProtocolPlugin):
 		message = self.lastcommand
 		parts = [x.strip() for x in message.split() if x.strip()]
 		command = parts[0].strip("/")
-		self.client.logger.info("%s just used: %s" % (self.client.username," ".join(parts)), level=logging.INFO)
+		self.client.logger.info("%s just used: %s" % (self.client.username," ".join(parts)))
 		# See if we can handle it internally
 		try:
 			func = getattr(self.client, "command%s" % command.title())
