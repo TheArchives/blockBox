@@ -464,7 +464,7 @@ class Physics(Thread):
 						yield (x, y, z, BLOCK_AIR)
 						return
 	
-	def handle_sand_fall(self, offset):
+	def handle_step_fall(self, offset):
 		"""
 		Handles step falling. Experimental.
 		"""
