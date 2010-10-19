@@ -307,8 +307,9 @@ class ChatBot(irc.IRCClient):
 					msg = msg.replace("08", "&e")
 					msg = msg.replace("9", "&a")
 					msg = msg.replace("09", "&a")
+					msg = msg.replace("10", "&3")
 					msg = msg.replace("11", "&b")
-					msg = msg.replace("4", "&c")
+					msg = msg.replace("12", "&9")
 					msg = msg.replace("13", "&d")
 					msg = msg.replace("14", "&8")
 					msg = msg.replace("15", "&7")
@@ -334,11 +335,13 @@ class ChatBot(irc.IRCClient):
 		elif user in self.factory.directors:
 			color = COLOUR_GREEN
 		elif user in self.factory.admins:
-			color = COLOUR_DARKRED
-		elif user in self.factory.mods:
 			color = COLOUR_RED
+		elif user in self.factory.mods:
+			color = COLOUR_BLUE
 		elif user in VIPS:
 			color = COLOUR_YELLOW
+		elif user in self.factory.worldowners:
+			color = COLOUR_DARKYELLOW
 		elif user in self.factory.advbuilders:
 			color = COLOUR_WHITE
 		else:
@@ -545,15 +548,22 @@ class ChatBot(irc.IRCClient):
 class ChatBotFactory(protocol.ClientFactory):
 	# the class of the protocol to build when new connection is made
 	protocol = ChatBot
+	rebootFlag = 0
 
 	def __init__(self, main_factory):
 		self.main_factory = main_factory
 		self.instance = None
+		self.rebootFlag = 1
+	
+	def quit(self, msg):
+		self.rebootFlag = 0
+		self.instance.sendLine("QUIT :" + msg)
 
 	def clientConnectionLost(self, connector, reason):
 		"""If we get disconnected, reconnect to server."""
 		self.instance = None
-		connector.connect()
+		if(self.rebootFlag):
+			connector.connect()
 
 	def clientConnectionFailed(self, connector, reason):
 		self.logger.warning("Connection failed: %s" % reason)
