@@ -272,20 +272,16 @@ class World(object):
 		self.entitylist = []
 		if config.has_section("entitylist"):
 			for option in config.options("entitylist"):
-				entry = config.get("entitylist", option)
-				if entry.find("[") != -1:
-					self.entitylist.append(eval(entry))
-				else:
-					entry = [x.strip() for x in config.get("entitylist", option).split(",")]
-					for i in range(len(entry)):
-						try:
-							entry[i] = int(entry[i])
-						except:
-							if entry[i] == "False":
-								entry[i] = False
-							elif entry[i] == "True":
-								entry[i] = True
-					self.entitylist.append([entry[0],(entry[1],entry[2],entry[3])] + entry[4:])
+				destination = [x.strip() for x in config.get("entitylist", option).split(",")]
+				for i in range(len(destination)):
+					try:
+						destination[i] = int(destination[i])
+					except:
+						if destination[i] == "False":
+							destination[i] = False
+						elif destination[i] == "True":
+							destination[i] = True
+				self.entitylist.append([destination[0],(destination[1],destination[2],destination[3])] + destination[4:])
 
 	@property
 	def store_raw_blocks(self):
@@ -315,8 +311,8 @@ class World(object):
 		config.add_section("autoshutdown")
 		config.add_section("userzones")
 		config.add_section("rankzones")
-		config.add_section("entitylist")
 		config.add_section("chat")
+		config.add_section("entitylist")
 		config.set("size", "x", str(self.x))
 		config.set("size", "y", str(self.y))
 		config.set("size", "z", str(self.z))
@@ -373,8 +369,7 @@ class World(object):
 		# Store entitylist
 		for i in range(len(self.entitylist)):
 			entry = self.entitylist[i]
-			config.set("entitylist", str(i), str(entry))
-#			config.set("entitylist", str(i), ", ".join(map(str, [entry[0],entry[1][0],entry[1][1],entry[1][2]] + entry[2:])))
+			config.set("entitylist", str(i), ", ".join(map(str, [entry[0],entry[1][0],entry[1][1],entry[1][2]] + entry[2:])))
 			
 		fp = open(self.meta_path, "w")
 		config.write(fp)
@@ -383,8 +378,6 @@ class World(object):
 	@classmethod
 	def create(cls, basename, x, y, z, sx, sy, sz, sh, levels):
 		"Creates a new World file set"
-		if not os.path.exists("mapdata/worlds/"):
-			os.mkdir("mapdata/worlds/")
 		os.mkdir(basename)
 		world = cls(basename, load=False)
 		BlockStore.create_new(world.blocks_path, x, y, z, levels)

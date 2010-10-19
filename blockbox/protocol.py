@@ -46,8 +46,8 @@ class MyneServerProtocol(Protocol):
 		# Get an ID for ourselves
 		try:
 			self.id = self.factory.claimId(self)
-		except ServerFull and not self.factory.isMod():
-			self.sendError("This server is full from all of the users.")
+		except ServerFull:
+			self.sendError("No availible player slots.")
 			return
 		# Open the Whisper Log, Adminchat log and WorldChat Log
 		self.factory.create_if_not("logs/whisper.log")
@@ -70,7 +70,6 @@ class MyneServerProtocol(Protocol):
 		self.last_block_position = (-1, -1, -1)
 		self.gone = 0
 		self.frozen = False
-		self.resetIdleTimer()
 
 	def registerCommand(self, command, func):
 		"Registers func as the handler for the command named 'command'."
@@ -139,32 +138,6 @@ class MyneServerProtocol(Protocol):
 				task,
 				data,
 			))
-
-	def stopIdleTimer(self):
-		if hasattr(self, "idleCB"):
-			if self.idleCB.active():
-				self.idleCB.cancel()
-
-	def resetIdleTimer(self):
-		if self.gone:
-			return
-		elif not hasattr(self, "idleCB"):
-			self.idleCB = reactor.callLater(60*15,self.onIdleKick)
-		elif self.idleCB:
-			if self.idleCB.active():
-				self.idleCB.reset(60*15)
-			else:
-				self.idleCB = reactor.callLater(60*15,self.onIdleKick)
-		else:
-			self.idleCB = reactor.callLater(60*15,self.onIdleKick)
-
-	def onIdleKick(self):
-		if self.use_idlekick:
-			if self.gone and not self.isMod():
-				return
-			for client in self.factory.usernames.values():
-				client.sendServerMessage("%s has been kicked for being away." %self.username)
-			self.sendError("You were away too long.");
 	
 	def sendWorldMessage(self, message):
 		"Sends a message to everyone in the current world."
@@ -323,7 +296,6 @@ class MyneServerProtocol(Protocol):
 					self.factory.irc_relay.sendServerMessage("%s has come online." %self.username)
 				reactor.callLater(0.1, self.sendLevel)
 				reactor.callLater(1, self.sendKeepAlive)
-				self.resetIdleTimer()
 			elif type == TYPE_BLOCKCHANGE:
 				x, y, z, created, block = parts
 				if block == 255:
@@ -394,7 +366,6 @@ class MyneServerProtocol(Protocol):
 						self.last_block_changes = [(x, y, z)] + self.last_block_changes[:1]+self.last_block_changes[1:3]
 					else:
 						self.last_block_changes = [(x, y, z)] + self.last_block_changes[:2]
-				self.resetIdleTimer()
 			elif type == TYPE_PLAYERPOS:
 				# If we're loading a world, ignore these.
 				if self.loading_world:
@@ -402,8 +373,6 @@ class MyneServerProtocol(Protocol):
 				naff, x, y, z, h, p = parts
 				pos_change = not (x == self.x and y == self.y and z == self.z)
 				dir_change = not (h == self.h and p == self.p)
-				if dir_change: 
-					self.resetIdleTimer()
 				if self.frozen:
 					newx = self.x >> 5
 					newy = self.y >> 5
@@ -420,7 +389,6 @@ class MyneServerProtocol(Protocol):
 						self.factory.queue.put((self, TASK_PLAYERDIR, (self.id, self.h, self.p)))
 				self.x, self.y, self.z, self.h, self.p = x, y, z, h, p
 			elif type == TYPE_MESSAGE:
-				# We got a message.
 				byte, message = parts
 				user = self.username.lower()
 				t = self.persist.string("misc", "title", "")
@@ -620,7 +588,6 @@ class MyneServerProtocol(Protocol):
 								self.wclog.flush()
 							else:
 								self.factory.queue.put((self, TASK_MESSAGE, (self.id, self.userColour(), self.usertitlename, message)))
-				self.resetIdleTimer()
 			else:
 				if type == 2:
 					self.logger.warn("Alpha Client attempted to connect.")
@@ -638,20 +605,17 @@ class MyneServerProtocol(Protocol):
 		elif self.isDirector():
 			color = COLOUR_GREEN
 		elif self.isAdmin():
-			color = COLOUR_RED
+			color = COLOUR_DARKRED
 		elif self.isMod():
-			color = COLOUR_BLUE
+			color = COLOUR_RED
 		elif self.username.lower() in VIPS:
 			color = COLOUR_YELLOW
 		elif self.isWorldOwner():
-			color = COLOUR_DARKYELLOW
+			color = COLOUR_DARKBLUE
 		elif self.isOp():
-			color = COLOUR_DARKCYAN
+			color = COLOUR_BLUE
 		elif self.isAdvBuilder():
-			#if self.factory.irc_relay:
-			#	color = COLOUR_DARKGREY
-			#else:
-			color = COLOUR_GREY
+			color = COLOUR_WHITE
 		elif self.isWriter():
 			color = COLOUR_CYAN
 		else:
@@ -1180,8 +1144,8 @@ class MyneServerProtocol(Protocol):
 		return block
 
 	def MessageAlert(self):
-		if os.path.exists("data/nemessage.dat"):
-			file = open('data/message.dat', 'r')
+		if os.path.exists("offlinemessage.dat"):
+			file = open('offlinemessage.dat', 'r')
 			messages = pickle.load(file)
 			file.close()
 			for client in self.factory.clients.values():

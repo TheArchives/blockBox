@@ -118,7 +118,7 @@ class StdinPlugin(threading.Thread):
 									print ("Please specify a username.")
 								else:
 									try:
-										print Rank(self, message + ["console"], False, True, self.server)
+										print Rank(self, message, False, True, self.server)
 									except:
 										print ("You must specify a rank and username.")
 							elif message[0] == "derank":
@@ -246,7 +246,9 @@ class StdinPlugin(threading.Thread):
 							elif message[0] == ("cpr"):
 								self.server.heartbeat.turl()
 							elif message[0] == ("irc_cpr"):
-								self.server.reloadIrcBot()
+								self.server.irc_relay = None
+								self.server.irc_relay = ChatBotFactory(self.server)
+								reactor.connectTCP(self.server.config.get("irc", "server"), self.server.config.getint("irc", "port"), self.server.irc_relay)
 							else:
 								print ("There is no " + message[0] + " command.")
 						elif message.startswith("@"):

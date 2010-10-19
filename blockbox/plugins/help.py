@@ -16,7 +16,6 @@ class HelpPlugin(ProtocolPlugin):
 		"cmdlist": "commandCmdlist",
 		"commands": "commandCmdlist",
 		"about": "commandAbout",
-		"info": "commandAbout",
 		"credits": "commandCredits",
 		"motd": "commandMOTD",
 		"greeting": "commandMOTD",
@@ -91,7 +90,7 @@ class HelpPlugin(ProtocolPlugin):
 			else:
 				self.client.sendServerMessage("Unknown cmdlist '%s'" % parts[1])
 		else:
-			self.client.sendServerMessage("Command List - Use: /cmdlist category")
+			self.client.sendServerMessage("The Command List - Use: /cmdlist category")
 			self.client.sendServerMessage("Categories: all build world player info other")
 
 	def ListCommands(self,list):
