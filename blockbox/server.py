@@ -129,26 +129,6 @@ class MyneFactory(Factory):
 	Factory that deals with the general world actions and cross-player comms.
 	"""
 	protocol = MyneServerProtocol
-	def reloadIrcBot(self):
-		if (os.path.exists("conf/irc.ini")):
-			try:
-				self.irc_relay.quit("Reloading the IRC Bot...")
-				global ChatBotFactory
-				del ChatBotFactory
-				from blockbox.irc_client import ChatBotFactory
-				if  self.config.getboolean("irc", "use_irc"):
-					self.use_irc = True
-					self.irc_nick = self.conf_irc.get("irc", "nick")
-					self.irc_pass = self.conf_irc.get("irc", "password")
-					self.irc_channel = self.conf_irc.get("irc", "channel")
-					self.irc_cmdlogs = self.conf_irc.getboolean("irc", "cmdlogs")
-					self.irc_relay = ChatBotFactory(self)
-					reactor.connectTCP(self.config.get("irc", "server"), self.config.getint("irc", "port"), self.irc_relay)
-					return True
-			except:
-				return False
-		return False
-			
 
 	def __init__(self):
 		self.initVariables()
@@ -205,7 +185,6 @@ class MyneFactory(Factory):
 		self.info_store = self.config.get("options", "info_store")
 		self.table_prefix = self.config.get("options", "table_prefix")
 		self.default_backup = self.config.get("worlds", "default_backup")
-		self.use_idlekick = self.config.getboolean("options", "use_idlekick")
 		self.owner = self.config.get("info", "owner").lower()
 		self.backup_freq = self.config.getint("backup", "backup_freq")
 		self.backup_default = self.config.getboolean("backup", "backup_default")
@@ -498,6 +477,7 @@ class MyneFactory(Factory):
 		"""
 		try:
 			if ASD and len(self.worlds[world_id].clients)>0:
+				#self.logger.error("AUTOSHUTDOWN ERROR DETECTED, PLEASE REPORT THIS ERROR TO BLOCKBOX TEAM")
 				self.worlds[world_id].ASD.kill()
 				self.worlds[world_id].ASD = None
 				return
@@ -630,9 +610,9 @@ class MyneFactory(Factory):
 					# Someone spoke!
 					elif task is TASK_IRCMESSAGE:
 						#LOL MOAR WORD FILTER
-						#id, colour, username, text = data
-						#text = self.messagestrip(text)
-						#data = (id,colour,username,text)
+						id, colour, username, text = data
+						text = self.messagestrip(text)
+						data = (id,colour,username,text)
 						for client in self.clients.values():
 							client.sendIrcMessage(*data)
 						id, colour, username, text = data
@@ -674,13 +654,13 @@ class MyneFactory(Factory):
 						for client in self.clients.values():
 							client.sendPlayerLeave(*data)
 							if not source_client.username is None:
-								client.sendServerMessage("%s has gone offline (%s%s%s)" % (source_client.username, COLOUR_RED, source_client.quitmsg, COLOUR_YELLOW))
+								client.sendServerMessage("%s has quit! (%s%s%s)" % (source_client.username, COLOUR_RED, source_client.quitmsg, COLOUR_YELLOW))
 							else:
 								source_client.log("Pinged the server.")
 						if not source_client.username is None:
 							if self.irc_relay and world:
-								self.irc_relay.sendServerMessage("%s has gone offline (%s%s%s)" % (source_client.username, COLOUR_RED, source_client.quitmsg, COLOUR_YELLOW))
-						self.logger.info("%s has gone offline (%s)" % (source_client.username, source_client.quitmsg))
+								self.irc_relay.sendServerMessage("%s has quit! (%s%s%s)" % (source_client.username, COLOUR_RED, source_client.quitmsg, COLOUR_YELLOW))
+						self.logger.info("%s has quit! (%s)" % (source_client.username, source_client.quitmsg))
 					# Someone changed worlds!
 					elif task is TASK_WORLDCHANGE:
 						# Only run it for clients who weren't the source.
@@ -732,7 +712,7 @@ class MyneFactory(Factory):
 						if self.irc_relay and world:
 							self.irc_relay.sendServerMessage(message)
 					elif task == TASK_PLAYERRESPAWN:
-						# We need to immediately respawn the user to update their nick.
+						# We need to immediately respawn the player to update their nick.
 						for client in world.clients:
 							if client != source_client:
 								id, username, x, y, z, h, p = data
@@ -749,7 +729,7 @@ class MyneFactory(Factory):
 					elif task == TASK_AWAYMESSAGE:
 						# Give all world people the message
 						message = data
-						for client in self.clients.values():
+						for client in world.clients:
 							client.sendNormalMessage(COLOUR_DARKPURPLE + message)
 						self.logger.info("AWAY - %s %s" % (username, text))
 						self.chatlog.write("%s %s %s\n" % (datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M"), username, text))
@@ -908,7 +888,6 @@ class MyneFactory(Factory):
 		try:
 			os.stat(dir)
 		except:
-			self.logger.debug("Making "+filename)
 			try:
 				os.mkdir(dir)
 			except OSError:
@@ -916,9 +895,3 @@ class MyneFactory(Factory):
 		if not os.path.exists(filename):
 			with open(filename, "w") as f:
 				f.write("")
-	def exit(self):
-		try:
-			raw_input("Press Enter to exit.")
-			raise EOFError
-		except EOFError:
-			exit(1);

@@ -24,7 +24,7 @@ class APIProtocol(LineReceiver):
 	
 	def sendJson(self, data):
 		self.sendLine(json.dumps(data))
-
+	
 	def lineReceived(self, line):
 		data = json.loads(line)
 		peer = self.transport.getPeer()
@@ -53,10 +53,10 @@ class APIProtocol(LineReceiver):
 	
 	def commandUsers(self, data):
 		self.sendJson({"users": list(self.factory.usernames.keys())})
-
+		
 	def commandOwner(self, data):
 		self.sendJson({"owner": list(self.factory.owner)})
-
+				
 	def commandDirectors(self, data):
 		self.sendJson({"directors": list(self.factory.directors)})
 
@@ -68,10 +68,10 @@ class APIProtocol(LineReceiver):
 				
 	def commandSpecs(self, data):
 		self.sendJson({"specs": list(self.factory.spectators)})
-
+	
 	def commandWorlds(self, data):
 		self.sendJson({"worlds": list(self.factory.worlds.keys())})
-
+	
 	def commandUserworlds(self, data):
 		self.sendJson({"worlds": [
 			(world.id, [client.username for client in world.clients if client.username], {
@@ -82,19 +82,10 @@ class APIProtocol(LineReceiver):
 				"archive": world.is_archive,
 				"locked": not world.all_write,
 				"physics": world.physics,
-				"zones": world.zoned,
-				"gchat": world.global_chat,
-				"colors": world.highlight_ops,
-				"fwater": world.finite_water,
-				"solids": world.admin_blocks,
-				"x": world.x,
-				"y": world.y,
-				"z": world.z,
-				"owner": world.owner,
 			})
 			for world in self.factory.worlds.values()
 		]})
-
+	
 	def commandWorldinfo(self, data):
 		world = self.factory.worlds[data['world_id']]
 		self.sendJson({
@@ -105,15 +96,6 @@ class APIProtocol(LineReceiver):
 			"archive": world.is_archive,
 			"locked": not world.all_write,
 			"physics": world.physics,
-			"zones": world.zoned,
-			"gchat": world.global_chat,
-			"colors": world.highlight_ops,
-			"fwater": world.finite_water,
-			"solids": world.admin_blocks,
-			"x": world.x,
-			"y": world.y,
-			"z": world.z,
-			"owner": world.owner,
 		})
 
 class APIFactory(Factory):

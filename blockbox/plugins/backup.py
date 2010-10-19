@@ -50,7 +50,6 @@ class BackupPlugin(ProtocolPlugin):
 			os.mkdir(path)
 			try:
 				shutil.copy(world_dir + "blocks.gz", path)
-				shutil.copy(world_dir + "world.meta", path)
 			except:
 				self.client.sendServerMessage("Something went wrong while backing up. Please try again.")
 			if len(parts) > 2:
@@ -86,10 +85,6 @@ class BackupPlugin(ProtocolPlugin):
 				old_clients = self.client.factory.worlds[world_id].clients					
 				if not os.path.exists(world_dir+"blocks.gz.new"):
 					shutil.copy(world_dir+"backup/%s/blocks.gz" %backup_number,world_dir)
-					try:
-						shutil.copy(world_dir+"backup/%s/world.meta" %backup_number,world_dir)
-					except:
-						pass
 				else:
 					reactor.callLater(1, self.commandRestore(self, parts, overriderank))
 				self.client.factory.loadWorld("mapdata/worlds/%s" % world_id, world_id)

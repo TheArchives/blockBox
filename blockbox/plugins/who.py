@@ -27,6 +27,7 @@ class PlayersPlugin(ProtocolPlugin):
 	@only_username_command
 	def commandLastseen(self, username, fromloc, overriderank):
 		"/lastseen username - Guest\nTells you when 'username' was last seen."
+		#TOFIX: Lastseen
 		if self.persist.string("main", "lastseen", -1):
 			self.client.sendServerMessage("There are no records of %s." % username)
 		else:

@@ -77,6 +77,5 @@ class BackPlugin(ProtocolPlugin):
 		try:
 			func(parts, 'user', False) #fromloc is user, overriderank is false
 		except Exception, e:
-			self.client.sendSplitServerMessage(traceback.format_exc().replace("Traceback (most recent call last):", ""))
-			self.client.sendSplitServerMessage("Internal Server Error - Traceback (Please report this to the Server Staff or the blockBox Team, see /about for contact info)")
-			self.client.logger.error(traceback.format_exc())
+			self.client.sendServerMessage("Internal server error.")
+			self.client.log(traceback.format_exc(), level=logging.ERROR)

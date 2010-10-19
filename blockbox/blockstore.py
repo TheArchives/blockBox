@@ -13,7 +13,6 @@ import time
 from array import array
 from physics import Physics
 from constants import *
-from lib.twisted.internet import reactor
 
 class BlockStore(Thread):
 	"""

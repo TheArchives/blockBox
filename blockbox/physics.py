@@ -299,7 +299,7 @@ class Physics(Thread):
 					block = self.blockstore.raw_blocks[new_offset]
 					if block is CHR_WATER or block is CHR_LAVA:
 						self.fluid_queue.add(new_offset)
-		elif block is CHR_AIR:
+		if block is CHR_AIR:
 			if offset in self.sponge_locations:
 				self.sponge_locations.remove(offset)
 				# See if there's some water or lava that needs reanimating
