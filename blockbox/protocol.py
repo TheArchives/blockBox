@@ -591,13 +591,15 @@ class MyneServerProtocol(Protocol):
 			else:
 				if type == 2:
 					self.logger.warn("Alpha Client attempted to connect.")
-					self.sendError("blockBox does not currently support the SMP Protocol.")
+					self.sendPacked(
+						255,
+						self.packString("This server is only compatible with Minecraft Classic!")
+					)
 					self.transport.loseConnection()
 				else:
 					self.log("Unhandleable type %s" % type, logging.WARN)
 
 	def userColour(self):
-		#Idea: Back to original please
 		if self.isSpectator():
 			color = COLOUR_BLACK
 		elif self.isOwner():
@@ -605,21 +607,21 @@ class MyneServerProtocol(Protocol):
 		elif self.isDirector():
 			color = COLOUR_GREEN
 		elif self.isAdmin():
-			color = COLOUR_DARKRED
-		elif self.isMod():
 			color = COLOUR_RED
+		elif self.isMod():
+			color = COLOUR_BLUE
 		elif self.username.lower() in VIPS:
 			color = COLOUR_YELLOW
 		elif self.isWorldOwner():
-			color = COLOUR_DARKBLUE
+			color = COLOUR_DARKYELLOW
 		elif self.isOp():
-			color = COLOUR_BLUE
+			color = COLOUR_DARKCYAN
 		elif self.isAdvBuilder():
-			color = COLOUR_WHITE
+			color = COLOUR_GREY
 		elif self.isWriter():
 			color = COLOUR_CYAN
 		else:
-			color = COLOUR_GREY
+			color = COLOUR_WHITE
 		return color
 
 	def rankName(self):
@@ -1144,8 +1146,8 @@ class MyneServerProtocol(Protocol):
 		return block
 
 	def MessageAlert(self):
-		if os.path.exists("offlinemessage.dat"):
-			file = open('offlinemessage.dat', 'r')
+		if os.path.exists("data/offlinemessage.dat"):
+			file = open('data/offlinemessage.dat', 'r')
 			messages = pickle.load(file)
 			file.close()
 			for client in self.factory.clients.values():
