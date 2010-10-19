@@ -53,8 +53,28 @@ def Rank(self, parts, fromloc, overriderank,server=None):
 		world.ops.add(username)
 		return ("Opped %s" % username)
 		#make op
+	elif parts[1] == "worldowner":
+		if len(parts) > 3:
+			try:
+				world = factory.worlds[parts[3]]
+			except KeyError:
+				return ("Unknown world \"%s\"" %parts[3])
+		else:
+			if not server:
+				world = self.client.world
+			else:
+				return "You must provide a world"
+		if not server:
+			if self.client.isWorldOwner()==False and not overriderank:
+				return ("You are not high enough rank!")
+		else:
+			if not parts[-1] == "console":
+				return ("You are not high enough rank!")
+		self.client.world.owner = (username)
+		return ("%s is now a world owner." % username)
+		#make world owner	
 	elif parts[1] == "advbuilder":
-		#make them an advanced builder
+		#make them an advbuilder
 		if not server:
 			if not self.client.isMod():
 				return ("You are not high enough rank!")
@@ -66,6 +86,7 @@ def Rank(self, parts, fromloc, overriderank,server=None):
 		if username in factory.usernames:
 			factory.usernames[username].sendAdvBuilderUpdate()
 		return ("%s is now an Advanced Builder." % username)
+
 	elif parts[1] == "mod":
 		#make them a mod
 		if not server:
@@ -170,8 +191,36 @@ def DeRank(self, parts, fromloc, overriderank, server=None):
 				user.sendOpUpdate()
 		return ("Deopped %s" % username)
 		#make op
-	elif parts[1] == "member":
-		#make them a member
+	elif parts[1] == "worldowner":
+		if len(parts) > 3:
+			try:
+				world = factory.worlds[parts[3]]
+			except KeyError:
+				return ("Unknown world \"%s\"" %parts[3])
+		else:
+			if not server:
+				world = self.client.world
+			else:
+				return "You must provide a world"
+		if not server:
+			if not self.client.isWorldOwner() and world != self.client.world:
+				return ("You are not an World Owner!")
+		else:
+			if not parts[-1] == "console":
+				if not factory.isWorldOwner(parts[-1]):
+					return ("You are not high enough rank!")
+		try:
+			self.client.world.owner = ("")
+		except KeyError:
+			return ("%s is not a world owner." % username)
+		if username in factory.usernames:
+			user = factory.usernames[username]
+			if user.world == world:
+				user.sendOpUpdate()
+		return ("%s is no longer the world owner." % username)
+		#make worldowner
+	elif parts[1] == "advbuilder":
+		#make them an advbuilder
 		if not server:
 			if not self.client.isMod():
 				return ("You are not high enough rank!")
@@ -179,13 +228,13 @@ def DeRank(self, parts, fromloc, overriderank, server=None):
 			if not parts[-1] == "console":
 				if not factory.isMod(parts[-1]):
 					return ("You are not high enough rank!")
-		if username in factory.members:
-			factory.members.remove(username)
+		if username in factory.advbuilders:
+			factory.advbuilders.remove(username)
 		else:
-			return ("No such member \"%s\"" % username.lower())
+			return ("No such Advanced Builder \"%s\"" % username.lower())
 		if username in factory.usernames:
-			factory.usernames[username].sendMemberUpdate()
-		return ("%s is no longer a Member." % username.lower())
+			factory.usernames[username].sendAdvBuilderUpdate()
+		return ("%s is no longer an Advance Builder." % username.lower())
 	elif parts[1] == "mod":
 		#make them a mod
 		if not server:

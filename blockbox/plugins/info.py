@@ -94,14 +94,16 @@ class InfoPlugin(ProtocolPlugin):
 				return block2
 	@build_list
 	def commandInfo(self,parts,fromloc,overriderank):
-			self.binfo = 1
-			self.client.sendServerMessage("You are now getting info about blocks.")
-			self.client.sendServerMessage("Use '/infoend' to stop.")
+		"/binfo - Guest\nStarts getting information on blocks."
+		self.binfo = 1
+		self.client.sendServerMessage("You are now getting info about blocks.")
+		self.client.sendServerMessage("Use '/infoend' to stop.")
 
 	@build_list
 	def commandInfoEnd(self,parts,fromloc,overriderank):
-			self.binfo = 0
-			self.client.sendServerMessage("You are no longer getting info about blocks.")
+		"/binfoend - Guest\nEnds getting information on blocks."
+		self.binfo = 0
+		self.client.sendServerMessage("You are no longer getting info about blocks.")
 
 	@build_list
 	def commandBlockindex(self, parts, fromloc, overriderank):

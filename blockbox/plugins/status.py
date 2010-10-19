@@ -30,7 +30,7 @@ class StatusPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("Please specify an World Owner.")
 		else:
 			self.client.world.owner = str(parts[1])
-			#This was deleted in iCraft2.6.2 for some weird reasons
+			#This was deleted in iCraft2.6.2 for some weird reason
 			#self.client.sendWorldOwnerUpdate()
 			self.client.sendServerMessage("The World Owner has been set.")
 
