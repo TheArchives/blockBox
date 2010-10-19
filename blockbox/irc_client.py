@@ -334,15 +334,17 @@ class ChatBot(irc.IRCClient):
 		elif user in self.factory.directors:
 			color = COLOUR_GREEN
 		elif user in self.factory.admins:
-			color = COLOUR_DARKRED
-		elif user in self.factory.mods:
 			color = COLOUR_RED
+		elif user in self.factory.mods:
+			color = COLOUR_BLUE
 		elif user in VIPS:
 			color = COLOUR_YELLOW
+		elif user in self.factory.worldowners:
+			color = COLOUR_DARKYELLOW
 		elif user in self.factory.advbuilders:
-			color = COLOUR_WHITE
-		else:
 			color = COLOUR_GREY
+		else:
+			color = COLOUR_YELLOW
 		return color
 
 	def action(self, user, channel, msg):
