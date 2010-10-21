@@ -156,7 +156,7 @@ class StdinPlugin(threading.Thread):
 							elif message[0] == ("new"):
 								if len(message) == 1:
 									print ("Please specify a new worldname.")
-								elif self.server.world_exists(parts[1]):
+								elif self.server.world_exists(message[1]):
 									print ("Worldname in use")
 								else:
 									if len(message) == 2:
