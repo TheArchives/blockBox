@@ -754,7 +754,7 @@ class MyneFactory(Factory):
 		# Find the template files, copy them to the new location
 		for filename in ["blocks.gz", "world.meta"]:
 			try:
-				shutil.copyfile("templates/%s/%s" % (template, filename), "worlds/%s/%s" % (new_name, filename))
+				shutil.copyfile("mapdata/templates/%s/%s" % (template, filename), "mapdata/worlds/%s/%s" % (new_name, filename))
 			except:
 				raise TemplateDoesNotExist
 
