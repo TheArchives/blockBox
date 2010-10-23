@@ -24,7 +24,7 @@ def Rank(self, parts, fromloc, overriderank,server=None):
 			if not (self.client.username.lower() in world.ops or self.client.isMod() or self.client.isWorldOwner()) and not overriderank:
 				return ("You are not high enough rank!")
 		else:
-			if not parts[-1] == "console":
+			if fromloc != "console":
 				if not ((parts[-1]) in world.ops) or factory.isMod(parts[-1]):
 					return ("You are not high enough rank!")
 		world.writers.add(username)
@@ -48,18 +48,38 @@ def Rank(self, parts, fromloc, overriderank,server=None):
 			if self.client.isWorldOwner()==False and not overriderank:
 				return ("You are not high enough rank!")
 		else:
-			if not parts[-1] == "console":
+			if fromloc != "console":
 				return ("You are not high enough rank!")
 		world.ops.add(username)
 		return ("Opped %s" % username)
 		#make op
+	elif parts[1] == "worldowner":
+		if len(parts) > 3:
+			try:
+				world = factory.worlds[parts[3]]
+			except KeyError:
+				return ("Unknown world \"%s\"" %parts[3])
+		else:
+			if not server:
+				world = self.client.world
+			else:
+				return "You must provide a world"
+		if not server:
+			if self.client.isWorldOwner()==False and not overriderank:
+				return ("You are not high enough rank!")
+		else:
+			if fromloc != "console":
+				return ("You are not high enough rank!")
+		self.client.world.owner = (username)
+		return ("%s is now a world owner." % username)
+		#make world owner	
 	elif parts[1] == "advbuilder":
-		#make them an advanced builder
+		#make them an advbuilder
 		if not server:
 			if not self.client.isMod():
 				return ("You are not high enough rank!")
 		else:
-			if not parts[-1] == "console":
+			if fromloc != "console":
 				if not factory.isMod(parts[-1]):
 					return ("You are not high enough rank!")
 		factory.advbuilders.add(username)
@@ -72,7 +92,7 @@ def Rank(self, parts, fromloc, overriderank,server=None):
 			if not self.client.isDirector():
 				return ("You are not high enough rank!")
 		else:
-			if not parts[-1] == "console":
+			if fromloc != "console":
 				if not factory.isDirector(parts[-1]):
 					return ("You are not high enough rank!")
 		factory.mods.add(username)
@@ -85,7 +105,7 @@ def Rank(self, parts, fromloc, overriderank,server=None):
 			if not self.client.isDirector():
 				return ("You are not high enough rank!")
 		else:
-			if not parts[-1] == "console":
+			if fromloc != "console":
 				if not factory.isDirector(parts[-1]):
 					return ("You are not high enough rank!")
 		factory.admins.add(username)
@@ -98,7 +118,7 @@ def Rank(self, parts, fromloc, overriderank,server=None):
 			if not self.client.isOwner():
 				return ("You are not high enough rank!")
 		else:
-			if not parts[-1] == "console":
+			if fromloc != "console":
 				if not factory.isOwner(parts[-1]):
 					return ("You are not high enough rank!")
 		factory.directors.add(username)
@@ -130,7 +150,7 @@ def DeRank(self, parts, fromloc, overriderank, server=None):
 			if not ((self.client.username in world.ops) or self.client.isMod()) and overriderank:
 				return ("You are not high enough rank!")
 		else:
-			if not parts[-1] == "console":
+			if fromloc != "console":
 				if not ((parts[-1]) in world.ops) or factory.isMod(parts[-1]):
 					return ("You are not high enough rank!")
 		try:
@@ -157,7 +177,7 @@ def DeRank(self, parts, fromloc, overriderank, server=None):
 			if not self.client.isWorldOwner() and world != self.client.world:
 				return ("You are not an World Owner!")
 		else:
-			if not parts[-1] == "console":
+			if fromloc != "console":
 				if not factory.isWorldOwner(parts[-1]):
 					return ("You are not high enough rank!")
 		try:
@@ -169,14 +189,42 @@ def DeRank(self, parts, fromloc, overriderank, server=None):
 			if user.world == world:
 				user.sendOpUpdate()
 		return ("Deopped %s" % username)
-		#make op
-	elif parts[1] == "member":
-		#make them a member
+		#make worldowner
+	elif parts[1] == "worldowner":
+		if len(parts) > 3:
+			try:
+				world = factory.worlds[parts[3]]
+			except KeyError:
+				return ("Unknown world \"%s\"" %parts[3])
+		else:
+			if not server:
+				world = self.client.world
+			else:
+				return "You must provide a world"
+		if not server:
+			if not self.client.isWorldOwner() and world != self.client.world:
+				return ("You are not an World Owner!")
+		else:
+			if fromloc != "console":
+				if not factory.isWorldOwner(parts[-1]):
+					return ("You are not high enough rank!")
+		try:
+			self.client.world.owner = ("")
+		except KeyError:
+			return ("%s is not a world owner." % username)
+		if username in factory.usernames:
+			user = factory.usernames[username]
+			if user.world == world:
+				user.sendWorldOwnerUpdate()
+		return ("%s is no longer the world owner." % username)
+		#make worldowner
+	elif parts[1] == "advbuilder":
+		#make them an advbuilder
 		if not server:
 			if not self.client.isMod():
 				return ("You are not high enough rank!")
 		else:
-			if not parts[-1] == "console":
+			if fromloc != "console":
 				if not factory.isMod(parts[-1]):
 					return ("You are not high enough rank!")
 		if username in factory.members:
@@ -192,7 +240,7 @@ def DeRank(self, parts, fromloc, overriderank, server=None):
 			if not self.client.isDirector():
 				return ("You are not high enough rank!")
 		else:
-			if not parts[-1] == "console":
+			if fromloc != "console":
 				if not factory.isDirector(parts[-1]):
 					return ("You are not high enough rank!")
 		if username in factory.mods:
@@ -208,7 +256,7 @@ def DeRank(self, parts, fromloc, overriderank, server=None):
 			if not self.client.isDirector():
 				return ("You are not high enough rank!")
 		else:
-			if not parts[-1] == "console":
+			if fromloc != "console":
 				if not factory.isDirector(parts[-1]):
 					return ("You are not high enough rank!")
 		if username in factory.admins:
@@ -224,7 +272,7 @@ def DeRank(self, parts, fromloc, overriderank, server=None):
 			if not self.client.isOwner():
 				return ("You are not high enough rank!")
 		else:
-			if not parts[-1] == "console":
+			if fromloc != "console":
 				if not factory.isOwner(parts[-1]):
 					return ("You are not high enough rank!")
 		if username in factory.directors:

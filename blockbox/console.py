@@ -10,6 +10,7 @@ from blockbox.constants import *
 import logging
 from globals import *
 from blockbox.irc_client import ChatBotFactory
+from lib.twisted.internet import reactor
 
 class StdinPlugin(threading.Thread):
 
@@ -118,7 +119,7 @@ class StdinPlugin(threading.Thread):
 									print ("Please specify a username.")
 								else:
 									try:
-										print Rank(self, message, False, True, self.server)
+										print Rank(self, message, 'console', True, self.server)
 									except:
 										print ("You must specify a rank and username.")
 							elif message[0] == "derank":
@@ -126,7 +127,7 @@ class StdinPlugin(threading.Thread):
 									print ("Please specify a username.")
 								else:
 									try:
-										print DeRank(self, message + ["console"], False, True, self.server)
+										print DeRank(self, message, 'console', True, self.server)
 									except:
 										print ("You must specify a rank and username.")
 							elif message[0] == "spec":
@@ -134,7 +135,7 @@ class StdinPlugin(threading.Thread):
 									print ("Please specify a username.")
 								else:
 									try:
-										print Spec(self, message[1], False, True, self.server)
+										print Spec(self, message[1], 'console', True, self.server)
 									except:
 										print ("Please specify a username.")
 							elif message[0] == ("boot"):
@@ -143,7 +144,7 @@ class StdinPlugin(threading.Thread):
 								except:
 									print ("Please specify a worldname.")
 									continue
-								self.server.loadWorld("worlds/"+world, world)
+								self.server.loadWorld("mapdata/worlds/"+world, world)
 								print ("World '"+world+"' booted.")
 							elif message[0] == ("shutdown"):
 								try:
@@ -164,7 +165,10 @@ class StdinPlugin(threading.Thread):
 									elif len(message) == 3 or len(message) == 4:
 										template = message[2]
 									world_id = message[1].lower()
-									self.server.newWorld(world_id, template)
+									try:
+										self.server.newWorld(world_id, template)
+									except TemplateDoesNotExist:
+										print ("Template does not exist")
 									self.server.loadWorld("mapdata/worlds/%s" % world_id, world_id)
 									self.server.worlds[world_id].all_write = False
 									if len(message) < 4:
