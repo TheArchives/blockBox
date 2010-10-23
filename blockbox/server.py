@@ -240,6 +240,7 @@ class MyneFactory(Factory):
 		self.directors = set()
 		self.admins = set()
 		self.mods = set()
+		self.worldowners = set()
 		self.advbuilders = set()
 		self.spectators = set()
 		self.silenced = set()
