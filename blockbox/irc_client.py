@@ -321,7 +321,7 @@ class ChatBot(irc.IRCClient):
 						moddedmsg = msg[:51].replace(" ", "")
 						if moddedmsg[len(moddedmsg)-2] == "&":
 							msg = msg.replace("&", "*")
-					self.factory.queue.put((self, TASK_IRCMESSAGE, (127, userColour(user), user, msg)))
+					self.factory.queue.put((self, TASK_IRCMESSAGE, (127, self.userColour(user), user, msg)))
 		except:
 			self.logger.error(traceback.format_exc())
 			self.msg(self.factory.irc_channel,"ERROR " + traceback.format_exc())
