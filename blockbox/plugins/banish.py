@@ -35,7 +35,7 @@ class BanishPlugin(ProtocolPlugin):
 		"/worldkick username - Op\nAliases: banish\nBanishes the Player to the default world."
 		if user.world == self.client.world:
 			user.sendServerMessage("You were WorldKicked from '%s'." % self.client.world.id)
-			user.changeToWorld("default")
+			user.changeToWorld("main")
 			self.client.sendServerMessage("Player %s got WorldKicked." % user.username)
 		else:
 			self.client.sendServerMessage("Your Player is in another world!")
@@ -51,7 +51,7 @@ class BanishPlugin(ProtocolPlugin):
 			self.client.world.add_worldban(username)
 			if username in self.client.factory.usernames:
 				if self.client.factory.usernames[username].world == self.client.world:
-					self.client.factory.usernames[username].changeToWorld("default")
+					self.client.factory.usernames[username].changeToWorld("main")
 					self.client.factory.usernames[username].sendServerMessage("You got WorldBanned!")
 			self.client.sendServerMessage("%s has been WorldBanned." % username)
 
