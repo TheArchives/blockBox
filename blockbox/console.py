@@ -250,9 +250,24 @@ class StdinPlugin(threading.Thread):
 							elif message[0] == ("cpr"):
 								self.server.heartbeat.turl()
 							elif message[0] == ("irc_cpr"):
+								self.server.irc_relay.quit("Reloading the IRC Bot...")
 								self.server.irc_relay = None
 								self.server.irc_relay = ChatBotFactory(self.server)
 								reactor.connectTCP(self.server.conf_irc.get("irc", "server"), self.server.conf_irc.getint("irc", "port"), self.server.irc_relay)
+							#elif message[0] == ("irc_unload"):
+							#	if not self.irc_relay:
+							#		print ("IRC bot is not loaded.")
+							#	else:
+							#		self.server.irc_relay.connectionLost("IRC Bot disabled.")
+							#		self.server.irc_relay = None
+							#		print ("IRC Bot unloaded.")
+							#elif message[0] == ("irc_load"):
+							#	if self.irc_relay:
+							#		print ("IRC bot is already loaded. If it failed please use /irc_cpr!")
+							#	else:
+							#		self.server.irc_relay = ChatBotFactory(self.server)
+							#		reactor.connectTCP(self.server.conf_irc.get("irc", "server"), self.server.conf_irc.getint("irc", "port"), self.server.irc_relay)
+							#		print ("IRC Bot loaded.")
 							else:
 								print ("There is no " + message[0] + " command.")
 						elif message.startswith("@"):
