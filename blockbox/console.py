@@ -252,7 +252,7 @@ class StdinPlugin(threading.Thread):
 							elif message[0] == ("irc_cpr"):
 								self.server.irc_relay = None
 								self.server.irc_relay = ChatBotFactory(self.server)
-								reactor.connectTCP(self.server.config.get("irc", "server"), self.server.config.getint("irc", "port"), self.server.irc_relay)
+								reactor.connectTCP(self.server.conf_irc.get("irc", "server"), self.server.conf_irc.getint("irc", "port"), self.server.irc_relay)
 							else:
 								print ("There is no " + message[0] + " command.")
 						elif message.startswith("@"):
