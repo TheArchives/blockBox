@@ -551,11 +551,17 @@ class ChatBotFactory(protocol.ClientFactory):
 	def __init__(self, main_factory):
 		self.main_factory = main_factory
 		self.instance = None
+		self.isQuitting = False
 
+	def quit(self, msg):
+		self.isQuitting = True
+		self.instance.sendLine("DISCONNECT :" + msg)
+		
 	def clientConnectionLost(self, connector, reason):
 		"""If we get disconnected, reconnect to server."""
 		self.instance = None
-		connector.connect()
+		if not self.isQuitting:
+			connector.connect()
 
 	def clientConnectionFailed(self, connector, reason):
 		self.logger.warning("Connection failed: %s" % reason)
