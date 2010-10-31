@@ -18,5 +18,5 @@ class IRCPlugin(ProtocolPlugin):
 		"/irc_cpr - Admin\nRehashes the IRC Bot."
 		self.client.factory.irc_relay = None
 		self.client.factory.irc_relay = ChatBotFactory(self.server)
-		reactor.connectTCP(self.client.factory.config.get("irc", "server"), self.client.factory.config.getint("irc", "port"), self.client.factory.irc_relay)
+		reactor.connectTCP(self.client.factory.conf_irc.get("irc", "server"), self.client.factory.conf_irc.getint("irc", "port"), self.client.factory.irc_relay)
 		self.client.sendServerMessage("IRC Bot reloaded.")
