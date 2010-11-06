@@ -10,7 +10,7 @@ from lib.twisted.internet import reactor
 class IRCPlugin(ProtocolPlugin):
 	
 	commands = {
-		"irc_cpr": "commandIRCReload",
+		#"irc_cpr": "commandIRCReload",
 	}
 
 	@admin_only
