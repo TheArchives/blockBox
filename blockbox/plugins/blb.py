@@ -84,21 +84,22 @@ class BlbPlugin(ProtocolPlugin):
 			# We also keep world as a local so they can't change worlds and affect the new one
 			world = self.client.world
 			def generate_changes():
-				for i in range(x, x2+1):
-					for j in range(y, y2+1):
-						for k in range(z, z2+1):
-							if not self.client.AllowedToBuild(i, j, k) and overriderank==False:
-								return
-							try:
+				try:
+					self.client.total = 0 # Obviously set the count to 0 first! -- Stacy
+					for i in range(x, x2+1):
+						for j in range(y, y2+1):
+							for k in range(z, z2+1):
+								if not self.client.AllowedToBuild(i, j, k) and overriderank==False:
+									return
 								world[i, j, k] = block
 								self.client.runHook("blockchange", x, y, z, ord(block), ord(block), fromloc)
-							except AssertionError:
-								self.client.sendServerMessage("Out of bounds blb error.")
-								return
-							self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
-							self.client.sendBlock(i, j, k, block)
-							self.client.total = self.client.total+1
-							yield
+								self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
+								self.client.sendBlock(i, j, k, block)
+								self.client.total += 1 # This is how you increase a number in python.... - Stacy
+								yield
+				except AssertionError:
+					self.client.sendServerMessage("Out of bounds blb error.")
+					return
 			
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
