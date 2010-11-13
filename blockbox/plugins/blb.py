@@ -111,7 +111,6 @@ class BlbPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if fromloc == 'user':
-						#count = ((1+(x2 - x)) * (1+(y2 - y)) * (1+(z2 - z))/3)
 						self.client.finalizeMassCMD('blb', self.client.total)
 						self.client.total = 0
 					pass
@@ -192,7 +191,7 @@ class BlbPlugin(ProtocolPlugin):
 									return
 								self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 								self.client.sendBlock(i, j, k, block)
-								self.client.total = self.client.total+1
+								self.client.total += 1 # This is how you increase a number in python.... - Stacy
 								yield
 
 			# Now, set up a loop delayed by the reactor
@@ -205,7 +204,6 @@ class BlbPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if fromloc == 'user':
-						#count = (((1+(x2 - x)) * (1+(y2 - y)) * (1+(z2 - z))/3) - ((x2 - x) * (y2 - y) * (z2 - z)/3))
 						self.client.finalizeMassCMD('bhb', self.client.total)
 						self.client.total = 0
 					pass
@@ -286,6 +284,7 @@ class BlbPlugin(ProtocolPlugin):
 									return
 								self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 								self.client.sendBlock(i, j, k, block)
+								self.client.total += 1 # This is how you increase a number in python.... - Stacy
 								yield
 
 			# Now, set up a loop delayed by the reactor
@@ -298,9 +297,7 @@ class BlbPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if fromloc == 'user':
-						#TODO: Fix the formula
-						count = (((1+(x2 - x)) * (1+(y2 - y)) * (1+(z2 - z))/3) - ((x2 - x) * (y2 - y) * (2+(z2 - z))/3))
-						self.client.finalizeMassCMD('bwb', count)
+						self.client.finalizeMassCMD('bwb', self.client.count)
 					pass
 			do_step()
 
@@ -442,7 +439,7 @@ class BlbPlugin(ProtocolPlugin):
 							else:
 								self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 								self.client.sendBlock(i, j, k, block)
-							self.client.total = self.client.total+1
+							self.client.total += 1 # This is how you increase a number in python.... - Stacy
 							yield
 			
 			# Now, set up a loop delayed by the reactor
@@ -455,8 +452,6 @@ class BlbPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if fromloc == 'user':
-						#TODO: Speed up blockcount in ticker
-						#count = ((1+(x2 - x)) * (1+(y2 - y)) * (1+(z2 - z))/3)
 						self.client.finalizeMassCMD('bcb', self.client.total)
 						self.client.total = 0
 					pass
@@ -570,7 +565,6 @@ class BlbPlugin(ProtocolPlugin):
 									else:
 										world[i, j, k] = block2
 										self.total_b = self.total_b+1
-
 								except AssertionError:
 									self.client.sendServerMessage("Out of bounds bhcb error.")
 									return
@@ -580,6 +574,7 @@ class BlbPlugin(ProtocolPlugin):
 								else:
 									self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 									self.client.sendBlock(i, j, k, block)
+								self.client.total += 1
 								yield
 
 			# Now, set up a loop delayed by the reactor
@@ -592,8 +587,7 @@ class BlbPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if fromloc == 'user':
-						count = (((1+(x2 - x)) * (1+(y2 - y)) * (1+(z2 - z))/3) - ((x2 - x) * (y2 - y) * (z2 - z)/3))
-						self.client.finalizeMassCMD('bhcb', count)
+						self.client.finalizeMassCMD('bhcb', self.client.total)
 						self.client.sendServerMessage("%i %s, %i %s" % (self.total_a, block, self.total_b, block2))
 						self.total_a = 0
 						self.total_b = 0
@@ -691,6 +685,7 @@ class BlbPlugin(ProtocolPlugin):
 									return
 								self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 								self.client.sendBlock(i, j, k, block)
+								self.client.total += 1
 								yield
 
 			# Now, set up a loop delayed by the reactor
@@ -703,8 +698,6 @@ class BlbPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if fromloc == 'user':
-						#TODO: Fix the formula
-						count = (2*(1+(x2 - x)) + 2*(1+(y2 - y)) + 2*(z2 - z))
 						self.client.finalizeMassCMD('bfb', count)
 					pass
 			do_step()

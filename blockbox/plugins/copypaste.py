@@ -61,7 +61,7 @@ class CopyPastePlugin(ProtocolPlugin):
 						world[rx, ry, rz] = block
 						self.client.queueTask(TASK_BLOCKSET, (rx, ry, rz, block), world=world)
 						self.client.sendBlock(rx, ry, rz, block)
-						self.client.total = self.client.total+1
+						self.client.total += 1 # This is how you increase a number in python.... - Stacy
 					except AssertionError:
 						self.client.sendServerMessage("Out of bounds paste error.")
 						return
@@ -140,7 +140,7 @@ class CopyPastePlugin(ProtocolPlugin):
 								check_offset = world.blockstore.get_offset(i, j, k)
 								block = world.blockstore.raw_blocks[check_offset]
 								self.client.bsaved_blocks.add((i -x, j - y, k -z, block))
-								self.client.total = self.client.total+1
+								self.client.total += 1 # This is how you increase a number in python.... - Stacy
 							except AssertionError:
 								self.client.sendServerMessage("Out of bounds copy error.")
 								return

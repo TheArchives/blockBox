@@ -116,7 +116,7 @@ class NaturePlugin(ProtocolPlugin):
 							pass
 						self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 						self.client.sendBlock(i, j, k, block)
-						self.client.total = self.client.total+1
+						self.client.total += 1 # This is how you increase a number in python.... - Stacy
 						yield
 		# Now, set up a loop delayed by the reactor
 		block_iter = iter(generate_changes())
@@ -174,7 +174,7 @@ class NaturePlugin(ProtocolPlugin):
 							pass
 						self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 						self.client.sendBlock(i, j, k, block)
-						self.client.total = self.client.total+1
+						self.client.total += 1 # This is how you increase a number in python.... - Stacy
 						yield
 		# Now, set up a loop delayed by the reactor
 		block_iter = iter(generate_changes())
@@ -231,7 +231,7 @@ class NaturePlugin(ProtocolPlugin):
 							pass
 						self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world = world)
 						self.client.sendBlock(x, y, z, block)
-						self.client.total = self.client.total+1
+						self.client.total += 1 # This is how you increase a number in python.... - Stacy
 						yield
 		# Now, set up a loop delayed by the reactor
 		block_iter = iter(generate_changes())
@@ -285,7 +285,7 @@ class NaturePlugin(ProtocolPlugin):
 							pass
 						self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world = world)
 						self.client.sendBlock(x, y, z, block)
-						self.client.total = self.client.total+1
+						self.client.total += 1 # This is how you increase a number in python.... - Stacy
 						yield
 		# Now, set up a loop delayed by the reactor
 		block_iter = iter(generate_changes())
@@ -361,7 +361,7 @@ class NaturePlugin(ProtocolPlugin):
 							pass
 						self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 						self.client.sendBlock(i, j, k, block)
-						self.client.total = self.client.total+1
+						self.client.total += 1 # This is how you increase a number in python.... - Stacy
 						yield
 		# Now, set up a loop delayed by the reactor
 		block_iter = iter(generate_changes())
@@ -415,7 +415,7 @@ class NaturePlugin(ProtocolPlugin):
 							pass
 						self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world = world)
 						self.client.sendBlock(x, y, z, block)
-						self.client.total = self.client.total+1
+						self.client.total += 1 # This is how you increase a number in python.... - Stacy
 						yield
 		# Now, set up a loop delayed by the reactor
 		block_iter = iter(generate_changes())
