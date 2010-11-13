@@ -11,11 +11,14 @@ class IRCPlugin(ProtocolPlugin):
 	
 	commands = {
 		#"irc_cpr": "commandIRCReload",
+		#"ircload": "commandIRCLoad",
+		#"ircunload": "commandIRCUnload",
 	}
 
 	@admin_only
 	def commandIRCReload(self, parts, fromloc, overriderank):
 		"/irc_cpr - Admin\nRehashes the IRC Bot."
+		self.client.factory.irc_relay.disconnect()
 		self.client.factory.irc_relay = None
 		self.client.factory.irc_relay = ChatBotFactory(self.server)
 		reactor.connectTCP(self.client.factory.conf_irc.get("irc", "server"), self.client.factory.conf_irc.getint("irc", "port"), self.client.factory.irc_relay)
@@ -37,6 +40,6 @@ class IRCPlugin(ProtocolPlugin):
 		if not self.irc_relay:
 			self.client.factory.sendServerMessage("IRC bot is not loaded.")
 			return
-		self.client.factory.irc_relay.protocol.connectionLost("IRC Bot disabled.")
+		self.client.factory.irc_relay.disconnect()
 		self.client.factory.irc_relay = None
 		self.client.sendServerMessage("IRC Bot unloaded.")

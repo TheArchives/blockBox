@@ -567,6 +567,9 @@ class ChatBotFactory(protocol.ClientFactory):
 		self.logger.warning("Connection failed: %s" % reason)
 		self.instance = None
 
+	def disconnect(self):
+		self.transport.loseConnection()
+
 	def sendMessage(self, username, message):
 		if self.instance:
 			message = message.replace("&0", "01")

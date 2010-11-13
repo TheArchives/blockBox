@@ -91,7 +91,7 @@ class BrepPlugin(ProtocolPlugin):
 									self.client.runHook("blockchange", x, y, z, ord(block), ord(block), fromloc)
 									self.client.queueTask(TASK_BLOCKSET, (i, j, k, blockB), world=world)
 									self.client.sendBlock(i, j, k, blockB)
-									self.client.total = self.client.total+1
+									self.client.total += 1 # This is how you increase a number in python.... - Stacy
 							except AssertionError:
 								self.client.sendServerMessage("Out of bounds replace error.")
 								return
@@ -220,7 +220,7 @@ class BrepPlugin(ProtocolPlugin):
 									world[i, j, k] = var_block
 									self.client.queueTask(TASK_BLOCKSET, (i, j, k, var_block), world=world)
 									self.client.sendBlock(i, j, k, var_block)
-									self.client.total = self.client.total+1
+									self.client.total += 1 # This is how you increase a number in python.... - Stacy
 							except AssertionError:
 								self.client.sendServerMessage("Out of bounds creplace error.")
 								return
@@ -360,7 +360,7 @@ class BrepPlugin(ProtocolPlugin):
 									self.client.queueTask(TASK_BLOCKSET, (ri, rj, rk, block), world=world)
 									self.client.sendBlock(ri, rj, rk, block)
 									self.var_blocklist.append((ri, rj, rk,(i,j,k)))
-									self.client.total = self.client.total+1
+									self.client.total += 1 # This is how you increase a number in python.... - Stacy
 							except AssertionError:
 								pass
 							yield

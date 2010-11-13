@@ -179,7 +179,7 @@ class StairsPlugin(ProtocolPlugin):
 							return
 						self.client.queueTask(TASK_BLOCKSET, (i, j, k, stepblock), world=world)
 						self.client.sendBlock(i, j, k, stepblock)
-						self.client.total = self.client.total+1
+						self.client.total += 1 # This is how you increase a number in python.... - Stacy
 						yield
 			
 			# Now, set up a loop delayed by the reactor

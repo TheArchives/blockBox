@@ -163,7 +163,7 @@ class UndoPlugin(ProtocolPlugin):
 								return
 							self.client.queueTask(TASK_BLOCKSET, (i, j, k, originalblock), world=world)
 							self.client.sendBlock(i, j, k, originalblock)
-							self.client.total = self.client.total+1
+							self.client.total += 1 # This is how you increase a number in python.... - Stacy
 							yield
 						self.client.var_undolist = self.client.sublist
 		# Now, set up a loop delayed by the reactor
@@ -217,7 +217,7 @@ class UndoPlugin(ProtocolPlugin):
 								return
 							user.queueTask(TASK_BLOCKSET, (i, j, k, originalblock), world=world)
 							user.sendBlock(i, j, k, originalblock)
-							self.client.total = self.client.total+1
+							self.client.total += 1 # This is how you increase a number in python.... - Stacy
 							yield
 						user.var_redolist = var_sublist
 					except:
@@ -250,7 +250,7 @@ class UndoPlugin(ProtocolPlugin):
 								return
 							user.queueTask(TASK_BLOCKSET, (i, j, k, originalblock), world=world)
 							user.sendBlock(i, j, k, originalblock)
-							self.client.total = self.client.total+1
+							self.client.total += 1 # This is how you increase a number in python.... - Stacy
 							yield
 						user.var_redolist = var_sublist
 					except:
@@ -281,7 +281,7 @@ class UndoPlugin(ProtocolPlugin):
 								return
 							self.client.queueTask(TASK_BLOCKSET, (i, j, k, originalblock), world=world)
 							self.client.sendBlock(i, j, k, originalblock)
-							self.client.total = self.client.total+1
+							self.client.total += 1 # This is how you increase a number in python.... - Stacy
 							yield
 						self.client.var_redolist = self.client.sublist
 				else:
@@ -310,7 +310,7 @@ class UndoPlugin(ProtocolPlugin):
 								return
 							self.client.queueTask(TASK_BLOCKSET, (i, j, k, originalblock), world=world)
 							self.client.sendBlock(i, j, k, originalblock)
-							self.client.total = self.client.total+1
+							self.client.total += 1 # This is how you increase a number in python.... - Stacy
 							yield
 						self.client.var_redolist = self.client.sublist
 		# Now, set up a loop delayed by the reactor

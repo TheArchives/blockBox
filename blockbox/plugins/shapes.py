@@ -276,7 +276,7 @@ class ShapesPlugin(ProtocolPlugin):
 						return
 					self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 					self.client.sendBlock(i, j, k, block)
-					self.client.total = self.client.total+1
+					self.client.total += 1 # This is how you increase a number in python.... - Stacy
 					yield
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
@@ -392,7 +392,7 @@ class ShapesPlugin(ProtocolPlugin):
 										return
 									self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 									self.client.sendBlock(i, j, k, block)
-									self.client.total = self.client.total+1
+									self.client.total += 1 # This is how you increase a number in python.... - Stacy
 									yield
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
@@ -497,7 +497,7 @@ class ShapesPlugin(ProtocolPlugin):
 					self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 					self.client.sendBlock(i, j, k, block)
 					#TODO: Yes I am retarted for using self.client.total in line
-					self.client.total = self.client.total+1
+					self.client.total += 1 # This is how you increase a number in python.... - Stacy
 					yield
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
@@ -725,7 +725,7 @@ class ShapesPlugin(ProtocolPlugin):
 									self.client.queueTask(TASK_BLOCKSET, (x+i, y+j, z+k, block), world=world)
 									self.client.sendBlock(x+i, y+j, z+k, block)
 									#TODO: Yes, I am retarded in using self.client.total in circles.
-									self.client.total = self.client.total+1
+									self.client.total += 1 # This is how you increase a number in python.... - Stacy
 									yield
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
@@ -827,7 +827,7 @@ class ShapesPlugin(ProtocolPlugin):
 								self.client.queueTask(TASK_BLOCKSET, (x+i, y+j, z+k, block), world=world)
 								self.client.sendBlock(x+i, y+j, z+k, block)
 								#TODO: Yes, I am retarded for using self.client.total in domes.
-								self.client.total = self.client.total+1
+								self.client.total += 1 # This is how you increase a number in python.... - Stacy
 								yield
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
@@ -928,7 +928,7 @@ class ShapesPlugin(ProtocolPlugin):
 									return
 								self.client.queueTask(TASK_BLOCKSET, (var_x+i, var_y+j, var_z+k, block), world=world)
 								self.client.sendBlock(var_x+i, var_y+j, var_z+k, block)
-								self.client.total = self.client.total+1
+								self.client.total += 1 # This is how you increase a number in python.... - Stacy
 								#TODO: Not so retarded to use self.client.total here :3
 								yield
 			# Now, set up a loop delayed by the reactor
@@ -1077,7 +1077,7 @@ class ShapesPlugin(ProtocolPlugin):
 						return
 					self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 					self.client.sendBlock(i, j, k, block)
-					self.client.total = self.client.total+1
+					self.client.total += 1 # This is how you increase a number in python.... - Stacy
 					yield
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
