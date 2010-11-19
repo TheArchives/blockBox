@@ -16,11 +16,14 @@ import socket
 import gc
 import hashlib
 import random
-from blockbox.console import StdinPlugin
+import logging
+from ConfigParser import RawConfigParser as ConfigParser
 from Queue import Queue, Empty
+
 from lib.twisted.internet.protocol import Factory
 from lib.twisted.internet import reactor
-from ConfigParser import RawConfigParser as ConfigParser
+
+from blockbox.console import StdinPlugin
 from blockbox.protocol import MyneServerProtocol
 from blockbox.world import World
 from blockbox.irc_client import ChatBotFactory
@@ -28,7 +31,6 @@ from blockbox.constants import *
 from blockbox.plugins import *
 from blockbox.timer import ResettableTimer
 from blockbox.persistence import PersistenceEngine as Persist
-import logging
 
 class Heartbeat(object):
 	"""
@@ -258,7 +260,8 @@ class MyneFactory(Factory):
 		self.heartbeat = Heartbeat(self)
 		# Boot worlds that got loaded
 		for world in self.worlds:
-			self.loadWorld("mapdata/worlds/%s" % world, world)
+			self.loadWorld("mapdata/worlds/%s" % world, world)
+
 	def initLoops(self):
 		# Set up tasks to run during execution
 		reactor.callLater(0.1, self.sendMessages)

@@ -8,14 +8,15 @@ import hashlib
 import traceback
 import datetime
 import cPickle as pickle
+
 from lib.twisted.internet.protocol import Protocol
 from lib.twisted.internet import reactor
+
 from blockbox.constants import *
 from blockbox.plugins import protocol_plugins
 from blockbox.decorators import *
 from blockbox.irc_client import ChatBotFactory
 from blockbox.persistence import PersistenceEngine as Persist
-import logging
 
 class MyneServerProtocol(Protocol):
 	"""
@@ -88,12 +89,14 @@ class MyneServerProtocol(Protocol):
 			if self.commands[command] == func:
 				del self.commands[command]
 		except KeyError:
-			self.logger.warning("Command '%s' is not registered to %s." % (command, func))
+			self.logger.warning("Command '%s' is not registered to %s." % (command, func))
+
 	def registerHook(self, hook, func):
 		"Registers func as something to be run for hook 'hook'."
 		if hook not in self.hooks:
 			self.hooks[hook] = []
-		self.hooks[hook].append(func)
+		self.hooks[hook].append(func)
+
 	def unregisterHook(self, hook, func):
 		"Unregisters func from hook 'hook'."
 		try:
@@ -106,7 +109,8 @@ class MyneServerProtocol(Protocol):
 		for plugin in self.plugins:
 			if isinstance(plugin, plugin_class):
 				self.plugins.remove(plugin)
-				plugin.unregister()
+				plugin.unregister()
+
 	def loadPlugin(self, plugin_class):
 		self.plugins.append(plugin_class(self))
 
@@ -117,7 +121,8 @@ class MyneServerProtocol(Protocol):
 			# If they return False, we can skip over and return
 			if result is not None:
 				return result
-		return None
+		return None
+
 	def queueTask(self, task, data=[], world=None):
 		"Adds the given task to the factory's queue."
 		# If they've overridden the world, use that as the client.
@@ -132,7 +137,8 @@ class MyneServerProtocol(Protocol):
 				self,
 				task,
 				data,
-			))
+			))
+
 	def sendWorldMessage(self, message):
 		"Sends a message to everyone in the current world."
 		self.queueTask(TASK_WORLDMESSAGE, (255, self.world, COLOUR_YELLOW+message))
@@ -166,21 +172,27 @@ class MyneServerProtocol(Protocol):
 		del self.plugins
 		del self.commands
 		del self.hooks
-		self.connected = 0
+		self.connected = 0
+
 	def send(self, data):
-		self.transport.write(data)
+		self.transport.write(data)
+
 	def sendPacked(self, mtype, *args):
 		fmt = TYPE_FORMATS[mtype]
-		self.transport.write(chr(mtype) + fmt.encode(*args))
+		self.transport.write(chr(mtype) + fmt.encode(*args))
+
 	def sendError(self, error):
 		self.logger.info("Sending error: %s" % error)
 		self.sendPacked(TYPE_ERROR, error)
-		reactor.callLater(0.2, self.transport.loseConnection)
+		reactor.callLater(0.2, self.transport.loseConnection)
+
 	def duplicateKick(self):
 		"Called when someone else logs in with our username"
-		self.sendError("You logged in on another computer.")
+		self.sendError("You logged in on another computer.")
+
 	def packString(self, string, length=64, packWith=" "):
-		return string + (packWith*(length-len(string)))
+		return string + (packWith*(length-len(string)))
+
 	def isOp(self):
 		return (self.username.lower() in self.world.ops) or self.isWorldOwner() or self.isMod() or self.isAdmin() or self.isDirector() or self.isOwner()
 

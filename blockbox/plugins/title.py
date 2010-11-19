@@ -5,7 +5,9 @@
 from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.persistence import PersistenceEngine as Persist
-class TitlePlugin(ProtocolPlugin):
+
+class TitlePlugin(ProtocolPlugin):
+
 	commands = {
 		"title":	 "commandSetTitle",
 		"settitle":	 "commandSetTitle",

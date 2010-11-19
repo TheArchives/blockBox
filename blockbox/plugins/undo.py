@@ -2,24 +2,29 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
+from lib.twisted.internet import reactor
+
 from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
-from lib.twisted.internet import reactor
+
 maxundos = 3000
 
-class UndoPlugin(ProtocolPlugin):
+class UndoPlugin(ProtocolPlugin):
+
 	commands = {
 		"undo": "commandUndo",
 		"redo": "commandRedo",
-	}
+	}
+
 	hooks = {
 		"blockchange": "blockChanged",
 		"newworld": "newWorld",
 	}
 	def gotClient(self):
 		self.client.var_undolist = []
-		self.client.var_redolist = []
+		self.client.var_redolist = []
+
 	def blockChanged(self, x, y, z, block, selected_block, fromloc):
 		"Hook trigger for block changes."
 		world = self.client.world
@@ -29,7 +34,8 @@ class UndoPlugin(ProtocolPlugin):
 			self.client.var_undolist.insert(0,((x,y,z),block,originalblock))
 		else:
 			del self.client.var_undolist[-1]
-			self.client.var_undolist.insert(0,((x,y,z),block,originalblock))
+			self.client.var_undolist.insert(0,((x,y,z),block,originalblock))
+
 	def newWorld(self, world):
 		"Hook to reset undolist in new worlds."
 		self.client.var_undolist = []

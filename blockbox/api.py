@@ -3,11 +3,12 @@
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
 import traceback
-from lib.twisted.protocols.basic import LineReceiver
-from lib.twisted.internet.protocol import Factory
 import logging
 import os
 import json
+
+from lib.twisted.protocols.basic import LineReceiver
+from lib.twisted.internet.protocol import Factory
 
 class APIProtocol(LineReceiver):
 	"""
@@ -16,12 +17,15 @@ class APIProtocol(LineReceiver):
 	def connectionMade(self):
 		self.factory, self.api_factory = self.factory.main_factory, self.factory
 		peer = self.transport.getPeer()
-		self.api_factory.logger.info("Connection made from %s:%s" % (peer.host, peer.port))
+		self.api_factory.logger.info("Connection made from %s:%s" % (peer.host, peer.port))
+
 	def connectionLost(self, reason):
 		peer = self.transport.getPeer()
-		self.api_factory.logger.info("Connection lost from %s:%s" % (peer.host, peer.port))
+		self.api_factory.logger.info("Connection lost from %s:%s" % (peer.host, peer.port))
+
 	def sendJson(self, data):
-		self.sendLine(json.dumps(data))
+		self.sendLine(json.dumps(data))
+
 	def lineReceived(self, line):
 		data = json.loads(line)
 		peer = self.transport.getPeer()
@@ -40,12 +44,14 @@ class APIProtocol(LineReceiver):
 					func(data)
 				except Exception, e:
 					self.sendLine("ERROR %s" % e)
-					traceback.print_exc()
+					traceback.print_exc()
+
 	def commandIrcInfo(self, data):
 		if self.factory.config.getboolean("irc", "use_irc"):
 			self.sendJson({"irc": [self.factory.config.get("irc", "server"), self.factory.config.getint("irc", "port"), self.factory.irc_channel]})
 		else:
-			self.sendLine("ERROR: No IRC information for server.")
+			self.sendLine("ERROR: No IRC information for server.")
+
 	def commandUsers(self, data):
 		self.sendJson({"users": list(self.factory.usernames.keys())})
 
@@ -59,7 +65,8 @@ class APIProtocol(LineReceiver):
 		self.sendJson({"admins": list(self.factory.admins)})
 
 	def commandMods(self, data):
-		self.sendJson({"mods": list(self.factory.mods)})
+		self.sendJson({"mods": list(self.factory.mods)})
+
 	def commandSpecs(self, data):
 		self.sendJson({"specs": list(self.factory.spectators)})
 

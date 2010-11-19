@@ -2,19 +2,23 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-from lib.twisted.internet import reactor
-from blockbox.plugins import ProtocolPlugin
-from blockbox.decorators import *
-from blockbox.constants import *
 import math
 import random
 
-class ToolsPlugin(ProtocolPlugin):
+from lib.twisted.internet import reactor
+
+from blockbox.plugins import ProtocolPlugin
+from blockbox.decorators import *
+from blockbox.constants import *
+
+class ToolsPlugin(ProtocolPlugin):
+
 	commands = {
 		"ruler": "commandRuler",
 		"measure": "commandRuler",
 		"roll": "commandRoll"
-	}
+	}
+
 	@world_list
 	def commandRuler(self, parts, fromloc, overriderank):
 		"/ruler - Guest\nAliases: measure\nCounts the amount of blocks between two clicks."

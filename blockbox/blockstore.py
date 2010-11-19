@@ -5,12 +5,14 @@
 import os
 import gzip
 import struct
+#TOFIX: mmap is not used in blockstore
 import mmap
-from threading import Thread
-from Queue import Queue
 import logging
 import time
 from array import array
+from threading import Thread
+from Queue import Queue
+
 from physics import Physics
 from constants import *
 
@@ -18,7 +20,7 @@ class BlockStore(Thread):
 	"""
 	A class which deals with storing the block maps, flushing them, etc.
 	"""
-	
+
 	def __init__(self, blocks_path,  sx, sy, sz):
 		Thread.__init__(self)
 		self.x, self.y, self.z = sx, sy, sz
@@ -89,14 +91,17 @@ class BlockStore(Thread):
 				else:
 					raise ValueError("Unknown BlockStore task: %s" % task)
 			except (KeyboardInterrupt, IOError):
-				pass
+				pass
+
 	def enable_physics(self):
 		"Turns on physics"
 		self.flush()
-		self.physics = True
+		self.physics = True
+
 	def disable_physics(self):
 		"Disables physics, and clears the in-memory store."
-		self.physics = False
+		self.physics = False
+
 	def create_raw_blocks(self):
 		"Reads in the gzipped data into a raw array"
 		# Open the blocks file
@@ -109,7 +114,8 @@ class BlockStore(Thread):
 		while chunk:
 			self.raw_blocks.extend(chunk)
 			chunk = fh.read(2048)
-		fh.close()
+		fh.close()
+
 	def get_offset(self, x, y, z):
 		"Turns block coordinates into a data offset"
 		assert 0 <= x < self.x
@@ -126,14 +132,16 @@ class BlockStore(Thread):
 
 	def world_message(self, message):
 		"Sends a message out to users about this World."
-		self.out_queue.put([TASK_WORLDMESSAGE, message])
+		self.out_queue.put([TASK_WORLDMESSAGE, message])
+
 	def admin_message(self, message):
 		"Sends a message out to admins about this World."
 		self.out_queue.put([TASK_ADMINMESSAGE, message])
 
 	def send_block(self, x, y, z):
 		"Tells the server to update the given block for clients."
-		self.out_queue.put([TASK_BLOCKSET, (x, y, z, self[x, y, z])])
+		self.out_queue.put([TASK_BLOCKSET, (x, y, z, self[x, y, z])])
+
 	def __setitem__(self, (x, y, z), block):
 		"Set a block in this level to the given value."
 		assert isinstance(block, str) and len(block) == 1
@@ -144,7 +152,8 @@ class BlockStore(Thread):
 		if self.raw_blocks:
 			self.raw_blocks[offset] = block
 		# Ask the physics engine if they'd like a look at that
-		self.physics_engine.handle_change(offset, block)
+		self.physics_engine.handle_change(offset, block)
+
 	def __getitem__(self, (x, y, z)):
 		"Return the value at position x, y, z - possibly not efficiently."
 		offset = self.get_offset(x, y, z)
@@ -159,7 +168,8 @@ class BlockStore(Thread):
 				gz.seek(offset + 4)
 				block = gz.read(1)
 				gz.close()
-				return block
+				return block
+
 	def flush(self):
 		"""
 		Flushes queued blocks into the .gz file.
@@ -217,7 +227,8 @@ class BlockStore(Thread):
 				self.saving = False
 			except:
 				self.saving = True
-				reactor.callLater(3, self.flush)
+				reactor.callLater(3, self.flush)
+
 	@classmethod
 	def create_new(cls, blocks_path, sx, sy, sz, levels):
 		"""

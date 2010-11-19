@@ -3,14 +3,15 @@
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
 import cPickle #Now using the MUCH faster, optimized cPickle
-import logging
 import time
+
 from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 from blockbox.persistence import PersistenceEngine as Persist
 
-class PlayersPlugin(ProtocolPlugin):
+class PlayersPlugin(ProtocolPlugin):
+
 	commands = {
 		"who": "commandWho",
 		"whois": "commandWho",
@@ -125,12 +126,14 @@ class PlayersPlugin(ProtocolPlugin):
 					if p.int("bank", "balance", -1) is not -1:
 						self.client.sendServerMessage("Balance: C%d." %(p.int("bank", "balance", 0)))
 					else:
-						self.client.sendServerMessage("Balance: N/A")
+						self.client.sendServerMessage("Balance: N/A")
+
 	@player_list
 	def commandQuitMsg(self, parts, fromloc, overriderank):
 		self.client.persist.set("main", "quitmsg", " ".join(parts[1:]))
 		self.client.quitmsg = " ".join(parts[1:])
-		self.client.sendServerMessage("Your quit message is now: %s" % " ".join(parts[1:]))
+		self.client.sendServerMessage("Your quit message is now: %s" % " ".join(parts[1:]))
+
 	@player_list
 	def commandQuit(self, parts, fromloc, overriderank):
 		if not len(parts) > 1:
