@@ -2,14 +2,15 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-from lib.twisted.internet import reactor
 import cmath
+
+from lib.twisted.internet import reactor
+
 from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 
-class ShapesPlugin(ProtocolPlugin):
-	
+class ShapesPlugin(ProtocolPlugin):
 	commands = {
 		"sphere": "commandSphere",
 		"hsphere": "commandHSphere",
@@ -22,8 +23,7 @@ class ShapesPlugin(ProtocolPlugin):
 		"ellipsoid": "commandEllipsoid",
 		"ell": "commandEllipsoid",
 		"polytri": "commandPolytri"
-	}
-	
+	}
 	@build_list
 	@writer_only
 	def commandSphere(self, parts, fromloc, overriderank):
@@ -631,7 +631,7 @@ class ShapesPlugin(ProtocolPlugin):
 						self.client.finalizeMassCMD('csphere', count)
 					pass
 			do_step()
-			
+
 	@build_list
 	@op_only
 	def commandCircle(self, parts, fromloc, overriderank):

@@ -3,24 +3,23 @@
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
 from lib.twisted.internet import reactor
+
 from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
-import sys
 
-class BrepPlugin(ProtocolPlugin):
-	
+class ReplacePlugin(ProtocolPlugin):
 	commands = {
-		"replace": "commandBrep",
-		"brep": "commandBrep",
+		"replace": "commandReplace",
+		"brep": "commandReplace",
 		"creplace": "commandCreplace",
 		"crep": "commandCreplace",
 		"fill": "commandFill",
 	}
-	
+
 	@build_list
 	@writer_only
-	def commandBrep(self, parts, fromloc, overriderank):
+	def commandReplace(self, parts, fromloc, overriderank):
 		"/replace blockA blockB [x y z x2 y2 z2] - Builder\nAliases: brep\nReplaces all blocks of blockA in this area to blockB."
 		if len(parts) < 9 and len(parts) != 3:
 			self.client.sendServerMessage("Please enter types (and possibly two coord triples)")

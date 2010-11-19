@@ -46,7 +46,7 @@ class ChatBot(irc.IRCClient):
 		self.logger.info("Joined %s." % channel)
 
 	def sendError(self, error):
-		self.log("Sending error: %s" % error)
+		self.logger.info("Sending error: %s" % error)
 		self.sendPacked(TYPE_ERROR, error)
 		reactor.callLater(0.2, self.transport.loseConnection)
 

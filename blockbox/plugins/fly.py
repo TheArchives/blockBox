@@ -6,21 +6,17 @@ from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 
-class FlyPlugin(ProtocolPlugin):
-	
+class FlyPlugin(ProtocolPlugin):
 	commands = {
 		"fly": "commandFly",
-	}
-	
+	}
 	hooks = {
 		"poschange": "posChanged",
 		"newworld": "newWorld",
-	}
-	
+	}
 	def gotClient(self):
 		self.flying = False
-		self.last_flying_block = None
-	
+		self.last_flying_block = None
 	def posChanged(self, x, y, z, h, p):
 		"Hook trigger for when the player moves"
 		# Are we fake-flying them?
@@ -74,13 +70,11 @@ class FlyPlugin(ProtocolPlugin):
 				self.setCsBlock(self.last_flying_block[0] - 1, self.last_flying_block[1], self.last_flying_block[2] + 1, BLOCK_AIR)
 				self.setCsBlock(self.last_flying_block[0] + 1, self.last_flying_block[1], self.last_flying_block[2] - 1, BLOCK_AIR)
 				self.setCsBlock(self.last_flying_block[0] + 1, self.last_flying_block[1], self.last_flying_block[2] + 1, BLOCK_AIR)
-				self.last_flying_block = None
-	
+				self.last_flying_block = None
 	def newWorld(self, world):
 		"Hook to reset flying abilities in new worlds if not op."
 		if self.client.isSpectator():
-			self.flying = False
-	
+			self.flying = False
 	@player_list
 	@on_off_command
 	def commandFly(self, onoff, fromloc, overriderank):

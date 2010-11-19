@@ -9,14 +9,12 @@ from blockbox.constants import *
 import math
 import random
 
-class ToolsPlugin(ProtocolPlugin):
-	
+class ToolsPlugin(ProtocolPlugin):
 	commands = {
 		"ruler": "commandRuler",
 		"measure": "commandRuler",
 		"roll": "commandRoll"
-	}
-	
+	}
 	@world_list
 	def commandRuler(self, parts, fromloc, overriderank):
 		"/ruler - Guest\nAliases: measure\nCounts the amount of blocks between two clicks."

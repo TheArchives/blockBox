@@ -8,11 +8,10 @@ protocol_plugins = []
 server_plugins = []
 
 class PluginMetaclass(type):
-	
 	"""
 	A metaclass which registers any subclasses of Plugin.
 	"""
-	
+
 	def __new__(cls, name, bases, dct):
 		# Supercall
 		new_cls = type.__new__(cls, name, bases, dct)
@@ -29,7 +28,6 @@ class PluginMetaclass(type):
 				logger.warning("Plugin '%s' is not a server or a protocol plugin." % name)
 		return new_cls
 
-
 class ServerPlugin(object):
 	"""
 	Parent object all plugins inherit from.
@@ -42,7 +40,7 @@ class ProtocolPlugin(object):
 	Parent object all plugins inherit from.
 	"""
 	__metaclass__ = PluginMetaclass
-	
+
 	def __init__(self, client):
 		# Store the client
 		self.client = client
@@ -56,7 +54,7 @@ class ProtocolPlugin(object):
 				self.client.registerHook(name, getattr(self, fname))
 		# Call clean setup method
 		self.gotClient()
-	
+
 	def unregister(self):
 		# Unregister our commands
 		if hasattr(self, "commands"):
@@ -67,10 +65,9 @@ class ProtocolPlugin(object):
 			for name, fname in self.hooks.items():
 				self.client.unregisterHook(name, getattr(self, fname))
 		del self.client
-	
+
 	def gotClient(self):
 		pass
-
 
 def load_plugins(plugins):
 	"Given a list of plugin names, imports them so they register."
@@ -79,7 +76,6 @@ def load_plugins(plugins):
 			__import__("blockbox.plugins.%s" % module_name)
 		except ImportError:
 			logging.getLogger("Plugins").error("Cannot load plugin %s." % module_name)
-
 
 def unload_plugin(plugin_name):
 	"Given a plugin name, reloads and re-imports its code."
@@ -90,12 +86,10 @@ def unload_plugin(plugin_name):
 		if plugin in server_plugins:
 			server_plugins.remove(plugin)
 
-
 def load_plugin(plugin_name):
 	# Reload the module, in case it was imported before
 	reload(__import__("blockbox.plugins.%s" % plugin_name, {}, {}, ["*"]))
 	load_plugins([plugin_name])
-
 
 def plugins_by_module_name(module_name):
 	"Given a module name, returns the plugin classes in it."

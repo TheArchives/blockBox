@@ -7,8 +7,7 @@ from blockbox.decorators import *
 from blockbox.constants import *
 from blockbox.timer import ResettableTimer
 
-class CountPlugin(ProtocolPlugin):
-	
+class CountPlugin(ProtocolPlugin):
 	commands = {
 		"count": "commandCount",
 		"countdown": "commandCount",

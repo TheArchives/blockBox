@@ -2,13 +2,12 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-import pickle
 import os
 import logging
 import hashlib
 import traceback
 import datetime
-import cPickle
+import cPickle as pickle
 from lib.twisted.internet.protocol import Protocol
 from lib.twisted.internet import reactor
 from blockbox.constants import *
@@ -35,13 +34,13 @@ class MyneServerProtocol(Protocol):
 		self.logger = logging.getLogger("Client")
 		self.quitmsg = "Goodbye."
 		self.homeworld = "main"
-		self.total = 0
+		self.total = 0 #TOFIX: Don't use a client variable for blb count, it makes everything seem retarted
 		self.ip = self.transport.getPeer().host
 		self.commands = {}
 		self.hooks = {}
 		self.plugins = [plugin(self) for plugin in protocol_plugins]
 		self.ClientVars = dict()
-	# Set identification variable to false
+		# Set identification variable to false
 		self.identified = False
 		# Get an ID for ourselves
 		try:
@@ -89,28 +88,25 @@ class MyneServerProtocol(Protocol):
 			if self.commands[command] == func:
 				del self.commands[command]
 		except KeyError:
-			self.logger.warning("Command '%s' is not registered to %s." % (command, func))
-	
+			self.logger.warning("Command '%s' is not registered to %s." % (command, func))
 	def registerHook(self, hook, func):
 		"Registers func as something to be run for hook 'hook'."
 		if hook not in self.hooks:
 			self.hooks[hook] = []
-		self.hooks[hook].append(func)
-	
+		self.hooks[hook].append(func)
 	def unregisterHook(self, hook, func):
 		"Unregisters func from hook 'hook'."
 		try:
 			self.hooks[hook].remove(func)
 		except (KeyError, ValueError):
 			self.logger.warning("Hook '%s' is not registered to %s." % (command, func))
-	
+
 	def unloadPlugin(self, plugin_class):
 		"Unloads the given plugin class."
 		for plugin in self.plugins:
 			if isinstance(plugin, plugin_class):
 				self.plugins.remove(plugin)
-				plugin.unregister()
-	
+				plugin.unregister()
 	def loadPlugin(self, plugin_class):
 		self.plugins.append(plugin_class(self))
 
@@ -121,8 +117,7 @@ class MyneServerProtocol(Protocol):
 			# If they return False, we can skip over and return
 			if result is not None:
 				return result
-		return None
-	
+		return None
 	def queueTask(self, task, data=[], world=None):
 		"Adds the given task to the factory's queue."
 		# If they've overridden the world, use that as the client.
@@ -137,8 +132,7 @@ class MyneServerProtocol(Protocol):
 				self,
 				task,
 				data,
-			))
-	
+			))
 	def sendWorldMessage(self, message):
 		"Sends a message to everyone in the current world."
 		self.queueTask(TASK_WORLDMESSAGE, (255, self.world, COLOUR_YELLOW+message))
@@ -172,27 +166,21 @@ class MyneServerProtocol(Protocol):
 		del self.plugins
 		del self.commands
 		del self.hooks
-		self.connected = 0
-	
+		self.connected = 0
 	def send(self, data):
-		self.transport.write(data)
-	
+		self.transport.write(data)
 	def sendPacked(self, mtype, *args):
 		fmt = TYPE_FORMATS[mtype]
-		self.transport.write(chr(mtype) + fmt.encode(*args))
-	
+		self.transport.write(chr(mtype) + fmt.encode(*args))
 	def sendError(self, error):
 		self.logger.info("Sending error: %s" % error)
 		self.sendPacked(TYPE_ERROR, error)
-		reactor.callLater(0.2, self.transport.loseConnection)
-	
+		reactor.callLater(0.2, self.transport.loseConnection)
 	def duplicateKick(self):
 		"Called when someone else logs in with our username"
-		self.sendError("You logged in on another computer.")
-	
+		self.sendError("You logged in on another computer.")
 	def packString(self, string, length=64, packWith=" "):
-		return string + (packWith*(length-len(string)))
-	
+		return string + (packWith*(length-len(string)))
 	def isOp(self):
 		return (self.username.lower() in self.world.ops) or self.isWorldOwner() or self.isMod() or self.isAdmin() or self.isDirector() or self.isOwner()
 
@@ -316,9 +304,9 @@ class MyneServerProtocol(Protocol):
 				try:
 				# If we're read-only, reverse the change
 					if self.isSpectator():
-						 self.sendBlock(x, y, z)
-						 self.sendServerMessage("Specs cannot edit maps.")
-						 return
+						self.sendBlock(x, y, z)
+						self.sendServerMessage("Spectators cannot edit maps.")
+						return
 					allowbuild = self.runHook("blockclick", x, y, z, block, True)
 					if allowbuild is False:
 						self.sendBlock(x, y, z)
@@ -672,7 +660,7 @@ class MyneServerProtocol(Protocol):
 		self.initial_position = position
 		if self.world.is_archive:
 			self.sendSplitServerMessage("This world is an Archive, and will cease to exist once the last person leaves.")
-			self.sendServerMessage(COLOUR_RED+"Admins: Please do not reboot this world.")
+			self.sendServerMessage(COLOUR_RED+"Staff: Please do not reboot this world.")
 		breakable_admins = self.runHook("canbreakadmin")
 		self.sendPacked(TYPE_INITIAL, 7, "Loading...", "Entering world '%s'" % world_id, 100 if breakable_admins else 0)
 		self.sendLevel()
@@ -689,9 +677,9 @@ class MyneServerProtocol(Protocol):
 	def sendWorldOwnerUpdate(self):
 		"Sends the admincrete-breaker update and a message."
 		if self.isWorldOwner():
-			self.sendServerMessage("You are now an World Owner here.")
+			self.sendServerMessage("You are now a World Owner here.")
 		else:
-			self.sendServerMessage("You are no longer an World Owner here.")
+			self.sendServerMessage("You are no longer a World Owner here.")
 		self.runHook("rankchange")
 		self.respawn()
 
@@ -770,32 +758,32 @@ class MyneServerProtocol(Protocol):
 	def sendPlayerDir(self, id, h, p):
 		self.sendPacked(TYPE_PLAYERDIR, id, h, p)
 
-	def sendMessage(self, id, colour, username, text, direct=False, action=False, irc=False):
+	def sendMessage(self, id, colour, username, text, fromloc='user'):
 		"Sends a message to the player, splitting it up if needed."
 		# See if it's muted.
-		replacement = self.runHook("recvmessage", colour, username, text, action)
+		replacement = self.runHook("recvmessage", colour, username, text, fromloc)
 		if replacement is False:
 			return
 		# See if we should highlight the names
-		if irc:
+		if fromloc == 'irc':
 			if self.world.highlight_ops:
-				if action:
+				if fromloc == 'action':
 					prefix = "%s*<%s%s>%s " % (COLOUR_YELLOW, colour, username, COLOUR_WHITE)
 				else:
 					prefix = "<%s%s%s> " % (colour, username, COLOUR_WHITE)
 			else:
-				if action:
+				if fromloc == 'action':
 					prefix = "%s*<%s%s>%s " % (COLOUR_YELLOW, COLOUR_WHITE, username, COLOUR_WHITE)
 				else:
 					prefix = "<%s%s> " % (COLOUR_WHITE, username)
 		else:
 			if self.world.highlight_ops:
-				if action:
+				if fromloc == 'action':
 					prefix = "%s*%s%s%s " % (COLOUR_YELLOW, colour, username, COLOUR_WHITE)
 				else:
 					prefix = "%s%s:%s " % (colour, username, COLOUR_WHITE)
 			else:
-				if action:
+				if fromloc == 'action':
 					prefix = "%s*%s%s%s " % (COLOUR_YELLOW, COLOUR_WHITE, username, COLOUR_WHITE)
 				else:
 					prefix = "%s: " % username
@@ -841,10 +829,10 @@ class MyneServerProtocol(Protocol):
 				self.sendPacked(TYPE_MESSAGE, id, prefix + newline)
 
 	def sendAction(self, id, colour, username, text):
-		self.sendMessage(id, colour, username, text, action=True)
+		self.sendMessage(id, colour, username, text, 'action')
 
 	def sendIrcMessage(self, id, colour, username, text):
-		self.sendMessage(id, colour, username, text, irc=True)
+		self.sendMessage(id, colour, username, text, 'irc')
 
 	def sendWhisper(self, username, text):
 		if self.world.highlight_ops:
@@ -996,7 +984,7 @@ class MyneServerProtocol(Protocol):
 		else:
 			self.sendPacked(TYPE_MESSAGE, 255, "You are now in world '%s'" % self.world.id)
 
-	def AllowedToBuild(self,x,y,z):
+	def AllowedToBuild(self, x, y, z):
 		build = False
 		assigned = []
 		try:
@@ -1156,7 +1144,8 @@ class MyneServerProtocol(Protocol):
 					client.sendServerMessage("Use /inbox to check and see.")
 					reactor.callLater(300, self.MessageAlert)
 
-	def setPersist(self): # Load persisted variables, and store some important stuff.
+	def setPersist(self):
+		"Load persisted variables, and store some important stuff."
 		self.persist.set("misc", "ip", self.ip)
 		self.quitmsg = self.persist.string("misc", "quitmsg", "Goodbye.")
 		self.homeworld = self.persist.string("misc", "homeworld", "main")

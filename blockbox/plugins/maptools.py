@@ -6,15 +6,14 @@ from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 
-class PrivatePlugin(ProtocolPlugin):
-	
+class PrivatePlugin(ProtocolPlugin):
 	commands = {
 		"private": "commandPrivate",
 		"lock": "commandLock",
 		"gchat": "commandGChat"
 		#"ponly": "commandPOnly"
 	}
-	
+
 	@world_list
 	@op_only
 	@on_off_command

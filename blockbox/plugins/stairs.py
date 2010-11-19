@@ -8,12 +8,10 @@ from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 
-class StairsPlugin(ProtocolPlugin):
-	
+class StairsPlugin(ProtocolPlugin):
 	commands = {
 		"stairs": "commandStairs",
-	}
-	
+	}
 	@build_list
 	@writer_only
 	def commandStairs(self, parts, fromloc, overriderank):

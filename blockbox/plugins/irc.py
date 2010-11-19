@@ -7,8 +7,7 @@ from blockbox.decorators import *
 from blockbox.constants import *
 from lib.twisted.internet import reactor
 
-class IRCPlugin(ProtocolPlugin):
-	
+class IRCPlugin(ProtocolPlugin):
 	commands = {
 		#"irc_cpr": "commandIRCReload",
 		#"ircload": "commandIRCLoad",

@@ -2,14 +2,16 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-from blockbox.plugins import ProtocolPlugin
-from blockbox.decorators import *
-from blockbox.constants import *
-from lib.twisted.internet import reactor
 from random import randint
 import sys, traceback
 from time import time
 import math
+
+from lib.twisted.internet import reactor
+
+from blockbox.plugins import ProtocolPlugin
+from blockbox.decorators import *
+from blockbox.constants import *
 
 """
 Here is a rundown of how the mobs file works. Mobs are dynamic lists of data that are themselves stored in another list.
@@ -52,8 +54,7 @@ var_unbreakables = ['\x07', '*', ')', '.', '1']
 var_childrenentities = ["testarrow","paintball","cannonball"]
 runonce = True
 
-class EntityPlugin(ProtocolPlugin):
-	
+class EntityPlugin(ProtocolPlugin):
 	commands = {
 		"entity": "commandEntity",
 		"entityclear": "commandEntityclear",
@@ -2562,7 +2563,7 @@ class EntityPlugin(ProtocolPlugin):
 		world = self.client.world
 		entitylist = world.entitylist
 		self.client.sendServerMessage(str(len(entitylist)))
-		
+
 	@op_only
 	def commandEntityclear(self, parts, fromloc, overriderank):
 		"/entityclear - Op\nAliases: mobclear\nClears the entities from the map"
@@ -2610,7 +2611,7 @@ class EntityPlugin(ProtocolPlugin):
 				self.client.sendServerMessage("Entity not registered in entityblocklist.")
 		self.client.world.entitylist = []
 		self.client.sendWorldMessage("Entities cleared.")
-		
+
 	@op_only
 	def commandEntities(self, parts, fromloc, overriderank):
 		"/entities - Op\nAliases: mobs\nDisplays available entities"

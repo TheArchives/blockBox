@@ -2,16 +2,15 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-import random
 import os
 import shutil
+
 from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 from blockbox.world import World
 
-class MultiWorldPlugin(ProtocolPlugin):
-	
+class MultiWorldPlugin(ProtocolPlugin):
 	commands = {
 		"new": "commandNew",
 		#"mapadd": "commandNew",
@@ -33,8 +32,7 @@ class MultiWorldPlugin(ProtocolPlugin):
 		#"mapdelete": "commandDelete",
 		"undelete": "commandUnDelete",
 		"deleted": "commandDeleted",
-	}
-	
+	}
 	@world_list
 	@admin_only
 	def commandNew(self, parts, fromloc, overriderank):
@@ -77,8 +75,7 @@ class MultiWorldPlugin(ProtocolPlugin):
 				self.client.sendServerMessage("There is already a world called '%s'." % new_worldid)
 			else:
 				self.client.factory.renameWorld(old_worldid, new_worldid)
-				self.client.sendServerMessage("World '%s' renamed to '%s'." % (old_worldid, new_worldid))
-	
+				self.client.sendServerMessage("World '%s' renamed to '%s'." % (old_worldid, new_worldid))
 	@world_list
 	@mod_only
 	def commandShutdown(self, parts, fromloc, overriderank):
@@ -119,8 +116,7 @@ class MultiWorldPlugin(ProtocolPlugin):
 					self.client.factory.loadWorld("mapdata/worlds/%s" % parts[1], parts[1])
 					self.client.sendServerMessage("World '%s' booted." % parts[1])
 				except AssertionError:
-					self.client.sendServerMessage("There is no world by that name.")
-	
+					self.client.sendServerMessage("There is no world by that name.")
 	@world_list
 	@only_string_command("world name")
 	def commandLoad(self, world_id, fromloc, overriderank, params=None):
@@ -141,15 +137,13 @@ class MultiWorldPlugin(ProtocolPlugin):
 			else:
 				self.client.sendServerMessage("You're WorldBanned from '%s'; so you're not allowed in." % world_id)
 				return
-		self.client.changeToWorld(world_id)
-	
+		self.client.changeToWorld(world_id)
 	@world_list
 	def commandWorlds(self, parts, fromloc, overriderank):
 		"/worlds [letter|all] - Guest\nAliases: maps, levels\nLists available worlds - by letter, online, or all."
 		if len(parts) != 2 and len(parts) != 3:
 			self.client.sendServerMessage("Do /worlds all for all worlds or choose a letter.")
 			self.client.sendServerList(["Online:"] + [id for id, world in self.client.factory.worlds.items() if self.client.canEnter(world)])
-
 			return
 		else:
 			if parts[1] == 'all':
@@ -220,8 +214,7 @@ class MultiWorldPlugin(ProtocolPlugin):
 			)
 			self.client.factory.loadWorld("mapdata/worlds/%s" % world_id, world_id)
 			self.client.factory.worlds[world_id].all_write = False
-			self.client.sendServerMessage("World '%s' made and booted." % world_id)
-	
+			self.client.sendServerMessage("World '%s' made and booted." % world_id)
 	@world_list
 	@admin_only
 	def commandDelete(self, parts, fromloc, overriderank):
@@ -245,8 +238,7 @@ class MultiWorldPlugin(ProtocolPlugin):
 						break
 			shutil.copytree("mapdata/worlds/%s" %parts[1], "mapdata/worlds/.trash/%s" %parts[1])
 			shutil.rmtree("mapdata/worlds/%s" % parts[1])
-			self.client.sendServerMessage("World deleted as %s." %(name))
-	
+			self.client.sendServerMessage("World deleted as %s." %(name))
 	@world_list
 	@admin_only
 	def commandUnDelete(self, parts, fromloc, overriderank):

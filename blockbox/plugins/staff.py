@@ -6,8 +6,8 @@ from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 from blockbox.globals import *
-class StaffPlugin(ProtocolPlugin):
-	
+
+class StaffPlugin(ProtocolPlugin):
 	commands = {
 		"staff": "commandStaff",
 		"advbuilders": "commandAdvBuilders",

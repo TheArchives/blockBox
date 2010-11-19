@@ -7,8 +7,7 @@ from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 
-class MessagingPlugin(ProtocolPlugin):
-	
+class MessagingPlugin(ProtocolPlugin):
 	commands = {
 		"say": "commandSay",
 		"msg": "commandSay",
@@ -30,8 +29,7 @@ class MessagingPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("This command doesn't need arguments")
 		else:
 			self.client.factory.queue.put((self.client, TASK_AWAYMESSAGE, self.client.username + " is now: "+COLOUR_DARKGREEN+"Back."))
-			self.client.gone = 0
-	
+			self.client.gone = 0
 	@player_list
 	def commandAway(self, parts, fromloc, overriderank):
 		 "/away reason - Guest\nAliases: afk, brb\nPrints out message of you going away."
@@ -51,16 +49,14 @@ class MessagingPlugin(ProtocolPlugin):
 			if self.client.isSilenced():
 				self.client.sendServerMessage("You are Silenced and lost your tongue.")
 			else:
-				self.client.factory.queue.put((self.client, TASK_ACTION, (self.client.id, self.client.userColour(), self.client.username, " ".join(parts[1:]))))
-	
+				self.client.factory.queue.put((self.client, TASK_ACTION, (self.client.id, self.client.userColour(), self.client.username, " ".join(parts[1:]))))
 	@mod_only
 	def commandSay(self, parts, fromloc, overriderank):
 		"/say message - Mod\nAliases: msg\nPrints out message in the server color."
 		if len(parts) == 1:
 			self.client.sendServerMessage("Please type a message.")
 		else:
-			self.client.factory.queue.put((self.client, TASK_SERVERMESSAGE, ("[MSG] "+(" ".join(parts[1:])))))
-	
+			self.client.factory.queue.put((self.client, TASK_SERVERMESSAGE, ("[MSG] "+(" ".join(parts[1:])))))
 	@director_only
 	def commandSRB(self, parts, fromloc, overriderank):
 		"/srb [reason] - Director\nPrints out a reboot message."

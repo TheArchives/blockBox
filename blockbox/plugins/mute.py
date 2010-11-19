@@ -6,8 +6,7 @@ from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 
-class MutePlugin(ProtocolPlugin):
-	
+class MutePlugin(ProtocolPlugin):
 	commands = {
 		"mute": "commandMute",
 		"unmute": "commandUnmute",
@@ -15,27 +14,22 @@ class MutePlugin(ProtocolPlugin):
 		"silence": "commandSilence",
 		"desilence": "commandDesilence",
 		"unsilence": "commandDesilence",
-	}
-	
+	}
 	hooks = {
 		"recvmessage": "messageReceived",
-	}
-	
+	}
 	def gotClient(self):
-		self.muted = set()
-	
-	def messageReceived(self, colour, username, text, action):
+		self.muted = set()
+	def messageReceived(self, colour, username, text, fromloc):
 		"Stop viewing a message if we've muted them."
 		if username.lower() in self.muted:
-			return False
-	
+			return False
 	@player_list
 	@only_username_command
 	def commandMute(self, username, fromloc, overriderank):
 		"/mute username - Guest\nStops you hearing messages from 'username'."
 		self.muted.add(username)
-		self.client.sendServerMessage("%s muted." % username)
-	
+		self.client.sendServerMessage("%s muted." % username)
 	@player_list
 	@only_username_command
 	def commandUnmute(self, username, fromloc, overriderank):
@@ -44,16 +38,14 @@ class MutePlugin(ProtocolPlugin):
 			self.muted.remove(username)
 			self.client.sendServerMessage("%s unmuted." % username)
 		else:
-			self.client.sendServerMessage("%s wasn't muted to start with" % username)
-	
+			self.client.sendServerMessage("%s wasn't muted to start with" % username)
 	@player_list
 	def commandMuted(self, username, fromloc, overriderank):
 		"/muted - Guest\nLists people you have muted."
 		if self.muted:
 			self.client.sendServerList(["Muted:"] + list(self.muted))
 		else:
-			self.client.sendServerMessage("You haven't muted anyone.")
-	
+			self.client.sendServerMessage("You haven't muted anyone.")
 	@player_list
 	@mod_only
 	@only_username_command

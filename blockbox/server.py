@@ -258,7 +258,7 @@ class MyneFactory(Factory):
 		self.heartbeat = Heartbeat(self)
 		# Boot worlds that got loaded
 		for world in self.worlds:
-			self.loadWorld("mapdata/worlds/%s" % world, world)
+			self.loadWorld("mapdata/worlds/%s" % world, world)
 	def initLoops(self):
 		# Set up tasks to run during execution
 		reactor.callLater(0.1, self.sendMessages)

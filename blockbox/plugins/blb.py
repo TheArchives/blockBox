@@ -8,8 +8,7 @@ from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 
-class BlbPlugin(ProtocolPlugin):
-	
+class BlbPlugin(ProtocolPlugin):
 	commands = {
 		"blb": "commandBlb",
 		"draw": "commandBlb",
@@ -22,13 +21,11 @@ class BlbPlugin(ProtocolPlugin):
 		"bcb": "commandBcb",
 		"bhcb": "commandBhcb",
 		"bfb": "commandFBlb",
-	}
-	
+	}
 	@build_list
 	@writer_only
 	def commandBlb(self, parts, fromloc, overriderank):
 		"/blb blockname [x y z x2 y2 z2] - Builder\nAliases: box, cub, cuboid, draw\nSets all blocks in this area to block."
-		
 		if len(parts) < 8 and len(parts) != 2:
 			self.client.sendServerMessage("Please enter a type (and possibly two coord triples)")
 		else:
@@ -120,14 +117,12 @@ class BlbPlugin(ProtocolPlugin):
 	@writer_only
 	def commandHBlb(self, parts, fromloc, overriderank):
 		"/bhb blockname [x y z x2 y2 z2] - Builder\nAliases: hbox\nSets all blocks in this area to block, hollow."
-
 		if len(parts) < 8 and len(parts) != 2:
 			self.client.sendServerMessage("Please enter a block type")
 		else:
 			block = self.client.GetBlockValue(parts[1])
 			if block == None:
 				return
-
 			# If they only provided the type argument, use the last two block places
 			if len(parts) == 2:
 				try:
@@ -213,14 +208,12 @@ class BlbPlugin(ProtocolPlugin):
 	@writer_only
 	def commandWBlb(self, parts, fromloc, overriderank):
 		"/bwb blockname [x y z x2 y2 z2] - Builder\nBuilds four walls between the two areas.\nHollow, with no roof or floor."
-
 		if len(parts) < 8 and len(parts) != 2:
 			self.client.sendServerMessage("Please enter a block type")
 		else:
 			block = self.client.GetBlockValue(parts[1])
 			if block == None:
 				return
-
 			# If they only provided the type argument, use the last two block places
 			if len(parts) == 2:
 				try:
@@ -330,17 +323,14 @@ class BlbPlugin(ProtocolPlugin):
 				except KeyError:
 					self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
 					return
-			
 			# Check the block is valid
 			if ord(block) > 49:
 				self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
 				return
-				
 			op_blocks = [BLOCK_SOLID, BLOCK_WATER, BLOCK_LAVA]
 			if ord(block) in op_blocks and not self.client.isOp():
 				self.client.sendServerMessage("Sorry, but you can't use that block.")
 				return
-			
 			# Check that block2 is valid
 			if ord(block2) > 49:
 				self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
@@ -364,7 +354,6 @@ class BlbPlugin(ProtocolPlugin):
 				else:
 					self.client.sendServerMessage("Solid is op-only")
 					return
-			
 			# If they only provided the type argument, use the last two block places
 			if len(parts) == 3:
 				try:
@@ -384,14 +373,13 @@ class BlbPlugin(ProtocolPlugin):
 				except ValueError:
 					self.client.sendServerMessage("All parameters must be integers")
 					return
-			
+
 			if x > x2:
 				x, x2 = x2, x
 			if y > y2:
 				y, y2 = y2, y
 			if z > z2:
 				z, z2 = z2, z
-			
 
 			if self.client.isDirector() or overriderank:
 				limit = 1073741824
@@ -409,7 +397,7 @@ class BlbPlugin(ProtocolPlugin):
 			if (x2 - x) * (y2 - y) * (z2 - z) > limit:
 				self.client.sendServerMessage("Sorry, that area is too big for you to bcb.")
 				return
-			
+
 			# Draw all the blocks on, I guess
 			# We use a generator so we can slowly release the blocks
 			# We also keep world as a local so they can't change worlds and affect the new one
@@ -441,7 +429,7 @@ class BlbPlugin(ProtocolPlugin):
 								self.client.sendBlock(i, j, k, block)
 							self.client.total += 1 # This is how you increase a number in python.... - Stacy
 							yield
-			
+
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
 			def do_step():
@@ -476,7 +464,6 @@ class BlbPlugin(ProtocolPlugin):
 				except KeyError:
 					self.client.sendServerMessage("'%s' is not a valid block type." % parts[2])
 					return
-				
 			# Try getting the block as a direct integer type.
 			try:
 				block = chr(int(parts[1]))
@@ -487,7 +474,6 @@ class BlbPlugin(ProtocolPlugin):
 				except KeyError:
 					self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
 					return
-
 			# Check the block is valid
 			if ord(block) > 49:
 				self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
@@ -496,8 +482,6 @@ class BlbPlugin(ProtocolPlugin):
 			if ord(block) in op_blocks and not self.client.isOp():
 				self.client.sendServerMessage("Sorry, but you can't use that block.")
 				return
-			
-
 			# If they only provided the type argument, use the last two block places
 			if len(parts) == 3:
 				try:
@@ -598,7 +582,6 @@ class BlbPlugin(ProtocolPlugin):
 	@writer_only
 	def commandFBlb(self, parts, fromloc, overriderank):
 		"/bfb blockname [x y z x2 y2 z2] - Builder\nSets all blocks in this area to block, wireframe."
-
 		if len(parts) < 8 and len(parts) != 2:
 			self.client.sendServerMessage("Please enter a block type")
 		else:
@@ -612,7 +595,6 @@ class BlbPlugin(ProtocolPlugin):
 				except KeyError:
 					self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
 					return
-
 			# Check the block is valid
 			if ord(block) > 49:
 				self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
@@ -621,7 +603,6 @@ class BlbPlugin(ProtocolPlugin):
 			if ord(block) in op_blocks and not self.client.isOp():
 				self.client.sendServerMessage("Sorry, but you can't use that block.")
 				return
-
 			# If they only provided the type argument, use the last two block places
 			if len(parts) == 2:
 				try:
@@ -678,8 +659,7 @@ class BlbPlugin(ProtocolPlugin):
 								return
 							if (i==x and j==y) or (i==x2 and j==y2) or (j==y2 and k==z2) or (i==x2 and k==z2) or (j==y and k==z) or (i==x and k==z) or (i==x and k==z2) or (j==y and k==z2) or (i==x2 and k==z) or (j==y2 and k==z) or (i==x and j==y2) or (i==x2 and j==y):
 								try:
-								   world[i, j, k] = block
-
+									world[i, j, k] = block
 								except AssertionError:
 									self.client.sendServerMessage("Out of bounds bfb error.")
 									return

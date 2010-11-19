@@ -79,7 +79,7 @@ class World(object):
 			self.blockstore.in_queue.put([TASK_PHYSICSON])
 		if self._finite_water:
 			self.blockstore.in_queue.put([TASK_FWATERON])
-			
+
 	def stop(self):
 		"Signals the BlockStore to stop."
 		self.blockstore.in_queue.put([TASK_STOP])
@@ -133,6 +133,7 @@ class World(object):
 				self.blockstore.in_queue.put([TASK_PHYSICSON])
 			else:
 				self.blockstore.in_queue.put([TASK_PHYSICSOFF])
+
 	physics = property(get_physics, set_physics)
 
 	def get_finite_water(self):
@@ -145,6 +146,7 @@ class World(object):
 				self.blockstore.in_queue.put([TASK_FWATERON])
 			else:
 				self.blockstore.in_queue.put([TASK_FWATEROFF])
+
 	finite_water = property(get_finite_water, set_finite_water)
 
 	def start_unflooding(self):
@@ -365,12 +367,10 @@ class World(object):
 		# Store rank zones
 		for name, zone in self.rankzones.items():
 			config.set("rankzones", str(name), ", ".join(map(str, zone)))
-
 		# Store entitylist
 		for i in range(len(self.entitylist)):
 			entry = self.entitylist[i]
 			config.set("entitylist", str(i), ", ".join(map(str, [entry[0],entry[1][0],entry[1][1],entry[1][2]] + entry[2:])))
-			
 		fp = open(self.meta_path, "w")
 		config.write(fp)
 		fp.close()
@@ -431,17 +431,17 @@ class World(object):
 
 	def add_worldban(self, name):
 		self.worldbans[name.lower()] = "True"
-		
+
 	def delete_worldban(self, name):
 		try:
 			del self.worldbans[name.lower()]
 			return True
 		except KeyError:
 			return False
-		
+
 	def isworldbanned(self, name):
 		return name.lower() in self.worldbans
-		
+
 	def add_command(self, x, y, z, cmd):
 		offset = self.get_offset(x, y, z)
 		self.commands[offset] = cmd
@@ -480,7 +480,7 @@ class World(object):
 	def has_mine(self, x, y, z):
 		offset = self.get_offset(x, y, z)
 		return offset in self.mines	
-		
+
 	def clear_mines(self):
 		self.mines = list([])
 

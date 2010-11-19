@@ -9,8 +9,7 @@ from blockbox.constants import *
 import math
 from random import choice
 #TODO: Add FinalizeMassCMD support
-class LSystemPlugin(ProtocolPlugin):
-	
+class LSystemPlugin(ProtocolPlugin):
 	commands = {
 		"lbook": "commandLbook",
 		"rec_axiom": "commandRec_Axiom",

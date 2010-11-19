@@ -104,7 +104,7 @@ class MinePlugin(ProtocolPlugin):
 				reactor.callLater(self.delay+0.5, explode2)
 		except AssertionError:
 			#oob
-			pass				
+			pass
 
 	@build_list
 	@op_only

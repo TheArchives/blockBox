@@ -7,7 +7,7 @@ from blockbox.decorators import *
 from blockbox.constants import *
 
 class BindPlugin(ProtocolPlugin):
-	
+
 	commands = {
 		"bind": "commandBind",
 		"build": "commandBind",
@@ -16,16 +16,16 @@ class BindPlugin(ProtocolPlugin):
 		"stand": "commandAir",
 		"place": "commandAir",
 	}
-	
+
 	hooks = {
 		"blockchange": "blockChanged",
 		"rankchange": "sendAdminBlockUpdate",
 		"canbreakadmin": "canBreakAdminBlocks",
 	}
-	
+
 	def gotClient(self):
 		self.block_overrides = {}
-	
+
 	def blockChanged(self, x, y, z, block, selected_block, fromloc):
 		"Hook trigger for block changes."
 		if block in self.block_overrides:
@@ -37,7 +37,7 @@ class BindPlugin(ProtocolPlugin):
 			return (not self.client.world.admin_blocks) or self.client.isOp()
 		else:
 			return False
-	
+
 	def sendAdminBlockUpdate(self):
 		"Sends a packet that updates the client's admin-building ability"
 		self.client.sendPacked(TYPE_INITIAL, 6, "Admincrete Update", "Reloading the server...", self.canBreakAdminBlocks() and 100 or 0)

@@ -6,22 +6,18 @@ from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 
-class AdminBlocksPlugin(ProtocolPlugin):
-	
+class AdminBlocksPlugin(ProtocolPlugin):
 	commands = {
 		"solid": "commandSolid",
 		"solids": "commandAdminblocks",
-	}
-	
+	}
 	hooks = {
 		"blockchange": "blockChanged",
 		"rankchange": "sendAdminBlockUpdate",
 		"canbreakadmin": "canBreakAdminBlocks",
-	}
-	
+	}
 	def gotClient(self):
-		self.building_solid = False
-	
+		self.building_solid = False
 	def blockChanged(self, x, y, z, block, selected_block, fromloc):
 		"Hook trigger for block changes."
 		# Admincrete hack check
@@ -33,19 +29,16 @@ class AdminBlocksPlugin(ProtocolPlugin):
 			self.client.world[x,y,z].addCallback(check_block)
 		# See if they are in solid-building mode
 		if self.building_solid and block == BLOCK_ROCK:
-			return BLOCK_GROUND_ROCK
-	
+			return BLOCK_GROUND_ROCK
 	def canBreakAdminBlocks(self):
 		"Shortcut for checking permissions."
 		if hasattr(self.client, "world"):
 			return (not self.client.world.admin_blocks) or self.client.isOp()
 		else:
-			return False
-	
+			return False
 	def sendAdminBlockUpdate(self):
 		"Sends a packet that updates the client's admin-building ability"
-		self.client.sendPacked(TYPE_INITIAL, 6, "Admincrete Update", "Reloading the server...", self.canBreakAdminBlocks() and 100 or 0)
-	
+		self.client.sendPacked(TYPE_INITIAL, 6, "Admincrete Update", "Reloading the server...", self.canBreakAdminBlocks() and 100 or 0)
 	@world_list
 	@op_only
 	@on_off_command
@@ -60,8 +53,7 @@ class AdminBlocksPlugin(ProtocolPlugin):
 			self.client.sendWorldMessage("Admin blocks are now disabled here.")
 			self.client.sendServerMessage("Admin Blocks off in %s" % self.client.world.id)
 		for client in self.client.world.clients:
-			self.client.sendAdminBlockUpdate()
-	
+			self.client.sendAdminBlockUpdate()
 	@build_list
 	@op_only
 	def commandSolid(self, parts, fromloc, overriderank):

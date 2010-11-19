@@ -2,24 +2,24 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
+import logging
+import datetime
+
+from lib.twisted.internet import reactor
+
 from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
-from lib.twisted.internet import reactor
-import logging
-import datetime
 
 class GreiferDetectorPlugin(ProtocolPlugin):
 
 	hooks = {
 		"blockchange": "blockChanged",
 		"newworld": "newWorld",
-	}
-	
+	}
 	def gotClient(self):
 		self.var_blockchcount = 0
-		self.in_publicworld = False
-	
+		self.in_publicworld = False
 	def blockChanged(self, x, y, z, block, selected_block, fromloc):
 		"Hook trigger for block changes."
 		world = self.client.world
@@ -38,7 +38,7 @@ class GreiferDetectorPlugin(ProtocolPlugin):
 				if self.var_blockchcount == 0:
 					reactor.callLater(5, griefcheck)
 				self.var_blockchcount += 1
-				
+
 	def newWorld(self, world):
 		"Hook to reset portal abilities in new worlds if not op."
 		if world.id.find('public') == -1:

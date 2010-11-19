@@ -3,21 +3,20 @@
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
 import traceback
+import cPickle as pickle
+
 from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from lib.twisted.internet import reactor
 from blockbox.constants import *
-import cPickle as pickle
 
-class OfflineMessagePlugin(ProtocolPlugin):
-	
+class OfflineMessagePlugin(ProtocolPlugin):
 	commands = {
 		  "s": "commandSendMessage",
 		  "inbox": "commandCheckMessages",
 		  "c": "commandClear",
 		  "clear": "commandClear",
-	}
-	
+	}
 	def commandSendMessage(self,parts, fromloc, overriderank):
 		"/s username message - Guest\nSends an message to the players Inbox."
 		if len(parts) < 3:
