@@ -7,11 +7,11 @@ from blockbox.decorators import *
 from blockbox.constants import *
 
 class NickPlugin(ProtocolPlugin):
-	
+
 	commands = {
 		"nick": "commandNick",
 	}
-	
+
 	@player_list
 	@director_only
 	def commandNick(self, params, fromloc, rankoverride):

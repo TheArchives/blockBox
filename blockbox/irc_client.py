@@ -4,10 +4,12 @@
 
 import datetime
 import traceback
+import logging
+
 from lib.twisted.words.protocols import irc
 from lib.twisted.words.protocols.irc import IRC
 from lib.twisted.internet import protocol
-import logging
+
 from constants import *
 from globals import *
 from blockbox.plugins import protocol_plugins
@@ -46,7 +48,7 @@ class ChatBot(irc.IRCClient):
 		self.logger.info("Joined %s." % channel)
 
 	def sendError(self, error):
-		self.log("Sending error: %s" % error)
+		self.logger.info("Sending error: %s" % error)
 		self.sendPacked(TYPE_ERROR, error)
 		reactor.callLater(0.2, self.transport.loseConnection)
 
@@ -561,13 +563,15 @@ class ChatBotFactory(protocol.ClientFactory):
 		"""If we get disconnected, reconnect to server."""
 		self.instance = None
 		if not self.isQuitting:
-			connector.connect()
+			connector.connect()
+
 	def clientConnectionFailed(self, connector, reason):
 		self.logger.warning("Connection failed: %s" % reason)
 		self.instance = None
 
 	def disconnect(self):
-		self.transport.loseConnection()
+		self.transport.loseConnection()
+
 	def sendMessage(self, username, message):
 		if self.instance:
 			message = message.replace("&0", "01")

@@ -6,11 +6,13 @@ import threading
 import traceback, sys
 import time
 import datetime
-from blockbox.constants import *
 import logging
+
+from lib.twisted.internet import reactor
+
+from blockbox.constants import *
 from globals import *
 from blockbox.irc_client import ChatBotFactory
-from lib.twisted.internet import reactor
 
 class StdinPlugin(threading.Thread):
 

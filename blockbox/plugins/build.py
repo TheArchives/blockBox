@@ -7,19 +7,19 @@ from blockbox.decorators import *
 from blockbox.constants import *
 
 class BuildPlugin(ProtocolPlugin):
-	
+
 	commands = {
 		"b": "commandBuild",
 		"build": "commandBuild",
 	}
-	
+
 	hooks = {
 		"blockchange": "blockChanged",
 	}
-	
+
 	def gotClient(self):
 		self.block_overrides = {}
-	
+
 	def blockChanged(self, x, y, z, block, selected_block, fromloc):
 		"Hook trigger for block changes."
 		if block in self.block_overrides:
@@ -66,4 +66,3 @@ class BuildPlugin(ProtocolPlugin):
 				else:
 					self.block_overrides[old] = new
 					self.client.sendServerMessage("%s will turn into %s." % (old_name, name))
-	

@@ -3,22 +3,23 @@
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
 import datetime
+
 from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 
 class ArchivesPlugin(ProtocolPlugin):
-	
+
 	commands = {
 		"aname": "commandAname",
 		"atime": "commandAtime",
 		"aboot": "commandAboot",
 	}
-	
+
 	def gotClient(self):
 		self.selected_archive_name = None
 		self.selected_archive = None
-	
+
 	def commandAname(self, parts, True, False):
 		"/aname searchterm - Selects an archive name, by part or all of the name."
 		if len(parts) == 1:
@@ -38,7 +39,7 @@ class ArchivesPlugin(ProtocolPlugin):
 					self.client.sendServerMessage(match)
 				if len(matches) > 3:
 					self.client.sendServerMessage("..and %s more." % (len(matches) - 3))
-	
+
 	def commandAtime(self, parts, True, False):
 		"/atime yyyy/mm/dd hh_mm - Selects the archive time to get"
 		if len(parts) == 2:
@@ -68,7 +69,7 @@ class ArchivesPlugin(ProtocolPlugin):
 				times.sort()
 				self.selected_archive = times[0][2]
 				self.client.sendServerMessage("Selected archive from %s" % times[0][1].strftime("%Y/%m/%d %H_%M"))
-	
+
 	def commandAboot(self, parts, True, False):
 		"/aboot - Boots an archive after you've done /aname and /atime"
 		if not self.selected_archive:

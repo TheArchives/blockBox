@@ -57,7 +57,7 @@ class ResettableTimer(threading.Thread):
 		"""
 		self.counter = 0
 		self.stop = False
-		
+
 	def run(self):
 		"""
 		Run the timer loop.

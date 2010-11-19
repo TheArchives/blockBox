@@ -3,29 +3,30 @@
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
 import random
+
 from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 
 class HidePlugin(ProtocolPlugin):
-	
+
 	commands = {
 		"hide": "commandHide",
 		"cloak": "commandHide",
 	}
-	
+
 	hooks = {
 		"playerpos": "playerMoved",
 	}
-	
+
 	def gotClient(self):
 		self.hidden = False
-	
+
 	def playerMoved(self, x, y, z, h, p):
 		"Stops transmission of player positions if hide is on."
 		if self.hidden:
 			return False
-	
+
 	@player_list
 	@op_only
 	def commandHide(self, params, fromloc, overriderank):

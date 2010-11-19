@@ -10,7 +10,7 @@ from blockbox.decorators import *
 from blockbox.constants import *
 
 class TwitterPlugin(ProtocolPlugin):
-	
+
 	commands = {
 		"tlog": "commandTlogin",
 		"tdetails": "commandDetails",

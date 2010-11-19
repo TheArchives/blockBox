@@ -11,6 +11,7 @@ import urllib
 import urllib2
 import cookielib
 import re
+
 from lib.twisted.internet import reactor, protocol
 
 from blockbox.protocol import MyneServerProtocol, TYPE_FORMATS
@@ -67,19 +68,16 @@ class RipClient(MyneServerProtocol):
 				print ("Level size (%s, %s, %s)" % (self.sx, self.sy, self.sz))
 			elif type == TYPE_SPAWNPOINT and self.name:
 				naff, nick, x, y, z, h, nafftoo = parts
-
 				basename = "mapdata/archives/"+"/".join([self.name, datetime.datetime.utcnow().strftime("%Y-%m-%d_%H_%M")])
 				#basename = basename.replace("/", "\\")
 				try:
 					os.makedirs(basename)
 				except OSError:
 					pass
-
 				# Write out the blocks data
 				fh = open(os.path.join(basename, "blocks.gz"), mode="wb")
 				fh.write(self.gzipped)
 				fh.close()
-
 				# Write out meta info
 				config = ConfigParser()
 				x >>= 5
@@ -98,7 +96,6 @@ class RipClient(MyneServerProtocol):
 				fp = open(os.path.join(basename, "world.meta"), "w")
 				config.write(fp)
 				fp.close()
-
 				print ("Spawn point is at (%s, %s, %s, %s)" % (x, y, z, h))
 				print ("Saved as %s." % fh.name)
 				self.name = None
@@ -106,7 +103,6 @@ class RipClient(MyneServerProtocol):
 			elif type == TYPE_ERROR:
 				print ("Error! %s" % parts[0])
 				self.transport.loseConnection()
-
 
 class RipFactory(protocol.ClientFactory):
 	protocol = RipClient
@@ -123,12 +119,10 @@ class RipFactory(protocol.ClientFactory):
 		print ("Connection terminated.")
 		reactor.stop()
 
-
 # this connects the protocol to a server runing on port 8000
 def rip(key, username, password):
 	login_url = 'http://minecraft.net/login.jsp'
 	play_url = 'http://minecraft.net/play.jsp?server=%s'
-
 	cj = cookielib.CookieJar()
 	opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
 	login_data = urllib.urlencode({'username': username, 'password': password})
@@ -146,11 +140,11 @@ def rip(key, username, password):
 
 def main():
 	config = ConfigParser()
-       try:
-	    config.read(os.path.join(os.path.dirname(__file__), "client.conf"))
-       except:
-           logger.error("You need to rename client.example.conf to client.conf")           exit(1);
-           exit(1);
+		try:
+			config.read(os.path.join(os.path.dirname(__file__), "client.conf"))
+		except:
+			logger.error("You need to rename client.example.conf to client.conf")
+			exit(1);
 	rip(sys.argv[1], config.get("client", "username"), config.get("client", "password"))
 
 # this only runs if the module was *not* imported

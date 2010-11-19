@@ -6,7 +6,7 @@ from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 
 class KickBanPlugin(ProtocolPlugin):
-	
+
 	commands = {
 		"ban": "commandBan",
 		"banb": "commandBanBoth",
@@ -51,7 +51,7 @@ class KickBanPlugin(ProtocolPlugin):
 		else:
 			user.sendError("You got Kicked.")
 			self.client.sendServerMessage("They were just kicked.")
-	
+
 	@player_list
 	@admin_only
 	@only_username_command
@@ -79,7 +79,7 @@ class KickBanPlugin(ProtocolPlugin):
 				if username in self.client.factory.usernames:
 					self.client.factory.usernames[username].sendError("You got Banned!")
 				self.client.sendServerMessage("%s has been Banned." % username)
-	
+
 	@player_list
 	@director_only
 	@only_username_command
@@ -96,7 +96,7 @@ class KickBanPlugin(ProtocolPlugin):
 				if username in self.client.factory.usernames:
 					self.client.factory.usernames[username].sendError("You got Banned!")
 				self.client.sendServerMessage("%s has been IPBanned." % ip)
-	
+
 	@player_list
 	@admin_only
 	@only_username_command
@@ -107,7 +107,7 @@ class KickBanPlugin(ProtocolPlugin):
 		else:
 			self.client.factory.removeBan(username)
 			self.client.sendServerMessage("%s was UnBanned." % username)
-	
+
 	@player_list
 	@director_only
 	@only_string_command("IP")
@@ -128,7 +128,7 @@ class KickBanPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("%s is not Banned." % username)
 		else:
 			self.client.sendServerMessage("Reason: %s" % self.client.factory.banReason(username))
-	
+
 	@player_list
 	@director_only
 	@only_string_command("IP")

@@ -6,7 +6,9 @@ import logging
 import time
 from collections import deque
 from threading import Thread, Lock
+
 from lib.twisted.internet import reactor
+
 from constants import *
 
 CHR_STEP = chr(BLOCK_STEP)
@@ -49,7 +51,7 @@ class Physics(Thread):
 	GRASS_DIE_LIMIT = 10
 	SAND_FALL_LIMIT = 1000
 	STEP_FALL_LIMIT = 1000
-	
+
 	def __init__(self, blockstore):
 		Thread.__init__(self)
 		self.blockstore = blockstore
@@ -59,11 +61,11 @@ class Physics(Thread):
 		self.was_unflooding = False
 		self.logger = logging.getLogger("Physics")
 		self.init_queues()
-	
+
 	def stop(self):
 		self.running = False
 		self.join()
-	
+
 	def run(self):
 		while self.running:
 			if self.blockstore.physics:
@@ -92,7 +94,7 @@ class Physics(Thread):
 			self.was_unflooding = self.blockstore.unflooding
 			# Wait till next iter
 			time.sleep(0.7)
-	
+
 	def init_queues(self):
 		self.fluid_queue = set()
 		self.grass_grow_queue = set()
@@ -102,7 +104,7 @@ class Physics(Thread):
 		self.sponge_locations = set()
 		self.sand_queue = set()
 		self.step_queue = set()
-	
+
 	def scan_blocks(self):
 		"Scans the blockstore, looking for things to add to the queues."
 		# Initialise the queues
@@ -119,14 +121,14 @@ class Physics(Thread):
 				self.sand_queue.add(offset)
 			elif block is CHR_STEP:
 				self.step_queue.add(offset)
-	
+
 	def is_transparent(self, block):
 		"Returns whether specified block is transparent"
 		if block in (CHR_AIR, CHR_LEAVES, CHR_GLASS, CHR_RED_FLOWER, CHR_YELLOW_FLOWER, CHR_RED_MUSHROOM, CHR_BROWN_MUSHROOM, CHR_SHRUB):
 			return True
 		else:
 			return False
-	
+
 	def handle_change(self, offset, block):
 		"Gets called when a block is changed, with its position and type."
 		assert isinstance(block, str)
@@ -144,14 +146,14 @@ class Physics(Thread):
 			self.step_queue.add(offset)
 		if block is CHR_DIRT or block is CHR_GRASS:
 			self.grass_grow_queue.add(offset)
-	
+
 	def apply_ops(self, ops):
 		"Immediately applies changes to the in-memory state. Returns the changes."
 		for x, y, z, block in ops:
 			if block is not REQUEUE_FLUID:
 				self.blockstore.raw_blocks[self.blockstore.get_offset(x, y, z)] = chr(block)
 			yield x, y, z, block
-	
+
 	def run_iteration(self):
 		changes = []
 		fluid_done = 0
@@ -234,7 +236,7 @@ class Physics(Thread):
 			except KeyError:
 				pass
 		return changes, (fluid_done >= self.FLUID_LIMIT)
-	
+
 	def get_blocks(self, x, y, z, deltas):
 		"Given a starting point and some deltas, returns all offsets which exist."
 		for dx, dy, dz in deltas:
@@ -244,7 +246,7 @@ class Physics(Thread):
 				pass
 			else:
 				yield x+dx, y+dy, z+dz, new_offset
-	
+
 	def is_blocked(self, x, y, z):
 		"Given coords, determines if the block can see the sky."
 		blocked = False
@@ -255,7 +257,7 @@ class Physics(Thread):
 				blocked = True
 				break
 		return blocked
-	
+
 	def block_radius(self, r):
 		"Returns blocks within the radius"
 		for x in range(-r, r+1):
@@ -263,7 +265,7 @@ class Physics(Thread):
 				for z in range(-r, r+1):
 					if x or y or z:
 						yield (x, y, z)
-	
+
 	def handle_air(self, offset):
 		"Handles the appearance of an air block, for fluids or growth"
 		x, y, z = self.blockstore.get_coords(offset)
@@ -280,7 +282,7 @@ class Physics(Thread):
 				self.fluid_queue.add(new_offset)
 			elif new_block is CHR_SAND:
 				self.sand_queue.add(new_offset)
-	
+
 	def handle_sponge(self, offset):
 		"Handles simulation of sponge blocks."
 		x, y, z = self.blockstore.get_coords(offset)
@@ -307,13 +309,13 @@ class Physics(Thread):
 					block = self.blockstore.raw_blocks[new_offset]
 					if block is CHR_WATER or block is CHR_LAVA:
 						self.fluid_queue.add(new_offset)
-	
+
 	def sponge_within_radius(self, x, y, z, r):
 		for nx, ny, nz, new_offset in self.get_blocks(x, y, z, self.block_radius(r)):
 			if new_offset in self.sponge_locations:
 				return True
 		return False
-	
+
 	def handle_fluid(self, offset):
 		"Handles simulation of fluid blocks."
 		x, y, z = self.blockstore.get_coords(offset)
@@ -391,7 +393,7 @@ class Physics(Thread):
 			for nx, ny, nz, new_offset in self.get_blocks(x, y, z, [(0, 0, 1), (0, 0, -1), (1, 0, 0), (-1, 0, 0)]):
 				if self.blockstore.raw_blocks[new_offset] is CHR_AIR and not self.sponge_within_radius(nx, ny, nz, 2):
 					yield (nx, ny, nz, ord(block))
-	
+
 	def handle_grass_grow(self, offset):
 		"""
 		Handles grass growing. We get passed either a patch of grass that
@@ -415,7 +417,7 @@ class Physics(Thread):
 					if not self.is_blocked(nx, ny, nz):
 						yield (nx, ny, nz, BLOCK_GRASS)
 						self.grass_grow_queue.add(new_offset)
-	
+
 	def handle_sand_fall(self, offset):
 		"""
 		Handles sand falling. Experimental.
@@ -463,7 +465,7 @@ class Physics(Thread):
 						yield (nx, ny, nz, ord(block))
 						yield (x, y, z, BLOCK_AIR)
 						return
-	
+
 	def handle_step_fall(self, offset):
 		"""
 		Handles step falling. Experimental.

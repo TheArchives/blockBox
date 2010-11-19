@@ -6,7 +6,7 @@ from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 
 class TeleportPlugin(ProtocolPlugin):
-	
+
 	commands = {
 		"goto": "commandGoto",
 		"tp": "commandTeleport",
@@ -23,7 +23,7 @@ class TeleportPlugin(ProtocolPlugin):
 			self.client.teleportTo(x, y, z)
 		except (IndexError, ValueError):
 			self.client.sendServerMessage("Usage: /goto x y z")
-	
+
 	@player_list
 	@username_command
 	def commandTeleport(self, user, fromloc, overriderank):

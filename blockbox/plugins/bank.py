@@ -2,13 +2,14 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
+import logging
+
 from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.persistence import PersistenceEngine as Persist
-import logging
 
 class MoneyPlugin(ProtocolPlugin):
-	
+
 	commands = {
 		"bank":	 "commandBalance",
 		"balance":	 "commandBalance",
@@ -17,7 +18,7 @@ class MoneyPlugin(ProtocolPlugin):
 		"removebank":	"commandRemoveAccount",
 	}
 	money_logger = logging.getLogger('TransactionLogger')
-	
+
 	def commandBalance(self, parts, fromloc, overriderank):	
 		"/bank - Guest\nAliases: balance\nFirst time: Creates you a account.\nOtherwise: Checks your balance."
 		if self.client.persist.int("bank", "balance", -1) is not -1:
@@ -55,7 +56,7 @@ class MoneyPlugin(ProtocolPlugin):
 		self.client.factory.balancesqllog.write("UPDATE " + self.client.factory.table_prefix + "players SET balance=" + amount + " WHERE username='" + target + "';")
 		self.client.factory.balancesqllog.flush()
 		self.client.sendServerMessage("Set player balance to %d %s." % (amount, self.client.factory.credit_name))
-			
+
 	def commandPay(self, parts, fromloc, overriderank):
 		"/pay username amount - Guest\nThis lets you send money to other people."
 		if len(parts) != 3:
@@ -80,7 +81,7 @@ class MoneyPlugin(ProtocolPlugin):
 			return False
 		elif amount < 0 and not self.client.isDirector():
 			self.client.sendServerMessage("Error: Amount must be positive.")
-			return False		
+			return False
 		elif amount > ubalance or amount < -(tbalance):
 			self.client.sendServerMessage("Error: Not enough %s." % self.client.factory.credit_name)
 			return False

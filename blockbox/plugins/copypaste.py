@@ -2,22 +2,22 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
+import sys
+
 from lib.twisted.internet import reactor
 
 from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 
-import sys
-
 class CopyPastePlugin(ProtocolPlugin):
-	
+
 	commands = {
 		"copy": "commandSave",
 		"paste": "commandLoad",
 		"rotate": "commandRotate"
 	}
-	
+
 	@build_list
 	@writer_only
 	def commandLoad(self, parts, fromloc, overriderank):

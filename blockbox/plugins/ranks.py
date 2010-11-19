@@ -9,7 +9,7 @@ from blockbox.globals import *
 from blockbox.world import World
 
 class RankPlugin(ProtocolPlugin):
-	
+
 	commands = {
 		"rank": "commandRank",
 		"setrank": "commandRank",
@@ -104,7 +104,7 @@ class RankPlugin(ProtocolPlugin):
 	def commandSpec(self, username, fromloc, overriderank):
 		"/spec username - Mod\nMakes the player as a spec."
 		self.client.sendServerMessage(Spec(self, username, fromloc, overriderank))
-	
+
 	@player_list
 	@mod_only
 	@only_username_command

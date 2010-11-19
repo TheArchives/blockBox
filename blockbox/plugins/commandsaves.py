@@ -2,22 +2,22 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
+from lib.twisted.internet import reactor
+
 from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
-from lib.twisted.internet import reactor
-import logging
 
 class BackPlugin(ProtocolPlugin):
-	
+
 	commands = {
 		"b": "commandBack",
 	}
-	
+
 	hooks = {
 		"chatmsg": "Message",
 	}
-	
+
 	def gotClient(self):
 		self.lastcommand = None
 		self.savedcommands = list({})
@@ -25,7 +25,7 @@ class BackPlugin(ProtocolPlugin):
 	def Message(self, message):
 		if message.startswith("/") and not message.split()[0].lower() == "/b":
 			self.lastcommand = message
-	
+
 	@info_list
 	def commandBack(self, parts, fromloc, rankoverride):
 		message = self.lastcommand
@@ -42,7 +42,7 @@ class BackPlugin(ProtocolPlugin):
 			except KeyError:
 				self.client.sendServerMessage("Unknown command '%s'" % command)
 				return
-		if (self.client.isSpectator() and (getattr(func, "admin_only", False) or getattr(func, "mod_only", False) or getattr(func, "op_only", False) or getattr(func, "worldowner_only", False) or getattr(func, "member_only", False) or getattr(func, "writer_only", False))):
+		if (self.client.isSpectator() and (getattr(func, "admin_only", False) or getattr(func, "mod_only", False) or getattr(func, "op_only", False) or getattr(func, "worldowner_only", False) or getattr(func, "advbuilder_only", False) or getattr(func, "writer_only", False))):
 			if fromloc == 'user':
 				self.client.sendServerMessage("'%s' is not available to specs." % command)
 				return
@@ -66,7 +66,7 @@ class BackPlugin(ProtocolPlugin):
 			if fromloc == 'user':
 				self.client.sendServerMessage("'%s' is an WorldOwner-only command!" % command)
 				return
-		if getattr(func, "member_only", False) and not (self.client.isMember() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
+		if getattr(func, "advbuilder_only", False) and not (self.client.isMember() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
 			if fromloc == 'user':
 				self.client.sendServerMessage("'%s' is a Member-only command!" % command)
 				return
@@ -78,4 +78,4 @@ class BackPlugin(ProtocolPlugin):
 			func(parts, 'user', False) #fromloc is user, overriderank is false
 		except Exception, e:
 			self.client.sendServerMessage("Internal server error.")
-			self.client.log(traceback.format_exc(), level=logging.ERROR)
+			self.client.logger.error(traceback.format_exc())

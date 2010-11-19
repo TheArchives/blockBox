@@ -7,7 +7,7 @@ from blockbox.decorators import *
 from blockbox.constants import *
 
 class PhysicsControlPlugin(ProtocolPlugin):
-	
+
 	commands = {
 		"physics": "commandPhysics",
 		#"physflush": "commandPhysflush",
@@ -16,14 +16,14 @@ class PhysicsControlPlugin(ProtocolPlugin):
 		"fwater": "commandFwater",
 		"asd":"commandASD",
 	}
-	
+
 	@world_list
 	@op_only
 	def commandUnflood(self, parts, fromloc, overriderank):
 		"/unflood worldname - Op\nAliases: deflood\nSlowly removes all water and lava from the map."
 		self.client.world.start_unflooding()
 		self.client.sendWorldMessage("Unflooding has been initiated.")
-	
+
 	@world_list
 	@admin_only
 	@on_off_command
@@ -44,7 +44,7 @@ class PhysicsControlPlugin(ProtocolPlugin):
 			else:
 				self.client.world.physics = False
 				self.client.sendWorldMessage("This world now has physics disabled.")
-	
+
 	@world_list
 	@op_only
 	@on_off_command
@@ -56,7 +56,7 @@ class PhysicsControlPlugin(ProtocolPlugin):
 		else:
 			self.client.world.finite_water = False
 			self.client.sendWorldMessage("This world now has finite water disabled.")
-	
+
 	@world_list
 	@admin_only
 	@on_off_command
@@ -71,7 +71,7 @@ class PhysicsControlPlugin(ProtocolPlugin):
 
 	# Needs updating for new physics engine separation
 	#@admin_only
-	#def commandPhysflush(self,):
+	#def commandPhysflush(self, parts, fromloc, overriderank):
 	#	"/physflush - Tells the physics engine to rescan the world."
 	#	self.client.world.physics_engine.was_physics = False
 	#	self.sendServerMessage("Physics flush running.")

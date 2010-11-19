@@ -5,21 +5,22 @@
 
 import sys
 if not sys.version_info[:2] == (2, 6):
-    print ("ATTENTION: Do you need help with blockBox? blockbox.bradness.info/forum or #blockBox@irc.esper.net")
-    try:
-        print ("NOTICE: Sorry, but you need Python 2.6.x (Zope, Twisted and SimpleJSON) to run blockBox; http://www.python.org/download/releases/2.6.5/")
-    except:
-        print ("NOTICE: Sorry, but you need Python 2.6.x (Zope, Twisted and SimpleJSON) to run blockBox; http://www.python.org/download/releases/2.6.5/")
-    exit(1);
-
+	print ("ATTENTION: Do you need help with blockBox? http://blockbox.bradness.info/forum or #blockBox@irc.esper.net")
+	try:
+		print ("NOTICE: Sorry, but you need Python 2.6.x (Zope, Twisted and SimpleJSON) to run blockBox; http://www.python.org/download/releases/2.6.5/")
+	except:
+		print ("NOTICE: Sorry, but you need Python 2.6.x (Zope, Twisted and SimpleJSON) to run blockBox; http://www.python.org/download/releases/2.6.5/")
+	exit(1);
 
 import logging
-from blockbox.constants import *
 from logging.handlers import SMTPHandler
+from ConfigParser import RawConfigParser as ConfigParser
+
 from lib.twisted.internet import reactor
+
+from blockbox.constants import *
 from blockbox.server import MyneFactory
 from blockbox.api import APIFactory
-from ConfigParser import RawConfigParser as ConfigParser
 
 logging.basicConfig(
 	format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",

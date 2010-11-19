@@ -6,13 +6,13 @@ from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 
 class SpectatePlugin(ProtocolPlugin):
-	
+
 	commands = {
 		"spectate": "commandSpectate",
 		"follow": "commandSpectate",
 		"watch": "commandSpectate",
 	}
-	
+
 	hooks = {
 		"poschange": "posChanged",
 	}
@@ -23,12 +23,9 @@ class SpectatePlugin(ProtocolPlugin):
 	
 	def posChanged(self, x, y, z, h, p):
 		"Hook trigger for when the player moves"
-
 		spectators = set()
-
 		for uid in self.client.factory.clients:
 			user = self.client.factory.clients[uid]
-
 			try:
 				if user.spectating == self.client.id:
 					if user.x != x and user.y != y and user.z != z:
@@ -41,14 +38,11 @@ class SpectatePlugin(ProtocolPlugin):
 	@username_command
 	def commandSpectate(self, user, fromloc, overriderank):
 		"/spectate username - Guest\nAliases: follow, watch\nFollows specified player around"
-
 		nospec_check = True
-
 		try:
 			self.client.spectating
 		except AttributeError:
 			nospec_check = False
-
 		if not nospec_check or self.client.spectating != user.id:
 			self.client.sendServerMessage("You are now spectating %s" % user.username)
 			self.client.spectating = user.id

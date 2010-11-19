@@ -7,11 +7,11 @@ from blockbox.decorators import *
 from blockbox.constants import *
 
 class RespawnPlugin(ProtocolPlugin):
-	
+
 	commands = {
 		"respawn": "commandRespawn",
 	}
-	
+
 	@player_list
 	@mod_only
 	@only_username_command
