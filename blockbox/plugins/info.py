@@ -7,6 +7,7 @@ from blockbox.decorators import *
 from blockbox.constants import *
 
 class InfoPlugin(ProtocolPlugin):
+
 	BlockList = []
 	while len(BlockList) != 50:
 		BlockList.append('')

@@ -87,6 +87,7 @@ class ShapesPlugin(ProtocolPlugin):
 									return
 								self.client.queueTask(TASK_BLOCKSET, (x+i, y+j, z+k, block), world=world)
 								self.client.sendBlock(x+i, y+j, z+k, block)
+								self.client.total += 1
 								yield
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
@@ -98,8 +99,8 @@ class ShapesPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)
 				except StopIteration:
 					if fromloc == 'user':
-						count = int(round((4/3)*cmath.pi*(parts[2]^3) + 4*cmath.pi*(parts[2]^2)))
-						self.client.finalizeMassCMD('sphere', count)
+						self.client.finalizeMassCMD('sphere', self.client.total)
+						self.client.total = 0
 					pass
 			do_step()
 
@@ -166,6 +167,7 @@ class ShapesPlugin(ProtocolPlugin):
 									return
 								self.client.queueTask(TASK_BLOCKSET, (x+i, y+j, z+k, block), world=world)
 								self.client.sendBlock(x+i, y+j, z+k, block)
+								self.client.total += 1
 								yield
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
@@ -177,8 +179,8 @@ class ShapesPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)
 				except StopIteration:
 					if fromloc == 'user':	
-						count = int(round(4*cmath.pi*(parts[2]^2)))
-						self.client.finalizeMassCMD('hsphere', count)
+						self.client.finalizeMassCMD('hsphere', self.client.total)
+						self.client.total = 0
 					pass
 			do_step()
 
@@ -496,17 +498,16 @@ class ShapesPlugin(ProtocolPlugin):
 						return
 					self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 					self.client.sendBlock(i, j, k, block)
-					#TODO: Yes I am retarted for using self.client.total in line
-					self.client.total += 1 # This is how you increase a number in python.... - Stacy
+					self.client.total += 1
 					yield
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
 			def do_step():
 				# Do 10 blocks
 				try:
-					for x in range(10):#10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
+					for x in range(10): #10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
 						block_iter.next()
-					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
+					reactor.callLater(0.01, do_step) #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if fromloc == 'user':
 						self.client.finalizeMassCMD('line', self.client.total)
@@ -518,6 +519,8 @@ class ShapesPlugin(ProtocolPlugin):
 	@op_only
 	def commandCsphere(self, parts, fromloc, overriderank):
 		"/csphere blocktype blocktype x y z radius - Op\nPlace/delete a block and /csphere block radius"
+		self.total_a = 0
+		self.total_b = 0
 		if len(parts) < 7 and len(parts) != 4:
 			self.client.sendServerMessage("Please enter two types a radius(and possibly a coord triple)")
 		else:
@@ -616,6 +619,7 @@ class ShapesPlugin(ProtocolPlugin):
 								else:
 									self.client.queueTask(TASK_BLOCKSET, (x+i, y+j, z+k, block), world=world)
 									self.client.sendBlock(x+i, y+j, z+k, block)
+								self.client.total += 1
 								yield
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
@@ -627,8 +631,8 @@ class ShapesPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)
 				except StopIteration:
 					if fromloc == 'user':
-						count = int(round(4*cmath.pi*(parts[2]^2)))
-						self.client.finalizeMassCMD('csphere', count)
+						self.client.finalizeMassCMD('csphere', self.client.total)
+						self.client.total = 0
 					pass
 			do_step()
 
@@ -724,8 +728,7 @@ class ShapesPlugin(ProtocolPlugin):
 										return
 									self.client.queueTask(TASK_BLOCKSET, (x+i, y+j, z+k, block), world=world)
 									self.client.sendBlock(x+i, y+j, z+k, block)
-									#TODO: Yes, I am retarded in using self.client.total in circles.
-									self.client.total += 1 # This is how you increase a number in python.... - Stacy
+									self.client.total += 1
 									yield
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
@@ -928,8 +931,7 @@ class ShapesPlugin(ProtocolPlugin):
 									return
 								self.client.queueTask(TASK_BLOCKSET, (var_x+i, var_y+j, var_z+k, block), world=world)
 								self.client.sendBlock(var_x+i, var_y+j, var_z+k, block)
-								self.client.total += 1 # This is how you increase a number in python.... - Stacy
-								#TODO: Not so retarded to use self.client.total here :3
+								self.client.total += 1
 								yield
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
@@ -1077,16 +1079,16 @@ class ShapesPlugin(ProtocolPlugin):
 						return
 					self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 					self.client.sendBlock(i, j, k, block)
-					self.client.total += 1 # This is how you increase a number in python.... - Stacy
+					self.client.total += 1
 					yield
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
 			def do_step():
 				# Do 10 blocks
 				try:
-					for x in range(10):#10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
+					for x in range(10): #10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
 						block_iter.next()
-					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
+					reactor.callLater(0.01, do_step) #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if fromloc == 'user':
 						self.client.finalizeMassCMD('polytri', self.client.total)

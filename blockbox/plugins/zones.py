@@ -429,6 +429,7 @@ class ZonesPlugin(ProtocolPlugin):
 									return
 								self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 								self.client.sendBlock(i, j, k, block)
+								self.client.total += 0
 								yield
 				# Now, set up a loop delayed by the reactor
 				block_iter = iter(generate_changes())
@@ -440,8 +441,8 @@ class ZonesPlugin(ProtocolPlugin):
 						reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 					except StopIteration:
 						if fromloc == 'user':
-							count = ((1+(x2 - x)) * (1+(y2 - y)) * (1+(z2 - z))/3)
-							self.client.finalizeMassCMD('zone clear', count)
+							self.client.finalizeMassCMD('zone clear', self.client.total)
+							self.client.total = 0
 						pass
 				do_step()
 			else:
