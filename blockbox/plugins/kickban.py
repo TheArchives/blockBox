@@ -5,8 +5,7 @@
 from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 
-class KickBanPlugin(ProtocolPlugin):
-
+class KickBanPlugin(ProtocolPlugin):
 	commands = {
 		"ban": "commandBan",
 		"banb": "commandBanBoth",
@@ -50,8 +49,7 @@ class KickBanPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("They were just kicked.")
 		else:
 			user.sendError("You got Kicked.")
-			self.client.sendServerMessage("They were just kicked.")
-
+			self.client.sendServerMessage("They were just kicked.")
 	@player_list
 	@admin_only
 	@only_username_command
@@ -78,8 +76,7 @@ class KickBanPlugin(ProtocolPlugin):
 				self.client.factory.addBan(username, " ".join(params))
 				if username in self.client.factory.usernames:
 					self.client.factory.usernames[username].sendError("You got Banned!")
-				self.client.sendServerMessage("%s has been Banned." % username)
-
+				self.client.sendServerMessage("%s has been Banned." % username)
 	@player_list
 	@director_only
 	@only_username_command
@@ -95,8 +92,7 @@ class KickBanPlugin(ProtocolPlugin):
 				self.client.factory.addIpBan(ip, " ".join(params))
 				if username in self.client.factory.usernames:
 					self.client.factory.usernames[username].sendError("You got Banned!")
-				self.client.sendServerMessage("%s has been IPBanned." % ip)
-
+				self.client.sendServerMessage("%s has been IPBanned." % ip)
 	@player_list
 	@admin_only
 	@only_username_command
@@ -106,8 +102,7 @@ class KickBanPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("%s is not Banned." % username)
 		else:
 			self.client.factory.removeBan(username)
-			self.client.sendServerMessage("%s was UnBanned." % username)
-
+			self.client.sendServerMessage("%s was UnBanned." % username)
 	@player_list
 	@director_only
 	@only_string_command("IP")
@@ -127,8 +122,7 @@ class KickBanPlugin(ProtocolPlugin):
 		if not self.client.factory.isBanned(username):
 			self.client.sendServerMessage("%s is not Banned." % username)
 		else:
-			self.client.sendServerMessage("Reason: %s" % self.client.factory.banReason(username))
-
+			self.client.sendServerMessage("Reason: %s" % self.client.factory.banReason(username))
 	@player_list
 	@director_only
 	@only_string_command("IP")

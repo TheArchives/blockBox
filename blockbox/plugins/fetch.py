@@ -5,8 +5,7 @@
 from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 
-class FetchPlugin(ProtocolPlugin):
-
+class FetchPlugin(ProtocolPlugin):
 	commands = {
 		"fetch": "commandFetch",
 		"bring": "commandFetch",
@@ -35,8 +34,7 @@ class FetchPlugin(ProtocolPlugin):
 				sender = self.client.var_fetchdata[0]
 				sender.sendServerMessage("%s did not accept your request." % self.client.username)
 			self.client.var_fetchdata
-			return True
-
+			return True
 	@player_list
 	@op_only
 	@username_command

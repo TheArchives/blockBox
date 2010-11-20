@@ -16,12 +16,10 @@ class GreiferDetectorPlugin(ProtocolPlugin):
 	hooks = {
 		"blockchange": "blockChanged",
 		"newworld": "newWorld",
-	}
-
+	}
 	def gotClient(self):
 		self.var_blockchcount = 0
-		self.in_publicworld = False
-
+		self.in_publicworld = False
 	def blockChanged(self, x, y, z, block, selected_block, fromloc):
 		"Hook trigger for block changes."
 		world = self.client.world

@@ -5,14 +5,12 @@
 from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 
-class SpectatePlugin(ProtocolPlugin):
-
+class SpectatePlugin(ProtocolPlugin):
 	commands = {
 		"spectate": "commandSpectate",
 		"follow": "commandSpectate",
 		"watch": "commandSpectate",
-	}
-
+	}
 	hooks = {
 		"poschange": "posChanged",
 	}

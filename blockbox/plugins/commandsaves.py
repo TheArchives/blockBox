@@ -8,24 +8,20 @@ from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 
-class BackPlugin(ProtocolPlugin):
-
+class BackPlugin(ProtocolPlugin):
 	commands = {
 		"b": "commandBack",
-	}
-
+	}
 	hooks = {
 		"chatmsg": "Message",
-	}
-
+	}
 	def gotClient(self):
 		self.lastcommand = None
 		self.savedcommands = list({})
 
 	def Message(self, message):
 		if message.startswith("/") and not message.split()[0].lower() == "/b":
-			self.lastcommand = message
-
+			self.lastcommand = message
 	@info_list
 	def commandBack(self, parts, fromloc, rankoverride):
 		message = self.lastcommand

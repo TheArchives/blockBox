@@ -10,15 +10,13 @@ from blockbox.decorators import *
 from lib.twisted.internet import reactor
 from blockbox.constants import *
 
-class OfflineMessagePlugin(ProtocolPlugin):
-
+class OfflineMessagePlugin(ProtocolPlugin):
 	commands = {
 		  "s": "commandSendMessage",
 		  "inbox": "commandCheckMessages",
 		  "c": "commandClear",
 		  "clear": "commandClear",
-	}
-
+	}
 	def commandSendMessage(self,parts, fromloc, overriderank):
 		"/s username message - Guest\nSends an message to the players Inbox."
 		if len(parts) < 3:

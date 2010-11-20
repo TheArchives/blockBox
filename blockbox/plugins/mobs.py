@@ -54,8 +54,7 @@ var_unbreakables = ['\x07', '*', ')', '.', '1']
 var_childrenentities = ["testarrow","paintball","cannonball"]
 runonce = True
 
-class EntityPlugin(ProtocolPlugin):
-
+class EntityPlugin(ProtocolPlugin):
 	commands = {
 		"entity": "commandEntity",
 		"entityclear": "commandEntityclear",

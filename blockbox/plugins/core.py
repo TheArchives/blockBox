@@ -6,14 +6,12 @@ from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 
-class CorePlugin(ProtocolPlugin):
-
+class CorePlugin(ProtocolPlugin):
 	commands = {
 		"pll": "commandPluginload",
 		"plu": "commandPluginunload",
 		"plr": "commandPluginreload",
-	}
-
+	}
 	@admin_only
 	@only_string_command("plugin name")
 	def commandPluginreload(self, plugin_name, fromloc, overriderank):
@@ -24,8 +22,7 @@ class CorePlugin(ProtocolPlugin):
 		except:
 			self.client.sendServerMessage("No such plugin '%s'." % plugin_name)
 		else:
-			self.client.sendServerMessage("Plugin '%s' reloaded." % plugin_name)
-
+			self.client.sendServerMessage("Plugin '%s' reloaded." % plugin_name)
 	@director_only
 	@only_string_command("plugin name")
 	def commandPluginload(self, plugin_name, fromloc, overriderank):
@@ -35,8 +32,7 @@ class CorePlugin(ProtocolPlugin):
 		except:
 			self.client.sendServerMessage("No such plugin '%s'." % plugin_name)
 		else:
-			self.client.sendServerMessage("Plugin '%s' loaded." % plugin_name)
-
+			self.client.sendServerMessage("Plugin '%s' loaded." % plugin_name)
 	@director_only
 	@only_string_command("plugin name")
 	def commandPluginunload(self, plugin_name, fromloc, overriderank):

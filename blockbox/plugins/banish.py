@@ -5,8 +5,7 @@
 from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 
-class BanishPlugin(ProtocolPlugin):
-
+class BanishPlugin(ProtocolPlugin):
 	commands = {
 		"banish": "commandBanish",
 		"worldkick": "commandBanish",
@@ -26,8 +25,7 @@ class BanishPlugin(ProtocolPlugin):
 		if len(done):
 			self.client.sendServerList(["WorldBanned:"] + done.split(' '))
 		else:
-			self.client.sendServerList(["WorldBanned: No one."])
-
+			self.client.sendServerList(["WorldBanned: No one."])
 	@player_list
 	@op_only
 	@username_command

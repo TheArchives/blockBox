@@ -6,8 +6,7 @@ from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 
-class NickPlugin(ProtocolPlugin):
-
+class NickPlugin(ProtocolPlugin):
 	commands = {
 		"nick": "commandNick",
 	}

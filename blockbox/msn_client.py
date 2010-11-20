@@ -4,9 +4,11 @@
 
 import datetime
 import traceback
+import logging
+
 from lib.twisted.words.protocols import MSN
 from lib.twisted.internet import protocol
-import logging
+
 from constants import *
 from globals import *
 from blockbox.plugins import protocol_plugins

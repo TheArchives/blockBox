@@ -6,8 +6,7 @@ from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 
-class StatusPlugin(ProtocolPlugin):
-
+class StatusPlugin(ProtocolPlugin):
 	commands = {
 		"status": "commandStatus",
 		"mapinfo": "commandStatus",

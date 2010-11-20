@@ -8,8 +8,7 @@ from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 
-class ReplacePlugin(ProtocolPlugin):
-
+class ReplacePlugin(ProtocolPlugin):
 	commands = {
 		"replace": "commandReplace",
 		"brep": "commandReplace",

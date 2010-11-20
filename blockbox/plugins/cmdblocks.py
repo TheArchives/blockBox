@@ -16,8 +16,7 @@ from blockbox.persistence import PersistenceEngine as Persist
 from blockbox.timer import ResettableTimer
 from blockbox.persistence import PersistenceEngine as Persist
 
-class CommandPlugin(ProtocolPlugin):
-
+class CommandPlugin(ProtocolPlugin):
 	commands = {
 		"cmdhelp": "commandCmdHelp",
 		"cmd": "commandCommand",
@@ -29,15 +28,13 @@ class CommandPlugin(ProtocolPlugin):
 		"cmddelend": "commandCommanddelend",
 		"cmdshow": "commandShowcmdblocks",
 		"cmdinfo": "commandcmdinfo",
-	}
-
+	}
 	hooks = {
 		"blockclick": "blockChanged",
 		"newworld": "newWorld",
 		"poschange": "posChanged",
 		"chatmsg": "message"
-	}
-
+	}
 	def gotClient(self):
 		self.twocoordcommands = list(["blb", "bhb", "bwb", "mountain", "hill", "dune", "pit", "lake", "hole", "copy", "replace"])
 		self.onecoordcommands = list(["sphere", "hsphere", "paste"])

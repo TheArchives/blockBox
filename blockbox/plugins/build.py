@@ -6,8 +6,7 @@ from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 
-class BuildPlugin(ProtocolPlugin):
-
+class BuildPlugin(ProtocolPlugin):
 	commands = {
 		"b": "commandBuild",
 		"build": "commandBuild",

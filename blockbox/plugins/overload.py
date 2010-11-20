@@ -8,14 +8,12 @@ from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 
-class OverloadPlugin(ProtocolPlugin):
-
+class OverloadPlugin(ProtocolPlugin):
 	commands = {
 		"overload": "commandOverload",
 		#"send": "commandSend",
 		"blazer": "commandBlazer",
-	}
-
+	}
 	@player_list
 	@admin_only
 	@username_command

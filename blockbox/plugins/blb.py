@@ -8,8 +8,7 @@ from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 
-class BlbPlugin(ProtocolPlugin):
-
+class BlbPlugin(ProtocolPlugin):
 	commands = {
 		"blb": "commandBlb",
 		"draw": "commandBlb",
@@ -22,8 +21,7 @@ class BlbPlugin(ProtocolPlugin):
 		"bcb": "commandBcb",
 		"bhcb": "commandBhcb",
 		"bfb": "commandFBlb",
-	}
-
+	}
 	@build_list
 	@writer_only
 	def commandBlb(self, parts, fromloc, overriderank):

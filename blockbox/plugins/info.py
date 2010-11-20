@@ -7,6 +7,7 @@ from blockbox.decorators import *
 from blockbox.constants import *
 
 class InfoPlugin(ProtocolPlugin):
+
 	BlockList = []
 	while len(BlockList) != 50:
 		BlockList.append('')
@@ -75,11 +76,9 @@ class InfoPlugin(ProtocolPlugin):
 		"infoend": "commandInfoEnd",
 		"blockindex": "commandBlockindex",
 		"bindex": "commandBlockindex",
-	}
-
+	}
 	def gotClient(self):
-		self.binfo = 0
-
+		self.binfo = 0
 	def blockChanged(self, x, y, z, block, selected_block, fromloc):
 		if self.binfo == 1:
 			check_offset = self.client.world.blockstore.get_offset(x, y, z)
@@ -91,8 +90,7 @@ class InfoPlugin(ProtocolPlugin):
 			else:
 				self.client.sendServerMessage("Block Info: %s (%s)" % (self.BlockList[block2], block2))
 				self.client.sendServerMessage("x: %s y: %s z: %s" % (x, y, z))
-				return block2
-
+				return block2
 	@build_list
 	def commandInfo(self,parts,fromloc,overriderank):
 			self.binfo = 1

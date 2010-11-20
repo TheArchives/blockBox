@@ -10,14 +10,12 @@ from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 
-class CopyPastePlugin(ProtocolPlugin):
-
+class CopyPastePlugin(ProtocolPlugin):
 	commands = {
 		"copy": "commandSave",
 		"paste": "commandLoad",
 		"rotate": "commandRotate"
-	}
-
+	}
 	@build_list
 	@writer_only
 	def commandLoad(self, parts, fromloc, overriderank):

@@ -12,23 +12,19 @@ class DirtBombPlugin(ProtocolPlugin):
 
 	commands = {
 		"dirtbomb": "commanddirtbomb",
-	}
-
+	}
 	hooks = {
 		"blockchange": "blockChanged",
 		"newworld": "newWorld",
-	}
-
+	}
 	def gotClient(self):
 		self.build_tnt = False
 		self.explosion_radius = 7
-		self.delay = 2
-
+		self.delay = 2
 	def newWorld(self, world):
 		"Hook to reset bomb abilities in new worlds if not op."
 		if not self.client.isOp():
-			self.build_tnt = False
-
+			self.build_tnt = False
 	def blockChanged(self, x, y, z, block, selected_block, fromloc):
 		"Hook trigger for block changes."
 		tobuild = []

@@ -11,9 +11,9 @@ from blockbox.constants import *
 class IRCPlugin(ProtocolPlugin):
 
 	commands = {
-		"irc_cpr": "commandIRCReload",
-		"ircload": "commandIRCLoad",
-		"ircunload": "commandIRCUnload",
+		#"irc_cpr": "commandIRCReload",
+		#"ircload": "commandIRCLoad",
+		#"ircunload": "commandIRCUnload",
 	}
 
 	@admin_only

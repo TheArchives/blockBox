@@ -6,24 +6,19 @@ from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 
-class PaintPlugin(ProtocolPlugin):
-
+class PaintPlugin(ProtocolPlugin):
 	commands = {
 		"paint": "commandPaint",
-	}
-
+	}
 	hooks = {
 		"preblockchange": "blockChanged",
-	}
-
+	}
 	def gotClient(self):
-		self.painting = False
-
+		self.painting = False
 	def blockChanged(self, x, y, z, block, selected_block, fromloc):
 		"Hook trigger for block changes."
 		if block is BLOCK_AIR and self.painting:
-			return selected_block
-
+			return selected_block
 	@build_list
 	def commandPaint(self, parts, fromloc, overriderank):
 		"/paint - Guest\nLets you break-and-build in one move. Toggle."

@@ -11,8 +11,7 @@ from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 
-class NaturePlugin(ProtocolPlugin):
-
+class NaturePlugin(ProtocolPlugin):
 	commands = {
 		"dune": "commandDune",
 		"hill": "commandHill",
@@ -26,18 +25,15 @@ class NaturePlugin(ProtocolPlugin):
 	hooks = {
 		"blockchange": "blockChanged",
 		"newworld": "newWorld",
-	}
-
+	}
 	def gotClient(self):
 		self.build_trees = False
 		self.trunk_height = 5, 9
-		self.fanout = 2, 4
-
+		self.fanout = 2, 4
 	def newWorld(self, world):
 		"Hook to reset dynamiting abilities in new worlds if not op."
 		if not self.client.isWriter():
-			self.build_trees = False
-
+			self.build_trees = False
 	def blockChanged(self, x, y, z, block, selected_block, fromloc):
 		"Hook trigger for block changes."
 		tobuild = []
@@ -76,8 +72,7 @@ class NaturePlugin(ProtocolPlugin):
 			self.client.sendServerMessage("You are now building trees; place a plant!")
 		else:
 			self.build_trees = False
-			self.client.sendServerMessage("You are no longer building trees.")
-
+			self.client.sendServerMessage("You are no longer building trees.")
 	@build_list
 	@advbuilder_only
 	def commandDune(self, parts, fromloc, overriderank):

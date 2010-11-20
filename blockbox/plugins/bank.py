@@ -8,8 +8,7 @@ from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.persistence import PersistenceEngine as Persist
 
-class MoneyPlugin(ProtocolPlugin):
-
+class MoneyPlugin(ProtocolPlugin):
 	commands = {
 		"bank":	 "commandBalance",
 		"balance":	 "commandBalance",
@@ -17,8 +16,7 @@ class MoneyPlugin(ProtocolPlugin):
 		"setbank":		"commandSetAccount",
 		"removebank":	"commandRemoveAccount",
 	}
-	money_logger = logging.getLogger('TransactionLogger')
-
+	money_logger = logging.getLogger('TransactionLogger')
 	def commandBalance(self, parts, fromloc, overriderank):	
 		"/bank - Guest\nAliases: balance\nFirst time: Creates you a account.\nOtherwise: Checks your balance."
 		if self.client.persist.int("bank", "balance", -1) is not -1:
