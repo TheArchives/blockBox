@@ -10,7 +10,6 @@ class BindPlugin(ProtocolPlugin):
 
 	commands = {
 		"bind": "commandBind",
-		"build": "commandBind",
 		"material": "commandBind",
 		"air": "commandAir",
 		"stand": "commandAir",

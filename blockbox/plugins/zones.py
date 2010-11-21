@@ -429,7 +429,7 @@ class ZonesPlugin(ProtocolPlugin):
 									return
 								self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 								self.client.sendBlock(i, j, k, block)
-								self.client.total += 0
+								self.client.total += 1
 								yield
 				# Now, set up a loop delayed by the reactor
 				block_iter = iter(generate_changes())

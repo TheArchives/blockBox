@@ -46,7 +46,6 @@ class ImagedrawPlugin(ProtocolPlugin):
 	@admin_only
 	def commandImagedraw(self, parts, fromloc, overriderank):
 		"/imagedraw [x y z x2 y2 z2] - Builder\nSets all blocks in this area to image."
-		self.var_total = 0
 		if len(parts) < 8 and len(parts) != 2 and len(parts) != 3:
 			self.client.sendServerMessage("Please enter whether to flip? (rotation)")
 			self.client.sendServerMessage("(and possibly two coord triples)")
@@ -266,7 +265,7 @@ class ImagedrawPlugin(ProtocolPlugin):
 								return
 							self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 							self.client.sendBlock(i, j, k, block)
-							self.var_total += 1
+							self.client.total += 1
 							yield
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
@@ -279,6 +278,6 @@ class ImagedrawPlugin(ProtocolPlugin):
 				except StopIteration:
 					if fromloc == 'user':
 						self.client.finalizeMassCMD('imagedraw', self.client.total)
-						self.var_total = 0
+						self.client.total = 0
 					pass
 			do_step()

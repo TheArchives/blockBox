@@ -109,10 +109,8 @@ The Salt is also used to help verify users' identities.
 						"irc": self.factory.config.get("irc", "channel")+"@"+self.factory.config.get("irc", "server"),
 					}))
 					self.response = fh.read().strip()
-					self.hash = self.url.partition("server=")[2]
-					if self.factory.console_delay == self.factory.delay_count:
-						self.logger.info("%s" % self.url)
 					#TODO: Response handling, more info coming soon
+					#if self.response == 'ERROR_'
 					if not self.factory.console.is_alive():
 						self.factory.console.run()
 				except IOError,SystemExit:
@@ -155,19 +153,19 @@ class MyneFactory(Factory):
 		self.config.read("conf/server.ini")
 		self.conf_performance.read("conf/performance.ini")
 		self.conf_plugins.read("conf/plugins.ini")
-		
+
 		self.use_irc = False
 		if  (os.path.exists("conf/irc.ini")):
 			self.use_irc = True
 			self.conf_irc = ConfigParser()
 			self.conf_irc.read("conf/irc.ini")
-		
+
 		self.use_email = False
 		if  (os.path.exists("conf/email.ini")):
 			self.use_email = True
 			self.conf_email = ConfigParser()
 			self.conf_email.read("conf/email.ini")
-		
+
 		self.saving = False
 		self.max_clients = self.config.getint("main", "max_clients")
 		self.server_name = self.config.get("main", "name")
@@ -261,6 +259,16 @@ class MyneFactory(Factory):
 		# Boot worlds that got loaded
 		for world in self.worlds:
 			self.loadWorld("mapdata/worlds/%s" % world, world)
+		self.blblimit = []
+		self.blblimit["player"] = self.config.getint("blb", "player")
+		self.blblimit["builder"] = self.config.getint("blb", "builder")
+		self.blblimit["advbuilder"] = self.config.getint("blb", "advbuilder")
+		self.blblimit["op"] = self.config.getint("blb", "op")
+		self.blblimit["worldowner"] = self.config.getint("blb", "worldowner")
+		self.blblimit["mod"] = self.config.getint("blb", "mod")
+		self.blblimit["admin"] = self.config.getint("blb", "admin")
+		self.blblimit["director"] = self.config.getint("blb", "director")
+		self.blblimit["owner"] = self.config.getint("blb", "owner")
 
 	def initLoops(self):
 		# Set up tasks to run during execution
