@@ -139,12 +139,8 @@ def rip(key, username, password):
 	reactor.run()
 
 def main():
-	config = ConfigParser()
-		try:
-			config.read(os.path.join(os.path.dirname(__file__), "client.conf"))
-		except:
-			logger.error("You need to rename client.example.conf to client.conf")
-			exit(1);
+	config = ConfigParser()		try:
+			config.read(os.path.join(os.path.dirname(__file__), "client.conf"))		except:			logger.error("You need to rename client.example.conf to client.conf")			exit(1);
 	rip(sys.argv[1], config.get("client", "username"), config.get("client", "password"))
 
 # this only runs if the module was *not* imported
