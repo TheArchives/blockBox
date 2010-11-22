@@ -259,16 +259,6 @@ class MyneFactory(Factory):
 		# Boot worlds that got loaded
 		for world in self.worlds:
 			self.loadWorld("mapdata/worlds/%s" % world, world)
-		self.blblimit = []
-		self.blblimit["player"] = self.config.getint("blb", "player")
-		self.blblimit["builder"] = self.config.getint("blb", "builder")
-		self.blblimit["advbuilder"] = self.config.getint("blb", "advbuilder")
-		self.blblimit["op"] = self.config.getint("blb", "op")
-		self.blblimit["worldowner"] = self.config.getint("blb", "worldowner")
-		self.blblimit["mod"] = self.config.getint("blb", "mod")
-		self.blblimit["admin"] = self.config.getint("blb", "admin")
-		self.blblimit["director"] = self.config.getint("blb", "director")
-		self.blblimit["owner"] = self.config.getint("blb", "owner")
 
 	def initLoops(self):
 		# Set up tasks to run during execution
