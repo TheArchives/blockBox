@@ -278,6 +278,10 @@ class MyneFactory(Factory):
 		self.logger.info("%i garbage objects collected, %i were uncollected." % ( count, len(gc.garbage)))
 		reactor.callLater(60*15, self.cleanGarbage)
 
+	def cleanGarbageOnce(self):
+		count = gc.collect()
+		self.logger.info("%i garbage objects collected, %i were uncollected." % ( count, len(gc.garbage)))
+
 	def loadMeta(self):
 		"Loads the 'meta' - variables that change with the server (worlds, admins, etc.)"
 		config = ConfigParser()

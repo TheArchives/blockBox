@@ -5,6 +5,7 @@
 import sys
 import urllib
 from os import popen
+
 from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
