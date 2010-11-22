@@ -74,15 +74,13 @@ class BlbPlugin(ProtocolPlugin):
 			# Stop them doing silly things
 			if (x2 - x) * (y2 - y) * (z2 - z) > limit:
 				self.client.sendServerMessage("Sorry, that area is too big for you to blb.")
-				return
-			
+				return
 			# Draw all the blocks on, I guess
 			# We use a generator so we can slowly release the blocks
 			# We also keep world as a local so they can't change worlds and affect the new one
 			world = self.client.world
 			def generate_changes():
 				try:
-					self.client.total = 0 # Obviously set the count to 0 first! -- Stacy
 					for i in range(x, x2+1):
 						for j in range(y, y2+1):
 							for k in range(z, z2+1):
@@ -172,22 +170,22 @@ class BlbPlugin(ProtocolPlugin):
 			# We also keep world as a local so they can't change worlds and affect the new one
 			world = self.client.world
 			def generate_changes():
-				for i in range(x, x2+1):
-					for j in range(y, y2+1):
-						for k in range(z, z2+1):
-							if not self.client.AllowedToBuild(i, j, k) and overriderank==False:
-								return
-							if i==x or i==x2 or j==y or j==y2 or k==z or k==z2:
-								try:
-								   world[i, j, k] = block
-								   self.client.runHook("blockchange", x, y, z, ord(block), ord(block), fromloc)
-								except AssertionError:
-									self.client.sendServerMessage("Out of bounds bhb error.")
+				try:
+					for i in range(x, x2+1):
+						for j in range(y, y2+1):
+							for k in range(z, z2+1):
+								if not self.client.AllowedToBuild(i, j, k) and overriderank==False:
 									return
-								self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
-								self.client.sendBlock(i, j, k, block)
-								self.client.total += 1 # This is how you increase a number in python.... - Stacy
-								yield
+								if i==x or i==x2 or j==y or j==y2 or k==z or k==z2:
+									world[i, j, k] = block
+									self.client.runHook("blockchange", x, y, z, ord(block), ord(block), fromloc)
+								   	self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
+									self.client.sendBlock(i, j, k, block)
+									self.client.total += 1 # This is how you increase a number in python.... - Stacy
+									yield
+				except AssertionError:
+					self.client.sendServerMessage("Out of bounds bhb error.")
+					return
 
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())

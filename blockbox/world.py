@@ -439,7 +439,7 @@ class World(object):
 		except KeyError:
 			return False
 
-	def isworldbanned(self, name):
+	def isWorldBanned(self, name):
 		return name.lower() in self.worldbans
 
 	def add_command(self, x, y, z, cmd):
