@@ -158,12 +158,14 @@ class MyneFactory(Factory):
 		if  (os.path.exists("conf/irc.ini")):
 			self.use_irc = True
 			self.conf_irc = ConfigParser()
-			self.conf_irc.read("conf/irc.ini")
+			self.conf_irc.read("conf/irc.ini")
+
 		self.use_email = False
 		if  (os.path.exists("conf/email.ini")):
 			self.use_email = True
 			self.conf_email = ConfigParser()
-			self.conf_email.read("conf/email.ini")
+			self.conf_email.read("conf/email.ini")
+
 		self.saving = False
 		self.max_clients = self.config.getint("main", "max_clients")
 		self.server_name = self.config.get("main", "name")
@@ -257,16 +259,7 @@ class MyneFactory(Factory):
 		# Boot worlds that got loaded
 		for world in self.worlds:
 			self.loadWorld("mapdata/worlds/%s" % world, world)
-		self.useblblimit = self.config.getboolean("blb", "use_blb_limiter")
-		if self.useblblimit:			self.blblimit = dict()			self.blblimit["player"] = self.config.getint("blb", "player")
-			self.blblimit["builder"] = self.config.getint("blb", "builder")
-			self.blblimit["advbuilder"] = self.config.getint("blb", "advbuilder")
-			self.blblimit["op"] = self.config.getint("blb", "op")
-			self.blblimit["worldowner"] = self.config.getint("blb", "worldowner")
-			self.blblimit["mod"] = self.config.getint("blb", "mod")
-			self.blblimit["admin"] = self.config.getint("blb", "admin")
-			self.blblimit["director"] = self.config.getint("blb", "director")
-			self.blblimit["owner"] = self.config.getint("blb", "owner")
+
 	def initLoops(self):
 		# Set up tasks to run during execution
 		reactor.callLater(0.1, self.sendMessages)
@@ -284,6 +277,10 @@ class MyneFactory(Factory):
 		count = gc.collect()
 		self.logger.info("%i garbage objects collected, %i were uncollected." % ( count, len(gc.garbage)))
 		reactor.callLater(60*15, self.cleanGarbage)
+
+	def cleanGarbageOnce(self):
+		count = gc.collect()
+		self.logger.info("%i garbage objects collected, %i were uncollected." % ( count, len(gc.garbage)))
 
 	def loadMeta(self):
 		"Loads the 'meta' - variables that change with the server (worlds, admins, etc.)"
