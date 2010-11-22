@@ -46,7 +46,6 @@ class ImagedrawPlugin(ProtocolPlugin):
 	@admin_only
 	def commandImagedraw(self, parts, fromloc, overriderank):
 		"/imagedraw [x y z x2 y2 z2] - Builder\nSets all blocks in this area to image."
-		self.var_total = 0
 		if len(parts) < 8 and len(parts) != 2 and len(parts) != 3:
 			self.client.sendServerMessage("Please enter whether to flip? (rotation)")
 			self.client.sendServerMessage("(and possibly two coord triples)")
@@ -65,7 +64,7 @@ class ImagedrawPlugin(ProtocolPlugin):
 			if flip=='true' or flip=='false':
 				pass
 			else:
-				self.client.sendServerMessage("flip must be true or false")
+				self.client.sendServerMessage("Flip must be true or false.")
 				return
 			#try to get url
 			try:
@@ -74,7 +73,7 @@ class ImagedrawPlugin(ProtocolPlugin):
 				self.client.sendServerMessage("You have not recorded an url yet (use /rec_url).")
 				return
 			if imageurl.find('http:') == -1:
-				self.client.sendServerMessage("You cannot access server files, only external files")
+				self.client.sendServerMessage("You cannot access server files, only external files.")
 				return
 			# If they only provided the type argument, use the last two block places
 			if len(parts) == 2 or len(parts) == 3:
@@ -93,7 +92,7 @@ class ImagedrawPlugin(ProtocolPlugin):
 					y2 = int(parts[7])
 					z2 = int(parts[8])
 				except ValueError:
-					self.client.sendServerMessage("All parameters must be integers")
+					self.client.sendServerMessage("All parameters must be integers.")
 					return
 			if y == y2:
 				height = abs(x2-x)+1
@@ -113,7 +112,7 @@ class ImagedrawPlugin(ProtocolPlugin):
 				f = StringIO.StringIO(u.read())
 				image = Image.open(f)
 			except:
-				self.client.sendServerMessage("The url or image is invalid")
+				self.client.sendServerMessage("The url or image is invalid.")
 				return
 			if rotation != 0:
 				image = image.rotate(rotation,3,1)
@@ -266,19 +265,19 @@ class ImagedrawPlugin(ProtocolPlugin):
 								return
 							self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 							self.client.sendBlock(i, j, k, block)
-							self.var_total += 1
+							self.client.total += 1
 							yield
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
 			def do_step():
 				# Do 10 blocks
 				try:
-					for x in range(10):#10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
+					for x in range(10): #10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
 						block_iter.next()
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if fromloc == 'user':
 						self.client.finalizeMassCMD('imagedraw', self.client.total)
-						self.var_total = 0
+						self.client.total = 0
 					pass
 			do_step()
