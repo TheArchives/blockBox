@@ -46,7 +46,7 @@ The Salt is also used to help verify users' identities.
 
 	def bb_turl(self):
 		try:
-			threading.Thread(target=self.get_url).start()
+			threading.Thread(target=self.bb_get_url).start()
 		except:
 			self.logger.error(traceback.format_exc())
 			reactor.callLater(1, self.bb_turl)
@@ -74,7 +74,7 @@ The Salt is also used to help verify users' identities.
 				self.url = fh.read().strip()
 				self.hash = self.url.partition("server=")[2]
 				if self.factory.console_delay == self.factory.delay_count:
-					self.logger.info("%s" % self.url)
+					self.logger.debug("%s" % self.url)
 					#self.logger.info("Saved URL to url.txt.")
 				open('data/url.txt', 'w').write(self.url)
 				if not self.factory.console.is_alive():
@@ -826,39 +826,97 @@ class MyneFactory(Factory):
 
 	def AutoBackup(self):
 		for world in self.worlds:
-			self.Backup(world)
+			self.Backup(world, "server")
 		if self.backup_auto:
-			reactor.callLater(float(self.backup_freq * 60),self.AutoBackup)
+			reactor.callLater(float(self.backup_freq * 60), self.AutoBackup)
 
-	def Backup(self,world_id):
-			world_dir = ("mapdata/worlds/%s/" % world_id)
-			if world_id == "main" and not self.backup_default:
-				return
-			if not os.path.exists(world_dir):
-				self.logger.info("World %s does not exist." % (world.id))
+	def Backup(self, world_id, fromloc, backupname=None):
+		world_dir = ("mapdata/worlds/%s/" % world_id)
+		if world_id == "main" and not self.backup_default and not fromloc == "user": #This is to ensure manual backup still works
+			return
+		if not os.path.exists(world_dir):
+			if fromloc == "console":
+				self.logger.error("World %s does not exist." % (world_id))
+			elif fromloc == "server":
+				self.logger.warning("AutoBackup tried to backup world %s which does not exist." % (world_id)) 
+			elif fromloc == "user":
+				error = ("ERROR_WORLD_DOES_NOT_EXIST_%s" % world_id)
+				return error
+			return
+		else:
+			if not os.path.exists(world_dir+"backup/"):
+				os.mkdir(world_dir+"backup/")
+			folders = os.listdir(world_dir+"backup/")
+			if backupname is not None:
+				path = os.path.join(world_dir+"backup/", backupname)
+				if os.path.exists(path):
+					if fromloc == "console":
+						self.logger.error("Backup %s already exists." % (backupname))
+					elif fromloc == "server":
+						# Should never reach here
+						self.logger.warning("AutoBackup error, please contact the blockBox team.")
+					elif fromloc == "user":
+						error = ("ERROR_BACKUP_ALREADY_EXISTS_%s" % (backupname))
+						return error
+					return
 			else:
-				if not os.path.exists(world_dir+"backup/"):
-					os.mkdir(world_dir+"backup/")
-				folders = os.listdir(world_dir+"backup/")
 				backups = list([])
 				for x in folders:
 					if x.isdigit():
 						backups.append(x)
 				backups.sort(lambda x, y: int(x) - int(y))
-
 				path = os.path.join(world_dir+"backup/", "0")
 				if backups:
 					path = os.path.join(world_dir+"backup/", str(int(backups[-1])+1))
+			try:
 				os.mkdir(path)
 				shutil.copy(world_dir + "blocks.gz", path)
+				shutil.copy(world_dir + "world.meta", path)
+			except:
+				if backupname is not None:
+					if fromloc == "console":
+						self.logger.error("Unable to save backup %s of world %s" % (backupname, world_id)
+					elif fromloc == "console":
+						self.logger.error("Unable to save backup %s of world %s" % (backupname, world_id)
+					elif fromloc == "user":
+						error = ("ERROR_UNABLE_TO_SAVE_BACKUP_%s" % (backupname))
+						return error
+				else:
+					if fromloc == "console":
+						self.logger.error("Unable to save backup %s of world %s" % (str(int(backups[-1])+1)), world_id)
+					elif fromloc == "server":
+						self.logger.error("Unable to save backup %s of world %s" % (str(int(backups[-1])+1)), world_id)
+					elif fromloc == "user":
+						error = ("ERROR_UNABLE_TO_SAVE_BACKUP_%s" % (backup))
+						return error
+			if backupname is not None:
+				if fromloc == "console":
+					self.logger.error("Unable to save backup %s of world %s" % (backupname, world_id)
+				elif fromloc == "server":
+					self.logger.error("Unable to save backup %s of world %s" % (backupname, world_id)
+				elif fromloc == "user":
+					error = ("ERROR_UNABLE_TO_SAVE_BACKUP_%s" % (backupname))
+					return error
+			else:
 				try:
-					self.logger.info("%s's backup %s is saved." %(world_id, str(int(backups[-1])+1)))
+					if fromloc == "console":
+						self.logger.info("%s's backup %s is saved." %(world_id, str(int(backups[-1])+1)))
+					elif fromloc == "server":
+						self.logger.debug("%s's backup %s is saved." %(world_id, str(int(backups[-1])+1)))
+					elif fromloc == "user":
+						error = str(int(backups[-1])+1)
 				except:
-					self.logger.info("%s's backup 0 is saved.")
-				if len(backups)+1 > self.backup_max:
-					for i in range(0,((len(backups)+1)-self.backup_max)):
-						shutil.rmtree(os.path.join(world_dir+"backup/", str(int(backups[i]))))
-
+					if fromloc == "console"
+						self.logger.info("%s's backup 0 is saved.")
+					elif fromloc == "server":
+						self.logger.debug("%s's backup 0 is saved." %(world_id))
+					elif fromloc == "user":
+						error = 0
+			if len(backups)+1 > self.backup_max:
+				for i in range(0,((len(backups)+1)-self.backup_max)):
+					shutil.rmtree(os.path.join(world_dir+"backup/", str(int(backups[i]))))
+			if error is not None:
+				return error
 	def messagestrip(factory,message):
 		strippedmessage = ""
 		for x in message:
@@ -868,8 +926,7 @@ class MyneFactory(Factory):
 		for x in factory.filter:
 			rep = re.compile(x[0], re.IGNORECASE)
 			message = rep.sub(x[1], message)
-		return message   
-	
+		return message   
 	def loadArchives(self):
 		self.archives = {}
 		for name in os.listdir("mapdata/archives/"):
@@ -887,8 +944,7 @@ class MyneFactory(Factory):
 							self.archives[name] = {}
 						self.archives[name][when] = "%s/%s" % (name, subfilename)
 		self.logger.info("Loaded %s discrete archives." % len(self.archives))
-		reactor.callLater(60, self.loadArchives)		
-	
+		reactor.callLater(60, self.loadArchives)		
 	def create_if_not(self, filename):
 		dir = os.path.dirname(filename)
 		try:

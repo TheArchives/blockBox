@@ -130,12 +130,14 @@ class PlayersPlugin(ProtocolPlugin):
 
 	@player_list
 	def commandQuitMsg(self, parts, fromloc, overriderank):
+		"/quitmsg - Guest\nSets your quit message."
 		self.client.persist.set("main", "quitmsg", " ".join(parts[1:]))
 		self.client.quitmsg = " ".join(parts[1:])
 		self.client.sendServerMessage("Your quit message is now: %s" % " ".join(parts[1:]))
 
 	@player_list
 	def commandQuit(self, parts, fromloc, overriderank):
+		"/quit - Guest\nExit the server."
 		if not len(parts) > 1:
 			self.client.sendError("Quit: %s" % self.client.quitmsg)
 		else:
