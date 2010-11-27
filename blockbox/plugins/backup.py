@@ -22,48 +22,27 @@ class BackupPlugin(ProtocolPlugin):
 	@world_list
 	@op_only
 	def commandBackup(self, parts, fromloc, overriderank):
-		"/backup worldname - Op\nMakes a backup copy of the map of the map."
+		"/backup worldname [backupname] - Op\nMakes a backup copy of the map of the map."
 		if len(parts) == 1:
 			parts.append(self.client.world.basename.lstrip("mapdata/worlds"))
 		world_id = parts[1]
-		world_dir = ("mapdata/worlds/%s/" % world_id)
-		if not os.path.exists(world_dir):
-		   self.client.sendServerMessage("World %s does not exist." % (world_id))
-		else:
-			if not os.path.exists(world_dir+"backup/"):
-				os.mkdir(world_dir+"backup/")
-			folders = os.listdir(world_dir+"backup/")
-			if len(parts) > 2:
-				path = os.path.join(world_dir+"backup/", parts[2])
-				if os.path.exists(path):
-					self.client.sendServerMessage("Backup %s already exists. Pick a different name." % parts[2])
-					return
-			else:
-				backups = list([])
-				for x in folders:
-					if x.isdigit():
-						backups.append(x)
-				backups.sort(lambda x, y: int(x) - int(y))
-				path = os.path.join(world_dir+"backup/", "0")
-				if backups:
-					path = os.path.join(world_dir+"backup/", str(int(backups[-1])+1))
-			os.mkdir(path)
-			try:
-				shutil.copy(world_dir + "blocks.gz", path)
-			except:
-				self.client.sendServerMessage("Something went wrong while backing up. Please try again.")
-			if len(parts) > 2:
-				self.client.sendServerMessage("Backup %s saved." % parts[2])
-			else:
-				try:
-					self.client.sendServerMessage("Backup %s saved." % str(int(backups[-1])+1))
-				except:
-					self.client.sendServerMessage("Backup 0 saved.")
+		backupname = parts[2]
+		if backupname == "":
+			backupname = None
+		response = self.client.factory.Backup(self, world_id, "user", backupname)
+		if response == ("ERROR_WORLD_DOES_NOT_EXIST_%s" % world_id):
+			self.client.sendServerMessage("World %s does not exist." % (world_id))
+		elif response == ("ERROR_BACKUP_ALREADY_EXISTS_%s" % backupname):
+			self.client.sendServerMessage("Backup %s already exists. Pick another name!" % backupname)
+		elif response == ("SUCCESS"):
+			self.client.sendServerMessage("Backup %s of world %s saved." % (backupname, world_id))
+		elif response.isdigit():
+			self.client.sendServerMessage("Backup %s of world %s saved." % (response, world_id))
 
 	@world_list
 	@op_only
 	def commandRestore(self, parts, fromloc, overriderank):
-		"/restore worldname number - Op\nRestore map to indicated number."
+		"/restore worldname number|backupname - Op\nRestore map to indicated number or backup name."
 		if len(parts) < 2:
 			self.client.sendServerMessage("Please specify at least a world ID!")
 		else:
