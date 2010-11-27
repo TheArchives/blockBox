@@ -875,9 +875,9 @@ class MyneFactory(Factory):
 			except:
 				if backupname is not None:
 					if fromloc == "console":
-						self.logger.error("Unable to save backup %s of world %s" % (backupname, world_id)
+						self.logger.error("Unable to save backup %s of world %s" % (backupname, world_id))
 					elif fromloc == "console":
-						self.logger.error("Unable to save backup %s of world %s" % (backupname, world_id)
+						self.logger.error("Unable to save backup %s of world %s" % (backupname, world_id))
 					elif fromloc == "user":
 						error = ("ERROR_UNABLE_TO_SAVE_BACKUP_%s" % (backupname))
 						return error
@@ -891,9 +891,9 @@ class MyneFactory(Factory):
 						return error
 			if backupname is not None:
 				if fromloc == "console":
-					self.logger.error("Unable to save backup %s of world %s" % (backupname, world_id)
+					self.logger.error("Unable to save backup %s of world %s" % (backupname, world_id))
 				elif fromloc == "server":
-					self.logger.error("Unable to save backup %s of world %s" % (backupname, world_id)
+					self.logger.error("Unable to save backup %s of world %s" % (backupname, world_id))
 				elif fromloc == "user":
 					error = ("ERROR_UNABLE_TO_SAVE_BACKUP_%s" % (backupname))
 					return error
@@ -906,8 +906,8 @@ class MyneFactory(Factory):
 					elif fromloc == "user":
 						error = str(int(backups[-1])+1)
 				except:
-					if fromloc == "console"
-						self.logger.info("%s's backup 0 is saved.")
+					if fromloc == "console":
+						self.logger.info("%s's backup 0 is saved." % (world_id))
 					elif fromloc == "server":
 						self.logger.debug("%s's backup 0 is saved." %(world_id))
 					elif fromloc == "user":
