@@ -225,29 +225,16 @@ class LSystemPlugin(ProtocolPlugin):
 							finalsequence = finalsequence[:index+numproductionsadded*lengthofproduction] + productionchoice + finalsequence[index+numproductionsadded*lengthofproduction+1:]
 							numproductionsadded += 1
 					axiom = finalsequence
-
 			num_movements = 0
 			for item in finalsequence:
 				if item == "F" or item == "B":
 					num_movements += 1
-					
-					
-			if self.client.isOwner():
-				limit = 1000000000
-			elif self.client.isSuperAdmin():
-				limit = 7077888
-			elif self.client.isAdmin():
-				limit = 2097152
-			elif self.client.isMod():
-				limit = 262144
-			elif self.client.isOp():
-				limit = 21952
-			else:
-				limit = 4062
-			# Stop them doing silly things
-			if num_movements*standarddistance > limit:
-				self.client.sendServerMessage("Sorry, that area is too big for you to use an lsystem on.")
-				return
+			limit = self.client.getBlbLimit(self.client.username)
+			if limit != -1:
+				# Stop them doing silly things
+				if (num_movements*standarddistance > limit) or limit == 0:
+					self.client.sendSplitServerMessage("Sorry, that area is too big for you to use an lsystem on (Limit is %s)" % limit)
+					return
 			world = self.client.world
 			def generate_changes():
 				# Try getting the block as a direct integer type.
@@ -260,7 +247,6 @@ class LSystemPlugin(ProtocolPlugin):
 					except KeyError:
 						self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
 						return
-				
 				# Check the block is valid
 				if ord(block) > 49:
 					self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
@@ -276,7 +262,6 @@ class LSystemPlugin(ProtocolPlugin):
 						var_x,var_y,var_z = drawer_location
 						var_x2,var_y2,var_z2 = targetlocation
 						drawer_location = targetlocation
-
 						var_x = int(round(var_x))
 						var_y = int(round(var_y))
 						var_z = int(round(var_z))
@@ -288,7 +273,6 @@ class LSystemPlugin(ProtocolPlugin):
 							mx = float(var_x2-var_x)/steps
 							my = float(var_y2-var_y)/steps
 							mz = float(var_z2-var_z)/steps
-
 							coordinatelist1 = []
 							for t in range(steps+1):
 								coordinatelist1.append((int(round(mx*t+var_x)),int(round(my*t+var_y)),int(round(mz*t+var_z))))
@@ -298,7 +282,6 @@ class LSystemPlugin(ProtocolPlugin):
 									coordinatelist2.append(coordtuple)
 						except:
 							coordinatelist2 = []
-						
 						for coordtuple in coordinatelist2:
 							i,j,k = coordtuple
 							try:
@@ -330,13 +313,11 @@ class LSystemPlugin(ProtocolPlugin):
 						var_x2 = int(round(var_x2))
 						var_y2 = int(round(var_y2))
 						var_z2 = int(round(var_z2))
-						
 						try:
 							steps = int(((var_x2-var_x)**2+(var_y2-var_y)**2+(var_z2-var_z)**2)**0.5)
 							mx = float(var_x2-var_x)/steps
 							my = float(var_y2-var_y)/steps
 							mz = float(var_z2-var_z)/steps
-
 							coordinatelist1 = []
 							for t in range(steps+1):
 								coordinatelist1.append((int(round(mx*t+var_x)),int(round(my*t+var_y)),int(round(mz*t+var_z))))
@@ -346,7 +327,6 @@ class LSystemPlugin(ProtocolPlugin):
 									coordinatelist2.append(coordtuple)
 						except:
 							coordinatelist2 = []
-						
 						for coordtuple in coordinatelist2:
 							i,j,k = coordtuple
 							try:
@@ -364,21 +344,18 @@ class LSystemPlugin(ProtocolPlugin):
 							if not var_override:
 								self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 								self.client.sendBlock(i, j, k, block)
-							yield
-							
+							yield
 					elif item == "B":
 						targetlocation = (drawer_location[0]-drawer_orientationvector[0]*standarddistance,drawer_location[1]-drawer_orientationvector[1]*standarddistance,drawer_location[2]-drawer_orientationvector[2]*standarddistance)
 						var_x,var_y,var_z = drawer_location
 						var_x2,var_y2,var_z2 = targetlocation
 						drawer_location = targetlocation
-
 						var_x = int(round(var_x))
 						var_y = int(round(var_y))
 						var_z = int(round(var_z))
 						var_x2 = int(round(var_x2))
 						var_y2 = int(round(var_y2))
 						var_z2 = int(round(var_z2))
-						
 						try:
 							steps = int(((var_x2-var_x)**2+(var_y2-var_y)**2+(var_z2-var_z)**2)**0.5)
 							mx = float(var_x2-var_x)/steps
@@ -412,8 +389,7 @@ class LSystemPlugin(ProtocolPlugin):
 							if not var_override:
 								self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 								self.client.sendBlock(i, j, k, block)
-							yield
-					
+							yield
 					elif item == "G":
 						drawer_location = (drawer_location[0]+drawer_orientationvector[0]*standarddistance,drawer_location[1]+drawer_orientationvector[1]*standarddistance,drawer_location[2]+drawer_orientationvector[2]*standarddistance)
 

@@ -15,8 +15,7 @@ class StairsPlugin(ProtocolPlugin):
 	@build_list
 	@writer_only
 	def commandStairs(self, parts, fromloc, overriderank):
-		"/stairs blockname height (c) [x y z x2 y2 z2] - Builder\nBuilds a spiral staircase."
-		
+		"/stairs blockname height (c) [x y z x2 y2 z2] - Builder\nBuilds a spiral staircase."
 		if len(parts) < 9 and len(parts) != 3 and len(parts) != 4:
 			self.client.sendServerMessage("Please enter a blocktype height (c (for counter-clockwise)")
 			self.client.sendServerMessage("(and possibly two coord triples)")
@@ -91,24 +90,13 @@ class StairsPlugin(ProtocolPlugin):
 					except ValueError:
 						self.client.sendServerMessage("All parameters must be integers")
 						return
-					
-			if self.client.isDirector() or overriderank:
-				limit = 1073741824
-			elif self.client.isAdmin():
-				limit = 2097152
-			elif self.client.isMod():
-				limit = 262144
-			elif self.client.isAdvBuilder():
-				limit = 110592
-			elif self.client.isOp():
-				limit = 21952
-			else:
-				limit = 4062
-			# Stop them doing silly things
-			if height * 4 > limit:
-				self.client.sendServerMessage("Sorry, that area is too big for you to make stairs.")
-				return
-			
+
+			limit = self.client.getBlbLimit(self.client.username)
+			if limit != -1:
+				# Stop them doing silly things
+				if (height * 4 > limit) or limit == 0:
+					self.client.sendSplitServerMessage("Sorry, that area is too big for you to make stairs(Limit is %s)" % limit)
+					return
 			# Draw all the blocks on, I guess
 			# We use a generator so we can slowly release the blocks
 			# We also keep world as a local so they can't change worlds and affect the new one
@@ -179,7 +167,6 @@ class StairsPlugin(ProtocolPlugin):
 						self.client.sendBlock(i, j, k, stepblock)
 						self.client.total += 1 # This is how you increase a number in python.... - Stacy
 						yield
-			
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
 			def do_step():

@@ -110,22 +110,14 @@ class CopyPastePlugin(ProtocolPlugin):
 				y, y2 = y2, y
 			if z > z2:
 				z, z2 = z2, z
-			if self.client.isDirector() or overriderank:
-				limit = 1073741824
-			elif self.client.isAdmin():
-				limit = 2097152
-			elif self.client.isMod():
-				limit = 262144
-			elif self.client.isOp():
-				limit = 110592
-			elif self.client.isMember():
-				limit = 55296
-			else:
-				limit = 4062
-			# Stop them doing silly things
-			if (x2 - x) * (y2 - y) * (z2 - z) > limit:
-				self.client.sendServerMessage("Sorry, that area is too big for you to copy.")
-				return
+
+			limit = self.client.getBlbLimit(self.client.username)
+			if limit != -1:
+				# Stop them doing silly things
+				if ((x2 - x) * (y2 - y) * (z2 - z) > limit) or limit == 0:
+					self.client.sendServerMessage("Sorry, that area is too big for you to copy (Limit is %s)" % limit)
+					return
+
 			self.client.bsaved_blocks = set()
 			world = self.client.world
 			def generate_changes():
@@ -138,7 +130,7 @@ class CopyPastePlugin(ProtocolPlugin):
 								check_offset = world.blockstore.get_offset(i, j, k)
 								block = world.blockstore.raw_blocks[check_offset]
 								self.client.bsaved_blocks.add((i -x, j - y, k -z, block))
-								self.client.total += 1 # This is how you increase a number in python.... - Stacy
+								self.client.total += 1
 							except AssertionError:
 								self.client.sendServerMessage("Out of bounds copy error.")
 								return

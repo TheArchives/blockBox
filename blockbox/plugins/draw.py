@@ -124,22 +124,12 @@ class ImagedrawPlugin(ProtocolPlugin):
 				y, y2 = y2, y
 			if z > z2:
 				z, z2 = z2, z
-			if self.client.isDirector() or overriderank:
-				limit = 1073741824
-			elif self.client.isAdmin():
-				limit = 2097152
-			elif self.client.isMod():
-				limit = 262144
-			elif self.client.isOp():
-				limit = 110592
-			elif self.client.isMember():
-				limit = 55296
-			else:
-				limit = 4062
-			# Stop them doing silly things
-			if height*width > limit:
-				self.client.sendServerMessage("Sorry, that area is too big for you to imagedraw.")
-				return
+			limit = self.client.getBlbLimit(self.client.username)
+			if limit != -1:
+				# Stop them doing silly things
+				if (height * width > limit) or limit == 0:
+					self.client.sendServerMessage("Sorry, that area is too big for you to imagedraw (Limit is %s)" % limit)
+					return
 			# Draw all the blocks on, I guess
 			# We use a generator so we can slowly release the blocks
 			# We also keep world as a local so they can't change worlds and affect the new one

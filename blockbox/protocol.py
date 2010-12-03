@@ -1168,3 +1168,51 @@ class MyneServerProtocol(Protocol):
 			self.sendServerMessage("Your " + command +" has finished.")
 		else:
 			self.sendServerMessage("Your " + command +" has finished, with %d blocks." % abs(block))
+
+	def getBlbLimit(self, username, factor=1):
+		"Fetches BLB Limit, and returns limit multiplied by a factor. 0 is returned if blb is disabled for that usergroup, and -1 for no limit."
+		if self.factory.useblblimit:
+			if self.isSpectator():
+			   limit = 0
+			elif self.isOwner():
+				limit = self.factory.blblimit["owner"]
+			elif self.isDirector():
+				limit = self.factory.blblimit["director"]
+			elif self.isAdmin():
+				limit = self.factory.blblimit["admin"]
+			elif self.isMod():
+				limit = self.factory.blblimit["mod"]
+			elif self.isWorldOwner():
+				limit = self.factory.blblimit["worldowner"]
+			elif self.isOp():
+				limit = self.factory.blblimit["op"]
+			elif self.isAdvBuilder():
+				limit = self.factory.blblimit["advbuilder"]
+			elif self.isWriter():
+				limit = self.factory.blblimit["builder"]
+			else:
+				limit = self.factory.blblimit["player"]
+		else:
+			if self.isSpectator():
+				limit = 0
+			elif self.isOwner():
+				limit = 2199023255552
+			elif self.isDirector():
+				limit = 1073741824
+			elif self.isAdmin():
+				limit = 2097152
+			elif self.isMod():
+				limit = 262144
+			elif self.isWorldOwner():
+				limit = 176128
+			elif self.isOp():
+				limit = 110592
+			elif self.isAdvBuilder():
+				limit = 55296
+			elif self.isWriter():
+				limit = 4062
+			else:
+				limit = 128
+
+		limit *= factor
+		return limit

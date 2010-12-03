@@ -83,8 +83,8 @@ class PlayersPlugin(ProtocolPlugin):
 					else:
 						self.client.sendServerMessage("Status: "+COLOUR_DARKGREEN+"Online")
 					self.client.sendServerMessage("World: %s" % (username.world.id))
-					if user in bank:
-						self.client.sendServerMessage("Balance: M%d." %(bank[user]))
+					if p.int("bank", "balance", -1) is not -1:
+						self.client.sendServerMessage("Balance: C%d." %(p.int("bank", "balance", 0)))
 					else:
 						self.client.sendServerMessage("Balance: N/A")
 				else:

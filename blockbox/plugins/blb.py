@@ -8,7 +8,8 @@ from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 
-class BlbPlugin(ProtocolPlugin):
+class BlbPlugin(ProtocolPlugin):
+
 	commands = {
 		"blb": "commandBlb",
 		"draw": "commandBlb",
@@ -21,9 +22,10 @@ class BlbPlugin(ProtocolPlugin):
 		"bcb": "commandBcb",
 		"bhcb": "commandBhcb",
 		"bfb": "commandFBlb",
-	}
+		#"useblblimit": "commandToggleUseBlb",
+	}
+
 	@build_list
-	@writer_only
 	def commandBlb(self, parts, fromloc, overriderank):
 		"/blb blockname [x y z x2 y2 z2] - Builder\nAliases: box, cub, cuboid, draw\nSets all blocks in this area to block."
 		if len(parts) < 8 and len(parts) != 2:
@@ -51,30 +53,21 @@ class BlbPlugin(ProtocolPlugin):
 				except ValueError:
 					self.client.sendServerMessage("All parameters must be integers")
 					return
-			
+
 			if x > x2:
 				x, x2 = x2, x
 			if y > y2:
 				y, y2 = y2, y
 			if z > z2:
 				z, z2 = z2, z
-			
-			if self.client.isDirector() or overriderank:
-				limit = 1073741824
-			elif self.client.isAdmin():
-				limit = 2097152
-			elif self.client.isMod():
-				limit = 262144
-			elif self.client.isOp():
-				limit = 110592
-			elif self.client.isAdvBuilder():
-				limit = 55296
-			else:
-				limit = 4062
-			# Stop them doing silly things
-			if (x2 - x) * (y2 - y) * (z2 - z) > limit:
-				self.client.sendServerMessage("Sorry, that area is too big for you to blb.")
-				return
+
+			limit = self.client.getBlbLimit(self.client.username)
+			if limit != -1:
+				# Stop them doing silly things
+				if ((x2 - x) * (y2 - y) * (z2 - z) > limit) or limit == 0:
+					self.client.sendServerMessage("Sorry, that area is too big for you to blb (Limit is %s)" % limit)
+					return
+
 			# Draw all the blocks on, I guess
 			# We use a generator so we can slowly release the blocks
 			# We also keep world as a local so they can't change worlds and affect the new one
@@ -84,26 +77,24 @@ class BlbPlugin(ProtocolPlugin):
 					for i in range(x, x2+1):
 						for j in range(y, y2+1):
 							for k in range(z, z2+1):
-								if not self.client.AllowedToBuild(i, j, k) and overriderank==False:
+								if not self.client.AllowedToBuild(i, j, k) and overriderank == False:
 									return
 								world[i, j, k] = block
 								self.client.runHook("blockchange", x, y, z, ord(block), ord(block), fromloc)
 								self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 								self.client.sendBlock(i, j, k, block)
-								self.client.total += 1 # This is how you increase a number in python.... - Stacy
+								self.client.total += 1
 								yield
 				except AssertionError:
 					self.client.sendServerMessage("Out of bounds blb error.")
-					return
-			
-			# Now, set up a loop delayed by the reactor
+					return				# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
 			def do_step():
 				# Do 10 blocks
 				try:
-					for x in range(10):#10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
+					for x in range(10): # 10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
 						block_iter.next()
-					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
+					reactor.callLater(0.01, do_step) #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if fromloc == 'user':
 						self.client.finalizeMassCMD('blb', self.client.total)
@@ -148,22 +139,12 @@ class BlbPlugin(ProtocolPlugin):
 			if z > z2:
 				z, z2 = z2, z
 
-			if self.client.isDirector() or overriderank:
-				limit = 1073741824
-			elif self.client.isAdmin():
-				limit = 2097152
-			elif self.client.isMod():
-				limit = 262144
-			elif self.client.isOp():
-				limit = 110592
-			elif self.client.isAdvBuilder():
-				limit = 55296
-			else:
-				limit = 4062
-			# Stop them doing silly things
-			if (x2 - x) * (y2 - y) * (z2 - z) > limit:
-				self.client.sendServerMessage("Sorry, that area is too big for you to bhb.")
-				return
+			limit = self.client.getBlbLimit(self.client.username)
+			if limit != -1:
+				# Stop them doing silly things
+				if (x2 - x) * (y2 - y) * (z2 - z) > limit or limit == 0:
+					self.client.sendServerMessage("Sorry, that area is too big for you to bhb (Limit is %s)" % limit)
+					return
 
 			# Draw all the blocks on, I guess
 			# We use a generator so we can slowly release the blocks
@@ -181,7 +162,7 @@ class BlbPlugin(ProtocolPlugin):
 									self.client.runHook("blockchange", x, y, z, ord(block), ord(block), fromloc)
 								   	self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 									self.client.sendBlock(i, j, k, block)
-									self.client.total += 1 # This is how you increase a number in python.... - Stacy
+									self.client.total += 1
 									yield
 				except AssertionError:
 					self.client.sendServerMessage("Out of bounds bhb error.")
@@ -192,9 +173,9 @@ class BlbPlugin(ProtocolPlugin):
 			def do_step():
 				# Do 10 blocks
 				try:
-					for x in range(10):#10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
+					for x in range(10): #10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
 						block_iter.next()
-					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
+					reactor.callLater(0.01, do_step) #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if fromloc == 'user':
 						self.client.finalizeMassCMD('bhb', self.client.total)
@@ -239,22 +220,12 @@ class BlbPlugin(ProtocolPlugin):
 			if z > z2:
 				z, z2 = z2, z
 
-			if self.client.isDirector() or overriderank:
-				limit = 1073741824
-			elif self.client.isAdmin():
-				limit = 2097152
-			elif self.client.isMod():
-				limit = 262144
-			elif self.client.isOp():
-				limit = 110592
-			elif self.client.isAdvBuilder():
-				limit = 55296
-			else:
-				limit = 4062
-			# Stop them doing silly things
-			if (x2 - x) * (y2 - y) * (z2 - z) > limit:
-				self.client.sendServerMessage("Sorry, that area is too big for you to bwb.")
-				return
+			limit = self.client.getBlbLimit(self.client.username)
+			if limit != -1:
+				# Stop them doing silly things
+				if ((x2 - x) * (y2 - y) * (z2 - z) > limit) or limit == 0:
+					self.client.sendServerMessage("Sorry, that area is too big for you to bwb (Limit is %s)" % limit)
+					return
 
 			# Draw all the blocks on, I guess
 			# We use a generator so we can slowly release the blocks
@@ -275,7 +246,7 @@ class BlbPlugin(ProtocolPlugin):
 									return
 								self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 								self.client.sendBlock(i, j, k, block)
-								self.client.total += 1 # This is how you increase a number in python.... - Stacy
+								self.client.total += 1
 								yield
 
 			# Now, set up a loop delayed by the reactor
@@ -337,7 +308,7 @@ class BlbPlugin(ProtocolPlugin):
 				try:
 					username = self.client.factory.usernames[self.client.username.lower()]
 				except:
-					self.client.sendServerMessage("ERROR Identity could not be confirmed")
+					self.client.sendServerMessage("ERROR: Identity could not be confirmed")
 					return
 				if username.isDirector():
 					pass
@@ -379,22 +350,12 @@ class BlbPlugin(ProtocolPlugin):
 			if z > z2:
 				z, z2 = z2, z
 
-			if self.client.isDirector() or overriderank:
-				limit = 1073741824
-			elif self.client.isAdmin():
-				limit = 2097152
-			elif self.client.isMod():
-				limit = 262144
-			elif self.client.isOp():
-				limit = 110592
-			elif self.client.isAdvBuilder():
-				limit = 55296
-			else:
-				limit = 4062
-			# Stop them doing silly things
-			if (x2 - x) * (y2 - y) * (z2 - z) > limit:
-				self.client.sendServerMessage("Sorry, that area is too big for you to bcb.")
-				return
+			limit = self.client.getBlbLimit(self.client.username)
+			if limit != -1:
+				# Stop them doing silly things
+				if ((x2 - x) * (y2 - y) * (z2 - z) > limit) or limit == 0:
+					self.client.sendServerMessage("Sorry, that area is too big for you to bcb (Limit is %s)" % limit)
+					return
 
 			# Draw all the blocks on, I guess
 			# We use a generator so we can slowly release the blocks
@@ -507,22 +468,12 @@ class BlbPlugin(ProtocolPlugin):
 			if z > z2:
 				z, z2 = z2, z
 
-			if self.client.isDirector() or overriderank:
-				limit = 1073741824
-			elif self.client.isAdmin():
-				limit = 2097152
-			elif self.client.isMod():
-				limit = 262144
-			elif self.client.isOp():
-				limit = 110592
-			elif self.client.isAdvBuilder():
-				limit = 55296
-			else:
-				limit = 4062
-			# Stop them doing silly things
-			if (x2 - x) * (y2 - y) * (z2 - z) > limit:
-				self.client.sendServerMessage("Sorry, that area is too big for you to bhcb.")
-				return
+			limit = self.client.getBlbLimit(self.client.username)
+			if limit != -1:
+				# Stop them doing silly things
+				if ((x2 - x) * (y2 - y) * (z2 - z) > limit) or limit == 0:
+					self.client.sendServerMessage("Sorry, that area is too big for you to bhcb (Limit is %s)" % limit)
+					return
 
 			# Draw all the blocks on, I guess
 			# We use a generator so we can slowly release the blocks
@@ -628,22 +579,12 @@ class BlbPlugin(ProtocolPlugin):
 			if z > z2:
 				z, z2 = z2, z
 
-			if self.client.isDirector() or overriderank:
-				limit = 1073741824
-			elif self.client.isAdmin():
-				limit = 2097152
-			elif self.client.isMod():
-				limit = 262144
-			elif self.client.isOp():
-				limit = 110592
-			elif self.client.isAdvBuilder():
-				limit = 55296
-			else:
-				limit = 4062
-			# Stop them doing silly things
-			if (x2 - x) * (y2 - y) * (z2 - z) > limit:
-				self.client.sendServerMessage("Sorry, that area is too big for you to bfb.")
-				return
+			limit = self.client.getBlbLimit(self.client.username)
+			if limit != -1:
+				# Stop them doing silly things
+				if ((x2 - x) * (y2 - y) * (z2 - z) > limit) or limit == 0:
+					self.client.sendServerMessage("Sorry, that area is too big for you to bfb (Limit is %s)" % limit)
+					return
 
 			# Draw all the blocks on, I guess
 			# We use a generator so we can slowly release the blocks
@@ -679,3 +620,14 @@ class BlbPlugin(ProtocolPlugin):
 						self.client.finalizeMassCMD('bfb', count)
 					pass
 			do_step()
+
+#	@owner_only
+#	@on_off_command
+#	def commandToggleUseBlb(self, onoff, fromloc, overriderank):
+#		"/useblblimit on|off - Owner\nSet if the server will use custom BLB limit or the default limit."
+#		if onoff == "on":
+#			self.client.factory.useblblimit = True
+#			self.client.sendServerMessage("Custom BLB Limit is now on.")
+#		else:
+#			self.client.factory.useblblimit = False
+#			self.client.sendServerMessage("Custom BLB Limit is now off.")

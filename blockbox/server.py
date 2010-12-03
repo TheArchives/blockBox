@@ -192,8 +192,20 @@ class MyneFactory(Factory):
 		self.backup_auto = self.config.getboolean("backup", "backup_auto")
 		if self.backup_auto:
 			reactor.callLater(float(self.backup_freq * 60),self.AutoBackup)
+		self.useblblimit = self.config.getboolean("blb", "use_blb_limiter")
+		if self.useblblimit:
+			self.blblimit = dict()
+			self.blblimit["player"] = self.config.getint("blb", "player")
+			self.blblimit["builder"] = self.config.getint("blb", "builder")
+			self.blblimit["advbuilder"] = self.config.getint("blb", "advbuilder")
+			self.blblimit["op"] = self.config.getint("blb", "op")
+			self.blblimit["worldowner"] = self.config.getint("blb", "worldowner")
+			self.blblimit["mod"] = self.config.getint("blb", "mod")
+			self.blblimit["admin"] = self.config.getint("blb", "admin")
+			self.blblimit["director"] = self.config.getint("blb", "director")
+			self.blblimit["owner"] = self.config.getint("blb", "owner")
 		# Parse IRC section
-		if  self.use_irc:
+		if self.use_irc:
 			self.irc_nick = self.conf_irc.get("irc", "nick")
 			self.irc_pass = self.conf_irc.get("irc", "password")
 			self.irc_channel = self.conf_irc.get("irc", "channel")
@@ -222,7 +234,7 @@ class MyneFactory(Factory):
 		self.chatlog = open("logs/server.log", "a")
 		self.chatlog = open("logs/chat.log", "a")
 		self.balancesqllog = open("data/balances.sql", "a")
-		
+
 		# Create a default world, if there isn't one.
 		if not os.path.isdir("mapdata/worlds/main"):
 			self.logger.info("Generating main world...")
@@ -425,7 +437,7 @@ class MyneFactory(Factory):
 				self.save_count += 1
 			if shutdown: del self.worlds[world_id]
 		except:
-			self.logger.info("Error saving %s" % world_id)
+			self.logger.error("Error saving %s" % world_id)
 
 	def claimId(self, client):
 		for i in range(1, self.max_clients+1):
@@ -495,7 +507,7 @@ class MyneFactory(Factory):
 			if not client.console:
 				client.sendServerMessage("You can't shutdown main.")
 			else:
-				self.logger.info("You can't shutdown main.")
+				self.logger.warning("You can't shutdown main.")
 		if not self.worlds[world_id].ASD == None:
 			self.worlds[world_id].ASD.kill()
 			self.worlds[world_id].ASD = None
@@ -916,7 +928,8 @@ class MyneFactory(Factory):
 				for i in range(0,((len(backups)+1)-self.backup_max)):
 					shutil.rmtree(os.path.join(world_dir+"backup/", str(int(backups[i]))))
 			if error is not None:
-				return error
+				return error
+
 	def messagestrip(factory,message):
 		strippedmessage = ""
 		for x in message:
@@ -926,7 +939,8 @@ class MyneFactory(Factory):
 		for x in factory.filter:
 			rep = re.compile(x[0], re.IGNORECASE)
 			message = rep.sub(x[1], message)
-		return message   
+		return message   
+
 	def loadArchives(self):
 		self.archives = {}
 		for name in os.listdir("mapdata/archives/"):
@@ -944,7 +958,8 @@ class MyneFactory(Factory):
 							self.archives[name] = {}
 						self.archives[name][when] = "%s/%s" % (name, subfilename)
 		self.logger.info("Loaded %s discrete archives." % len(self.archives))
-		reactor.callLater(60, self.loadArchives)		
+		reactor.callLater(60, self.loadArchives)
+
 	def create_if_not(self, filename):
 		dir = os.path.dirname(filename)
 		try:

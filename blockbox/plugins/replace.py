@@ -56,22 +56,12 @@ class ReplacePlugin(ProtocolPlugin):
 				y, y2 = y2, y
 			if z > z2:
 				z, z2 = z2, z
-			if self.client.isDirector() or overriderank:
-				limit = 1073741824
-			elif self.client.isAdmin():
-				limit = 2097152
-			elif self.client.isMod():
-				limit = 262144
-			elif self.client.isOp():
-				limit = 110592
-			elif self.client.isAdvBuilder():
-				limit = 55296
-			else:
-				limit = 4062
-			# Stop them doing silly things
-			if (x2 - x) * (y2 - y) * (z2 - z) > limit:
-				self.client.sendServerMessage("Sorry, that area is too big for you to replace.")
-				return
+			limit = self.client.getBlbLimit(self.client.username)
+			if limit != -1:
+				# Stop them doing silly things
+				if ((x2 - x) * (y2 - y) * (z2 - z) > limit) or limit == 0:
+					self.client.sendServerMessage("Sorry, that area is too big for you to replace (Limit is %s)" % limit)
+					return
 			# Draw all the blocks on, I guess
 			# We use a generator so we can slowly release the blocks
 			# We also keep world as a local so they can't change worlds and affect the new one
@@ -185,22 +175,12 @@ class ReplacePlugin(ProtocolPlugin):
 				y, y2 = y2, y
 			if z > z2:
 				z, z2 = z2, z
-			if self.client.isDirector() or overriderank:
-				limit = 1073741824
-			elif self.client.isAdmin():
-				limit = 2097152
-			elif self.client.isMod():
-				limit = 262144
-			elif self.client.isOp():
-				limit = 110592
-			elif self.client.isAdvBuilder():
-				limit = 55296
-			else:
-				limit = 4062
-			# Stop them doing silly things
-			if (x2 - x) * (y2 - y) * (z2 - z) > limit:
-				self.client.sendServerMessage("Sorry, that area is too big for you to rep.")
-				return
+			limit = self.client.getBlbLimit(self.client.username)
+			if limit != -1:
+				# Stop them doing silly things
+				if ((x2 - x) * (y2 - y) * (z2 - z) > limit) or limit == 0:
+					self.client.sendServerMessage("Sorry, that area is too big for you to creplace (Limit is %s)" % limit)
+					return
 			# Draw all the blocks on, I guess
 			# We use a generator so we can slowly release the blocks
 			# We also keep world as a local so they can't change worlds and affect the new one
@@ -297,18 +277,7 @@ class ReplacePlugin(ProtocolPlugin):
 				except ValueError:
 					self.client.sendServerMessage("All parameters must be integers")
 					return
-			if self.client.isDirector() or overriderank:
-				limit = 1073741824
-			elif self.client.isAdmin():
-				limit = 2097152
-			elif self.client.isMod():
-				limit = 262144
-			elif self.client.isOp():
-				limit = 110592
-			elif self.client.isAdvBuilder():
-				limit = 55296
-			else:
-				limit = 4062
+			limit = self.client.getBlbLimit(self.client.username)
 			var_locxchecklist = [(1,0,0),(-1,0,0)]
 			var_locychecklist = [(0,1,0),(0,-1,0)]
 			var_loczchecklist = [(0,0,1),(0,0,-1)]
@@ -339,9 +308,11 @@ class ReplacePlugin(ProtocolPlugin):
 			def generate_changes():
 				var_blockchanges = 0
 				while self.var_blocklist != []:
-					if var_blockchanges > limit:
-						self.client.sendServerMessage("You have exceeded the fill limit for your rank.")
-						return
+					if limit != -1:
+						# Stop them doing silly things
+						if (var_blockchanges > limit) or limit == 0:
+							self.client.sendServerMessage("You have exceeded the fill limit for your rank (Limit is %s)" % limit)
+							return
 					i,j,k,positionprevious = self.var_blocklist[0]
 					var_blockchanges += 1
 					for offsettuple in var_locchecklist:
@@ -355,7 +326,6 @@ class ReplacePlugin(ProtocolPlugin):
 								checkblock = world.blockstore.raw_blocks[world.blockstore.get_offset(ri, rj, rk)]
 								if checkblock == var_repblock:
 									world[ri, rj, rk] = block
-				
 									self.client.queueTask(TASK_BLOCKSET, (ri, rj, rk, block), world=world)
 									self.client.sendBlock(ri, rj, rk, block)
 									self.var_blocklist.append((ri, rj, rk,(i,j,k)))
