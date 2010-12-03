@@ -166,7 +166,7 @@ class UndoPlugin(ProtocolPlugin):
 								return
 							self.client.queueTask(TASK_BLOCKSET, (i, j, k, originalblock), world=world)
 							self.client.sendBlock(i, j, k, originalblock)
-							self.client.total += 1 # This is how you increase a number in python.... - Stacy
+							self.client.total += 1
 							yield
 						self.client.var_undolist = self.client.sublist
 		# Now, set up a loop delayed by the reactor

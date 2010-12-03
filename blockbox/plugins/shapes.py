@@ -55,20 +55,12 @@ class ShapesPlugin(ProtocolPlugin):
 				except ValueError:
 					self.client.sendServerMessage("All parameters must be integers")
 					return
-			if self.client.isDirector() or overriderank:
-				limit = 1073741824
-			elif self.client.isAdmin():
-				limit = 2097152
-			elif self.client.isMod():
-				limit = 262144
-			elif self.client.isOp():
-				limit = 110592
-			elif self.client.isAdvBuilder():
-				limit = 55296
-			else:
-				limit = 4062
-			if (radius*2)**3>limit:
-				return
+			limit = self.client.getBlbLimit(self.client.username)
+			if limit != -1:
+				# Stop them doing silly things
+				if ((radius*2)**3 > limit) or limit == 0:
+					self.client.sendServerMessage("Sorry, that area is too big for you to sphere (Limit is %s)" % limit)
+					return
 			# Draw all the blocks on, I guess
 			# We use a generator so we can slowly release the blocks
 			# We also keep world as a local so they can't change worlds and affect the new one
@@ -135,20 +127,12 @@ class ShapesPlugin(ProtocolPlugin):
 				except ValueError:
 					self.client.sendServerMessage("All parameters must be integers")
 					return
-			if self.client.isDirector() or overriderank:
-				limit = 1073741824
-			elif self.client.isAdmin():
-				limit = 2097152
-			elif self.client.isMod():
-				limit = 262144
-			elif self.client.isOp():
-				limit = 110592
-			elif self.client.isAdvBuilder():
-				limit = 55296
-			else:
-				limit = 4062
-			if (radius*2)**3>limit:
-				return
+			limit = self.client.getBlbLimit(self.client.username)
+			if limit != -1:
+				# Stop them doing silly things
+				if ((radius*2)**3 > limit) or limit == 0:
+					self.client.sendServerMessage("Sorry, that area is too big for you to hsphere (Limit is %s)" % limit)
+					return
 			# Draw all the blocks on, I guess
 			# We use a generator so we can slowly release the blocks
 			# We also keep world as a local so they can't change worlds and affect the new one
@@ -159,11 +143,12 @@ class ShapesPlugin(ProtocolPlugin):
 						for k in range(-radius-1, radius):
 							if (i**2 + j**2 + k**2)**0.5 < radius and (i**2 + j**2 + k**2)**0.5 > radius-1.49:
 								if not self.client.AllowedToBuild(x+i, y+j, z+k) and not permissionoverride:
+									self.client.sendServerMessage("You are not allowed to build here.")
 									return
 								try:
 									world[x+i, y+j, z+k] = block
 								except AssertionError:
-									self.client.sendServerMessage("Out of bounds sphere error.")
+									self.client.sendServerMessage("Out of bounds hsphere error.")
 									return
 								self.client.queueTask(TASK_BLOCKSET, (x+i, y+j, z+k, block), world=world)
 								self.client.sendBlock(x+i, y+j, z+k, block)
@@ -178,7 +163,7 @@ class ShapesPlugin(ProtocolPlugin):
 						block_iter.next()
 					reactor.callLater(0.01, do_step)
 				except StopIteration:
-					if fromloc == 'user':	
+					if fromloc == 'user':
 						self.client.finalizeMassCMD('hsphere', self.client.total)
 						self.client.total = 0
 					pass
@@ -232,27 +217,17 @@ class ShapesPlugin(ProtocolPlugin):
 				except ValueError:
 					self.client.sendServerMessage("All parameters must be integers")
 					return
-			if self.client.isDirector() or overriderank:
-				limit = 1073741824
-			elif self.client.isAdmin():
-				limit = 2097152
-			elif self.client.isMod():
-				limit = 262144
-			elif self.client.isOp():
-				limit = 110592
-			elif self.client.isAdvBuilder():
-				limit = 55296
-			else:
-				limit = 4062
-			# Stop them doing silly things
-			if 2*((x-x2)**2+(y-y2)**2+(z-z2)**2)**0.5+2*((x2-x3)**2+(y2-y3)**2+(z2-z3)**2)**0.5 > limit:
-				self.client.sendServerMessage("Sorry, that area is too big for you to curve.")
-				return
+			limit = self.client.getBlbLimit(self.client.username)
+			if limit != -1:
+				# Stop them doing silly things
+				if ((2*((x-x2)**2+(y-y2)**2+(z-z2)**2)**0.5+2*((x2-x3)**2+(y2-y3)**2+(z2-z3)**2)**0.5) > limit) or limit == 0:
+					self.client.sendServerMessage("Sorry, that area is too big for you to curve (Limit is %s)" % limit)
+					return
 			# Draw all the blocks on, I guess
 			# We use a generator so we can slowly release the blocks
 			# We also keep world as a local so they can't change worlds and affect the new one
 			world = self.client.world
-			def generate_changes():				
+			def generate_changes():
 				#curve list
 				steps1 = float(2*((x3-x)**2+(y3-y)**2+(z3-z)**2)**0.5)
 				steps2 = float(2*((x2-x3)**2+(y2-y3)**2+(z2-z3)**2)**0.5) + steps1
@@ -278,7 +253,7 @@ class ShapesPlugin(ProtocolPlugin):
 						return
 					self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 					self.client.sendBlock(i, j, k, block)
-					self.client.total += 1 # This is how you increase a number in python.... - Stacy
+					self.client.total += 1
 					yield
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
@@ -298,22 +273,22 @@ class ShapesPlugin(ProtocolPlugin):
 	@build_list
 	@advbuilder_only
 	def commandPyramid(self, parts, fromloc, overriderank):
-		"/pyramid blockname height [x y z] - Advanced Builder\nSets all blocks in this area to be a pyramid."
+		"/pyramid blockname height fill(true|false) [x y z] - Advanced Builder\nSets all blocks in this area to be a pyramid."
 		if len(parts) < 7 and len(parts) != 4:
-			self.client.sendServerMessage("Please enter a block type height and fill?")
+			self.client.sendServerMessage("Please enter a block type, height and fill (hollow)")
 		else:
 			# Try getting the fill
 			fill = parts[3]
 			if fill=='true' or fill=='false':
 				pass
 			else:
-				self.client.sendServerMessage("fill must be true or false")
+				self.client.sendServerMessage("Fill must be true or false.")
 				return
 			# Try getting the height
 			try:
 				height = int(parts[2])
 			except ValueError:
-				self.client.sendServerMessage("Height must be a Number.")
+				self.client.sendServerMessage("Height must be a number.")
 				return
 			# Try getting the block as a direct integer type.
 			try:
@@ -357,22 +332,12 @@ class ShapesPlugin(ProtocolPlugin):
 					point1 = [x-i, y+height+i+1,z-i]
 					point2 = [x+i, y+height+i+1,z+i]
 				pointlist = pointlist+[(point1,point2)]
-			if self.client.isDirector() or overriderank:
-				limit = 1073741824
-			elif self.client.isAdmin():
-				limit = 2097152
-			elif self.client.isMod():
-				limit = 262144
-			elif self.client.isOp():
-				limit = 110592
-			elif self.client.isAdvBuilder():
-				limit = 55296
-			else:
-				limit = 4062
-			# Stop them doing silly things
-			if (x) * (y) * (z)/2 > limit:
-				self.client.sendServerMessage("Sorry, that area is too big for you to pyramid.")
-				return
+			limit = self.client.getBlbLimit(self.client.username)
+			if limit != -1:
+				# Stop them doing silly things
+				if ((x) * (y) * (z)/2 > limit) or limit == 0:
+					self.client.sendServerMessage("Sorry, that area is too big for you to pyramid (Limit is %s)" % limit)
+					return
 			# Draw all the blocks on, I guess
 			# We use a generator so we can slowly release the blocks
 			# We also keep world as a local so they can't change worlds and affect the new one
@@ -464,22 +429,12 @@ class ShapesPlugin(ProtocolPlugin):
 				coordinatelist1.append((int(round(mx*t+x)),int(round(my*t+y)),int(round(mz*t+z))))
 			coordinatelist2 = []
 			coordinatelist2 = [coordtuple for coordtuple in coordinatelist1 if coordtuple not in coordinatelist2]
-			if self.client.isDirector() or overriderank:
-				limit = 1073741824
-			elif self.client.isAdmin():
-				limit = 2097152
-			elif self.client.isMod():
-				limit = 262144
-			elif self.client.isOp():
-				limit = 110592
-			elif self.client.isAdvBuilder():
-				limit = 55296
-			else:
-				limit = 4062
-			# Stop them doing silly things
-			if len(coordinatelist2) > limit:
-				self.client.sendServerMessage("Sorry, that area is too big for you to line.")
-				return
+			limit = self.client.getBlbLimit(self.client.username)
+			if limit != -1:
+				# Stop them doing silly things
+				if (len(coordinatelist2) > limit) or limit == 0:
+					self.client.sendServerMessage("Sorry, that area is too big for you to line (Limit is %s)" % limit)
+					return
 			# Draw all the blocks on, I guess
 			# We use a generator so we can slowly release the blocks
 			# We also keep world as a local so they can't change worlds and affect the new one
@@ -573,21 +528,12 @@ class ShapesPlugin(ProtocolPlugin):
 				except ValueError:
 					self.client.sendServerMessage("All parameters must be integers")
 					return
-			if self.client.isDirector() or overriderank:
-				limit = 1073741824
-			elif self.client.isAdmin():
-				limit = 2097152
-			elif self.client.isMod():
-				limit = 262144
-			elif self.client.isOp():
-				limit = 110592
-			elif self.client.isAdvBuilder():
-				limit = 55296
-			else:
-				limit = 4062
-			if (radius*2)**3>limit:
-				self.client.sendServerMessage("Sorry, that area is too big for you to csphere.")
-				return
+			limit = self.client.getBlbLimit(self.client.username)
+			if limit != -1:
+				# Stop them doing silly things
+				if ((radius*2)**3 > limit) or limit == 0:
+					self.client.sendServerMessage("Sorry, that area is too big for you to csphere (Limit is %s)" % limit)
+					return
 			# Draw all the blocks on, I guess
 			# We use a generator so we can slowly release the blocks
 			# We also keep world as a local so they can't change worlds and affect the new one
@@ -685,21 +631,12 @@ class ShapesPlugin(ProtocolPlugin):
 				except ValueError:
 					self.client.sendServerMessage("All parameters must be integers")
 					return
-			if self.client.isDirector() or overriderank:
-				limit = 1073741824
-			elif self.client.isAdmin():
-				limit = 2097152
-			elif self.client.isMod():
-				limit = 262144
-			elif self.client.isOp():
-				limit = 110592
-			elif self.client.isAdvBuilder():
-				limit = 55296
-			else:
-				limit = 4062
-			if 2*cmath.pi*(radius)**2>limit:
-				self.client.sendServerMessage("Sorry, that area is too big for you to circle.")
-				return
+			limit = self.client.getBlbLimit(self.client.username)
+			if limit != -1:
+				# Stop them doing silly things
+				if (int(2*cmath.pi*(radius)**2) > limit) or limit == 0:
+					self.client.sendServerMessage("Sorry, that area is too big for you to circle (Limit is %s)" % limit)
+					return
 			# Draw all the blocks on, I guess
 			# We use a generator so we can slowly release the blocks
 			# We also keep world as a local so they can't change worlds and affect the new one
@@ -795,21 +732,12 @@ class ShapesPlugin(ProtocolPlugin):
 					self.client.sendServerMessage("All parameters must be integers")
 					return
 			absradius = abs(radius)
-			if self.client.isDirector() or overriderank:
-				limit = 1073741824
-			elif self.client.isAdmin():
-				limit = 2097152
-			elif self.client.isMod():
-				limit = 262144
-			elif self.client.isOp():
-				limit = 110592
-			elif self.client.isAdvBuilder():
-				limit = 55296
-			else:
-				limit = 4062
-			if (radius*2)**3/2>limit:
-				self.client.sendServerMessage("Sorry, that area is too big for you to dome.")
-				return
+			limit = self.client.getBlbLimit(self.client.username)
+			if limit != -1:
+				# Stop them doing silly things
+				if ((radius*2)**3/2 > limit) or limit == 0:
+					self.client.sendServerMessage("Sorry, that area is too big for you to dome (Limit is %s)" % limit)
+					return
 			# Draw all the blocks on, I guess
 			# We use a generator so we can slowly release the blocks
 			# We also keep world as a local so they can't change worlds and affect the new one
@@ -829,8 +757,7 @@ class ShapesPlugin(ProtocolPlugin):
 									return
 								self.client.queueTask(TASK_BLOCKSET, (x+i, y+j, z+k, block), world=world)
 								self.client.sendBlock(x+i, y+j, z+k, block)
-								#TODO: Yes, I am retarded for using self.client.total in domes.
-								self.client.total += 1 # This is how you increase a number in python.... - Stacy
+								self.client.total += 1
 								yield
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
@@ -893,25 +820,16 @@ class ShapesPlugin(ProtocolPlugin):
 				except ValueError:
 					self.client.sendServerMessage("All parameters must be integers")
 					return
-			if self.client.isDirector() or overriderank:
-				limit = 1073741824
-			elif self.client.isAdmin():
-				limit = 2097152
-			elif self.client.isMod():
-				limit = 262144
-			elif self.client.isOp():
-				limit = 110592
-			elif self.client.isAdvBuilder():
-				limit = 55296
-			else:
-				limit = 4062
 			radius = int(round(endradius*2 + ((x2-x)**2+(y2-y)**2+(z2-z)**2)**0.5)/2 + 1)
 			var_x = int(round(float(x+x2)/2))
 			var_y = int(round(float(y+y2)/2))
 			var_z = int(round(float(z+z2)/2))
-			if int(4/3*cmath.pi*radius**2*endradius)>limit:
-				self.client.sendServerMessage("Sorry, that area is too big for you to ellipsoid.")
-				return
+			limit = self.client.getBlbLimit(self.client.username)
+			if limit != -1:
+				# Stop them doing silly things
+				if (int(4/3*cmath.pi*radius**2*endradius) > limit) or limit == 0:
+					self.client.sendServerMessage("Sorry, that area is too big for you to ellipsoid (Limit is %s)" % limit)
+					return
 			# Draw all the blocks on, I guess
 			# We use a generator so we can slowly release the blocks
 			# We also keep world as a local so they can't change worlds and affect the new one
@@ -951,7 +869,7 @@ class ShapesPlugin(ProtocolPlugin):
 	@build_list
 	@op_only
 	def commandPolytri(self, parts, fromloc, overriderank):
-		"/Polytri blockname [x y z x2 y2 z2 x3 y3 z3] - Op\nSets all blocks between three points to block."
+		"/polytri blockname [x y z x2 y2 z2 x3 y3 z3] - Op\nSets all blocks between three points to block."
 		if len(parts) < 11 and len(parts) != 2:
 			self.client.sendServerMessage("Please enter a type (and possibly three coord triples)")
 		else:
@@ -1044,22 +962,12 @@ class ShapesPlugin(ProtocolPlugin):
 							finalcoordinatelist.append(coordtuple)
 				elif point1 not in finalcoordinatelist:
 					finalcoordinatelist.append(point1)
-			if self.client.isDirector() or overriderank:
-				limit = 1073741824
-			elif self.client.isAdmin():
-				limit = 2097152
-			elif self.client.isMod():
-				limit = 262144
-			elif self.client.isOp():
-				limit = 110592
-			elif self.client.isAdvBuilder():
-				limit = 55296
-			else:
-				limit = 4062
-			# Stop them doing silly things
-			if ((x-x2)**2+(y-y2)**2+(z-z2)**2)**0.5*((x-x3)**2+(y-y3)**2+(z-z3)**2)**0.5 > limit:
-				self.client.sendServerMessage("Sorry, that area is too big for you to polytri.")
-				return
+			limit = self.client.getBlbLimit(self.client.username)
+			if limit != -1:
+				# Stop them doing silly things
+				if ((((x-x2)**2+(y-y2)**2+(z-z2)**2)**0.5*((x-x3)**2+(y-y3)**2+(z-z3)**2)**0.5) > limit) or limit == 0:
+					self.client.sendServerMessage("Sorry, that area is too big for you to polytri (Limit is %s)" % limit)
+					return
 			# Draw all the blocks on, I guess
 			# We use a generator so we can slowly release the blocks
 			# We also keep world as a local so they can't change worlds and affect the new one
