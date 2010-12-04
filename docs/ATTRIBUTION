@@ -1,0 +1,32 @@
+ATTRIBUTION
+
+The terms hereby stated in this document of the law apply to blockBox, a free server software for the game "Minecraft". All terms of attribution are parented by the license over the software, the Creative Commons by-nc-sa 3.0, which is contained in the "docs" directory of the blockBox software.
+
+CREATIVE COMMONS CORPORATION IS NOT A LAW FIRM AND DOES NOT PROVIDE LEGAL SERVICES. DISTRIBUTION OF
+THIS LICENSE DOES NOT CREATE AN ATTORNEY-CLIENT RELATIONSHIP. CREATIVE COMMONS PROVIDES THIS
+INFORMATION ON AN "AS-IS" BASIS. CREATIVE COMMONS MAKES NO WARRANTIES REGARDING THE INFORMATION
+PROVIDED, AND DISCLAIMS LIABILITY FOR DAMAGES RESULTING FROM ITS USE.
+
+The terms of attribution follow. According to the way you use/distribute this software, you must follow such instructions. Any terms of higher severity (i.e. Relicensing above Modification) carry on terms from lower severity attribution.
+
+These terms are subject to change at any time without warning or consent.
+
+1. Execution
+No terms apply to this section of attribution, however if any sort of source code is modified, the next section of attribution must be followed as well.
+
+2. Modification
+If one uses the source code of blockBox in modification, specific terms must comply. These include, and are not limited to:
+
+a. The original content must stay in the "/credits" command, and only addition to the context and source of this command is allowed to preserve credits where they apply.
+b. The command "/about" must stay mentioned in the "/help" command, as well as "/credits" being mentioned in "/help" too.
+c. All persons of the VIP in-gaming rank (yellow name) must stay intact. Although users may be added to this list, the users that were originally on it may not.
+
+3. Redistribution
+"Redistribution" applys to software forking, release of modified source code, and any other related actions. Terms from before apply here as well, along with the fact that it must be stated in "/about" that the blockBox software was used as a base for the released source code.
+If one wishes to change the attribution terms with the release of modified source code, then the terms in Section 4 apply to the mentioned situation.
+Copyright headers in all source code files also must mention that the software was forked from blockBox.
+
+4. Relicensing
+To relicense a copy of blockBox, the pursuer of the license change must contact the blockBox Developmental Team in order to obtain instructions about how to continue forward.
+
+Any attempts to deny these terms CAN and WILL result in legal action. If there are any questions about this licensing, please contact us on IRC (irc.esper.net:6667 #blockBox). Thanks!

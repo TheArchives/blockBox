@@ -9,7 +9,7 @@ from blockbox.decorators import *
 from blockbox.constants import *
 
 class LavaPlugin(ProtocolPlugin):
-
+	"Class for player handling when touched lava."
 	hooks = {
 		"poschange": "posChanged",
 	}

@@ -8,7 +8,7 @@ from blockbox.constants import *
 from blockbox.globals import *
 
 class HelpPlugin(ProtocolPlugin):
-
+	"Command that shows help and information of the server."
 	commands = {
 		"status": "commandStatus",
 		"mapinfo": "commandStatus",

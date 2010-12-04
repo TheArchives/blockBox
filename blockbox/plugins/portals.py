@@ -6,7 +6,7 @@ from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 
-class PortalPlugin(ProtocolPlugin):
+class PortalPlugin(ProtocolPlugin):	"Commands for portal handling. And yes, we are still alive."
 	commands = {
 		"p": "commandPortal",
 		"tpbox": "commandPortal",

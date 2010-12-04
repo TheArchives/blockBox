@@ -9,7 +9,7 @@ from blockbox.decorators import *
 from blockbox.constants import *
 
 class BlbPlugin(ProtocolPlugin):
-
+	"Commands for Massive block buildings."
 	commands = {
 		"blb": "commandBlb",
 		"draw": "commandBlb",

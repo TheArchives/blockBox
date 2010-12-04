@@ -8,7 +8,7 @@ from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 
-class ArchivesPlugin(ProtocolPlugin):
+class ArchivesPlugin(ProtocolPlugin):	"Commands for handlings of archives."
 	commands = {
 		"aname": "commandAname",
 		"atime": "commandAtime",
