@@ -1,4 +1,4 @@
-# blockBox is Copyright 2009-2010 of the Archives Team, the iCraft Team, and the blockBox team.
+# blockBox is Copyright 2009-2010 of the Archives Team, the blockBox Team, and the iCraft team.
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
@@ -11,9 +11,8 @@ from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 
-#TODO: Add FinalizeMassCMD support
 class LSystemPlugin(ProtocolPlugin):
-
+	"Interface of Lsystem."
 	commands = {
 		"lbook": "commandLbook",
 		"rec_axiom": "commandRec_Axiom",
@@ -456,6 +455,7 @@ class LSystemPlugin(ProtocolPlugin):
 						block = chr(num)
 					else:
 						pass
+				self.client.total += 1
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
 			def do_step():
@@ -463,9 +463,10 @@ class LSystemPlugin(ProtocolPlugin):
 				try:
 					for x in range(10):#1 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
 						block_iter.next()
-					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
+					reactor.callLater(0.01, do_step) #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if fromloc == 'user':
-						self.client.sendServerMessage("Your lsystem just completed.")
+						self.client.finalizeMassCMD('lsystem', self.client.total)
+						self.client.total = 0
 					pass
 			do_step()

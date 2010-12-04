@@ -1,8 +1,6 @@
-# blockBox is Copyright 2009-2010 of the Archives Team, the iCraft Team, and the blockBox team.
+# blockBox is Copyright 2009-2010 of the Archives Team, the blockBox Team, and the iCraft team.
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
-
-import random
 
 from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
@@ -10,8 +8,10 @@ from blockbox.constants import *
 from blockbox.globals import *
 
 class HelpPlugin(ProtocolPlugin):
-
+	"Command that shows help and information of the server."
 	commands = {
+		"status": "commandStatus",
+		"mapinfo": "commandStatus",
 		"help": "commandHelp",
 		"?": "commandHelp",
 		"cmdlist": "commandCmdlist",
@@ -23,6 +23,32 @@ class HelpPlugin(ProtocolPlugin):
 	}
 
 	@info_list
+	def commandStatus(self, parts, fromloc, overriderank):
+		"/status - Guest\nAliases: mapinfo\nReturns info about the current world"
+		self.client.sendServerMessage("World: %s" % (self.client.world.id))
+		self.client.sendServerMessage("Owner: %s" % self.client.world.owner)
+		self.client.sendServerMessage("Size: %sx%sx%s" % (self.client.world.x, self.client.world.y, self.client.world.z))
+		self.client.sendServerMessage("- " + \
+			(self.client.world.all_write and "&4Unlocked" or "&2Locked") + "&e | " + \
+			(self.client.world.zoned and "&2Zones" or "&4Zones") + "&e | " + \
+			(self.client.world.private and "&2Private" or "&4Private") + "&e | " + \
+			(self.client.world.global_chat and "&2GChat" or "&4GChat")
+		)
+		self.client.sendServerMessage("- " + \
+			(self.client.world.highlight_ops and "&2Colors" or "&4Colors") + "&e | " + \
+			(self.client.world.physics and "&2Physics" or "&4Physics") + "&e | " + \
+			(self.client.world.finite_water and "&4FWater" or "&2FWater") + "&e | " + \
+			(self.client.world.admin_blocks and "&2Solids" or "&4Solids")
+		)
+		if not self.client.world.ops:
+			self.client.sendServerMessage("Ops: N/A")
+		else:
+			self.client.sendServerList(["Ops:"] + list(self.client.world.ops))
+		if not self.client.world.writers:
+			self.client.sendServerMessage("Builders: N/A")
+		else:
+			self.client.sendServerList(["Builders:"] + list(self.client.world.writers))
+	@info_list
 	def commandHelp(self, parts, fromloc, overriderank):
 		"/help [document/command] - Guest\nHelp for this server and commands."
 		if len(parts) > 1:

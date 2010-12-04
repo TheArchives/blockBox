@@ -1,8 +1,9 @@
-# blockBox is Copyright 2009-2010 of the Archives Team, the iCraft Team, and the blockBox team.
+# blockBox is Copyright 2009-2010 of the Archives Team, the blockBox Team, and the iCraft team.
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
 import cmath
+import random
 
 from lib.twisted.internet import reactor
 
@@ -10,9 +11,16 @@ from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 
-class ShapesPlugin(ProtocolPlugin):
+class BuildLibPlugin(ProtocolPlugin):
+	"Collections of things that users can build."
 	commands = {
-		"sphere": "commandSphere",
+		"dune": "commandDune",
+		"hill": "commandHill",
+		"hole": "commandHole",
+		"lake": "commandLake",
+		"mountain": "commandMountain",
+		"pit": "commandPit",
+		"tree": "commandTree",		"sphere": "commandSphere",
 		"hsphere": "commandHSphere",
 		"curve": "commandCurve",
 		"line": "commandLine",
@@ -22,9 +30,420 @@ class ShapesPlugin(ProtocolPlugin):
 		"dome": "commandDome",
 		"ellipsoid": "commandEllipsoid",
 		"ell": "commandEllipsoid",
-		"polytri": "commandPolytri"
-	}
+		"polytri": "commandPolytri",		"stairs": "commandStairs",
+	}
+
+	hooks = {
+		"blockchange": "blockChanged",
+		"newworld": "newWorld",
+	}
+
+	def gotClient(self):
+		self.build_trees = False
+		self.trunk_height = 5, 9
+		self.fanout = 2, 4
+
+	def newWorld(self, world):
+		"Hook to reset dynamiting abilities in new worlds if not op."
+		if not self.client.isWriter():
+			self.build_trees = False
+
+	def blockChanged(self, x, y, z, block, selected_block, fromloc):
+		"Hook trigger for block changes."
+		tobuild = []
+		# Randomise the variables
+		trunk_height = random.randint(*self.trunk_height)
+		fanout = random.randint(*self.fanout)
+		if self.build_trees and block == BLOCK_PLANT:
+			# Build the main tree bit
+			for i in range(-fanout-1, fanout):
+				for j in range(-fanout-1, fanout):
+					for k in range(-fanout-1, fanout):
+						if not self.client.AllowedToBuild(x+i, y+j, z+k):
+							return
+						if (i**2 + j**2 + k**2)**0.5 < fanout:
+							tobuild.append((i, j+trunk_height, k, BLOCK_LEAVES))
+			# Build the trunk
+			for i in range(trunk_height):
+				tobuild.append((0, i, 0, BLOCK_LOG))
+			# OK, send the build changes
+			for dx, dy, dz, block in tobuild:
+				try:
+					self.client.world[x+dx, y+dy, z+dz] = chr(block)
+					self.client.sendBlock(x+dx, y+dy, z+dz, block)
+					self.client.factory.queue.put((self.client, TASK_BLOCKSET, (x+dx, y+dy, z+dz, block)))
+				except AssertionError:
+					pass
+			return True
+
 	@build_list
+	@op_only
+	@on_off_command
+	def commandTree(self, onoff, fromloc, overriderank):
+		"/tree on|off - Builder\nBuilds trees, save the earth!"
+		if onoff == "on":
+			self.build_trees = True
+			self.client.sendServerMessage("You are now building trees; place a plant!")
+		else:
+			self.build_trees = False
+			self.client.sendServerMessage("You are no longer building trees.")
+
+	@build_list
+	@advbuilder_only
+	def commandDune(self, parts, fromloc, overriderank):
+		"/dune - Member\nCreates a sand dune between the two blocks you touched last."
+		# Use the last two block places
+		try:
+			x, y, z = self.client.last_block_changes[0]
+			x2, y2, z2 = self.client.last_block_changes[1]
+		except IndexError:
+			self.client.sendServerMessage("You have not clicked two corners yet.")
+			return
+		if x > x2:
+			x, x2 = x2, x
+		if y > y2:
+			y, y2 = y2, y
+		if z > z2:
+			z, z2 = z2, z
+		x_range = x2 - x
+		z_range = z2 - z
+		# Draw all the blocks on, I guess
+		# We use a generator so we can slowly release the blocks
+		# We also keep world as a local so they can't change worlds and affect the new one
+		world = self.client.world
+		def generate_changes():
+			for i in range(x, x2+1):
+				for k in range(z, z2+1):
+					# Work out the height at this place
+					dx = (x_range / 2.0) - abs((x_range / 2.0) - (i - x))
+					dz = (z_range / 2.0) - abs((z_range / 2.0) - (k - z))
+					dy = int((dx**2 * dz**2) ** 0.2)
+					for j in range(y, y+dy+1):
+						if not self.client.AllowedToBuild(i, j, k) and overriderank==False:
+							return
+						block = BLOCK_SAND if j == y+dy else BLOCK_SAND
+						try:
+							world[i, j, k] = chr(block)
+						except AssertionError:
+							pass
+						self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
+						self.client.sendBlock(i, j, k, block)
+						self.client.total += 1 # This is how you increase a number in python.... - Stacy
+						yield
+		# Now, set up a loop delayed by the reactor
+		block_iter = iter(generate_changes())
+		def do_step():
+			# Do 10 blocks
+			try:
+				for x in range(10):
+					block_iter.next()
+				reactor.callLater(0.01, do_step)
+			except StopIteration:
+				if fromloc == 'user':
+					self.client.finalizeMassCMD('dune', self.client.total)
+					#Flush after use
+					self.client.total = 0
+				pass
+		do_step()
+
+	@build_list
+	@advbuilder_only
+	def commandHill(self, parts, fromloc, overriderank):
+		"/hill - Member\nCreates a hill between the two blocks you touched last."
+		# Use the last two block places
+		try:
+			x, y, z = self.client.last_block_changes[0]
+			x2, y2, z2 = self.client.last_block_changes[1]
+		except IndexError:
+			self.client.sendServerMessage("You have not clicked two corners yet.")
+			return
+		if x > x2:
+			x, x2 = x2, x
+		if y > y2:
+			y, y2 = y2, y
+		if z > z2:
+			z, z2 = z2, z
+		x_range = x2 - x
+		z_range = z2 - z
+		# Draw all the blocks on, I guess
+		# We use a generator so we can slowly release the blocks
+		# We also keep world as a local so they can't change worlds and affect the new one
+		world = self.client.world
+		def generate_changes():
+			for i in range(x, x2+1):
+				for k in range(z, z2+1):
+					# Work out the height at this place
+					dx = (x_range / 2.0) - abs((x_range / 2.0) - (i - x))
+					dz = (z_range / 2.0) - abs((z_range / 2.0) - (k - z))
+					dy = int((dx**2 * dz**2) ** 0.2)
+					for j in range(y, y+dy+1):
+						if not self.client.AllowedToBuild(x, y, z) and overriderank==False:
+							return
+						block = BLOCK_GRASS if j == y+dy else BLOCK_DIRT
+						try:
+							world[i, j, k] = chr(block)
+						except AssertionError:
+							pass
+						self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
+						self.client.sendBlock(i, j, k, block)
+						self.client.total += 1 # This is how you increase a number in python.... - Stacy
+						yield
+		# Now, set up a loop delayed by the reactor
+		block_iter = iter(generate_changes())
+		def do_step():
+			# Do 10 blocks
+			try:
+				for x in range(10):
+					block_iter.next()
+				reactor.callLater(0.01, do_step)
+			except StopIteration:
+				if fromloc == 'user':
+					self.client.finalizeMassCMD('hill', self.client.total)
+					#Flush after use
+					self.client.total = 0
+				pass
+		do_step()
+
+	@build_list
+	@advbuilder_only
+	def commandHole(self, parts, fromloc, overriderank):
+		"/hole - Member\ncreates a hole between two blocks"
+		#Use the last two block places
+		try:
+			x1, y1, z1 = self.client.last_block_changes[0]
+			x2, y2, z2 = self.client.last_block_changes[1]
+		except IndexError:
+				self.client.sendServerMessage("You have not clicked two corners yet")
+				return
+		if x1 > x2:
+			x1, x2 = x2, x1
+		if y1 > y2:
+			y1, y2 = y2, y1
+		if z1 > z2:
+			z1, z2 = z2, z1
+		x_range = x2 - x1
+		z_range = z2 - z1
+		block = BLOCK_AIR
+		world = self.client.world
+		def generate_changes():
+			for x in range(x1, x2+1):
+				for z in range(z1, z2+1):
+					# Work out the height at this place
+					dx = (x_range / 2.0) - abs((x_range / 2.0) - (x - x1))
+					dz = (z_range / 2.0) - abs((z_range / 2.0) - (z - z1))
+					dy = int((dx**2 * dz**2) ** 0.3)
+					for y in range(y1-dy-1, y1+1):
+						if not self.client.AllowedToBuild(x, y, z) and overriderank==False:
+							return
+						if y < 0:
+							continue
+						try:
+							world[x, y, z] = chr(block)
+						except AssertionError:
+							pass
+						self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world = world)
+						self.client.sendBlock(x, y, z, block)
+						self.client.total += 1 # This is how you increase a number in python.... - Stacy
+						yield
+		# Now, set up a loop delayed by the reactor
+		block_iter = iter(generate_changes())
+		def do_step():
+			# Do 10 blocks
+			try:
+				for x in range(10):
+					block_iter.next()
+				reactor.callLater(0.01, do_step)
+			except StopIteration:
+				if fromloc == 'user':
+					self.client.finalizeMassCMD('hole', self.client.total)
+					self.client.total = 0
+				pass
+		do_step()
+
+	@build_list
+	@advbuilder_only
+	def commandLake(self, parts, fromloc, overriderank):
+		"/lake - Member\ncreates a lake between two blocks"
+		#Use the last two block places
+		try:
+			x1, y1, z1 = self.client.last_block_changes[0]
+			x2, y2, z2 = self.client.last_block_changes[1]
+		except IndexError:
+				self.client.sendServerMessage("You have not clicked two corners yet")
+				return
+		if x1 > x2:
+			x1, x2 = x2, x1
+		if y1 > y2:
+			y1, y2 = y2, y1
+		if z1 > z2:
+			z1, z2 = z2, z1
+		x_range = x2 - x1
+		z_range = z2 - z1
+		block = BLOCK_WATER
+		world = self.client.world
+		def generate_changes():
+			for x in range(x1, x2+1):
+				for z in range(z1, z2+1):
+					# Work out the height at this place
+					dx = (x_range / 2.0) - abs((x_range / 2.0) - (x - x1))
+					dz = (z_range / 2.0) - abs((z_range / 2.0) - (z - z1))
+					dy = int((dx**2 * dz**2) ** 0.3)
+					for y in range(y1-dy-1, y1):
+						if not self.client.AllowedToBuild(x, y, z) and overriderank==False:
+							return
+						try:
+							world[x, y, z] = chr(block)
+						except AssertionError:
+							pass
+						self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world = world)
+						self.client.sendBlock(x, y, z, block)
+						self.client.total += 1 # This is how you increase a number in python.... - Stacy
+						yield
+		# Now, set up a loop delayed by the reactor
+		block_iter = iter(generate_changes())
+		def do_step():
+			# Do 10 blocks
+			try:
+				for x in range(10):
+					block_iter.next()
+				reactor.callLater(0.01, do_step)
+			except StopIteration:
+				if fromloc == 'user':
+					self.client.finalizeMassCMD('lake', self.client.total)
+					#Flush after use
+					self.client.total = 0
+				pass
+		do_step()
+
+	@build_list
+	@advbuilder_only
+	def commandMountain(self, parts, fromloc, overriderank):
+		"/mountain blockname - Member\nCreates a mountain between the two blocks you touched last."
+		if len(parts) < 8 and len(parts) != 2:
+			self.client.sendServerMessage("Please enter a type.")
+			return
+		else:
+			block = self.client.GetBlockValue(parts[1])
+			if block == None:
+				return
+			# If they only provided the type argument, use the last two block places
+			if len(parts) == 2:
+				try:
+					x, y, z = self.client.last_block_changes[0]
+					x2, y2, z2 = self.client.last_block_changes[1]
+				except IndexError:
+					self.client.sendServerMessage("You have not clicked two corners yet.")
+					return
+			else:
+				try:
+					x = int(parts[2])
+					y = int(parts[3])
+					z = int(parts[4])
+					x2 = int(parts[5])
+					y2 = int(parts[6])
+					z2 = int(parts[7])
+				except ValueError:
+					self.client.sendServerMessage("All parameters must be integers")
+					return
+		if x > x2:
+			x, x2 = x2, x
+		if y > y2:
+			y, y2 = y2, y
+		if z > z2:
+			z, z2 = z2, z
+		x_range = x2 - x
+		z_range = z2 - z
+		# Draw all the blocks on, I guess
+		# We use a generator so we can slowly release the blocks
+		# We also keep world as a local so they can't change worlds and affect the new one
+		world = self.client.world
+		def generate_changes():
+			for i in range(x, x2+1):
+				for k in range(z, z2+1):
+					# Work out the height at this place
+					dx = (x_range / 2.0) - abs((x_range / 2.0) - (i - x))
+					dz = (z_range / 2.0) - abs((z_range / 2.0) - (k - z))
+					dy = int((dx**2 * dz**2) ** 0.3)
+					for j in range(y, y+dy+1):
+						if not self.client.AllowedToBuild(i, j, k) and overriderank==False:
+							return
+						try:
+							world[i, j, k] = block
+						except AssertionError:
+							pass
+						self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
+						self.client.sendBlock(i, j, k, block)
+						self.client.total += 1 # This is how you increase a number in python.... - Stacy
+						yield
+		# Now, set up a loop delayed by the reactor
+		block_iter = iter(generate_changes())
+		def do_step():
+			# Do 10 blocks
+			try:
+				for x in range(10):
+					block_iter.next()
+				reactor.callLater(0.01, do_step)
+			except StopIteration:
+				if fromloc == 'user':
+					self.client.finalizeMassCMD('mountain', self.client.total)
+					self.client.total = 0
+				pass
+		do_step()
+
+	@build_list
+	@advbuilder_only
+	def commandPit(self, parts, fromloc, overriderank):
+		"/pit - Member\ncreates a lava pit between two blocks"
+		#Use the last two block places
+		try:
+			x1, y1, z1 = self.client.last_block_changes[0]
+			x2, y2, z2 = self.client.last_block_changes[1]
+		except IndexError:
+				self.client.sendServerMessage("You have not clicked two corners yet")
+				return
+		if x1 > x2:
+			x1, x2 = x2, x1
+		if y1 > y2:
+			y1, y2 = y2, y1
+		if z1 > z2:
+			z1, z2 = z2, z1
+		x_range = x2 - x1
+		z_range = z2 - z1
+		block = BLOCK_LAVA
+		world = self.client.world
+		def generate_changes():
+			for x in range(x1, x2+1):
+				for z in range(z1, z2+1):
+					# Work out the height at this place
+					dx = (x_range / 2.0) - abs((x_range / 2.0) - (x - x1))
+					dz = (z_range / 2.0) - abs((z_range / 2.0) - (z - z1))
+					dy = int((dx**2 * dz**2) ** 0.3)
+					for y in range(y1-dy-1, y1):
+						if not self.client.AllowedToBuild(x, y, z) and overriderank==False:
+							return
+						try:
+							world[x, y, z] = chr(block)
+						except AssertionError:
+							pass
+						self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world = world)
+						self.client.sendBlock(x, y, z, block)
+						self.client.total += 1
+						yield
+		# Now, set up a loop delayed by the reactor
+		block_iter = iter(generate_changes())
+		def do_step():
+			# Do 10 blocks
+			try:
+				for x in range(10):
+					block_iter.next()
+				reactor.callLater(0.01, do_step)
+			except StopIteration:
+				if fromloc == 'user':
+					self.client.finalizeMassCMD('pit', self.client.total)
+					self.client.total = 0
+				pass
+		do_step()
+	@build_list
 	@writer_only
 	def commandSphere(self, parts, fromloc, overriderank):
 		"/sphere blocktype [x y z] radius - Builder\nPlace/delete a block and /sphere block radius"
@@ -1000,6 +1419,175 @@ class ShapesPlugin(ProtocolPlugin):
 				except StopIteration:
 					if fromloc == 'user':
 						self.client.finalizeMassCMD('polytri', self.client.total)
+						self.client.total = 0
+					pass
+			do_step()
+	@build_list
+	@writer_only
+	def commandStairs(self, parts, fromloc, overriderank):
+		"/stairs blockname height (c) [x y z x2 y2 z2] - Builder\nBuilds a spiral staircase."
+		if len(parts) < 9 and len(parts) != 3 and len(parts) != 4:
+			self.client.sendServerMessage("Please enter a blocktype height (c (for counter-clockwise)")
+			self.client.sendServerMessage("(and possibly two coord triples)")
+			self.client.sendServerMessage("If the two points are on the 'ground' adjacent to each other, then")
+			self.client.sendServerMessage("the second point will spawn the staircase and the first will")
+			self.client.sendServerMessage("be used for the initial orientation")
+		else:
+			# Try getting the counter-clockwise flag
+			if len(parts) == 4:
+				if parts[3] == 'c':
+					counterflag = 1
+				else:
+					self.client.sendServerMessage("The third entry must be 'c' for counter-clockwise")
+					return
+			else:
+				counterflag = -1
+			# Try getting the height as a direct integer type.
+			try:
+				height = int(parts[2])
+			except ValueError:
+				self.client.sendServerMessage("The height must be an integer")
+				return
+				
+			# Try getting the block as a direct integer type.
+			try:
+				block = chr(int(parts[1]))
+			except ValueError:
+				# OK, try a symbolic type.
+				try:
+					block = chr(globals()['BLOCK_%s' % parts[1].upper()])
+				except KeyError:
+					self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
+					return
+			
+			# Check the block is valid
+			if ord(block) > 49:
+				self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
+				return
+			op_blocks = [BLOCK_SOLID, BLOCK_WATER, BLOCK_LAVA]
+			if ord(block) in op_blocks and not self.client.isOp():
+				self.client.sendServerMessage("Sorry, but you can't use that block.")
+				return
+					
+			# If they only provided the type argument, use the last two block places
+			if len(parts) == 3 or len(parts) == 4:
+				try:
+					x, y, z = self.client.last_block_changes[0]
+					x2, y2, z2 = self.client.last_block_changes[1]
+				except IndexError:
+					self.client.sendServerMessage("You have not clicked two corners yet.")
+					return
+			else:
+				if len(parts) == 9:
+					try:
+						x = int(parts[3])
+						y = int(parts[4])
+						z = int(parts[5])
+						x2 = int(parts[6])
+						y2 = int(parts[7])
+						z2 = int(parts[8])
+					except ValueError:
+						self.client.sendServerMessage("All parameters must be integers")
+						return
+				else:
+					try:
+						x = int(parts[3])
+						y = int(parts[4])
+						z = int(parts[5])
+						x2 = int(parts[6])
+						y2 = int(parts[7])
+						z2 = int(parts[8])
+					except ValueError:
+						self.client.sendServerMessage("All parameters must be integers")
+						return
+
+			limit = self.client.getBlbLimit(self.client.username)
+			if limit != -1:
+				# Stop them doing silly things
+				if (height * 4 > limit) or limit == 0:
+					self.client.sendSplitServerMessage("Sorry, that area is too big for you to make stairs(Limit is %s)" % limit)
+					return
+			# Draw all the blocks on, I guess
+			# We use a generator so we can slowly release the blocks
+			# We also keep world as a local so they can't change worlds and affect the new one
+			world = self.client.world
+			def generate_changes():
+				if abs(x-x2)+abs(z-z2) == 1:
+					if x - x2 == -1:
+						orientation = 1
+					elif z - z2 == -1:
+						orientation = 2
+					elif x - x2 == 1:
+						orientation = 3
+					else:
+						orientation = 4
+				else:
+					orientation = 1
+				if height >= 0:
+					heightsign = 1
+				else:
+					heightsign = -1
+				stepblock = chr(BLOCK_STEP)
+				for h in range(abs(height)):
+					locy = y+h*heightsign
+					if counterflag == -1:
+						if orientation == 1:
+							blocklist = [(x,locy,z),(x+1,locy,z+1),(x+1,locy,z),(x+1,locy,z-1)]
+						elif orientation == 2:
+							blocklist = [(x,locy,z),(x-1,locy,z+1),(x,locy,z+1),(x+1,locy,z+1)]
+						elif orientation == 3:
+							blocklist = [(x,locy,z),(x-1,locy,z-1),(x-1,locy,z),(x-1,locy,z+1)]
+						else:
+							blocklist = [(x,locy,z),(x+1,locy,z-1),(x,locy,z-1),(x-1,locy,z-1)]
+					else:
+						if orientation == 1:
+							blocklist = [(x,locy,z),(x+1,locy,z-1),(x+1,locy,z),(x+1,locy,z+1)]
+						elif orientation == 2:
+							blocklist = [(x,locy,z),(x+1,locy,z+1),(x,locy,z+1),(x-1,locy,z+1)]
+						elif orientation == 3:
+							blocklist = [(x,locy,z),(x-1,locy,z+1),(x-1,locy,z),(x-1,locy,z-1)]
+						else:
+							blocklist = [(x,locy,z),(x-1,locy,z-1),(x,locy,z-1),(x+1,locy,z-1)]
+					orientation = orientation - heightsign*counterflag
+					if orientation > 4:
+						orientation = 1
+					if orientation < 1:
+						orientation = 4
+					for entry in blocklist:
+						i,j,k = entry
+						if not self.client.AllowedToBuild(i, j, k):
+							return
+					for entry in blocklist[:3]:
+						i,j,k = entry
+						try:
+							world[i, j, k] = block
+						except AssertionError:
+							self.client.sendServerMessage("Out of bounds stairs error.")
+							return
+						self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
+						self.client.sendBlock(i, j, k, block)
+						yield
+						i,j,k = blocklist[3]
+						try:
+							world[i, j, k] = stepblock
+						except AssertionError:
+							self.client.sendServerMessage("Out of bounds stairs error.")
+							return
+						self.client.queueTask(TASK_BLOCKSET, (i, j, k, stepblock), world=world)
+						self.client.sendBlock(i, j, k, stepblock)
+						self.client.total += 1 # This is how you increase a number in python.... - Stacy
+						yield
+			# Now, set up a loop delayed by the reactor
+			block_iter = iter(generate_changes())
+			def do_step():
+				# Do 10 blocks
+				try:
+					for x in range(10):#10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
+						block_iter.next()
+					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
+				except StopIteration:
+					if fromloc == 'user':
+						self.client.finalizeMassCMD('stairs', self.total)
 						self.client.total = 0
 					pass
 			do_step()

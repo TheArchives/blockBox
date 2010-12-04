@@ -1,4 +1,4 @@
-# blockBox is Copyright 2009-2010 of the Archives Team, the iCraft Team, and the blockBox team.
+# blockBox is Copyright 2009-2010 of the Archives Team, the blockBox Team, and the iCraft team.
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
@@ -9,7 +9,7 @@ from blockbox.decorators import *
 from blockbox.constants import *
 
 class BlbPlugin(ProtocolPlugin):
-
+	"Commands for Massive block buildings."
 	commands = {
 		"blb": "commandBlb",
 		"draw": "commandBlb",
@@ -25,14 +25,29 @@ class BlbPlugin(ProtocolPlugin):
 		#"useblblimit": "commandToggleUseBlb",
 	}
 
+	def canBreakAdminBlocks(self):
+		"Shortcut for checking permissions."
+		if hasattr(self.client, "world"):
+			return (not self.client.world.admin_blocks) or self.client.isOp()
+		else:
+			return False
+
 	@build_list
 	def commandBlb(self, parts, fromloc, overriderank):
-		"/blb blockname [x y z x2 y2 z2] - Builder\nAliases: box, cub, cuboid, draw\nSets all blocks in this area to block."
+		"/blb blockname [x y z x2 y2 z2] - Guest\nAliases: box, cub, cuboid, draw\nSets all blocks in this area to block."
 		if len(parts) < 8 and len(parts) != 2:
 			self.client.sendServerMessage("Please enter a type (and possibly two coord triples)")
 		else:
 			block = self.client.GetBlockValue(parts[1])
 			if block == None:
+				return
+			# Check the block is valid
+			if ord(block) > 49:
+				self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
+				return
+			op_blocks = [BLOCK_SOLID, BLOCK_WATER, BLOCK_LAVA]
+			if ord(block) in op_blocks and not self.client.isOp():
+				self.client.sendServerMessage("Sorry, but you can't use that block.")
 				return
 			# If they only provided the type argument, use the last two block places
 			if len(parts) == 2:
@@ -103,15 +118,17 @@ class BlbPlugin(ProtocolPlugin):
 			do_step()
 
 	@build_list
-	@writer_only
 	def commandHBlb(self, parts, fromloc, overriderank):
-		"/bhb blockname [x y z x2 y2 z2] - Builder\nAliases: hbox\nSets all blocks in this area to block, hollow."
+		"/bhb blockname [x y z x2 y2 z2] - Guest\nAliases: hbox\nSets all blocks in this area to block, hollow."
 		if len(parts) < 8 and len(parts) != 2:
 			self.client.sendServerMessage("Please enter a block type")
 		else:
 			block = self.client.GetBlockValue(parts[1])
 			if block == None:
-				return
+				return			if ord(block) == 7:
+				if not self.canBreakAdminBlocks(self):
+					self.client.sendServerMessage("Solid is op-only.")
+					return
 			# If they only provided the type argument, use the last two block places
 			if len(parts) == 2:
 				try:
@@ -184,15 +201,17 @@ class BlbPlugin(ProtocolPlugin):
 			do_step()
 
 	@build_list
-	@writer_only
 	def commandWBlb(self, parts, fromloc, overriderank):
-		"/bwb blockname [x y z x2 y2 z2] - Builder\nBuilds four walls between the two areas.\nHollow, with no roof or floor."
+		"/bwb blockname [x y z x2 y2 z2] - Guest\nBuilds four walls between the two areas.\nHollow, with no roof or floor."
 		if len(parts) < 8 and len(parts) != 2:
 			self.client.sendServerMessage("Please enter a block type")
 		else:
 			block = self.client.GetBlockValue(parts[1])
 			if block == None:
-				return
+				return			if ord(block) == 7:
+				if not self.canBreakAdminBlocks(self):
+					self.client.sendServerMessage("Solid is op-only.")
+					return
 			# If they only provided the type argument, use the last two block places
 			if len(parts) == 2:
 				try:
@@ -264,11 +283,8 @@ class BlbPlugin(ProtocolPlugin):
 			do_step()
 
 	@build_list
-	@writer_only
 	def commandBcb(self, parts, fromloc, overriderank):
-		"/bcb blockname blockname2 [x y z x2 y2 z2] - Builder\nSets all blocks in this area to block, checkered."
-		self.total_a = 0
-		self.total_b = 0
+		"/bcb blockname blockname2 [x y z x2 y2 z2] - Guest\nSets all blocks in this area to block, checkered."
 		if len(parts) < 9 and len(parts) != 3:
 			self.client.sendServerMessage("Please enter two types (and possibly two coord triples)")
 		else:
@@ -304,25 +320,9 @@ class BlbPlugin(ProtocolPlugin):
 			if ord(block2) > 49:
 				self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
 				return
-			if ord(block2) == 7:
-				try:
-					username = self.client.factory.usernames[self.client.username.lower()]
-				except:
-					self.client.sendServerMessage("ERROR: Identity could not be confirmed")
-					return
-				if username.isDirector():
-					pass
-				elif username.isAdmin():
-					pass
-				elif username.isMod():
-					pass
-				elif username.isAdvBuilder():
-					pass
-				elif username.isOp():
-					pass
-				else:
-					self.client.sendServerMessage("Solid is op-only")
-					return
+			if ord(block2) in op_blocks and not self.client.isOp():
+				self.client.sendServerMessage("Sorry, but you can't use that block.")
+				return
 			# If they only provided the type argument, use the last two block places
 			if len(parts) == 3:
 				try:
@@ -394,9 +394,9 @@ class BlbPlugin(ProtocolPlugin):
 			def do_step():
 				# Do 10 blocks
 				try:
-					for x in range(10):#10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
+					for x in range(10): # 10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
 						block_iter.next()
-					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
+					reactor.callLater(0.01, do_step) # This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if fromloc == 'user':
 						self.client.finalizeMassCMD('bcb', self.client.total)
@@ -405,9 +405,8 @@ class BlbPlugin(ProtocolPlugin):
 			do_step()
 
 	@build_list
-	@writer_only
 	def commandBhcb(self, parts, fromloc, overriderank):
-		"/bhcb blockname blockname2 [x y z x2 y2 z2] - Builder\nSets all blocks in this area to blocks, checkered hollow."
+		"/bhcb blockname blockname2 [x y z x2 y2 z2] - Guest\nSets all blocks in this area to blocks, checkered hollow."
 		self.total_a = 0
 		self.total_b = 0
 		if len(parts) < 9 and len(parts) != 3:
@@ -439,6 +438,12 @@ class BlbPlugin(ProtocolPlugin):
 				return
 			op_blocks = [BLOCK_SOLID, BLOCK_WATER, BLOCK_LAVA]
 			if ord(block) in op_blocks and not self.client.isOp():
+				self.client.sendServerMessage("Sorry, but you can't use that block.")
+				return			# Check that block2 is valid
+			if ord(block2) > 49:
+				self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
+				return
+			if ord(block2) in op_blocks and not self.client.isOp():
 				self.client.sendServerMessage("Sorry, but you can't use that block.")
 				return
 			# If they only provided the type argument, use the last two block places
@@ -528,9 +533,8 @@ class BlbPlugin(ProtocolPlugin):
 			do_step()
 
 	@build_list
-	@writer_only
 	def commandFBlb(self, parts, fromloc, overriderank):
-		"/bfb blockname [x y z x2 y2 z2] - Builder\nSets all blocks in this area to block, wireframe."
+		"/bfb blockname [x y z x2 y2 z2] - Guest\nSets all blocks in this area to block, wireframe."
 		if len(parts) < 8 and len(parts) != 2:
 			self.client.sendServerMessage("Please enter a block type")
 		else:

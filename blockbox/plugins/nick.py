@@ -1,4 +1,4 @@
-# blockBox is Copyright 2009-2010 of the Archives Team, the iCraft Team, and the blockBox team.
+# blockBox is Copyright 2009-2010 of the Archives Team, the blockBox Team, and the iCraft team.
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
@@ -6,14 +6,14 @@ from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 
-class NickPlugin(ProtocolPlugin):
+class NickPlugin(ProtocolPlugin):	"Commands for nickname changes."
 	commands = {
 		"nick": "commandNick",
 	}
 
 	@player_list
 	@director_only
-	def commandNick(self, params, fromloc, rankoverride):
+	def commandNick(self, params, fromloc, overriderank):
 		"/nick - Changes your username and skin. Use with great care."
 		if len(params) < 1:
 			self.client.sendServerMessage("Please enter a username.")

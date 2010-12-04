@@ -1,4 +1,4 @@
-# blockBox is Copyright 2009-2010 of the Archives Team, the iCraft Team, and the blockBox team.
+# blockBox is Copyright 2009-2010 of the Archives Team, the blockBox Team, and the iCraft team.
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
@@ -270,7 +270,6 @@ class World(object):
 						break
 					else:
 						i+=1
-						
 		self.entitylist = []
 		if config.has_section("entitylist"):
 			for option in config.options("entitylist"):

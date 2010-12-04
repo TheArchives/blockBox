@@ -1,4 +1,4 @@
-# blockBox is Copyright 2009-2010 of the Archives Team, the iCraft Team, and the blockBox team.
+# blockBox is Copyright 2009-2010 of the Archives Team, the blockBox Team, and the iCraft team.
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
@@ -8,13 +8,40 @@ from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 
-class IRCPlugin(ProtocolPlugin):
-
+class ServerUtilPlugin(ProtocolPlugin):
+	"Server Maintenance Tools and Commands."
 	commands = {
+		"srb": "commandSRB",
+		"srs": "commandSRS",
+		"u": "commandUrgent",
+		"urgent": "commandUrgent",
 		#"irc_cpr": "commandIRCReload",
 		#"ircload": "commandIRCLoad",
 		#"ircunload": "commandIRCUnload",
 	}
+	@director_only
+	def commandSRB(self, parts, fromloc, overriderank):
+		"/srb [reason] - Director\nPrints out a reboot message."
+		if len(parts) == 1:
+			self.client.factory.queue.put((self.client, TASK_SERVERURGENTMESSAGE, ("[Server Reboot] Be back in a few.")))
+		else:
+			self.client.factory.queue.put((self.client, TASK_SERVERURGENTMESSAGE, ("[Server Reboot] Be back in a few: "+(" ".join(parts[1:])))))
+
+	@director_only
+	def commandSRS(self, parts, fromloc, overriderank):
+		"/srs [reason] - Director\nPrints out a shutdown message."
+		if len(parts) == 1:
+			self.client.factory.queue.put((self.client, TASK_SERVERURGENTMESSAGE, ("[Server Shutdown] See you later.")))
+		else:
+			self.client.factory.queue.put((self.client, TASK_SERVERURGENTMESSAGE, ("[Server Shutdown] See you later: "+(" ".join(parts[1:])))))
+
+	@admin_only
+	def commandUrgent(self, parts, fromloc, overriderank):
+		"/u message - Admin\nAliases: urgent\nPrints out message in the server color."
+		if len(parts) == 1:
+			self.client.sendServerMessage("Please type a message.")
+		else:
+			self.client.factory.queue.put((self.client, TASK_SERVERURGENTMESSAGE, "[URGENT] "+(" ".join(parts[1:]))))
 
 	@admin_only
 	def commandIRCReload(self, parts, fromloc, overriderank):
