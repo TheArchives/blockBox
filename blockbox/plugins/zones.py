@@ -1,14 +1,14 @@
-# blockBox is Copyright 2009-2010 of the Archives Team, the iCraft Team, and the blockBox team.
+# blockBox is Copyright 2009-2010 of the Archives Team, the blockBox Team, and the iCraft team.
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
 from lib.twisted.internet import reactor
+
 from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 
-class ZonesPlugin(ProtocolPlugin):
-
+class ZonesPlugin(ProtocolPlugin):	"Commands for zone handlings."
 	commands = {
 		"znew": "commandNewZone",
 		"rbox": "commandNewZone",
@@ -478,7 +478,7 @@ class ZonesPlugin(ProtocolPlugin):
 					return
 				if zone[7] == "admin" and not self.client.isAdmin():
 					self.client.sendServerMessage("You can not remove a zone higher then you")
-					return			 
+					return
 				if zone[7] == "director" and not self.client.isDirector():
 					self.client.sendServerMessage("You can not remove a zone higher then you")
 					return
