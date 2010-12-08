@@ -40,7 +40,7 @@ class PortalPlugin(ProtocolPlugin):	"Commands for portal handling. And yes, we 
 				self.client.sendServerMessage("That is a teleport block, you cannot change it. (/pdel?)")
 				return False # False = they weren't allowed to build
 		if self.portal_dest:
-			self.client.sendServerMessage("You placed a teleport block")
+			self.client.sendServerMessage("You placed a teleport block.")
 			self.client.world.add_teleport(x, y, z, self.portal_dest)
 	def posChanged(self, x, y, z, h, p):
 		"Hook trigger for when the player moves"
@@ -58,7 +58,7 @@ class PortalPlugin(ProtocolPlugin):	"Commands for portal handling. And yes, we 
 				if world_id not in self.client.factory.worlds:
 					self.client.sendServerMessage("Attempting to boot and join '%s'" % world_id)
 					try:
-						self.client.factory.loadWorld("worlds/%s" % world_id, world_id)
+						self.client.factory.loadWorld("mapdata/worlds/%s" % world_id, world_id)
 					except AssertionError:
 						self.client.sendServerMessage("There is no world by that name.")
 						return
@@ -86,37 +86,55 @@ class PortalPlugin(ProtocolPlugin):	"Commands for portal handling. And yes, we 
 			self.portals_on = True
 	@op_only
 	def commandPortal(self, parts, fromloc, overriderank):
-		"/p worldname x y z [r] - Op\nAliases: tpbox\nMakes the next block you place a portal."
-		if len(parts) < 5:
-			self.client.sendServerMessage("Please enter a worldname, x, y and z.")
+		"/p worldname x y z [r(rotate)] - Op\nAliases: tpbox\nMakes the next block you place a portal."
+		if self.portal_remove is not False:
+			# Users are not supposed to build AND delete portals at the same time. It just looks stupid.
+			self.client.sendServerMessage("Please turn off portal deletion mode before continuing.")
+			return
 		else:
-			try:
-				x = int(parts[2])
-				y = int(parts[3])
-				z = int(parts[4])
-			except ValueError:
-				self.client.sendServerMessage("x, y and z must be integers")
+			if len(parts) < 5:
+				self.client.sendServerMessage("Please enter a worldname, x, y and z.")
 			else:
 				try:
-					h = int(parts[5])
-				except IndexError:
-					h = 0
+					x = int(parts[2])
+					y = int(parts[3])
+					z = int(parts[4])
 				except ValueError:
-					self.client.sendServerMessage("r must be an integer")
-					return
-				if not (0 <= h <= 255):
-					self.client.sendServerMessage("r must be between 0 and 255")
-					return
-				self.portal_dest = parts[1], x, y, z, h
-				self.client.sendServerMessage("You are now placing portal blocks. /portalend to stop")
+					self.client.sendServerMessage("x, y and z must be integers.")
+				else:
+					try:
+						h = int(parts[5])
+					except IndexError:
+						h = 0
+					except ValueError:
+						self.client.sendServerMessage("r must be an integer.")
+						return
+					if not (0 <= h <= 255):
+						self.client.sendServerMessage("r must be between 0 and 255")
+						return
+					self.portal_dest = parts[1], x, y, z, h
+					self.client.sendServerMessage("You are now placing portal blocks. /portalend to stop")
 	@op_only
 	def commandPortalhere(self, parts, fromloc, overriderank):
 		"/phere - Op\nEnables portal-building mode, to here."
+		if self.portal_remove is not False:
+			# Users are not supposed to build AND delete portals at the same time. It just looks stupid.
+			self.client.sendServerMessage("Please turn off portal deletion mode before continuing.")
+			return
+		else:
 		self.portal_dest = self.client.world.id, self.client.x>>5, self.client.y>>5, self.client.z>>5, self.client.h
 		self.client.sendServerMessage("You are now placing portal blocks to here.")
 	@op_only
 	def commandPortalend(self, parts, fromloc, overriderank):
 		"/pend - Op\nStops placing portal blocks."
+		if self.portal_dest is None:
+			# Portal building mode isn't even on.
+			self.client.sendServerMessage("Portal build mode is not on.")
+			# But still, to prevent bugs, let's set it back to None (in case some other random thing broke in and set this line as a string etc)
+			self.portal_dest = None
+			self.portal_remove = False
+			return
+		else:
 		self.portal_dest = None
 		self.portal_remove = False
 		self.client.sendServerMessage("You are no longer placing portal blocks.")
@@ -134,14 +152,24 @@ class PortalPlugin(ProtocolPlugin):	"Commands for portal handling. And yes, we 
 		self.client.sendServerMessage("All portals appearing blue temporarily.")
 	@op_only
 	def commandPortaldel(self, parts, fromloc, overriderank):
-		"/pdel - Op\nAliases: deltp\nEnables portal-deleting mode"
-		self.client.sendServerMessage("You are now able to delete portals. /pdelend to stop")
-		self.portal_remove = True
+		"/pdel - Op\nAliases: deltp\nEnables portal-deleting mode"		if self.portal_dest is not None:
+			# Users are not supposed to build AND delete portals at the same time. It just looks stupid.
+			self.client.sendServerMessage("Please turn off portal building mode before continuing.")
+			return
+		else:
+			self.client.sendServerMessage("You are now able to delete portals. /pdelend to stop")
+			self.portal_remove = True
 	@op_only
 	def commandPortaldelend(self, parts, fromloc, overriderank):
 		"/pdelend - Op\nDisables portal-deleting mode"
-		self.client.sendServerMessage("Portal deletion mode ended.")
-		self.portal_remove = False
+		if self.portal_remove is not False:			# Portal deletion mode isn't even on.
+			self.client.sendServerMessage("Portal deletion mode is not on.")
+			# But still, to prevent bugs, let's set it back to False (in case some other random thing broke in and set this line as a string etc)
+			self.portal_remove = False
+			return
+		else:
+			self.client.sendServerMessage("Portal deletion mode ended.")
+			self.portal_remove = False
 	@on_off_command
 	def commandUseportals(self, onoff, fromloc, overriderank):
 		"/puse on|off - Guest\nAllows you to enable or diable portal usage."
