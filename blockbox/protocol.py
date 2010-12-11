@@ -479,9 +479,14 @@ class MyneServerProtocol(Protocol):
 					except AttributeError:
 						# Can we find it from a plugin?
 						try:
-							func = self.commands[command.lower()]
-						except KeyError:
-							self.sendServerMessage("Unknown command '%s'" % command)
+							try:
+								func = self.commands[command.lower()]
+							except KeyError:
+								self.sendServerMessage("Unknown command '%s'" % command)
+								return
+						except AttributeError:
+							self.logger.error("Cannot find plugin %s, please report to blockBox team." % func)
+							self.sendSplitServerMessage("Command code not found, please report to server staff or blockBox team.")
 							return
 					if (self.isSpectator() and (getattr(func, "admin_only", False) or getattr(func, "mod_only", False) or getattr(func, "op_only", False) or getattr(func, "advbuilder_only", False) or getattr(func, "worldowner_only", False) or getattr(func, "writer_only", False))):
 						self.sendServerMessage("'%s' is not available to specs." % command)

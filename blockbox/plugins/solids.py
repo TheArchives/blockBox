@@ -21,6 +21,10 @@ class AdminBlocksPlugin(ProtocolPlugin):
 	def gotClient(self):
 		self.building_solid = False
 
+	def sendAdminBlockUpdate(self):
+		"Sends a packet that updates the client's admin-building ability"
+		self.client.sendPacked(TYPE_INITIAL, 6, "Admincrete Update", "Reloading the server...", self.canBreakAdminBlocks() and 100 or 0)
+
 	def blockChanged(self, x, y, z, block, selected_block, fromloc):
 		"Hook trigger for block changes."
 		# Admincrete hack check

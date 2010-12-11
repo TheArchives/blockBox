@@ -47,11 +47,19 @@ class ProtocolPlugin(object):
 		# Register our commands
 		if hasattr(self, "commands"):
 			for name, fname in self.commands.items():
-				self.client.registerCommand(name, getattr(self, fname))
+				try:
+					self.client.registerCommand(name, getattr(self, fname))
+				except AttributeError:
+					self.client.factory.logger.error("Cannot find command code for %s (command name is %s), please report to blockBox team." % (fname, name))
+					return
 		# Register our hooks
 		if hasattr(self, "hooks"):
 			for name, fname in self.hooks.items():
-				self.client.registerHook(name, getattr(self, fname))
+				try:
+					self.client.registerHook(name, getattr(self, fname))
+				except AttributeError:
+					self.client.factory.logger.error("Cannot find hook code for %s, please report to blockBox team." % fname)
+					return
 		# Call clean setup method
 		self.gotClient()
 

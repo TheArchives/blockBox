@@ -32,7 +32,7 @@ class InteractionPlugin(ProtocolPlugin):
 
 		"s": "commandSendMessage",
 		"inbox": "commandCheckMessages",
-		"c": "commandClear",
+		"c": "commandInboxClear",
 		"clear": "commandInboxClear",
 	}
 	money_logger = logging.getLogger('TransactionLogger')
