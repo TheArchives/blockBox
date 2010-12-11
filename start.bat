@@ -1,4 +1,4 @@
 @ECHO off
 TITLE blockBox
-run.py --debug
+run.py
 PAUSE
