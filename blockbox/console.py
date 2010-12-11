@@ -146,7 +146,11 @@ class StdinPlugin(threading.Thread):
 								except:
 									print ("Please specify a worldname.")
 									continue
-								self.server.loadWorld("mapdata/worlds/"+world, world)
+								try:
+									self.server.loadWorld("mapdata/worlds/"+world, world)
+								except AssertionError:
+									print ("World '%s' does not exist." % world)
+									continue
 								print ("World '"+world+"' booted.")
 							elif message[0] == ("shutdown"):
 								try:
@@ -154,13 +158,17 @@ class StdinPlugin(threading.Thread):
 								except:
 									print ("Please specify a worldname.")
 									continue
-								self.server.unloadWorld(world)
+								try:
+									self.server.unloadWorld(world)
+								except KeyError:
+									print ("World '%s' does not exist." % world)
+									continue
 								print ("World '"+world+"' shutdown.")
 							elif message[0] == ("new"):
 								if len(message) == 1:
 									print ("Please specify a new worldname.")
 								elif self.server.world_exists(message[1]):
-									print ("Worldname in use")
+									print ("World name in use.")
 								else:
 									if len(message) == 2:
 										template = "default"
@@ -170,7 +178,7 @@ class StdinPlugin(threading.Thread):
 									try:
 										self.server.newWorld(world_id, template)
 									except TemplateDoesNotExist:
-										print ("Template does not exist")
+										print ("Template '%s' does not exist." % template)
 									self.server.loadWorld("mapdata/worlds/%s" % world_id, world_id)
 									self.server.worlds[world_id].all_write = False
 									if len(message) < 4:
@@ -182,9 +190,9 @@ class StdinPlugin(threading.Thread):
 									self.server.queue.put((self, TASK_ACTION, (1, "&2", "Console", " ".join(message[1:]))))
 							elif message[0] == ("srb"):
 								if len(message) == 1:
-									self.server.queue.put((self, TASK_SERVERURGENTMESSAGE, ("[Server Reboot] Be back in a few.")))
+									self.server.queue.put((self, TASK_SERVERURGENTMESSAGE, ("[Server Reboot] Be back very soon.")))
 								else:
-									self.server.queue.put((self, TASK_SERVERURGENTMESSAGE, ("[Server Reboot] Be back in a few: "+(" ".join(message[1:])))))
+									self.server.queue.put((self, TASK_SERVERURGENTMESSAGE, ("[Server Reboot] Be back very soon: "+(" ".join(message[1:])))))
 							elif message[0] == ("srs"):
 								if len(message) == 1:
 									self.server.queue.put((self, TASK_SERVERURGENTMESSAGE, ("[Server Shutdown] See you later.")))
@@ -199,12 +207,12 @@ class StdinPlugin(threading.Thread):
 								print ("about boot ban cmdlist cpr derank irc_cpr help kick me new pll plr plu rank say shutdown spec srb srs u")
 							elif message[0] == ("about"):
 								print ("About The Server")
-								print ("Powered by blockBox %s - http://blockbox.bradness.info/"%VERSION)
+								print ("Powered by blockBox %s - http://blockbox.hk-diy.net/"% VERSION )
 								print ("Name: "+self.server.server_name)
 								try:
 									print ("URL: "+self.server.heartbeat.url)
 								except:
-									print ("URL: N/A (minecraft.net is offline)")
+									print ("URL: N/A (minecraft.net is probably offline)")
 							elif message[0] == ("say"):
 								if len(message) == 1:
 									print ("Please type a message.")
