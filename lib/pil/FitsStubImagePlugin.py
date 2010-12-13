@@ -19,48 +19,48 @@ _handler = None
 # @param handler Handler object.
 
 def register_handler(handler):
-    global _handler
-    _handler = handler
+	global _handler
+	_handler = handler
 
 # --------------------------------------------------------------------
 # Image adapter
 
 def _accept(prefix):
-    return prefix[:6] == "SIMPLE"
+	return prefix[:6] == "SIMPLE"
 
 class FITSStubImageFile(ImageFile.StubImageFile):
 
-    format = "FITS"
-    format_description = "FITS"
+	format = "FITS"
+	format_description = "FITS"
 
-    def _open(self):
+	def _open(self):
 
-        offset = self.fp.tell()
+		offset = self.fp.tell()
 
-        if not _accept(self.fp.read(6)):
-            raise SyntaxError("Not a FITS file")
+		if not _accept(self.fp.read(6)):
+			raise SyntaxError("Not a FITS file")
 
-        # FIXME: add more sanity checks here; mandatory header items
-        # include SIMPLE, BITPIX, NAXIS, etc.
+		# FIXME: add more sanity checks here; mandatory header items
+		# include SIMPLE, BITPIX, NAXIS, etc.
 
-        self.fp.seek(offset)
+		self.fp.seek(offset)
 
-        # make something up
-        self.mode = "F"
-        self.size = 1, 1
+		# make something up
+		self.mode = "F"
+		self.size = 1, 1
 
-        loader = self._load()
-        if loader:
-            loader.open(self)
+		loader = self._load()
+		if loader:
+			loader.open(self)
 
-    def _load(self):
-        return _handler
+	def _load(self):
+		return _handler
 
 
 def _save(im, fp, filename):
-    if _handler is None or not hasattr("_handler", "save"):
-        raise IOError("FITS save handler not installed")
-    _handler.save(im, fp, filename)
+	if _handler is None or not hasattr("_handler", "save"):
+		raise IOError("FITS save handler not installed")
+	_handler.save(im, fp, filename)
 
 
 # --------------------------------------------------------------------

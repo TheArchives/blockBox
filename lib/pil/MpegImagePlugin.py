@@ -5,7 +5,7 @@
 # MPEG file handling
 #
 # History:
-#       95-09-09 fl     Created
+#	   95-09-09 fl	 Created
 #
 # Copyright (c) Secret Labs AB 1997.
 # Copyright (c) Fredrik Lundh 1995.
@@ -22,34 +22,34 @@ from lib.pil import Image, ImageFile
 
 class BitStream:
 
-    def __init__(self, fp):
-        self.fp = fp
-        self.bits = 0
-        self.bitbuffer = 0
+	def __init__(self, fp):
+		self.fp = fp
+		self.bits = 0
+		self.bitbuffer = 0
 
-    def next(self):
-        return ord(self.fp.read(1))
+	def next(self):
+		return ord(self.fp.read(1))
 
-    def peek(self, bits):
-        while self.bits < bits:
-            c = self.next()
-            if c < 0:
-                self.bits = 0
-                continue
-            self.bitbuffer = (self.bitbuffer << 8) + c
-            self.bits = self.bits + 8
-        return self.bitbuffer >> (self.bits - bits) & (1L << bits) - 1
+	def peek(self, bits):
+		while self.bits < bits:
+			c = self.next()
+			if c < 0:
+				self.bits = 0
+				continue
+			self.bitbuffer = (self.bitbuffer << 8) + c
+			self.bits = self.bits + 8
+		return self.bitbuffer >> (self.bits - bits) & (1L << bits) - 1
 
-    def skip(self, bits):
-        while self.bits < bits:
-            self.bitbuffer = (self.bitbuffer << 8) + ord(self.fp.read(1))
-            self.bits = self.bits + 8
-        self.bits = self.bits - bits
+	def skip(self, bits):
+		while self.bits < bits:
+			self.bitbuffer = (self.bitbuffer << 8) + ord(self.fp.read(1))
+			self.bits = self.bits + 8
+		self.bits = self.bits - bits
 
-    def read(self, bits):
-        v = self.peek(bits)
-        self.bits = self.bits - bits
-        return v
+	def read(self, bits):
+		v = self.peek(bits)
+		self.bits = self.bits - bits
+		return v
 
 ##
 # Image plugin for MPEG streams.  This plugin can identify a stream,
@@ -57,18 +57,18 @@ class BitStream:
 
 class MpegImageFile(ImageFile.ImageFile):
 
-    format = "MPEG"
-    format_description = "MPEG"
+	format = "MPEG"
+	format_description = "MPEG"
 
-    def _open(self):
+	def _open(self):
 
-        s = BitStream(self.fp)
+		s = BitStream(self.fp)
 
-        if s.read(32) != 0x1B3:
-            raise SyntaxError, "not an MPEG file"
+		if s.read(32) != 0x1B3:
+			raise SyntaxError, "not an MPEG file"
 
-        self.mode = "RGB"
-        self.size = s.read(12), s.read(12)
+		self.mode = "RGB"
+		self.size = s.read(12), s.read(12)
 
 
 # --------------------------------------------------------------------

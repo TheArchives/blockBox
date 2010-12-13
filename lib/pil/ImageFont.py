@@ -29,26 +29,26 @@ from lib.pil import Image
 import os, string, sys
 
 class _imagingft_not_installed:
-    # module placeholder
-    def __getattr__(self, id):
-        raise ImportError("The _imagingft C module is not installed")
+	# module placeholder
+	def __getattr__(self, id):
+		raise ImportError("The _imagingft C module is not installed")
 
 try:
-    import _imagingft
-    core = _imagingft
-    del _imagingft
+	import _imagingft
+	core = _imagingft
+	del _imagingft
 except ImportError:
-    core = _imagingft_not_installed()
+	core = _imagingft_not_installed()
 
 # FIXME: add support for pilfont2 format (see FontFile.py)
 
 # --------------------------------------------------------------------
 # Font metrics format:
-#       "PILfont" LF
-#       fontdescriptor LF
-#       (optional) key=value... LF
-#       "DATA" LF
-#       binary data: 256*10*2 bytes (dx, dy, dstbox, srcbox)
+#	   "PILfont" LF
+#	   fontdescriptor LF
+#	   (optional) key=value... LF
+#	   "DATA" LF
+#	   binary data: 256*10*2 bytes (dx, dy, dstbox, srcbox)
 #
 # To place a character, cut out srcbox and paste at dstbox,
 # relative to the character position.  Then move the character
@@ -72,84 +72,84 @@ except ImportError:
 # @see pilfont
 
 class ImageFont:
-    "PIL font wrapper"
+	"PIL font wrapper"
 
-    def _load_pilfont(self, filename):
+	def _load_pilfont(self, filename):
 
-        file = open(filename, "rb")
+		file = open(filename, "rb")
 
-        for ext in (".png", ".gif", ".pbm"):
-            try:
-                fullname = os.path.splitext(filename)[0] + ext
-                image = Image.open(fullname)
-            except:
-                pass
-            else:
-                if image and image.mode in ("1", "L"):
-                    break
-        else:
-            raise IOError("cannot find glyph data file")
+		for ext in (".png", ".gif", ".pbm"):
+			try:
+				fullname = os.path.splitext(filename)[0] + ext
+				image = Image.open(fullname)
+			except:
+				pass
+			else:
+				if image and image.mode in ("1", "L"):
+					break
+		else:
+			raise IOError("cannot find glyph data file")
 
-        self.file = fullname
+		self.file = fullname
 
-        return self._load_pilfont_data(file, image)
+		return self._load_pilfont_data(file, image)
 
-    def _load_pilfont_data(self, file, image):
+	def _load_pilfont_data(self, file, image):
 
-        # read PILfont header
-        if file.readline() != "PILfont\n":
-            raise SyntaxError("Not a PILfont file")
-        d = string.split(file.readline(), ";")
-        self.info = [] # FIXME: should be a dictionary
-        while True:
-            s = file.readline()
-            if not s or s == "DATA\n":
-                break
-            self.info.append(s)
+		# read PILfont header
+		if file.readline() != "PILfont\n":
+			raise SyntaxError("Not a PILfont file")
+		d = string.split(file.readline(), ";")
+		self.info = [] # FIXME: should be a dictionary
+		while True:
+			s = file.readline()
+			if not s or s == "DATA\n":
+				break
+			self.info.append(s)
 
-        # read PILfont metrics
-        data = file.read(256*20)
+		# read PILfont metrics
+		data = file.read(256*20)
 
-        # check image
-        if image.mode not in ("1", "L"):
-            raise TypeError("invalid font image mode")
+		# check image
+		if image.mode not in ("1", "L"):
+			raise TypeError("invalid font image mode")
 
-        image.load()
+		image.load()
 
-        self.font = Image.core.font(image.im, data)
+		self.font = Image.core.font(image.im, data)
 
-        # delegate critical operations to internal type
-        self.getsize = self.font.getsize
-        self.getmask = self.font.getmask
+		# delegate critical operations to internal type
+		self.getsize = self.font.getsize
+		self.getmask = self.font.getmask
 
 ##
 # Wrapper for FreeType fonts.  Application code should use the
 # <b>truetype</b> factory function to create font objects.
 
 class FreeTypeFont:
-    "FreeType font wrapper (requires _imagingft service)"
+	"FreeType font wrapper (requires _imagingft service)"
 
-    def __init__(self, file, size, index=0, encoding=""):
-        # FIXME: use service provider instead
-        self.font = core.getfont(file, size, index, encoding)
+	def __init__(self, file, size, index=0, encoding=""):
+		# FIXME: use service provider instead
+		self.font = core.getfont(file, size, index, encoding)
 
-    def getname(self):
-        return self.font.family, self.font.style
+	def getname(self):
+		return self.font.family, self.font.style
 
-    def getmetrics(self):
-        return self.font.ascent, self.font.descent
+	def getmetrics(self):
+		return self.font.ascent, self.font.descent
 
-    def getsize(self, text):
-        return self.font.getsize(text)[0]
+	def getsize(self, text):
+		return self.font.getsize(text)[0]
 
-    def getmask(self, text, mode=""):
-        return self.getmask2(text, mode)[0]
+	def getmask(self, text, mode=""):
+		return self.getmask2(text, mode)[0]
 
-    def getmask2(self, text, mode="", fill=Image.core.fill):
-        size, offset = self.font.getsize(text)
-        im = fill("L", size, 0)
-        self.font.render(text, im.id, mode=="1")
-        return im, offset
+	def getmask2(self, text, mode="", fill=Image.core.fill):
+		size, offset = self.font.getsize(text)
+		im = fill("L", size, 0)
+		self.font.render(text, im.id, mode=="1")
+		return im, offset
 
 ##
 # Wrapper that creates a transposed font from any existing font
@@ -157,27 +157,27 @@ class FreeTypeFont:
 #
 # @param font A font object.
 # @param orientation An optional orientation.  If given, this should
-#     be one of Image.FLIP_LEFT_RIGHT, Image.FLIP_TOP_BOTTOM,
-#     Image.ROTATE_90, Image.ROTATE_180, or Image.ROTATE_270.
+#	 be one of Image.FLIP_LEFT_RIGHT, Image.FLIP_TOP_BOTTOM,
+#	 Image.ROTATE_90, Image.ROTATE_180, or Image.ROTATE_270.
 
 class TransposedFont:
-    "Wrapper for writing rotated or mirrored text"
+	"Wrapper for writing rotated or mirrored text"
 
-    def __init__(self, font, orientation=None):
-        self.font = font
-        self.orientation = orientation # any 'transpose' argument, or None
+	def __init__(self, font, orientation=None):
+		self.font = font
+		self.orientation = orientation # any 'transpose' argument, or None
 
-    def getsize(self, text):
-        w, h = self.font.getsize(text)
-        if self.orientation in (Image.ROTATE_90, Image.ROTATE_270):
-            return h, w
-        return w, h
+	def getsize(self, text):
+		w, h = self.font.getsize(text)
+		if self.orientation in (Image.ROTATE_90, Image.ROTATE_270):
+			return h, w
+		return w, h
 
-    def getmask(self, text, mode=""):
-        im = self.font.getmask(text, mode)
-        if self.orientation is not None:
-            return im.transpose(self.orientation)
-        return im
+	def getmask(self, text, mode=""):
+		im = self.font.getmask(text, mode)
+		if self.orientation is not None:
+			return im.transpose(self.orientation)
+		return im
 
 ##
 # Load font file.  This function loads a font object from the given
@@ -188,10 +188,10 @@ class TransposedFont:
 # @exception IOError If the file could not be read.
 
 def load(filename):
-    "Load a font file."
-    f = ImageFont()
-    f._load_pilfont(filename)
-    return f
+	"Load a font file."
+	f = ImageFont()
+	f._load_pilfont(filename)
+	return f
 
 ##
 # Load a TrueType or OpenType font file, and create a font object.
@@ -201,31 +201,31 @@ def load(filename):
 # This function requires the _imagingft service.
 #
 # @param filename A truetype font file.  Under Windows, if the file
-#    is not found in this filename, the loader also looks in Windows
-#    <b>fonts</b> directory
+#	is not found in this filename, the loader also looks in Windows
+#	<b>fonts</b> directory
 # @param size The requested size, in points.
 # @param index Which font face to load (default is first available face).
 # @param encoding Which font encoding to use (default is Unicode).  Common
-#    encodings are "unic" (Unicode), "symb" (Microsoft Symbol), "ADOB"
-#    (Adobe Standard), "ADBE" (Adobe Expert), and "armn" (Apple Roman).
-#    See the FreeType documentation for more information.
+#	encodings are "unic" (Unicode), "symb" (Microsoft Symbol), "ADOB"
+#	(Adobe Standard), "ADBE" (Adobe Expert), and "armn" (Apple Roman).
+#	See the FreeType documentation for more information.
 # @return A font object.
 # @exception IOError If the file could not be read.
 
 def truetype(filename, size, index=0, encoding=""):
-    "Load a truetype font file."
-    try:
-        return FreeTypeFont(filename, size, index, encoding)
-    except IOError:
-        if sys.platform == "win32":
-            # check the windows font repository
-            # NOTE: must use uppercase WINDIR, to work around bugs in
-            # 1.5.2's os.environ.get()
-            windir = os.environ.get("WINDIR")
-            if windir:
-                filename = os.path.join(windir, "fonts", filename)
-                return FreeTypeFont(filename, size, index, encoding)
-        raise
+	"Load a truetype font file."
+	try:
+		return FreeTypeFont(filename, size, index, encoding)
+	except IOError:
+		if sys.platform == "win32":
+			# check the windows font repository
+			# NOTE: must use uppercase WINDIR, to work around bugs in
+			# 1.5.2's os.environ.get()
+			windir = os.environ.get("WINDIR")
+			if windir:
+				filename = os.path.join(windir, "fonts", filename)
+				return FreeTypeFont(filename, size, index, encoding)
+		raise
 
 ##
 # Load font file.  Same as load, but searches for a bitmap font along
@@ -237,14 +237,14 @@ def truetype(filename, size, index=0, encoding=""):
 # @see #load
 
 def load_path(filename):
-    "Load a font file, searching along the Python path."
-    for dir in sys.path:
-        if Image.isDirectory(dir):
-            try:
-                return load(os.path.join(dir, filename))
-            except IOError:
-                pass
-    raise IOError("cannot find font file")
+	"Load a font file, searching along the Python path."
+	for dir in sys.path:
+		if Image.isDirectory(dir):
+			try:
+				return load(os.path.join(dir, filename))
+			except IOError:
+				pass
+	raise IOError("cannot find font file")
 
 ##
 # Load a (probably rather ugly) default font.
@@ -252,13 +252,13 @@ def load_path(filename):
 # @return A font object.
 
 def load_default():
-    "Load a default font."
-    from StringIO import StringIO
-    import base64
-    f = ImageFont()
-    f._load_pilfont_data(
-         # courB08
-         StringIO(base64.decodestring('''
+	"Load a default font."
+	from StringIO import StringIO
+	import base64
+	f = ImageFont()
+	f._load_pilfont_data(
+		 # courB08
+		 StringIO(base64.decodestring('''
 UElMZm9udAo7Ozs7OzsxMDsKREFUQQoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -375,16 +375,16 @@ AAD//2Ji2FrkY3iYpYC5qDeGgeEMAwPDvwQBBoYvcTwOVLMEAAAA//9isDBgkP///0EOg9z35v//
 Gc/eeW7BwPj5+QGZhANUswMAAAD//2JgqGBgYGBgqEMXlvhMPUsAAAAA//8iYDd1AAAAAP//AwDR
 w7IkEbzhVQAAAABJRU5ErkJggg==
 '''))))
-    return f
+	return f
 
 if __name__ == "__main__":
-    # create font data chunk for embedding
-    import base64, os, sys
-    font = "../Images/courB08"
-    print "    f._load_pilfont_data("
-    print "         # %s" % os.path.basename(font)
-    print "         StringIO(base64.decodestring('''"
-    base64.encode(open(font + ".pil", "rb"), sys.stdout)
-    print "''')), Image.open(StringIO(base64.decodestring('''"
-    base64.encode(open(font + ".pbm", "rb"), sys.stdout)
-    print "'''))))"
+	# create font data chunk for embedding
+	import base64, os, sys
+	font = "../Images/courB08"
+	print "	f._load_pilfont_data("
+	print "		 # %s" % os.path.basename(font)
+	print "		 StringIO(base64.decodestring('''"
+	base64.encode(open(font + ".pil", "rb"), sys.stdout)
+	print "''')), Image.open(StringIO(base64.decodestring('''"
+	base64.encode(open(font + ".pbm", "rb"), sys.stdout)
+	print "'''))))"

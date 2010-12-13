@@ -31,57 +31,57 @@ field = re.compile(r"([a-z]*) ([^ \r\n]*)")
 
 class ImtImageFile(ImageFile.ImageFile):
 
-    format = "IMT"
-    format_description = "IM Tools"
+	format = "IMT"
+	format_description = "IM Tools"
 
-    def _open(self):
+	def _open(self):
 
-        # Quick rejection: if there's not a LF among the first
-        # 100 bytes, this is (probably) not a text header.
+		# Quick rejection: if there's not a LF among the first
+		# 100 bytes, this is (probably) not a text header.
 
-        if not "\n" in self.fp.read(100):
-            raise SyntaxError, "not an IM file"
-        self.fp.seek(0)
+		if not "\n" in self.fp.read(100):
+			raise SyntaxError, "not an IM file"
+		self.fp.seek(0)
 
-        xsize = ysize = 0
+		xsize = ysize = 0
 
-        while 1:
+		while 1:
 
-            s = self.fp.read(1)
-            if not s:
-                break
+			s = self.fp.read(1)
+			if not s:
+				break
 
-            if s == chr(12):
+			if s == chr(12):
 
-                # image data begins
-                self.tile = [("raw", (0,0)+self.size,
-                             self.fp.tell(),
-                             (self.mode, 0, 1))]
+				# image data begins
+				self.tile = [("raw", (0,0)+self.size,
+							 self.fp.tell(),
+							 (self.mode, 0, 1))]
 
-                break
+				break
 
-            else:
+			else:
 
-                # read key/value pair
-                # FIXME: dangerous, may read whole file
-                s = s + self.fp.readline()
-                if len(s) == 1 or len(s) > 100:
-                    break
-                if s[0] == "*":
-                    continue # comment
+				# read key/value pair
+				# FIXME: dangerous, may read whole file
+				s = s + self.fp.readline()
+				if len(s) == 1 or len(s) > 100:
+					break
+				if s[0] == "*":
+					continue # comment
 
-                m = field.match(s)
-                if not m:
-                    break
-                k, v = m.group(1,2)
-                if k == "width":
-                    xsize = int(v)
-                    self.size = xsize, ysize
-                elif k == "height":
-                    ysize = int(v)
-                    self.size = xsize, ysize
-                elif k == "pixel" and v == "n8":
-                    self.mode = "L"
+				m = field.match(s)
+				if not m:
+					break
+				k, v = m.group(1,2)
+				if k == "width":
+					xsize = int(v)
+					self.size = xsize, ysize
+				elif k == "height":
+					ysize = int(v)
+					self.size = xsize, ysize
+				elif k == "pixel" and v == "n8":
+					self.mode = "L"
 
 
 #

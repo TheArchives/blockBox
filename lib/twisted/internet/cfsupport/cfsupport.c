@@ -137,77 +137,77 @@ static void __pyx_f_9cfsupport_socketCallBack(CFSocketRef __pyx_v_s,CFSocketCall
   /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":11 */
   /*try:*/ {
 
-    /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":12 */
-    __pyx_2 = (__pyx_v__type == kCFSocketReadCallBack);
-    if (__pyx_2) {
+	/* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":12 */
+	__pyx_2 = (__pyx_v__type == kCFSocketReadCallBack);
+	if (__pyx_2) {
 
-      /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":13 */
-      __pyx_2 = PyObject_IsTrue(__pyx_v_socket->readcallback); if (__pyx_2 < 0) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 13; goto __pyx_L2;}
-      if (__pyx_2) {
+	  /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":13 */
+	  __pyx_2 = PyObject_IsTrue(__pyx_v_socket->readcallback); if (__pyx_2 < 0) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 13; goto __pyx_L2;}
+	  if (__pyx_2) {
 
-        /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":14 */
-        __pyx_1 = PyTuple_New(0); if (!__pyx_1) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 14; goto __pyx_L2;}
-        __pyx_3 = PyObject_CallObject(__pyx_v_socket->readcallback, __pyx_1); if (!__pyx_3) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 14; goto __pyx_L2;}
-        Py_DECREF(__pyx_1); __pyx_1 = 0;
-        Py_DECREF(__pyx_3); __pyx_3 = 0;
-        goto __pyx_L5;
-      }
-      __pyx_L5:;
-      goto __pyx_L4;
-    }
-    __pyx_2 = (__pyx_v__type == kCFSocketWriteCallBack);
-    if (__pyx_2) {
+		/* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":14 */
+		__pyx_1 = PyTuple_New(0); if (!__pyx_1) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 14; goto __pyx_L2;}
+		__pyx_3 = PyObject_CallObject(__pyx_v_socket->readcallback, __pyx_1); if (!__pyx_3) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 14; goto __pyx_L2;}
+		Py_DECREF(__pyx_1); __pyx_1 = 0;
+		Py_DECREF(__pyx_3); __pyx_3 = 0;
+		goto __pyx_L5;
+	  }
+	  __pyx_L5:;
+	  goto __pyx_L4;
+	}
+	__pyx_2 = (__pyx_v__type == kCFSocketWriteCallBack);
+	if (__pyx_2) {
 
-      /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":16 */
-      __pyx_2 = PyObject_IsTrue(__pyx_v_socket->writecallback); if (__pyx_2 < 0) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 16; goto __pyx_L2;}
-      if (__pyx_2) {
+	  /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":16 */
+	  __pyx_2 = PyObject_IsTrue(__pyx_v_socket->writecallback); if (__pyx_2 < 0) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 16; goto __pyx_L2;}
+	  if (__pyx_2) {
 
-        /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":17 */
-        __pyx_1 = PyTuple_New(0); if (!__pyx_1) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 17; goto __pyx_L2;}
-        __pyx_3 = PyObject_CallObject(__pyx_v_socket->writecallback, __pyx_1); if (!__pyx_3) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 17; goto __pyx_L2;}
-        Py_DECREF(__pyx_1); __pyx_1 = 0;
-        Py_DECREF(__pyx_3); __pyx_3 = 0;
-        goto __pyx_L6;
-      }
-      __pyx_L6:;
-      goto __pyx_L4;
-    }
-    __pyx_2 = (__pyx_v__type == kCFSocketConnectCallBack);
-    if (__pyx_2) {
+		/* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":17 */
+		__pyx_1 = PyTuple_New(0); if (!__pyx_1) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 17; goto __pyx_L2;}
+		__pyx_3 = PyObject_CallObject(__pyx_v_socket->writecallback, __pyx_1); if (!__pyx_3) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 17; goto __pyx_L2;}
+		Py_DECREF(__pyx_1); __pyx_1 = 0;
+		Py_DECREF(__pyx_3); __pyx_3 = 0;
+		goto __pyx_L6;
+	  }
+	  __pyx_L6:;
+	  goto __pyx_L4;
+	}
+	__pyx_2 = (__pyx_v__type == kCFSocketConnectCallBack);
+	if (__pyx_2) {
 
-      /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":19 */
-      __pyx_2 = (__pyx_v_data == 0);
-      if (__pyx_2) {
+	  /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":19 */
+	  __pyx_2 = (__pyx_v_data == 0);
+	  if (__pyx_2) {
 
-        /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":20 */
-        __pyx_v_res = 0;
-        goto __pyx_L7;
-      }
-      /*else*/ {
+		/* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":20 */
+		__pyx_v_res = 0;
+		goto __pyx_L7;
+	  }
+	  /*else*/ {
 
-        /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":22 */
-        __pyx_v_res = (((int (*))__pyx_v_data)[0]);
-      }
-      __pyx_L7:;
+		/* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":22 */
+		__pyx_v_res = (((int (*))__pyx_v_data)[0]);
+	  }
+	  __pyx_L7:;
 
-      /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":23 */
-      __pyx_2 = PyObject_IsTrue(__pyx_v_socket->connectcallback); if (__pyx_2 < 0) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 23; goto __pyx_L2;}
-      if (__pyx_2) {
+	  /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":23 */
+	  __pyx_2 = PyObject_IsTrue(__pyx_v_socket->connectcallback); if (__pyx_2 < 0) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 23; goto __pyx_L2;}
+	  if (__pyx_2) {
 
-        /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":24 */
-        __pyx_1 = PyInt_FromLong(__pyx_v_res); if (!__pyx_1) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 24; goto __pyx_L2;}
-        __pyx_3 = PyTuple_New(1); if (!__pyx_3) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 24; goto __pyx_L2;}
-        PyTuple_SET_ITEM(__pyx_3, 0, __pyx_1);
-        __pyx_1 = 0;
-        __pyx_1 = PyObject_CallObject(__pyx_v_socket->connectcallback, __pyx_3); if (!__pyx_1) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 24; goto __pyx_L2;}
-        Py_DECREF(__pyx_3); __pyx_3 = 0;
-        Py_DECREF(__pyx_1); __pyx_1 = 0;
-        goto __pyx_L8;
-      }
-      __pyx_L8:;
-      goto __pyx_L4;
-    }
-    __pyx_L4:;
+		/* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":24 */
+		__pyx_1 = PyInt_FromLong(__pyx_v_res); if (!__pyx_1) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 24; goto __pyx_L2;}
+		__pyx_3 = PyTuple_New(1); if (!__pyx_3) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 24; goto __pyx_L2;}
+		PyTuple_SET_ITEM(__pyx_3, 0, __pyx_1);
+		__pyx_1 = 0;
+		__pyx_1 = PyObject_CallObject(__pyx_v_socket->connectcallback, __pyx_3); if (!__pyx_1) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 24; goto __pyx_L2;}
+		Py_DECREF(__pyx_3); __pyx_3 = 0;
+		Py_DECREF(__pyx_1); __pyx_1 = 0;
+		goto __pyx_L8;
+	  }
+	  __pyx_L8:;
+	  goto __pyx_L4;
+	}
+	__pyx_L4:;
   }
   goto __pyx_L3;
   __pyx_L2:;
@@ -216,20 +216,20 @@ static void __pyx_f_9cfsupport_socketCallBack(CFSocketRef __pyx_v_s,CFSocketCall
 
   /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":25 */
   /*except:*/ {
-    __Pyx_AddTraceback("cfsupport.socketCallBack");
-    __pyx_3 = __Pyx_GetExcValue(); if (!__pyx_3) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 25; goto __pyx_L1;}
-    Py_DECREF(__pyx_3); __pyx_3 = 0;
+	__Pyx_AddTraceback("cfsupport.socketCallBack");
+	__pyx_3 = __Pyx_GetExcValue(); if (!__pyx_3) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 25; goto __pyx_L1;}
+	Py_DECREF(__pyx_3); __pyx_3 = 0;
 
-    /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":26 */
-    __pyx_1 = __Pyx_GetName(__pyx_m, __pyx_n_traceback); if (!__pyx_1) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 26; goto __pyx_L1;}
-    __pyx_3 = PyObject_GetAttr(__pyx_1, __pyx_n_print_exc); if (!__pyx_3) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 26; goto __pyx_L1;}
-    Py_DECREF(__pyx_1); __pyx_1 = 0;
-    __pyx_1 = PyTuple_New(0); if (!__pyx_1) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 26; goto __pyx_L1;}
-    __pyx_4 = PyObject_CallObject(__pyx_3, __pyx_1); if (!__pyx_4) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 26; goto __pyx_L1;}
-    Py_DECREF(__pyx_3); __pyx_3 = 0;
-    Py_DECREF(__pyx_1); __pyx_1 = 0;
-    Py_DECREF(__pyx_4); __pyx_4 = 0;
-    goto __pyx_L3;
+	/* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":26 */
+	__pyx_1 = __Pyx_GetName(__pyx_m, __pyx_n_traceback); if (!__pyx_1) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 26; goto __pyx_L1;}
+	__pyx_3 = PyObject_GetAttr(__pyx_1, __pyx_n_print_exc); if (!__pyx_3) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 26; goto __pyx_L1;}
+	Py_DECREF(__pyx_1); __pyx_1 = 0;
+	__pyx_1 = PyTuple_New(0); if (!__pyx_1) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 26; goto __pyx_L1;}
+	__pyx_4 = PyObject_CallObject(__pyx_3, __pyx_1); if (!__pyx_4) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 26; goto __pyx_L1;}
+	Py_DECREF(__pyx_3); __pyx_3 = 0;
+	Py_DECREF(__pyx_1); __pyx_1 = 0;
+	Py_DECREF(__pyx_4); __pyx_4 = 0;
+	goto __pyx_L3;
   }
   __pyx_L3:;
 
@@ -343,18 +343,18 @@ static int __pyx_f_9cfsupport_10PyCFSocket___new__(PyObject *__pyx_v_self, PyObj
   __pyx_2 = (((struct __pyx_obj_9cfsupport_PyCFSocket *)__pyx_v_self)->cf == 0);
   if (__pyx_2) {
 
-    /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":60 */
-    __pyx_1 = __Pyx_GetName(__pyx_b, __pyx_n_ValueError); if (!__pyx_1) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 60; goto __pyx_L1;}
-    __pyx_3 = PyTuple_New(1); if (!__pyx_3) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 60; goto __pyx_L1;}
-    Py_INCREF(__pyx_k8p);
-    PyTuple_SET_ITEM(__pyx_3, 0, __pyx_k8p);
-    __pyx_4 = PyObject_CallObject(__pyx_1, __pyx_3); if (!__pyx_4) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 60; goto __pyx_L1;}
-    Py_DECREF(__pyx_1); __pyx_1 = 0;
-    Py_DECREF(__pyx_3); __pyx_3 = 0;
-    __Pyx_Raise(__pyx_4, 0, 0);
-    Py_DECREF(__pyx_4); __pyx_4 = 0;
-    {__pyx_filename = __pyx_f[1]; __pyx_lineno = 60; goto __pyx_L1;}
-    goto __pyx_L2;
+	/* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":60 */
+	__pyx_1 = __Pyx_GetName(__pyx_b, __pyx_n_ValueError); if (!__pyx_1) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 60; goto __pyx_L1;}
+	__pyx_3 = PyTuple_New(1); if (!__pyx_3) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 60; goto __pyx_L1;}
+	Py_INCREF(__pyx_k8p);
+	PyTuple_SET_ITEM(__pyx_3, 0, __pyx_k8p);
+	__pyx_4 = PyObject_CallObject(__pyx_1, __pyx_3); if (!__pyx_4) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 60; goto __pyx_L1;}
+	Py_DECREF(__pyx_1); __pyx_1 = 0;
+	Py_DECREF(__pyx_3); __pyx_3 = 0;
+	__Pyx_Raise(__pyx_4, 0, 0);
+	Py_DECREF(__pyx_4); __pyx_4 = 0;
+	{__pyx_filename = __pyx_f[1]; __pyx_lineno = 60; goto __pyx_L1;}
+	goto __pyx_L2;
   }
   __pyx_L2:;
 
@@ -365,18 +365,18 @@ static int __pyx_f_9cfsupport_10PyCFSocket___new__(PyObject *__pyx_v_self, PyObj
   __pyx_2 = (((struct __pyx_obj_9cfsupport_PyCFSocket *)__pyx_v_self)->source == 0);
   if (__pyx_2) {
 
-    /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":63 */
-    __pyx_1 = __Pyx_GetName(__pyx_b, __pyx_n_ValueError); if (!__pyx_1) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 63; goto __pyx_L1;}
-    __pyx_3 = PyTuple_New(1); if (!__pyx_3) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 63; goto __pyx_L1;}
-    Py_INCREF(__pyx_k9p);
-    PyTuple_SET_ITEM(__pyx_3, 0, __pyx_k9p);
-    __pyx_4 = PyObject_CallObject(__pyx_1, __pyx_3); if (!__pyx_4) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 63; goto __pyx_L1;}
-    Py_DECREF(__pyx_1); __pyx_1 = 0;
-    Py_DECREF(__pyx_3); __pyx_3 = 0;
-    __Pyx_Raise(__pyx_4, 0, 0);
-    Py_DECREF(__pyx_4); __pyx_4 = 0;
-    {__pyx_filename = __pyx_f[1]; __pyx_lineno = 63; goto __pyx_L1;}
-    goto __pyx_L3;
+	/* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":63 */
+	__pyx_1 = __Pyx_GetName(__pyx_b, __pyx_n_ValueError); if (!__pyx_1) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 63; goto __pyx_L1;}
+	__pyx_3 = PyTuple_New(1); if (!__pyx_3) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 63; goto __pyx_L1;}
+	Py_INCREF(__pyx_k9p);
+	PyTuple_SET_ITEM(__pyx_3, 0, __pyx_k9p);
+	__pyx_4 = PyObject_CallObject(__pyx_1, __pyx_3); if (!__pyx_4) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 63; goto __pyx_L1;}
+	Py_DECREF(__pyx_1); __pyx_1 = 0;
+	Py_DECREF(__pyx_3); __pyx_3 = 0;
+	__Pyx_Raise(__pyx_4, 0, 0);
+	Py_DECREF(__pyx_4); __pyx_4 = 0;
+	{__pyx_filename = __pyx_f[1]; __pyx_lineno = 63; goto __pyx_L1;}
+	goto __pyx_L3;
   }
   __pyx_L3:;
 
@@ -420,17 +420,17 @@ static PyObject *__pyx_f_9cfsupport_10PyCFSocket_update(PyObject *__pyx_v_self, 
   __pyx_1 = PyObject_IsTrue(((struct __pyx_obj_9cfsupport_PyCFSocket *)__pyx_v_self)->reading); if (__pyx_1 < 0) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 73; goto __pyx_L1;}
   if (__pyx_1) {
 
-    /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":74 */
-    __pyx_v_mask = (__pyx_v_mask | kCFSocketReadCallBack);
+	/* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":74 */
+	__pyx_v_mask = (__pyx_v_mask | kCFSocketReadCallBack);
 
-    /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":75 */
-    __pyx_v_automask = (__pyx_v_automask | kCFSocketAutomaticallyReenableReadCallBack);
-    goto __pyx_L2;
+	/* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":75 */
+	__pyx_v_automask = (__pyx_v_automask | kCFSocketAutomaticallyReenableReadCallBack);
+	goto __pyx_L2;
   }
   /*else*/ {
 
-    /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":77 */
-    __pyx_v_offmask = (__pyx_v_offmask | kCFSocketReadCallBack);
+	/* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":77 */
+	__pyx_v_offmask = (__pyx_v_offmask | kCFSocketReadCallBack);
   }
   __pyx_L2:;
 
@@ -438,17 +438,17 @@ static PyObject *__pyx_f_9cfsupport_10PyCFSocket_update(PyObject *__pyx_v_self, 
   __pyx_1 = PyObject_IsTrue(((struct __pyx_obj_9cfsupport_PyCFSocket *)__pyx_v_self)->writing); if (__pyx_1 < 0) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 78; goto __pyx_L1;}
   if (__pyx_1) {
 
-    /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":79 */
-    __pyx_v_mask = (__pyx_v_mask | kCFSocketWriteCallBack);
+	/* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":79 */
+	__pyx_v_mask = (__pyx_v_mask | kCFSocketWriteCallBack);
 
-    /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":80 */
-    __pyx_v_automask = (__pyx_v_automask | kCFSocketAutomaticallyReenableWriteCallBack);
-    goto __pyx_L3;
+	/* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":80 */
+	__pyx_v_automask = (__pyx_v_automask | kCFSocketAutomaticallyReenableWriteCallBack);
+	goto __pyx_L3;
   }
   /*else*/ {
 
-    /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":82 */
-    __pyx_v_offmask = (__pyx_v_offmask | kCFSocketWriteCallBack);
+	/* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":82 */
+	__pyx_v_offmask = (__pyx_v_offmask | kCFSocketWriteCallBack);
   }
   __pyx_L3:;
 
@@ -631,9 +631,9 @@ static void __pyx_f_9cfsupport_10PyCFSocket___dealloc__(PyObject *__pyx_v_self) 
   __pyx_1 = (((struct __pyx_obj_9cfsupport_PyCFSocket *)__pyx_v_self)->source != 0);
   if (__pyx_1) {
 
-    /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":107 */
-    CFRelease(((struct __pyx_obj_9cfsupport_PyCFSocket *)__pyx_v_self)->source);
-    goto __pyx_L2;
+	/* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":107 */
+	CFRelease(((struct __pyx_obj_9cfsupport_PyCFSocket *)__pyx_v_self)->source);
+	goto __pyx_L2;
   }
   __pyx_L2:;
 
@@ -641,12 +641,12 @@ static void __pyx_f_9cfsupport_10PyCFSocket___dealloc__(PyObject *__pyx_v_self) 
   __pyx_1 = (((struct __pyx_obj_9cfsupport_PyCFSocket *)__pyx_v_self)->cf != 0);
   if (__pyx_1) {
 
-    /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":109 */
-    CFSocketInvalidate(((struct __pyx_obj_9cfsupport_PyCFSocket *)__pyx_v_self)->cf);
+	/* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":109 */
+	CFSocketInvalidate(((struct __pyx_obj_9cfsupport_PyCFSocket *)__pyx_v_self)->cf);
 
-    /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":110 */
-    CFRelease(((struct __pyx_obj_9cfsupport_PyCFSocket *)__pyx_v_self)->cf);
-    goto __pyx_L3;
+	/* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfsocket.pxi":110 */
+	CFRelease(((struct __pyx_obj_9cfsupport_PyCFSocket *)__pyx_v_self)->cf);
+	goto __pyx_L3;
   }
   __pyx_L3:;
 
@@ -703,18 +703,18 @@ static int __pyx_f_9cfsupport_16PyCFRunLoopTimer___new__(PyObject *__pyx_v_self,
   __pyx_1 = (((struct __pyx_obj_9cfsupport_PyCFRunLoopTimer *)__pyx_v_self)->cf == 0);
   if (__pyx_1) {
 
-    /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfrunloop.pxi":19 */
-    __pyx_2 = __Pyx_GetName(__pyx_b, __pyx_n_ValueError); if (!__pyx_2) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 19; goto __pyx_L1;}
-    __pyx_3 = PyTuple_New(1); if (!__pyx_3) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 19; goto __pyx_L1;}
-    Py_INCREF(__pyx_k10p);
-    PyTuple_SET_ITEM(__pyx_3, 0, __pyx_k10p);
-    __pyx_4 = PyObject_CallObject(__pyx_2, __pyx_3); if (!__pyx_4) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 19; goto __pyx_L1;}
-    Py_DECREF(__pyx_2); __pyx_2 = 0;
-    Py_DECREF(__pyx_3); __pyx_3 = 0;
-    __Pyx_Raise(__pyx_4, 0, 0);
-    Py_DECREF(__pyx_4); __pyx_4 = 0;
-    {__pyx_filename = __pyx_f[2]; __pyx_lineno = 19; goto __pyx_L1;}
-    goto __pyx_L2;
+	/* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfrunloop.pxi":19 */
+	__pyx_2 = __Pyx_GetName(__pyx_b, __pyx_n_ValueError); if (!__pyx_2) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 19; goto __pyx_L1;}
+	__pyx_3 = PyTuple_New(1); if (!__pyx_3) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 19; goto __pyx_L1;}
+	Py_INCREF(__pyx_k10p);
+	PyTuple_SET_ITEM(__pyx_3, 0, __pyx_k10p);
+	__pyx_4 = PyObject_CallObject(__pyx_2, __pyx_3); if (!__pyx_4) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 19; goto __pyx_L1;}
+	Py_DECREF(__pyx_2); __pyx_2 = 0;
+	Py_DECREF(__pyx_3); __pyx_3 = 0;
+	__Pyx_Raise(__pyx_4, 0, 0);
+	Py_DECREF(__pyx_4); __pyx_4 = 0;
+	{__pyx_filename = __pyx_f[2]; __pyx_lineno = 19; goto __pyx_L1;}
+	goto __pyx_L2;
   }
   __pyx_L2:;
 
@@ -807,9 +807,9 @@ static void __pyx_f_9cfsupport_16PyCFRunLoopTimer___dealloc__(PyObject *__pyx_v_
   __pyx_1 = (((struct __pyx_obj_9cfsupport_PyCFRunLoopTimer *)__pyx_v_self)->cf != 0);
   if (__pyx_1) {
 
-    /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfrunloop.pxi":32 */
-    CFRelease(((struct __pyx_obj_9cfsupport_PyCFRunLoopTimer *)__pyx_v_self)->cf);
-    goto __pyx_L2;
+	/* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfrunloop.pxi":32 */
+	CFRelease(((struct __pyx_obj_9cfsupport_PyCFRunLoopTimer *)__pyx_v_self)->cf);
+	goto __pyx_L2;
   }
   __pyx_L2:;
 
@@ -838,18 +838,18 @@ static void __pyx_f_9cfsupport_runLoopTimerCallBack(CFRunLoopTimerRef __pyx_v_ti
   /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfrunloop.pxi":37 */
   /*try:*/ {
 
-    /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfrunloop.pxi":38 */
-    __pyx_2 = PyObject_IsTrue(__pyx_v_obj->callout); if (__pyx_2 < 0) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 38; goto __pyx_L2;}
-    if (__pyx_2) {
+	/* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfrunloop.pxi":38 */
+	__pyx_2 = PyObject_IsTrue(__pyx_v_obj->callout); if (__pyx_2 < 0) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 38; goto __pyx_L2;}
+	if (__pyx_2) {
 
-      /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfrunloop.pxi":39 */
-      __pyx_1 = PyTuple_New(0); if (!__pyx_1) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 39; goto __pyx_L2;}
-      __pyx_3 = PyObject_CallObject(__pyx_v_obj->callout, __pyx_1); if (!__pyx_3) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 39; goto __pyx_L2;}
-      Py_DECREF(__pyx_1); __pyx_1 = 0;
-      Py_DECREF(__pyx_3); __pyx_3 = 0;
-      goto __pyx_L4;
-    }
-    __pyx_L4:;
+	  /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfrunloop.pxi":39 */
+	  __pyx_1 = PyTuple_New(0); if (!__pyx_1) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 39; goto __pyx_L2;}
+	  __pyx_3 = PyObject_CallObject(__pyx_v_obj->callout, __pyx_1); if (!__pyx_3) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 39; goto __pyx_L2;}
+	  Py_DECREF(__pyx_1); __pyx_1 = 0;
+	  Py_DECREF(__pyx_3); __pyx_3 = 0;
+	  goto __pyx_L4;
+	}
+	__pyx_L4:;
   }
   goto __pyx_L3;
   __pyx_L2:;
@@ -858,20 +858,20 @@ static void __pyx_f_9cfsupport_runLoopTimerCallBack(CFRunLoopTimerRef __pyx_v_ti
 
   /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfrunloop.pxi":40 */
   /*except:*/ {
-    __Pyx_AddTraceback("cfsupport.runLoopTimerCallBack");
-    __pyx_1 = __Pyx_GetExcValue(); if (!__pyx_1) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 40; goto __pyx_L1;}
-    Py_DECREF(__pyx_1); __pyx_1 = 0;
+	__Pyx_AddTraceback("cfsupport.runLoopTimerCallBack");
+	__pyx_1 = __Pyx_GetExcValue(); if (!__pyx_1) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 40; goto __pyx_L1;}
+	Py_DECREF(__pyx_1); __pyx_1 = 0;
 
-    /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfrunloop.pxi":41 */
-    __pyx_3 = __Pyx_GetName(__pyx_m, __pyx_n_traceback); if (!__pyx_3) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 41; goto __pyx_L1;}
-    __pyx_1 = PyObject_GetAttr(__pyx_3, __pyx_n_print_exc); if (!__pyx_1) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 41; goto __pyx_L1;}
-    Py_DECREF(__pyx_3); __pyx_3 = 0;
-    __pyx_3 = PyTuple_New(0); if (!__pyx_3) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 41; goto __pyx_L1;}
-    __pyx_4 = PyObject_CallObject(__pyx_1, __pyx_3); if (!__pyx_4) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 41; goto __pyx_L1;}
-    Py_DECREF(__pyx_1); __pyx_1 = 0;
-    Py_DECREF(__pyx_3); __pyx_3 = 0;
-    Py_DECREF(__pyx_4); __pyx_4 = 0;
-    goto __pyx_L3;
+	/* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfrunloop.pxi":41 */
+	__pyx_3 = __Pyx_GetName(__pyx_m, __pyx_n_traceback); if (!__pyx_3) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 41; goto __pyx_L1;}
+	__pyx_1 = PyObject_GetAttr(__pyx_3, __pyx_n_print_exc); if (!__pyx_1) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 41; goto __pyx_L1;}
+	Py_DECREF(__pyx_3); __pyx_3 = 0;
+	__pyx_3 = PyTuple_New(0); if (!__pyx_3) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 41; goto __pyx_L1;}
+	__pyx_4 = PyObject_CallObject(__pyx_1, __pyx_3); if (!__pyx_4) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 41; goto __pyx_L1;}
+	Py_DECREF(__pyx_1); __pyx_1 = 0;
+	Py_DECREF(__pyx_3); __pyx_3 = 0;
+	Py_DECREF(__pyx_4); __pyx_4 = 0;
+	goto __pyx_L3;
   }
   __pyx_L3:;
 
@@ -920,22 +920,22 @@ static int __pyx_f_9cfsupport_11PyCFRunLoop___new__(PyObject *__pyx_v_self, PyOb
   __pyx_1 = __pyx_v_runLoop == Py_None;
   if (__pyx_1) {
 
-    /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfrunloop.pxi":55 */
-    __pyx_v__runLoop = CFRunLoopGetCurrent();
-    goto __pyx_L2;
+	/* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfrunloop.pxi":55 */
+	__pyx_v__runLoop = CFRunLoopGetCurrent();
+	goto __pyx_L2;
   }
   /*else*/ {
 
-    /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfrunloop.pxi":57 */
-    __pyx_1 = (CFObj_Convert(__pyx_v_runLoop,(&__pyx_v__runLoop)) == 0);
-    if (__pyx_1) {
+	/* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfrunloop.pxi":57 */
+	__pyx_1 = (CFObj_Convert(__pyx_v_runLoop,(&__pyx_v__runLoop)) == 0);
+	if (__pyx_1) {
 
-      /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfrunloop.pxi":58 */
-      __Pyx_ReRaise();
-      {__pyx_filename = __pyx_f[2]; __pyx_lineno = 58; goto __pyx_L1;}
-      goto __pyx_L3;
-    }
-    __pyx_L3:;
+	  /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfrunloop.pxi":58 */
+	  __Pyx_ReRaise();
+	  {__pyx_filename = __pyx_f[2]; __pyx_lineno = 58; goto __pyx_L1;}
+	  goto __pyx_L3;
+	}
+	__pyx_L3:;
   }
   __pyx_L2:;
 
@@ -995,12 +995,12 @@ static PyObject *__pyx_f_9cfsupport_11PyCFRunLoop_stop(PyObject *__pyx_v_self, P
   __pyx_1 = (CFObj_Convert(((struct __pyx_obj_9cfsupport_PyCFRunLoop *)__pyx_v_self)->cf,(&__pyx_v__runLoop)) == 0);
   if (__pyx_1) {
 
-    /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfrunloop.pxi":69 */
-    __pyx_2 = __Pyx_GetName(__pyx_b, __pyx_n_ValueError); if (!__pyx_2) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 69; goto __pyx_L1;}
-    __Pyx_Raise(__pyx_2, __pyx_k11p, 0);
-    Py_DECREF(__pyx_2); __pyx_2 = 0;
-    {__pyx_filename = __pyx_f[2]; __pyx_lineno = 69; goto __pyx_L1;}
-    goto __pyx_L2;
+	/* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfrunloop.pxi":69 */
+	__pyx_2 = __Pyx_GetName(__pyx_b, __pyx_n_ValueError); if (!__pyx_2) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 69; goto __pyx_L1;}
+	__Pyx_Raise(__pyx_2, __pyx_k11p, 0);
+	Py_DECREF(__pyx_2); __pyx_2 = 0;
+	{__pyx_filename = __pyx_f[2]; __pyx_lineno = 69; goto __pyx_L1;}
+	goto __pyx_L2;
   }
   __pyx_L2:;
 
@@ -1037,12 +1037,12 @@ static PyObject *__pyx_f_9cfsupport_11PyCFRunLoop_currentMode(PyObject *__pyx_v_
   __pyx_1 = (CFObj_Convert(((struct __pyx_obj_9cfsupport_PyCFRunLoop *)__pyx_v_self)->cf,(&__pyx_v__runLoop)) == 0);
   if (__pyx_1) {
 
-    /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfrunloop.pxi":76 */
-    __pyx_2 = __Pyx_GetName(__pyx_b, __pyx_n_ValueError); if (!__pyx_2) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 76; goto __pyx_L1;}
-    __Pyx_Raise(__pyx_2, __pyx_k12p, 0);
-    Py_DECREF(__pyx_2); __pyx_2 = 0;
-    {__pyx_filename = __pyx_f[2]; __pyx_lineno = 76; goto __pyx_L1;}
-    goto __pyx_L2;
+	/* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfrunloop.pxi":76 */
+	__pyx_2 = __Pyx_GetName(__pyx_b, __pyx_n_ValueError); if (!__pyx_2) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 76; goto __pyx_L1;}
+	__Pyx_Raise(__pyx_2, __pyx_k12p, 0);
+	Py_DECREF(__pyx_2); __pyx_2 = 0;
+	{__pyx_filename = __pyx_f[2]; __pyx_lineno = 76; goto __pyx_L1;}
+	goto __pyx_L2;
   }
   __pyx_L2:;
 
@@ -1053,11 +1053,11 @@ static PyObject *__pyx_f_9cfsupport_11PyCFRunLoop_currentMode(PyObject *__pyx_v_
   __pyx_1 = (__pyx_v__currentMode == 0);
   if (__pyx_1) {
 
-    /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfrunloop.pxi":79 */
-    Py_INCREF(Py_None);
-    __pyx_r = Py_None;
-    goto __pyx_L0;
-    goto __pyx_L3;
+	/* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfrunloop.pxi":79 */
+	Py_INCREF(Py_None);
+	__pyx_r = Py_None;
+	goto __pyx_L0;
+	goto __pyx_L3;
   }
   __pyx_L3:;
 
@@ -1099,12 +1099,12 @@ static PyObject *__pyx_f_9cfsupport_11PyCFRunLoop_addSocket(PyObject *__pyx_v_se
   __pyx_1 = (CFObj_Convert(((struct __pyx_obj_9cfsupport_PyCFRunLoop *)__pyx_v_self)->cf,(&__pyx_v__runLoop)) == 0);
   if (__pyx_1) {
 
-    /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfrunloop.pxi":85 */
-    __pyx_2 = __Pyx_GetName(__pyx_b, __pyx_n_ValueError); if (!__pyx_2) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 85; goto __pyx_L1;}
-    __Pyx_Raise(__pyx_2, __pyx_k13p, 0);
-    Py_DECREF(__pyx_2); __pyx_2 = 0;
-    {__pyx_filename = __pyx_f[2]; __pyx_lineno = 85; goto __pyx_L1;}
-    goto __pyx_L2;
+	/* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfrunloop.pxi":85 */
+	__pyx_2 = __Pyx_GetName(__pyx_b, __pyx_n_ValueError); if (!__pyx_2) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 85; goto __pyx_L1;}
+	__Pyx_Raise(__pyx_2, __pyx_k13p, 0);
+	Py_DECREF(__pyx_2); __pyx_2 = 0;
+	{__pyx_filename = __pyx_f[2]; __pyx_lineno = 85; goto __pyx_L1;}
+	goto __pyx_L2;
   }
   __pyx_L2:;
 
@@ -1144,12 +1144,12 @@ static PyObject *__pyx_f_9cfsupport_11PyCFRunLoop_removeSocket(PyObject *__pyx_v
   __pyx_1 = (CFObj_Convert(((struct __pyx_obj_9cfsupport_PyCFRunLoop *)__pyx_v_self)->cf,(&__pyx_v__runLoop)) == 0);
   if (__pyx_1) {
 
-    /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfrunloop.pxi":91 */
-    __pyx_2 = __Pyx_GetName(__pyx_b, __pyx_n_ValueError); if (!__pyx_2) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 91; goto __pyx_L1;}
-    __Pyx_Raise(__pyx_2, __pyx_k14p, 0);
-    Py_DECREF(__pyx_2); __pyx_2 = 0;
-    {__pyx_filename = __pyx_f[2]; __pyx_lineno = 91; goto __pyx_L1;}
-    goto __pyx_L2;
+	/* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfrunloop.pxi":91 */
+	__pyx_2 = __Pyx_GetName(__pyx_b, __pyx_n_ValueError); if (!__pyx_2) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 91; goto __pyx_L1;}
+	__Pyx_Raise(__pyx_2, __pyx_k14p, 0);
+	Py_DECREF(__pyx_2); __pyx_2 = 0;
+	{__pyx_filename = __pyx_f[2]; __pyx_lineno = 91; goto __pyx_L1;}
+	goto __pyx_L2;
   }
   __pyx_L2:;
 
@@ -1189,12 +1189,12 @@ static PyObject *__pyx_f_9cfsupport_11PyCFRunLoop_addTimer(PyObject *__pyx_v_sel
   __pyx_1 = (CFObj_Convert(((struct __pyx_obj_9cfsupport_PyCFRunLoop *)__pyx_v_self)->cf,(&__pyx_v__runLoop)) == 0);
   if (__pyx_1) {
 
-    /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfrunloop.pxi":97 */
-    __pyx_2 = __Pyx_GetName(__pyx_b, __pyx_n_ValueError); if (!__pyx_2) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 97; goto __pyx_L1;}
-    __Pyx_Raise(__pyx_2, __pyx_k15p, 0);
-    Py_DECREF(__pyx_2); __pyx_2 = 0;
-    {__pyx_filename = __pyx_f[2]; __pyx_lineno = 97; goto __pyx_L1;}
-    goto __pyx_L2;
+	/* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfrunloop.pxi":97 */
+	__pyx_2 = __Pyx_GetName(__pyx_b, __pyx_n_ValueError); if (!__pyx_2) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 97; goto __pyx_L1;}
+	__Pyx_Raise(__pyx_2, __pyx_k15p, 0);
+	Py_DECREF(__pyx_2); __pyx_2 = 0;
+	{__pyx_filename = __pyx_f[2]; __pyx_lineno = 97; goto __pyx_L1;}
+	goto __pyx_L2;
   }
   __pyx_L2:;
 
@@ -1234,12 +1234,12 @@ static PyObject *__pyx_f_9cfsupport_11PyCFRunLoop_removeTimer(PyObject *__pyx_v_
   __pyx_1 = (CFObj_Convert(((struct __pyx_obj_9cfsupport_PyCFRunLoop *)__pyx_v_self)->cf,(&__pyx_v__runLoop)) == 0);
   if (__pyx_1) {
 
-    /* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfrunloop.pxi":103 */
-    __pyx_2 = __Pyx_GetName(__pyx_b, __pyx_n_ValueError); if (!__pyx_2) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 103; goto __pyx_L1;}
-    __Pyx_Raise(__pyx_2, __pyx_k16p, 0);
-    Py_DECREF(__pyx_2); __pyx_2 = 0;
-    {__pyx_filename = __pyx_f[2]; __pyx_lineno = 103; goto __pyx_L1;}
-    goto __pyx_L2;
+	/* "/Volumes/Crack/src/Twisted/twisted/internet/cfsupport/cfrunloop.pxi":103 */
+	__pyx_2 = __Pyx_GetName(__pyx_b, __pyx_n_ValueError); if (!__pyx_2) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 103; goto __pyx_L1;}
+	__Pyx_Raise(__pyx_2, __pyx_k16p, 0);
+	Py_DECREF(__pyx_2); __pyx_2 = 0;
+	{__pyx_filename = __pyx_f[2]; __pyx_lineno = 103; goto __pyx_L1;}
+	goto __pyx_L2;
   }
   __pyx_L2:;
 
@@ -1293,7 +1293,7 @@ static PyObject *__pyx_tp_new_9cfsupport_PyCFSocket(PyTypeObject *t, PyObject *a
   p->reading = Py_None; Py_INCREF(p->reading);
   p->writing = Py_None; Py_INCREF(p->writing);
   if (__pyx_f_9cfsupport_10PyCFSocket___new__(o, a, k) < 0) {
-    Py_DECREF(o); o = 0;
+	Py_DECREF(o); o = 0;
   }
   return o;
 }
@@ -1301,13 +1301,13 @@ static PyObject *__pyx_tp_new_9cfsupport_PyCFSocket(PyTypeObject *t, PyObject *a
 static void __pyx_tp_dealloc_9cfsupport_PyCFSocket(PyObject *o) {
   struct __pyx_obj_9cfsupport_PyCFSocket *p = (struct __pyx_obj_9cfsupport_PyCFSocket *)o;
   {
-    PyObject *etype, *eval, *etb;
-    PyErr_Fetch(&etype, &eval, &etb);
-    ++o->ob_refcnt;
-    __pyx_f_9cfsupport_10PyCFSocket___dealloc__(o);
-    if (PyErr_Occurred()) PyErr_WriteUnraisable(o);
-    --o->ob_refcnt;
-    PyErr_Restore(etype, eval, etb);
+	PyObject *etype, *eval, *etb;
+	PyErr_Fetch(&etype, &eval, &etb);
+	++o->ob_refcnt;
+	__pyx_f_9cfsupport_10PyCFSocket___dealloc__(o);
+	if (PyErr_Occurred()) PyErr_WriteUnraisable(o);
+	--o->ob_refcnt;
+	PyErr_Restore(etype, eval, etb);
   }
   Py_XDECREF(p->readcallback);
   Py_XDECREF(p->writecallback);
@@ -1321,19 +1321,19 @@ static int __pyx_tp_traverse_9cfsupport_PyCFSocket(PyObject *o, visitproc v, voi
   int e;
   struct __pyx_obj_9cfsupport_PyCFSocket *p = (struct __pyx_obj_9cfsupport_PyCFSocket *)o;
   if (p->readcallback) {
-    e = (*v)(p->readcallback, a); if (e) return e;
+	e = (*v)(p->readcallback, a); if (e) return e;
   }
   if (p->writecallback) {
-    e = (*v)(p->writecallback, a); if (e) return e;
+	e = (*v)(p->writecallback, a); if (e) return e;
   }
   if (p->connectcallback) {
-    e = (*v)(p->connectcallback, a); if (e) return e;
+	e = (*v)(p->connectcallback, a); if (e) return e;
   }
   if (p->reading) {
-    e = (*v)(p->reading, a); if (e) return e;
+	e = (*v)(p->reading, a); if (e) return e;
   }
   if (p->writing) {
-    e = (*v)(p->writing, a); if (e) return e;
+	e = (*v)(p->writing, a); if (e) return e;
   }
   return 0;
 }
@@ -1493,7 +1493,7 @@ static PyObject *__pyx_tp_new_9cfsupport_PyCFRunLoopTimer(PyTypeObject *t, PyObj
   struct __pyx_obj_9cfsupport_PyCFRunLoopTimer *p = (struct __pyx_obj_9cfsupport_PyCFRunLoopTimer *)o;
   p->callout = Py_None; Py_INCREF(p->callout);
   if (__pyx_f_9cfsupport_16PyCFRunLoopTimer___new__(o, a, k) < 0) {
-    Py_DECREF(o); o = 0;
+	Py_DECREF(o); o = 0;
   }
   return o;
 }
@@ -1501,13 +1501,13 @@ static PyObject *__pyx_tp_new_9cfsupport_PyCFRunLoopTimer(PyTypeObject *t, PyObj
 static void __pyx_tp_dealloc_9cfsupport_PyCFRunLoopTimer(PyObject *o) {
   struct __pyx_obj_9cfsupport_PyCFRunLoopTimer *p = (struct __pyx_obj_9cfsupport_PyCFRunLoopTimer *)o;
   {
-    PyObject *etype, *eval, *etb;
-    PyErr_Fetch(&etype, &eval, &etb);
-    ++o->ob_refcnt;
-    __pyx_f_9cfsupport_16PyCFRunLoopTimer___dealloc__(o);
-    if (PyErr_Occurred()) PyErr_WriteUnraisable(o);
-    --o->ob_refcnt;
-    PyErr_Restore(etype, eval, etb);
+	PyObject *etype, *eval, *etb;
+	PyErr_Fetch(&etype, &eval, &etb);
+	++o->ob_refcnt;
+	__pyx_f_9cfsupport_16PyCFRunLoopTimer___dealloc__(o);
+	if (PyErr_Occurred()) PyErr_WriteUnraisable(o);
+	--o->ob_refcnt;
+	PyErr_Restore(etype, eval, etb);
   }
   Py_XDECREF(p->callout);
   (*o->ob_type->tp_free)(o);
@@ -1517,7 +1517,7 @@ static int __pyx_tp_traverse_9cfsupport_PyCFRunLoopTimer(PyObject *o, visitproc 
   int e;
   struct __pyx_obj_9cfsupport_PyCFRunLoopTimer *p = (struct __pyx_obj_9cfsupport_PyCFRunLoopTimer *)o;
   if (p->callout) {
-    e = (*v)(p->callout, a); if (e) return e;
+	e = (*v)(p->callout, a); if (e) return e;
   }
   return 0;
 }
@@ -1662,7 +1662,7 @@ static PyObject *__pyx_tp_new_9cfsupport_PyCFRunLoop(PyTypeObject *t, PyObject *
   struct __pyx_obj_9cfsupport_PyCFRunLoop *p = (struct __pyx_obj_9cfsupport_PyCFRunLoop *)o;
   p->cf = Py_None; Py_INCREF(p->cf);
   if (__pyx_f_9cfsupport_11PyCFRunLoop___new__(o, a, k) < 0) {
-    Py_DECREF(o); o = 0;
+	Py_DECREF(o); o = 0;
   }
   return o;
 }
@@ -1677,7 +1677,7 @@ static int __pyx_tp_traverse_9cfsupport_PyCFRunLoop(PyObject *o, visitproc v, vo
   int e;
   struct __pyx_obj_9cfsupport_PyCFRunLoop *p = (struct __pyx_obj_9cfsupport_PyCFRunLoop *)o;
   if (p->cf) {
-    e = (*v)(p->cf, a); if (e) return e;
+	e = (*v)(p->cf, a); if (e) return e;
   }
   return 0;
 }
@@ -1890,191 +1890,191 @@ statichere char **__pyx_f = __pyx_filenames;
 /* Runtime support code */
 
 static int __Pyx_ArgTypeTest(PyObject *obj, PyTypeObject *type, int none_allowed, char *name) {
-    if (!type) {
-        PyErr_Format(PyExc_SystemError, "Missing type object");
-        return 0;
-    }
-    if ((none_allowed && obj == Py_None) || PyObject_TypeCheck(obj, type))
-        return 1;
-    PyErr_Format(PyExc_TypeError,
-        "Argument '%s' has incorrect type (expected %s, got %s)",
-        name, type->tp_name, obj->ob_type->tp_name);
-    return 0;
+	if (!type) {
+		PyErr_Format(PyExc_SystemError, "Missing type object");
+		return 0;
+	}
+	if ((none_allowed && obj == Py_None) || PyObject_TypeCheck(obj, type))
+		return 1;
+	PyErr_Format(PyExc_TypeError,
+		"Argument '%s' has incorrect type (expected %s, got %s)",
+		name, type->tp_name, obj->ob_type->tp_name);
+	return 0;
 }
 
 static PyObject *__Pyx_Import(PyObject *name, PyObject *from_list) {
-    PyObject *__import__ = 0;
-    PyObject *empty_list = 0;
-    PyObject *module = 0;
-    PyObject *global_dict = 0;
-    PyObject *empty_dict = 0;
-    PyObject *list;
-    __import__ = PyObject_GetAttrString(__pyx_b, "__import__");
-    if (!__import__)
-        goto bad;
-    if (from_list)
-        list = from_list;
-    else {
-        empty_list = PyList_New(0);
-        if (!empty_list)
-            goto bad;
-        list = empty_list;
-    }
-    global_dict = PyModule_GetDict(__pyx_m);
-    if (!global_dict)
-        goto bad;
-    empty_dict = PyDict_New();
-    if (!empty_dict)
-        goto bad;
-    module = PyObject_CallFunction(__import__, "OOOO",
-        name, global_dict, empty_dict, list);
+	PyObject *__import__ = 0;
+	PyObject *empty_list = 0;
+	PyObject *module = 0;
+	PyObject *global_dict = 0;
+	PyObject *empty_dict = 0;
+	PyObject *list;
+	__import__ = PyObject_GetAttrString(__pyx_b, "__import__");
+	if (!__import__)
+		goto bad;
+	if (from_list)
+		list = from_list;
+	else {
+		empty_list = PyList_New(0);
+		if (!empty_list)
+			goto bad;
+		list = empty_list;
+	}
+	global_dict = PyModule_GetDict(__pyx_m);
+	if (!global_dict)
+		goto bad;
+	empty_dict = PyDict_New();
+	if (!empty_dict)
+		goto bad;
+	module = PyObject_CallFunction(__import__, "OOOO",
+		name, global_dict, empty_dict, list);
 bad:
-    Py_XDECREF(empty_list);
-    Py_XDECREF(__import__);
-    Py_XDECREF(empty_dict);
-    return module;
+	Py_XDECREF(empty_list);
+	Py_XDECREF(__import__);
+	Py_XDECREF(empty_dict);
+	return module;
 }
 
 static PyObject *__Pyx_GetExcValue(void) {
-    PyObject *type = 0, *value = 0, *tb = 0;
-    PyObject *result = 0;
-    PyThreadState *tstate = PyThreadState_Get();
-    PyErr_Fetch(&type, &value, &tb);
-    PyErr_NormalizeException(&type, &value, &tb);
-    if (PyErr_Occurred())
-        goto bad;
-    if (!value) {
-        value = Py_None;
-        Py_INCREF(value);
-    }
-    Py_XDECREF(tstate->exc_type);
-    Py_XDECREF(tstate->exc_value);
-    Py_XDECREF(tstate->exc_traceback);
-    tstate->exc_type = type;
-    tstate->exc_value = value;
-    tstate->exc_traceback = tb;
-    result = value;
-    Py_XINCREF(result);
-    type = 0;
-    value = 0;
-    tb = 0;
+	PyObject *type = 0, *value = 0, *tb = 0;
+	PyObject *result = 0;
+	PyThreadState *tstate = PyThreadState_Get();
+	PyErr_Fetch(&type, &value, &tb);
+	PyErr_NormalizeException(&type, &value, &tb);
+	if (PyErr_Occurred())
+		goto bad;
+	if (!value) {
+		value = Py_None;
+		Py_INCREF(value);
+	}
+	Py_XDECREF(tstate->exc_type);
+	Py_XDECREF(tstate->exc_value);
+	Py_XDECREF(tstate->exc_traceback);
+	tstate->exc_type = type;
+	tstate->exc_value = value;
+	tstate->exc_traceback = tb;
+	result = value;
+	Py_XINCREF(result);
+	type = 0;
+	value = 0;
+	tb = 0;
 bad:
-    Py_XDECREF(type);
-    Py_XDECREF(value);
-    Py_XDECREF(tb);
-    return result;
+	Py_XDECREF(type);
+	Py_XDECREF(value);
+	Py_XDECREF(tb);
+	return result;
 }
 
 static PyObject *__Pyx_GetName(PyObject *dict, PyObject *name) {
-    PyObject *result;
-    result = PyObject_GetAttr(dict, name);
-    if (!result)
-        PyErr_SetObject(PyExc_NameError, name);
-    return result;
+	PyObject *result;
+	result = PyObject_GetAttr(dict, name);
+	if (!result)
+		PyErr_SetObject(PyExc_NameError, name);
+	return result;
 }
 
 static void __Pyx_WriteUnraisable(char *name) {
-    PyObject *old_exc, *old_val, *old_tb;
-    PyObject *ctx;
-    PyErr_Fetch(&old_exc, &old_val, &old_tb);
-    ctx = PyString_FromString(name);
-    PyErr_Restore(old_exc, old_val, old_tb);
-    if (!ctx)
-        ctx = Py_None;
-    PyErr_WriteUnraisable(ctx);
+	PyObject *old_exc, *old_val, *old_tb;
+	PyObject *ctx;
+	PyErr_Fetch(&old_exc, &old_val, &old_tb);
+	ctx = PyString_FromString(name);
+	PyErr_Restore(old_exc, old_val, old_tb);
+	if (!ctx)
+		ctx = Py_None;
+	PyErr_WriteUnraisable(ctx);
 }
 
 static void __Pyx_Raise(PyObject *type, PyObject *value, PyObject *tb) {
-    Py_XINCREF(type);
-    Py_XINCREF(value);
-    Py_XINCREF(tb);
-    /* First, check the traceback argument, replacing None with NULL. */
-    if (tb == Py_None) {
-        Py_DECREF(tb);
-        tb = 0;
-    }
-    else if (tb != NULL && !PyTraceBack_Check(tb)) {
-        PyErr_SetString(PyExc_TypeError,
-            "raise: arg 3 must be a traceback or None");
-        goto raise_error;
-    }
-    /* Next, replace a missing value with None */
-    if (value == NULL) {
-        value = Py_None;
-        Py_INCREF(value);
-    }
-    /* Next, repeatedly, replace a tuple exception with its first item */
-    while (PyTuple_Check(type) && PyTuple_Size(type) > 0) {
-        PyObject *tmp = type;
-        type = PyTuple_GET_ITEM(type, 0);
-        Py_INCREF(type);
-        Py_DECREF(tmp);
-    }
-    if (PyString_Check(type))
-        ;
-    else if (PyClass_Check(type))
-        ; /*PyErr_NormalizeException(&type, &value, &tb);*/
-    else if (PyInstance_Check(type)) {
-        /* Raising an instance.  The value should be a dummy. */
-        if (value != Py_None) {
-            PyErr_SetString(PyExc_TypeError,
-              "instance exception may not have a separate value");
-            goto raise_error;
-        }
-        else {
-            /* Normalize to raise <class>, <instance> */
-            Py_DECREF(value);
-            value = type;
-            type = (PyObject*) ((PyInstanceObject*)type)->in_class;
-            Py_INCREF(type);
-        }
-    }
-    else {
-        /* Not something you can raise.  You get an exception
-           anyway, just not what you specified :-) */
-        PyErr_Format(PyExc_TypeError,
-                 "exceptions must be strings, classes, or "
-                 "instances, not %s", type->ob_type->tp_name);
-        goto raise_error;
-    }
-    PyErr_Restore(type, value, tb);
-    return;
+	Py_XINCREF(type);
+	Py_XINCREF(value);
+	Py_XINCREF(tb);
+	/* First, check the traceback argument, replacing None with NULL. */
+	if (tb == Py_None) {
+		Py_DECREF(tb);
+		tb = 0;
+	}
+	else if (tb != NULL && !PyTraceBack_Check(tb)) {
+		PyErr_SetString(PyExc_TypeError,
+			"raise: arg 3 must be a traceback or None");
+		goto raise_error;
+	}
+	/* Next, replace a missing value with None */
+	if (value == NULL) {
+		value = Py_None;
+		Py_INCREF(value);
+	}
+	/* Next, repeatedly, replace a tuple exception with its first item */
+	while (PyTuple_Check(type) && PyTuple_Size(type) > 0) {
+		PyObject *tmp = type;
+		type = PyTuple_GET_ITEM(type, 0);
+		Py_INCREF(type);
+		Py_DECREF(tmp);
+	}
+	if (PyString_Check(type))
+		;
+	else if (PyClass_Check(type))
+		; /*PyErr_NormalizeException(&type, &value, &tb);*/
+	else if (PyInstance_Check(type)) {
+		/* Raising an instance.  The value should be a dummy. */
+		if (value != Py_None) {
+			PyErr_SetString(PyExc_TypeError,
+			  "instance exception may not have a separate value");
+			goto raise_error;
+		}
+		else {
+			/* Normalize to raise <class>, <instance> */
+			Py_DECREF(value);
+			value = type;
+			type = (PyObject*) ((PyInstanceObject*)type)->in_class;
+			Py_INCREF(type);
+		}
+	}
+	else {
+		/* Not something you can raise.  You get an exception
+		   anyway, just not what you specified :-) */
+		PyErr_Format(PyExc_TypeError,
+				 "exceptions must be strings, classes, or "
+				 "instances, not %s", type->ob_type->tp_name);
+		goto raise_error;
+	}
+	PyErr_Restore(type, value, tb);
+	return;
 raise_error:
-    Py_XDECREF(value);
-    Py_XDECREF(type);
-    Py_XDECREF(tb);
-    return;
+	Py_XDECREF(value);
+	Py_XDECREF(type);
+	Py_XDECREF(tb);
+	return;
 }
 
 static void __Pyx_ReRaise(void) {
-    PyThreadState *tstate = PyThreadState_Get();
-    PyObject *type = tstate->exc_type;
-    PyObject *value = tstate->exc_value;
-    PyObject *tb = tstate->exc_traceback;
-    Py_XINCREF(type);
-    Py_XINCREF(value);
-    Py_XINCREF(tb);
-    PyErr_Restore(type, value, tb);
+	PyThreadState *tstate = PyThreadState_Get();
+	PyObject *type = tstate->exc_type;
+	PyObject *value = tstate->exc_value;
+	PyObject *tb = tstate->exc_traceback;
+	Py_XINCREF(type);
+	Py_XINCREF(value);
+	Py_XINCREF(tb);
+	PyErr_Restore(type, value, tb);
 }
 
 static int __Pyx_InternStrings(__Pyx_InternTabEntry *t) {
-    while (t->p) {
-        *t->p = PyString_InternFromString(t->s);
-        if (!*t->p)
-            return -1;
-        ++t;
-    }
-    return 0;
+	while (t->p) {
+		*t->p = PyString_InternFromString(t->s);
+		if (!*t->p)
+			return -1;
+		++t;
+	}
+	return 0;
 }
 
 static int __Pyx_InitStrings(__Pyx_StringTabEntry *t) {
-    while (t->p) {
-        *t->p = PyString_FromStringAndSize(t->s, t->n - 1);
-        if (!*t->p)
-            return -1;
-        ++t;
-    }
-    return 0;
+	while (t->p) {
+		*t->p = PyString_FromStringAndSize(t->s, t->n - 1);
+		if (!*t->p)
+			return -1;
+		++t;
+	}
+	return 0;
 }
 
 #include "compile.h"
@@ -2082,55 +2082,55 @@ static int __Pyx_InitStrings(__Pyx_StringTabEntry *t) {
 #include "traceback.h"
 
 static void __Pyx_AddTraceback(char *funcname) {
-    PyObject *py_srcfile = 0;
-    PyObject *py_funcname = 0;
-    PyObject *py_globals = 0;
-    PyObject *empty_tuple = 0;
-    PyObject *empty_string = 0;
-    PyCodeObject *py_code = 0;
-    PyFrameObject *py_frame = 0;
-    
-    py_srcfile = PyString_FromString(__pyx_filename);
-    if (!py_srcfile) goto bad;
-    py_funcname = PyString_FromString(funcname);
-    if (!py_funcname) goto bad;
-    py_globals = PyModule_GetDict(__pyx_m);
-    if (!py_globals) goto bad;
-    empty_tuple = PyTuple_New(0);
-    if (!empty_tuple) goto bad;
-    empty_string = PyString_FromString("");
-    if (!empty_string) goto bad;
-    py_code = PyCode_New(
-        0,            /*int argcount,*/
-        0,            /*int nlocals,*/
-        0,            /*int stacksize,*/
-        0,            /*int flags,*/
-        empty_string, /*PyObject *code,*/
-        empty_tuple,  /*PyObject *consts,*/
-        empty_tuple,  /*PyObject *names,*/
-        empty_tuple,  /*PyObject *varnames,*/
-        empty_tuple,  /*PyObject *freevars,*/
-        empty_tuple,  /*PyObject *cellvars,*/
-        py_srcfile,   /*PyObject *filename,*/
-        py_funcname,  /*PyObject *name,*/
-        __pyx_lineno,   /*int firstlineno,*/
-        empty_string  /*PyObject *lnotab*/
-    );
-    if (!py_code) goto bad;
-    py_frame = PyFrame_New(
-        PyThreadState_Get(), /*PyThreadState *tstate,*/
-        py_code,             /*PyCodeObject *code,*/
-        py_globals,          /*PyObject *globals,*/
-        0                    /*PyObject *locals*/
-    );
-    if (!py_frame) goto bad;
-    py_frame->f_lineno = __pyx_lineno;
-    PyTraceBack_Here(py_frame);
+	PyObject *py_srcfile = 0;
+	PyObject *py_funcname = 0;
+	PyObject *py_globals = 0;
+	PyObject *empty_tuple = 0;
+	PyObject *empty_string = 0;
+	PyCodeObject *py_code = 0;
+	PyFrameObject *py_frame = 0;
+	
+	py_srcfile = PyString_FromString(__pyx_filename);
+	if (!py_srcfile) goto bad;
+	py_funcname = PyString_FromString(funcname);
+	if (!py_funcname) goto bad;
+	py_globals = PyModule_GetDict(__pyx_m);
+	if (!py_globals) goto bad;
+	empty_tuple = PyTuple_New(0);
+	if (!empty_tuple) goto bad;
+	empty_string = PyString_FromString("");
+	if (!empty_string) goto bad;
+	py_code = PyCode_New(
+		0,			/*int argcount,*/
+		0,			/*int nlocals,*/
+		0,			/*int stacksize,*/
+		0,			/*int flags,*/
+		empty_string, /*PyObject *code,*/
+		empty_tuple,  /*PyObject *consts,*/
+		empty_tuple,  /*PyObject *names,*/
+		empty_tuple,  /*PyObject *varnames,*/
+		empty_tuple,  /*PyObject *freevars,*/
+		empty_tuple,  /*PyObject *cellvars,*/
+		py_srcfile,   /*PyObject *filename,*/
+		py_funcname,  /*PyObject *name,*/
+		__pyx_lineno,   /*int firstlineno,*/
+		empty_string  /*PyObject *lnotab*/
+	);
+	if (!py_code) goto bad;
+	py_frame = PyFrame_New(
+		PyThreadState_Get(), /*PyThreadState *tstate,*/
+		py_code,			 /*PyCodeObject *code,*/
+		py_globals,		  /*PyObject *globals,*/
+		0					/*PyObject *locals*/
+	);
+	if (!py_frame) goto bad;
+	py_frame->f_lineno = __pyx_lineno;
+	PyTraceBack_Here(py_frame);
 bad:
-    Py_XDECREF(py_srcfile);
-    Py_XDECREF(py_funcname);
-    Py_XDECREF(empty_tuple);
-    Py_XDECREF(empty_string);
-    Py_XDECREF(py_code);
-    Py_XDECREF(py_frame);
+	Py_XDECREF(py_srcfile);
+	Py_XDECREF(py_funcname);
+	Py_XDECREF(empty_tuple);
+	Py_XDECREF(empty_string);
+	Py_XDECREF(py_code);
+	Py_XDECREF(py_frame);
 }

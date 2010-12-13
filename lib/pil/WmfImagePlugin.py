@@ -27,134 +27,134 @@ _handler = None
 # @param handler Handler object.
 
 def register_handler(handler):
-    global _handler
-    _handler = handler
+	global _handler
+	_handler = handler
 
 if hasattr(Image.core, "drawwmf"):
-    # install default handler (windows only)
+	# install default handler (windows only)
 
-    class WmfHandler:
+	class WmfHandler:
 
-        def open(self, im):
-            im.mode = "RGB"
-            self.bbox = im.info["wmf_bbox"]
+		def open(self, im):
+			im.mode = "RGB"
+			self.bbox = im.info["wmf_bbox"]
 
-        def load(self, im):
-            im.fp.seek(0) # rewind
-            return Image.fromstring(
-                "RGB", im.size,
-                Image.core.drawwmf(im.fp.read(), im.size, self.bbox),
-                "raw", "BGR", (im.size[0]*3 + 3) & -4, -1
-                )
+		def load(self, im):
+			im.fp.seek(0) # rewind
+			return Image.fromstring(
+				"RGB", im.size,
+				Image.core.drawwmf(im.fp.read(), im.size, self.bbox),
+				"raw", "BGR", (im.size[0]*3 + 3) & -4, -1
+				)
 
-    register_handler(WmfHandler())
+	register_handler(WmfHandler())
 
 # --------------------------------------------------------------------
 
 def word(c, o=0):
-    return ord(c[o]) + (ord(c[o+1])<<8)
+	return ord(c[o]) + (ord(c[o+1])<<8)
 
 def short(c, o=0):
-    v = ord(c[o]) + (ord(c[o+1])<<8)
-    if v >= 32768:
-        v = v - 65536
-    return v
+	v = ord(c[o]) + (ord(c[o+1])<<8)
+	if v >= 32768:
+		v = v - 65536
+	return v
 
 def dword(c, o=0):
-    return ord(c[o]) + (ord(c[o+1])<<8) + (ord(c[o+2])<<16) + (ord(c[o+3])<<24)
+	return ord(c[o]) + (ord(c[o+1])<<8) + (ord(c[o+2])<<16) + (ord(c[o+3])<<24)
 
 def long(c, o=0):
-    return dword(c, o)
+	return dword(c, o)
 
 #
 # --------------------------------------------------------------------
 # Read WMF file
 
 def _accept(prefix):
-    return (
-        prefix[:6] == "\xd7\xcd\xc6\x9a\x00\x00" or
-        prefix[:4] == "\x01\x00\x00\x00"
-        )
+	return (
+		prefix[:6] == "\xd7\xcd\xc6\x9a\x00\x00" or
+		prefix[:4] == "\x01\x00\x00\x00"
+		)
 
 ##
 # Image plugin for Windows metafiles.
 
 class WmfStubImageFile(ImageFile.StubImageFile):
 
-    format = "WMF"
-    format_description = "Windows Metafile"
+	format = "WMF"
+	format_description = "Windows Metafile"
 
-    def _open(self):
+	def _open(self):
 
-        # check placable header
-        s = self.fp.read(80)
+		# check placable header
+		s = self.fp.read(80)
 
-        if s[:6] == "\xd7\xcd\xc6\x9a\x00\x00":
+		if s[:6] == "\xd7\xcd\xc6\x9a\x00\x00":
 
-            # placeable windows metafile
+			# placeable windows metafile
 
-            # get units per inch
-            inch = word(s, 14)
+			# get units per inch
+			inch = word(s, 14)
 
-            # get bounding box
-            x0 = short(s, 6); y0 = short(s, 8)
-            x1 = short(s, 10); y1 = short(s, 12)
+			# get bounding box
+			x0 = short(s, 6); y0 = short(s, 8)
+			x1 = short(s, 10); y1 = short(s, 12)
 
-            # normalize size to 72 dots per inch
-            size = (x1 - x0) * 72 / inch, (y1 - y0) * 72 / inch
+			# normalize size to 72 dots per inch
+			size = (x1 - x0) * 72 / inch, (y1 - y0) * 72 / inch
 
-            self.info["wmf_bbox"] = x0, y0, x1, y1
+			self.info["wmf_bbox"] = x0, y0, x1, y1
 
-            self.info["dpi"] = 72
+			self.info["dpi"] = 72
 
-            # print self.mode, self.size, self.info
+			# print self.mode, self.size, self.info
 
-            # sanity check (standard metafile header)
-            if s[22:26] != "\x01\x00\t\x00":
-                raise SyntaxError("Unsupported WMF file format")
+			# sanity check (standard metafile header)
+			if s[22:26] != "\x01\x00\t\x00":
+				raise SyntaxError("Unsupported WMF file format")
 
-        elif long(s) == 1 and s[40:44] == " EMF":
-            # enhanced metafile
+		elif long(s) == 1 and s[40:44] == " EMF":
+			# enhanced metafile
 
-            # get bounding box
-            x0 = long(s, 8); y0 = long(s, 12)
-            x1 = long(s, 16); y1 = long(s, 20)
+			# get bounding box
+			x0 = long(s, 8); y0 = long(s, 12)
+			x1 = long(s, 16); y1 = long(s, 20)
 
-            # get frame (in 0.01 millimeter units)
-            frame = long(s, 24), long(s, 28), long(s, 32), long(s, 36)
+			# get frame (in 0.01 millimeter units)
+			frame = long(s, 24), long(s, 28), long(s, 32), long(s, 36)
 
-            # normalize size to 72 dots per inch
-            size = x1 - x0, y1 - y0
+			# normalize size to 72 dots per inch
+			size = x1 - x0, y1 - y0
 
-            # calculate dots per inch from bbox and frame
-            xdpi = 2540 * (x1 - y0) / (frame[2] - frame[0])
-            ydpi = 2540 * (y1 - y0) / (frame[3] - frame[1])
+			# calculate dots per inch from bbox and frame
+			xdpi = 2540 * (x1 - y0) / (frame[2] - frame[0])
+			ydpi = 2540 * (y1 - y0) / (frame[3] - frame[1])
 
-            self.info["wmf_bbox"] = x0, y0, x1, y1
+			self.info["wmf_bbox"] = x0, y0, x1, y1
 
-            if xdpi == ydpi:
-                self.info["dpi"] = xdpi
-            else:
-                self.info["dpi"] = xdpi, ydpi
+			if xdpi == ydpi:
+				self.info["dpi"] = xdpi
+			else:
+				self.info["dpi"] = xdpi, ydpi
 
-        else:
-            raise SyntaxError("Unsupported file format")
+		else:
+			raise SyntaxError("Unsupported file format")
 
-        self.mode = "RGB"
-        self.size = size
+		self.mode = "RGB"
+		self.size = size
 
-        loader = self._load()
-        if loader:
-            loader.open(self)
+		loader = self._load()
+		if loader:
+			loader.open(self)
 
-    def _load(self):
-        return _handler
+	def _load(self):
+		return _handler
 
 
 def _save(im, fp, filename):
-    if _handler is None or not hasattr("_handler", "save"):
-        raise IOError("WMF save handler not installed")
-    _handler.save(im, fp, filename)
+	if _handler is None or not hasattr("_handler", "save"):
+		raise IOError("WMF save handler not installed")
+	_handler.save(im, fp, filename)
 
 #
 # --------------------------------------------------------------------

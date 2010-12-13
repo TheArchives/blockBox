@@ -1,4 +1,4 @@
-# -*- test-case-name: twisted.test.test_internet -*-
+# -*- test-case-name: lib.twisted.test.test_internet -*-
 # $Id: default.py,v 1.90 2004/01/06 22:35:22 warner Exp $
 #
 # Copyright (c) 2001-2004 Twisted Matrix Laboratories.
@@ -12,7 +12,7 @@ Maintainer: Itamar Shtull-Trauring
 """
 
 import warnings
-warnings.warn("twisted.internet.default is deprecated. Use posixbase or selectreactor instead.", category=DeprecationWarning)
+warnings.warn("lib.twisted.internet.default is deprecated. Use posixbase or selectreactor instead.", category=DeprecationWarning)
 
 # Backwards compat
 from posixbase import PosixReactorBase

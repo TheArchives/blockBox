@@ -24,16 +24,16 @@ from lib.pil import Image
 # images under Windows 95/98, NT, 2000 and later.
 
 class HDC:
-    def __init__(self, dc):
-        self.dc = dc
-    def __int__(self):
-        return self.dc
+	def __init__(self, dc):
+		self.dc = dc
+	def __int__(self):
+		return self.dc
 
 class HWND:
-    def __init__(self, wnd):
-        self.wnd = wnd
-    def __int__(self):
-        return self.wnd
+	def __init__(self, wnd):
+		self.wnd = wnd
+	def __int__(self):
+		return self.wnd
 
 ##
 # Create a Windows bitmap with the given mode and size.  The mode can
@@ -49,123 +49,123 @@ class HWND:
 
 class Dib:
 
-    ##
-    # Create Windows bitmap.
-    #
-    # @param image Either a PIL image, or a mode string.  If a
-    #    mode string is used, a size must also be given.  The
-    #    mode can be one of "1", "L", "P", or "RGB".
-    # @param size If the first argument is a mode string, this
-    #    defines the size of the image.
+	##
+	# Create Windows bitmap.
+	#
+	# @param image Either a PIL image, or a mode string.  If a
+	#	mode string is used, a size must also be given.  The
+	#	mode can be one of "1", "L", "P", or "RGB".
+	# @param size If the first argument is a mode string, this
+	#	defines the size of the image.
 
-    def __init__(self, image, size=None):
-        if hasattr(image, "mode") and hasattr(image, "size"):
-            mode = image.mode
-            size = image.size
-        else:
-            mode = image
-            image = None
-        if mode not in ["1", "L", "P", "RGB"]:
-            mode = Image.getmodebase(mode)
-        self.image = Image.core.display(mode, size)
-        self.mode = mode
-        self.size = size
-        if image:
-            self.paste(image)
+	def __init__(self, image, size=None):
+		if hasattr(image, "mode") and hasattr(image, "size"):
+			mode = image.mode
+			size = image.size
+		else:
+			mode = image
+			image = None
+		if mode not in ["1", "L", "P", "RGB"]:
+			mode = Image.getmodebase(mode)
+		self.image = Image.core.display(mode, size)
+		self.mode = mode
+		self.size = size
+		if image:
+			self.paste(image)
 
-    ##
-    # Copy the bitmap contents to a device context.
-    #
-    # @param handle Device context (HDC), cast to a Python integer,
-    #    or a HDC or HWND instance.  In PythonWin, you can use the
-    #    <b>GetHandleAttrib</b> method of the <b>CDC</b> class to get
-    #    a suitable handle.
+	##
+	# Copy the bitmap contents to a device context.
+	#
+	# @param handle Device context (HDC), cast to a Python integer,
+	#	or a HDC or HWND instance.  In PythonWin, you can use the
+	#	<b>GetHandleAttrib</b> method of the <b>CDC</b> class to get
+	#	a suitable handle.
 
-    def expose(self, handle):
-        if isinstance(handle, HWND):
-            dc = self.image.getdc(handle)
-            try:
-                result = self.image.expose(dc)
-            finally:
-                self.image.releasedc(handle, dc)
-        else:
-            result = self.image.expose(handle)
-        return result
+	def expose(self, handle):
+		if isinstance(handle, HWND):
+			dc = self.image.getdc(handle)
+			try:
+				result = self.image.expose(dc)
+			finally:
+				self.image.releasedc(handle, dc)
+		else:
+			result = self.image.expose(handle)
+		return result
 
-    def draw(self, handle, dst, src=None):
-        if not src:
-            src = (0,0) + self.size
-        if isinstance(handle, HWND):
-            dc = self.image.getdc(handle)
-            try:
-                result = self.image.draw(dc, dst, src)
-            finally:
-                self.image.releasedc(handle, dc)
-        else:
-            result = self.image.draw(handle, dst, src)
-        return result
+	def draw(self, handle, dst, src=None):
+		if not src:
+			src = (0,0) + self.size
+		if isinstance(handle, HWND):
+			dc = self.image.getdc(handle)
+			try:
+				result = self.image.draw(dc, dst, src)
+			finally:
+				self.image.releasedc(handle, dc)
+		else:
+			result = self.image.draw(handle, dst, src)
+		return result
 
-    ##
-    # Installs the palette associated with the image in the
-    # given device context.
-    # <p>
-    # This method should be called upon <b>QUERYNEWPALETTE</b>
-    # and <b>PALETTECHANGED</b> events from Windows. If this
-    # method returns a non-zero value, one or more display
-    # palette entries were changed, and the image should be
-    # redrawn.
-    #
-    # @param handle Device context (HDC), cast to a Python integer,
-    #     or an HDC or HWND instance.
-    # @return A true value if one or more entries were changed
-    #    (this indicates that the image should be redrawn).
+	##
+	# Installs the palette associated with the image in the
+	# given device context.
+	# <p>
+	# This method should be called upon <b>QUERYNEWPALETTE</b>
+	# and <b>PALETTECHANGED</b> events from Windows. If this
+	# method returns a non-zero value, one or more display
+	# palette entries were changed, and the image should be
+	# redrawn.
+	#
+	# @param handle Device context (HDC), cast to a Python integer,
+	#	 or an HDC or HWND instance.
+	# @return A true value if one or more entries were changed
+	#	(this indicates that the image should be redrawn).
 
-    def query_palette(self, handle):
-        if isinstance(handle, HWND):
-            handle = self.image.getdc(handle)
-            try:
-                result = self.image.query_palette(handle)
-            finally:
-                self.image.releasedc(handle, handle)
-        else:
-            result = self.image.query_palette(handle)
-        return result
+	def query_palette(self, handle):
+		if isinstance(handle, HWND):
+			handle = self.image.getdc(handle)
+			try:
+				result = self.image.query_palette(handle)
+			finally:
+				self.image.releasedc(handle, handle)
+		else:
+			result = self.image.query_palette(handle)
+		return result
 
-    ##
-    # Paste a PIL image into the bitmap image.
-    #
-    # @param im A PIL image.  The size must match the target region.
-    #    If the mode does not match, the image is converted to the
-    #    mode of the bitmap image.
-    # @param box A 4-tuple defining the left, upper, right, and
-    #    lower pixel coordinate.  If None is given instead of a
-    #    tuple, all of the image is assumed.
+	##
+	# Paste a PIL image into the bitmap image.
+	#
+	# @param im A PIL image.  The size must match the target region.
+	#	If the mode does not match, the image is converted to the
+	#	mode of the bitmap image.
+	# @param box A 4-tuple defining the left, upper, right, and
+	#	lower pixel coordinate.  If None is given instead of a
+	#	tuple, all of the image is assumed.
 
-    def paste(self, im, box=None):
-        im.load()
-        if self.mode != im.mode:
-            im = im.convert(self.mode)
-        if box:
-            self.image.paste(im.im, box)
-        else:
-            self.image.paste(im.im)
+	def paste(self, im, box=None):
+		im.load()
+		if self.mode != im.mode:
+			im = im.convert(self.mode)
+		if box:
+			self.image.paste(im.im, box)
+		else:
+			self.image.paste(im.im)
 
-    ##
-    # Load display memory contents from string buffer.
-    #
-    # @param buffer A string buffer containing display data (usually
-    #     data returned from <b>tostring</b>)
+	##
+	# Load display memory contents from string buffer.
+	#
+	# @param buffer A string buffer containing display data (usually
+	#	 data returned from <b>tostring</b>)
 
-    def fromstring(self, buffer):
-        return self.image.fromstring(buffer)
+	def fromstring(self, buffer):
+		return self.image.fromstring(buffer)
 
-    ##
-    # Copy display memory contents to string buffer.
-    #
-    # @return A string buffer containing display data.
+	##
+	# Copy display memory contents to string buffer.
+	#
+	# @return A string buffer containing display data.
 
-    def tostring(self):
-        return self.image.tostring()
+	def tostring(self):
+		return self.image.tostring()
 
 
 ##
@@ -173,43 +173,43 @@ class Dib:
 
 class Window:
 
-    def __init__(self, title="PIL", width=None, height=None):
-        self.hwnd = Image.core.createwindow(
-            title, self.__dispatcher, width or 0, height or 0
-            )
+	def __init__(self, title="PIL", width=None, height=None):
+		self.hwnd = Image.core.createwindow(
+			title, self.__dispatcher, width or 0, height or 0
+			)
 
-    def __dispatcher(self, action, *args):
-        return apply(getattr(self, "ui_handle_" + action), args)
+	def __dispatcher(self, action, *args):
+		return apply(getattr(self, "ui_handle_" + action), args)
 
-    def ui_handle_clear(self, dc, x0, y0, x1, y1):
-        pass
+	def ui_handle_clear(self, dc, x0, y0, x1, y1):
+		pass
 
-    def ui_handle_damage(self, x0, y0, x1, y1):
-        pass
+	def ui_handle_damage(self, x0, y0, x1, y1):
+		pass
 
-    def ui_handle_destroy(self):
-        pass
+	def ui_handle_destroy(self):
+		pass
 
-    def ui_handle_repair(self, dc, x0, y0, x1, y1):
-        pass
+	def ui_handle_repair(self, dc, x0, y0, x1, y1):
+		pass
 
-    def ui_handle_resize(self, width, height):
-        pass
+	def ui_handle_resize(self, width, height):
+		pass
 
-    def mainloop(self):
-        Image.core.eventloop()
+	def mainloop(self):
+		Image.core.eventloop()
 
 ##
 # Create an image window which displays the given image.
 
 class ImageWindow(Window):
 
-    def __init__(self, image, title="PIL"):
-        if not isinstance(image, Dib):
-            image = Dib(image)
-        self.image = image
-        width, height = image.size
-        Window.__init__(self, title, width=width, height=height)
+	def __init__(self, image, title="PIL"):
+		if not isinstance(image, Dib):
+			image = Dib(image)
+		self.image = image
+		width, height = image.size
+		Window.__init__(self, title, width=width, height=height)
 
-    def ui_handle_repair(self, dc, x0, y0, x1, y1):
-        self.image.draw(dc, (x0, y0, x1, y1))
+	def ui_handle_repair(self, dc, x0, y0, x1, y1):
+		self.image.draw(dc, (x0, y0, x1, y1))

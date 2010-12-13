@@ -21,344 +21,344 @@ from lib.twisted.words.im import locals
 
 
 class IAccount(Interface):
-    """
-    I represent a user's account with a chat service.
-    """
+	"""
+	I represent a user's account with a chat service.
+	"""
 
-    client = Attribute('The L{IClient} currently connecting to this account, if any.')
-    gatewayType = Attribute('A C{str} that identifies the protocol used by this account.')
+	client = Attribute('The L{IClient} currently connecting to this account, if any.')
+	gatewayType = Attribute('A C{str} that identifies the protocol used by this account.')
 
-    def __init__(accountName, autoLogin, username, password, host, port):
-        """
-        @type accountName: string
-        @param accountName: A name to refer to the account by locally.
-        @type autoLogin: boolean
-        @type username: string
-        @type password: string
-        @type host: string
-        @type port: integer
-        """
+	def __init__(accountName, autoLogin, username, password, host, port):
+		"""
+		@type accountName: string
+		@param accountName: A name to refer to the account by locally.
+		@type autoLogin: boolean
+		@type username: string
+		@type password: string
+		@type host: string
+		@type port: integer
+		"""
 
-    def isOnline():
-        """
-        Am I online?
+	def isOnline():
+		"""
+		Am I online?
 
-        @rtype: boolean
-        """
+		@rtype: boolean
+		"""
 
-    def logOn(chatui):
-        """
-        Go on-line.
+	def logOn(chatui):
+		"""
+		Go on-line.
 
-        @type chatui: Implementor of C{IChatUI}
+		@type chatui: Implementor of C{IChatUI}
 
-        @rtype: L{Deferred} L{Client}
-        """
+		@rtype: L{Deferred} L{Client}
+		"""
 
-    def logOff():
-        """
-        Sign off.
-        """
+	def logOff():
+		"""
+		Sign off.
+		"""
 
-    def getGroup(groupName):
-        """
-        @rtype: L{Group<IGroup>}
-        """
+	def getGroup(groupName):
+		"""
+		@rtype: L{Group<IGroup>}
+		"""
 
-    def getPerson(personName):
-        """
-        @rtype: L{Person<IPerson>}
-        """
+	def getPerson(personName):
+		"""
+		@rtype: L{Person<IPerson>}
+		"""
 
 class IClient(Interface):
 
-    account = Attribute('The L{IAccount} I am a Client for')
+	account = Attribute('The L{IAccount} I am a Client for')
 
-    def __init__(account, chatui, logonDeferred):
-        """
-        @type account: L{IAccount}
-        @type chatui: L{IChatUI}
-        @param logonDeferred: Will be called back once I am logged on.
-        @type logonDeferred: L{Deferred<twisted.internet.defer.Deferred>}
-        """
+	def __init__(account, chatui, logonDeferred):
+		"""
+		@type account: L{IAccount}
+		@type chatui: L{IChatUI}
+		@param logonDeferred: Will be called back once I am logged on.
+		@type logonDeferred: L{Deferred<lib.twisted.internet.defer.Deferred>}
+		"""
 
-    def joinGroup(groupName):
-        """
-        @param groupName: The name of the group to join.
-        @type groupName: string
-        """
+	def joinGroup(groupName):
+		"""
+		@param groupName: The name of the group to join.
+		@type groupName: string
+		"""
 
-    def leaveGroup(groupName):
-        """
-        @param groupName: The name of the group to leave.
-        @type groupName: string
-        """
+	def leaveGroup(groupName):
+		"""
+		@param groupName: The name of the group to leave.
+		@type groupName: string
+		"""
 
-    def getGroupConversation(name, hide=0):
-        pass
+	def getGroupConversation(name, hide=0):
+		pass
 
-    def getPerson(name):
-        pass
+	def getPerson(name):
+		pass
 
 
 class IPerson(Interface):
 
-    def __init__(name, account):
-        """
-        Initialize me.
+	def __init__(name, account):
+		"""
+		Initialize me.
 
-        @param name: My name, as the server knows me.
-        @type name: string
-        @param account: The account I am accessed through.
-        @type account: I{Account}
-        """
+		@param name: My name, as the server knows me.
+		@type name: string
+		@param account: The account I am accessed through.
+		@type account: I{Account}
+		"""
 
-    def isOnline():
-        """
-        Am I online right now?
+	def isOnline():
+		"""
+		Am I online right now?
 
-        @rtype: boolean
-        """
+		@rtype: boolean
+		"""
 
-    def getStatus():
-        """
-        What is my on-line status?
+	def getStatus():
+		"""
+		What is my on-line status?
 
-        @return: L{locals.StatusEnum}
-        """
+		@return: L{locals.StatusEnum}
+		"""
 
-    def getIdleTime():
-        """
-        @rtype: string (XXX: How about a scalar?)
-        """
+	def getIdleTime():
+		"""
+		@rtype: string (XXX: How about a scalar?)
+		"""
 
-    def sendMessage(text, metadata=None):
-        """
-        Send a message to this person.
+	def sendMessage(text, metadata=None):
+		"""
+		Send a message to this person.
 
-        @type text: string
-        @type metadata: dict
-        """
+		@type text: string
+		@type metadata: dict
+		"""
 
 
 class IGroup(Interface):
-    """
-    A group which you may have a conversation with.
+	"""
+	A group which you may have a conversation with.
 
-    Groups generally have a loosely-defined set of members, who may
-    leave and join at any time.
-    """
+	Groups generally have a loosely-defined set of members, who may
+	leave and join at any time.
+	"""
 
-    name = Attribute('My C{str} name, as the server knows me.')
-    account = Attribute('The L{Account<IAccount>} I am accessed through.')
+	name = Attribute('My C{str} name, as the server knows me.')
+	account = Attribute('The L{Account<IAccount>} I am accessed through.')
 
-    def __init__(name, account):
-        """
-        Initialize me.
+	def __init__(name, account):
+		"""
+		Initialize me.
 
-        @param name: My name, as the server knows me.
-        @type name: str
-        @param account: The account I am accessed through.
-        @type account: L{Account<IAccount>}
-        """
+		@param name: My name, as the server knows me.
+		@type name: str
+		@param account: The account I am accessed through.
+		@type account: L{Account<IAccount>}
+		"""
 
-    def setTopic(text):
-        """
-        Set this Groups topic on the server.
+	def setTopic(text):
+		"""
+		Set this Groups topic on the server.
 
-        @type text: string
-        """
+		@type text: string
+		"""
 
-    def sendGroupMessage(text, metadata=None):
-        """
-        Send a message to this group.
+	def sendGroupMessage(text, metadata=None):
+		"""
+		Send a message to this group.
 
-        @type text: str
+		@type text: str
 
-        @type metadata: dict
-        @param metadata: Valid keys for this dictionary include:
+		@type metadata: dict
+		@param metadata: Valid keys for this dictionary include:
 
-            - C{'style'}: associated with one of:
-                - C{'emote'}: indicates this is an action
-        """
+			- C{'style'}: associated with one of:
+				- C{'emote'}: indicates this is an action
+		"""
 
-    def join():
-        """
-        Join this group.
-        """
+	def join():
+		"""
+		Join this group.
+		"""
 
-    def leave():
-        """
-        Depart this group.
-        """
+	def leave():
+		"""
+		Depart this group.
+		"""
 
 
 class IConversation(Interface):
-    """
-    A conversation with a specific person.
-    """
+	"""
+	A conversation with a specific person.
+	"""
 
-    def __init__(person, chatui):
-        """
-        @type person: L{IPerson}
-        """
+	def __init__(person, chatui):
+		"""
+		@type person: L{IPerson}
+		"""
 
-    def show():
-        """
-        doesn't seem like it belongs in this interface.
-        """
+	def show():
+		"""
+		doesn't seem like it belongs in this interface.
+		"""
 
-    def hide():
-        """
-        nor this neither.
-        """
+	def hide():
+		"""
+		nor this neither.
+		"""
 
-    def sendText(text, metadata):
-        pass
+	def sendText(text, metadata):
+		pass
 
-    def showMessage(text, metadata):
-        pass
+	def showMessage(text, metadata):
+		pass
 
-    def changedNick(person, newnick):
-        """
-        @param person: XXX Shouldn't this always be Conversation.person?
-        """
+	def changedNick(person, newnick):
+		"""
+		@param person: XXX Shouldn't this always be Conversation.person?
+		"""
 
 class IGroupConversation(Interface):
 
-    def show():
-        """
-        doesn't seem like it belongs in this interface.
-        """
+	def show():
+		"""
+		doesn't seem like it belongs in this interface.
+		"""
 
-    def hide():
-        """
-        nor this neither.
-        """
+	def hide():
+		"""
+		nor this neither.
+		"""
 
-    def sendText(text, metadata):
-        pass
+	def sendText(text, metadata):
+		pass
 
-    def showGroupMessage(sender, text, metadata):
-        pass
+	def showGroupMessage(sender, text, metadata):
+		pass
 
-    def setGroupMembers(members):
-        """
-        Sets the list of members in the group and displays it to the user.
-        """
+	def setGroupMembers(members):
+		"""
+		Sets the list of members in the group and displays it to the user.
+		"""
 
-    def setTopic(topic, author):
-        """
-        Displays the topic (from the server) for the group conversation window.
+	def setTopic(topic, author):
+		"""
+		Displays the topic (from the server) for the group conversation window.
 
-        @type topic: string
-        @type author: string (XXX: Not Person?)
-        """
+		@type topic: string
+		@type author: string (XXX: Not Person?)
+		"""
 
-    def memberJoined(member):
-        """
-        Adds the given member to the list of members in the group conversation
-        and displays this to the user,
+	def memberJoined(member):
+		"""
+		Adds the given member to the list of members in the group conversation
+		and displays this to the user,
 
-        @type member: string (XXX: Not Person?)
-        """
+		@type member: string (XXX: Not Person?)
+		"""
 
-    def memberChangedNick(oldnick, newnick):
-        """
-        Changes the oldnick in the list of members to C{newnick} and displays this
-        change to the user,
+	def memberChangedNick(oldnick, newnick):
+		"""
+		Changes the oldnick in the list of members to C{newnick} and displays this
+		change to the user,
 
-        @type oldnick: string (XXX: Not Person?)
-        @type newnick: string
-        """
+		@type oldnick: string (XXX: Not Person?)
+		@type newnick: string
+		"""
 
-    def memberLeft(member):
-        """
-        Deletes the given member from the list of members in the group
-        conversation and displays the change to the user.
+	def memberLeft(member):
+		"""
+		Deletes the given member from the list of members in the group
+		conversation and displays the change to the user.
 
-        @type member: string (XXX: Not Person?)
-        """
+		@type member: string (XXX: Not Person?)
+		"""
 
 
 class IChatUI(Interface):
 
-    def registerAccountClient(client):
-        """
-        Notifies user that an account has been signed on to.
+	def registerAccountClient(client):
+		"""
+		Notifies user that an account has been signed on to.
 
-        @type client: L{Client<IClient>}
-        """
+		@type client: L{Client<IClient>}
+		"""
 
-    def unregisterAccountClient(client):
-        """
-        Notifies user that an account has been signed off or disconnected.
+	def unregisterAccountClient(client):
+		"""
+		Notifies user that an account has been signed off or disconnected.
 
-        @type client: L{Client<IClient>}
-        """
+		@type client: L{Client<IClient>}
+		"""
 
-    def getContactsList():
-        """
-        @rtype: L{ContactsList}
-        """
+	def getContactsList():
+		"""
+		@rtype: L{ContactsList}
+		"""
 
-    # WARNING: You'll want to be polymorphed into something with
-    # intrinsic stoning resistance before continuing.
+	# WARNING: You'll want to be polymorphed into something with
+	# intrinsic stoning resistance before continuing.
 
-    def getConversation(person, Class, stayHidden=0):
-        """
-        For the given person object, returns the conversation window
-        or creates and returns a new conversation window if one does not exist.
+	def getConversation(person, Class, stayHidden=0):
+		"""
+		For the given person object, returns the conversation window
+		or creates and returns a new conversation window if one does not exist.
 
-        @type person: L{Person<IPerson>}
-        @type Class: L{Conversation<IConversation>} class
-        @type stayHidden: boolean
+		@type person: L{Person<IPerson>}
+		@type Class: L{Conversation<IConversation>} class
+		@type stayHidden: boolean
 
-        @rtype: L{Conversation<IConversation>}
-        """
+		@rtype: L{Conversation<IConversation>}
+		"""
 
-    def getGroupConversation(group, Class, stayHidden=0):
-        """
-        For the given group object, returns the group conversation window or
-        creates and returns a new group conversation window if it doesn't exist.
+	def getGroupConversation(group, Class, stayHidden=0):
+		"""
+		For the given group object, returns the group conversation window or
+		creates and returns a new group conversation window if it doesn't exist.
 
-        @type group: L{Group<interfaces.IGroup>}
-        @type Class: L{Conversation<interfaces.IConversation>} class
-        @type stayHidden: boolean
+		@type group: L{Group<interfaces.IGroup>}
+		@type Class: L{Conversation<interfaces.IConversation>} class
+		@type stayHidden: boolean
 
-        @rtype: L{GroupConversation<interfaces.IGroupConversation>}
-        """
+		@rtype: L{GroupConversation<interfaces.IGroupConversation>}
+		"""
 
-    def getPerson(name, client):
-        """
-        Get a Person for a client.
+	def getPerson(name, client):
+		"""
+		Get a Person for a client.
 
-        Duplicates L{IAccount.getPerson}.
+		Duplicates L{IAccount.getPerson}.
 
-        @type name: string
-        @type client: L{Client<IClient>}
+		@type name: string
+		@type client: L{Client<IClient>}
 
-        @rtype: L{Person<IPerson>}
-        """
+		@rtype: L{Person<IPerson>}
+		"""
 
-    def getGroup(name, client):
-        """
-        Get a Group for a client.
+	def getGroup(name, client):
+		"""
+		Get a Group for a client.
 
-        Duplicates L{IAccount.getGroup}.
+		Duplicates L{IAccount.getGroup}.
 
-        @type name: string
-        @type client: L{Client<IClient>}
+		@type name: string
+		@type client: L{Client<IClient>}
 
-        @rtype: L{Group<IGroup>}
-        """
+		@rtype: L{Group<IGroup>}
+		"""
 
-    def contactChangedNick(oldnick, newnick):
-        """
-        For the given person, changes the person's name to newnick, and
-        tells the contact list and any conversation windows with that person
-        to change as well.
+	def contactChangedNick(oldnick, newnick):
+		"""
+		For the given person, changes the person's name to newnick, and
+		tells the contact list and any conversation windows with that person
+		to change as well.
 
-        @type oldnick: string
-        @type newnick: string
-        """
+		@type oldnick: string
+		@type newnick: string
+		"""
