@@ -28,7 +28,7 @@ __version__ = "0.1"
 from lib.pil import ImageFile, ImagePalette
 
 def i16(c):
-    return ord(c[1]) + (ord(c[0])<<8)
+	return ord(c[1]) + (ord(c[0])<<8)
 
 ##
 # Image plugin for the GD uncompressed format.  Note that this format
@@ -38,48 +38,48 @@ def i16(c):
 
 class GdImageFile(ImageFile.ImageFile):
 
-    format = "GD"
-    format_description = "GD uncompressed images"
+	format = "GD"
+	format_description = "GD uncompressed images"
 
-    def _open(self):
+	def _open(self):
 
-        # Header
-        s = self.fp.read(775)
+		# Header
+		s = self.fp.read(775)
 
-        self.mode = "L" # FIXME: "P"
-        self.size = i16(s[0:2]), i16(s[2:4])
+		self.mode = "L" # FIXME: "P"
+		self.size = i16(s[0:2]), i16(s[2:4])
 
-        # transparency index
-        tindex = i16(s[5:7])
-        if tindex < 256:
-            self.info["transparent"] = tindex
+		# transparency index
+		tindex = i16(s[5:7])
+		if tindex < 256:
+			self.info["transparent"] = tindex
 
-        self.palette = ImagePalette.raw("RGB", s[7:])
+		self.palette = ImagePalette.raw("RGB", s[7:])
 
-        self.tile = [("raw", (0,0)+self.size, 775, ("L", 0, -1))]
+		self.tile = [("raw", (0,0)+self.size, 775, ("L", 0, -1))]
 
 ##
 # Load texture from a GD image file.
 #
 # @param filename GD file name, or an opened file handle.
 # @param mode Optional mode.  In this version, if the mode argument
-#     is given, it must be "r".
+#	 is given, it must be "r".
 # @return An image instance.
 # @exception IOError If the image could not be read.
 
 def open(fp, mode = "r"):
 
-    if mode != "r":
-        raise ValueError("bad mode")
+	if mode != "r":
+		raise ValueError("bad mode")
 
-    if type(fp) == type(""):
-        import __builtin__
-        filename = fp
-        fp = __builtin__.open(fp, "rb")
-    else:
-        filename = ""
+	if type(fp) == type(""):
+		import __builtin__
+		filename = fp
+		fp = __builtin__.open(fp, "rb")
+	else:
+		filename = ""
 
-    try:
-        return GdImageFile(fp, filename)
-    except SyntaxError:
-        raise IOError("cannot identify this image file")
+	try:
+		return GdImageFile(fp, filename)
+	except SyntaxError:
+		raise IOError("cannot identify this image file")

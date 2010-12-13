@@ -1,4 +1,4 @@
-# -*- test-case-name: twisted.words.test -*-
+# -*- test-case-name: lib.twisted.words.test -*-
 # Copyright (c) 2001-2005 Twisted Matrix Laboratories.
 # See LICENSE for details.
 
@@ -6,29 +6,29 @@
 """
 
 class WordsError(Exception):
-    def __str__(self):
-        return self.__class__.__name__ + ': ' + Exception.__str__(self)
+	def __str__(self):
+		return self.__class__.__name__ + ': ' + Exception.__str__(self)
 
 class NoSuchUser(WordsError):
-    pass
+	pass
 
 
 class DuplicateUser(WordsError):
-    pass
+	pass
 
 
 class NoSuchGroup(WordsError):
-    pass
+	pass
 
 
 class DuplicateGroup(WordsError):
-    pass
+	pass
 
 
 class AlreadyLoggedIn(WordsError):
-    pass
+	pass
 
 __all__ = [
-    'WordsError', 'NoSuchUser', 'DuplicateUser',
-    'NoSuchGroup', 'DuplicateGroup', 'AlreadyLoggedIn',
-    ]
+	'WordsError', 'NoSuchUser', 'DuplicateUser',
+	'NoSuchGroup', 'DuplicateGroup', 'AlreadyLoggedIn',
+	]

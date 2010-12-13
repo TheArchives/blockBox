@@ -24,59 +24,59 @@ from lib.pil import Image, ImageFile, ImagePalette
 
 
 def i16(c):
-    return ord(c[1]) + (ord(c[0])<<8)
+	return ord(c[1]) + (ord(c[0])<<8)
 
 def i32(c):
-    return ord(c[3]) + (ord(c[2])<<8) + (ord(c[1])<<16) + (ord(c[0])<<24)
+	return ord(c[3]) + (ord(c[2])<<8) + (ord(c[1])<<16) + (ord(c[0])<<24)
 
 
 def _accept(prefix):
-    return i32(prefix) == 0x59a66a95
+	return i32(prefix) == 0x59a66a95
 
 ##
 # Image plugin for Sun raster files.
 
 class SunImageFile(ImageFile.ImageFile):
 
-    format = "SUN"
-    format_description = "Sun Raster File"
+	format = "SUN"
+	format_description = "Sun Raster File"
 
-    def _open(self):
+	def _open(self):
 
-        # HEAD
-        s = self.fp.read(32)
-        if i32(s) != 0x59a66a95:
-            raise SyntaxError, "not an SUN raster file"
+		# HEAD
+		s = self.fp.read(32)
+		if i32(s) != 0x59a66a95:
+			raise SyntaxError, "not an SUN raster file"
 
-        offset = 32
+		offset = 32
 
-        self.size = i32(s[4:8]), i32(s[8:12])
+		self.size = i32(s[4:8]), i32(s[8:12])
 
-        depth = i32(s[12:16])
-        if depth == 1:
-            self.mode, rawmode = "1", "1;I"
-        elif depth == 8:
-            self.mode = rawmode = "L"
-        elif depth == 24:
-            self.mode, rawmode = "RGB", "BGR"
-        else:
-            raise SyntaxError, "unsupported mode"
+		depth = i32(s[12:16])
+		if depth == 1:
+			self.mode, rawmode = "1", "1;I"
+		elif depth == 8:
+			self.mode = rawmode = "L"
+		elif depth == 24:
+			self.mode, rawmode = "RGB", "BGR"
+		else:
+			raise SyntaxError, "unsupported mode"
 
-        compression = i32(s[20:24])
+		compression = i32(s[20:24])
 
-        if i32(s[24:28]) != 0:
-            length = i32(s[28:32])
-            offset = offset + length
-            self.palette = ImagePalette.raw("RGB;L", self.fp.read(length))
-            if self.mode == "L":
-                self.mode = rawmode = "P"
+		if i32(s[24:28]) != 0:
+			length = i32(s[28:32])
+			offset = offset + length
+			self.palette = ImagePalette.raw("RGB;L", self.fp.read(length))
+			if self.mode == "L":
+				self.mode = rawmode = "P"
 
-        stride = (((self.size[0] * depth + 7) / 8) + 3) & (~3)
+		stride = (((self.size[0] * depth + 7) / 8) + 3) & (~3)
 
-        if compression == 1:
-            self.tile = [("raw", (0,0)+self.size, offset, (rawmode, stride))]
-        elif compression == 2:
-            self.tile = [("sun_rle", (0,0)+self.size, offset, rawmode)]
+		if compression == 1:
+			self.tile = [("raw", (0,0)+self.size, offset, (rawmode, stride))]
+		elif compression == 2:
+			self.tile = [("sun_rle", (0,0)+self.size, offset, rawmode)]
 
 #
 # registry

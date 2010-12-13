@@ -64,8 +64,8 @@ class InternetPlugin(ProtocolPlugin):
 			if len(self.tuser) < 1:
 				self.client.sendServerMessage("Please do /tlog first.")
 			else:
-				msg = urllib.quote(" ".join(parts[1:]) + " #iCraft")
-				data = urllib.urlencode({"status": " ".join(parts[1:]) + " #iCraft"})
+				msg = urllib.quote(" ".join(parts[1:]) + " #blockBox")
+				data = urllib.urlencode({"status": " ".join(parts[1:]) + " #blockBox"})
 				urllib.urlopen(("http://%s:%s@twitter.com/statuses/update.xml" % (self.tuser,self.tpass)), data)
 				self.client.sendServerMessage("You have successfully tweeted.")
 				self.twlog.write(self.tuser+"("+self.client.username+")"+" has tweeted: "+msg+"\n")

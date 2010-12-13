@@ -36,98 +36,98 @@ bdf_slant = {
 }
 
 bdf_spacing = {
-    "P": "Proportional",
-    "M": "Monospaced",
-    "C": "Cell"
+	"P": "Proportional",
+	"M": "Monospaced",
+	"C": "Cell"
 }
 
 def bdf_char(f):
 
-    # skip to STARTCHAR
-    while 1:
-        s = f.readline()
-        if not s:
-            return None
-        if s[:9] == "STARTCHAR":
-            break
-    id = string.strip(s[9:])
+	# skip to STARTCHAR
+	while 1:
+		s = f.readline()
+		if not s:
+			return None
+		if s[:9] == "STARTCHAR":
+			break
+	id = string.strip(s[9:])
 
-    # load symbol properties
-    props = {}
-    while 1:
-        s = f.readline()
-        if not s or s[:6] == "BITMAP":
-            break
-        i = string.find(s, " ")
-        props[s[:i]] = s[i+1:-1]
+	# load symbol properties
+	props = {}
+	while 1:
+		s = f.readline()
+		if not s or s[:6] == "BITMAP":
+			break
+		i = string.find(s, " ")
+		props[s[:i]] = s[i+1:-1]
 
-    # load bitmap
-    bitmap = []
-    while 1:
-        s = f.readline()
-        if not s or s[:7] == "ENDCHAR":
-            break
-        bitmap.append(s[:-1])
-    bitmap = string.join(bitmap, "")
+	# load bitmap
+	bitmap = []
+	while 1:
+		s = f.readline()
+		if not s or s[:7] == "ENDCHAR":
+			break
+		bitmap.append(s[:-1])
+	bitmap = string.join(bitmap, "")
 
-    [x, y, l, d] = map(int, string.split(props["BBX"]))
-    [dx, dy] = map(int, string.split(props["DWIDTH"]))
+	[x, y, l, d] = map(int, string.split(props["BBX"]))
+	[dx, dy] = map(int, string.split(props["DWIDTH"]))
 
-    bbox = (dx, dy), (l, -d-y, x+l, -d), (0, 0, x, y)
+	bbox = (dx, dy), (l, -d-y, x+l, -d), (0, 0, x, y)
 
-    try:
-        im = Image.fromstring("1", (x, y), bitmap, "hex", "1")
-    except ValueError:
-        # deal with zero-width characters
-        im = Image.new("1", (x, y))
+	try:
+		im = Image.fromstring("1", (x, y), bitmap, "hex", "1")
+	except ValueError:
+		# deal with zero-width characters
+		im = Image.new("1", (x, y))
 
-    return id, int(props["ENCODING"]), bbox, im
+	return id, int(props["ENCODING"]), bbox, im
 
 ##
 # Font file plugin for the X11 BDF format.
 
 class BdfFontFile(FontFile.FontFile):
 
-    def __init__(self, fp):
+	def __init__(self, fp):
 
-        FontFile.FontFile.__init__(self)
+		FontFile.FontFile.__init__(self)
 
-        s = fp.readline()
-        if s[:13] != "STARTFONT 2.1":
-            raise SyntaxError, "not a valid BDF file"
+		s = fp.readline()
+		if s[:13] != "STARTFONT 2.1":
+			raise SyntaxError, "not a valid BDF file"
 
-        props = {}
-        comments = []
+		props = {}
+		comments = []
 
-        while 1:
-            s = fp.readline()
-            if not s or s[:13] == "ENDPROPERTIES":
-                break
-            i = string.find(s, " ")
-            props[s[:i]] = s[i+1:-1]
-            if s[:i] in ["COMMENT", "COPYRIGHT"]:
-                if string.find(s, "LogicalFontDescription") < 0:
-                    comments.append(s[i+1:-1])
+		while 1:
+			s = fp.readline()
+			if not s or s[:13] == "ENDPROPERTIES":
+				break
+			i = string.find(s, " ")
+			props[s[:i]] = s[i+1:-1]
+			if s[:i] in ["COMMENT", "COPYRIGHT"]:
+				if string.find(s, "LogicalFontDescription") < 0:
+					comments.append(s[i+1:-1])
 
-        font = string.split(props["FONT"], "-")
+		font = string.split(props["FONT"], "-")
 
-        font[4] = bdf_slant[string.upper(font[4])]
-        font[11] = bdf_spacing[string.upper(font[11])]
+		font[4] = bdf_slant[string.upper(font[4])]
+		font[11] = bdf_spacing[string.upper(font[11])]
 
-        ascent = int(props["FONT_ASCENT"])
-        descent = int(props["FONT_DESCENT"])
+		ascent = int(props["FONT_ASCENT"])
+		descent = int(props["FONT_DESCENT"])
 
-        fontname = string.join(font[1:], ";")
+		fontname = string.join(font[1:], ";")
 
-        # print "#", fontname
-        # for i in comments:
-        #       print "#", i
+		# print "#", fontname
+		# for i in comments:
+		#	   print "#", i
 
-        font = []
-        while 1:
-            c = bdf_char(fp)
-            if not c:
-                break
-            id, ch, (xy, dst, src), im = c
-            if ch >= 0 and ch < len(self.glyph):
-                self.glyph[ch] = xy, dst, src, im
+		font = []
+		while 1:
+			c = bdf_char(fp)
+			if not c:
+				break
+			id, ch, (xy, dst, src), im = c
+			if ch >= 0 and ch < len(self.glyph):
+				self.glyph[ch] = xy, dst, src, im

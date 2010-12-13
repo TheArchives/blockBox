@@ -25,38 +25,38 @@
 void *lpAcceptEx, *lpGetAcceptExSockaddrs, *lpConnectEx, *lpTransmitFile;
 
 int initPointer(SOCKET s, void **fun, GUID guid) {
-    int res;
-    DWORD bytes;
+	int res;
+	DWORD bytes;
 
-    *fun = NULL;
-    res = WSAIoctl(s, SIO_GET_EXTENSION_FUNCTION_POINTER,
-                   &guid, sizeof(guid),
-                   fun, sizeof(fun),
-                   &bytes, NULL, NULL);
-    return !res;
+	*fun = NULL;
+	res = WSAIoctl(s, SIO_GET_EXTENSION_FUNCTION_POINTER,
+				   &guid, sizeof(guid),
+				   fun, sizeof(fun),
+				   &bytes, NULL, NULL);
+	return !res;
 }
 
 int initWinsockPointers() {
-    SOCKET s = socket(AF_INET, SOCK_STREAM, 0);
-    /* I hate C */
-    GUID guid1 = WSAID_ACCEPTEX;
-    GUID guid2 = WSAID_GETACCEPTEXSOCKADDRS;
-    GUID guid3 = WSAID_CONNECTEX;
-    /*GUID guid4 = WSAID_TRANSMITFILE;*/
-    if (!s) {
-        return 0;
-    }
-    if (!initPointer(s, &lpAcceptEx, guid1))
-    {
-        return 0;
-    }
-    if (!initPointer(s, &lpGetAcceptExSockaddrs, guid2)) {
-        return 0;
-    }
-    if (!initPointer(s, &lpConnectEx, guid3)) {
-        return 0;
-    };
-    /*initPointer(s, &lpTransmitFile, guid4);*/
-    return 1;
+	SOCKET s = socket(AF_INET, SOCK_STREAM, 0);
+	/* I hate C */
+	GUID guid1 = WSAID_ACCEPTEX;
+	GUID guid2 = WSAID_GETACCEPTEXSOCKADDRS;
+	GUID guid3 = WSAID_CONNECTEX;
+	/*GUID guid4 = WSAID_TRANSMITFILE;*/
+	if (!s) {
+		return 0;
+	}
+	if (!initPointer(s, &lpAcceptEx, guid1))
+	{
+		return 0;
+	}
+	if (!initPointer(s, &lpGetAcceptExSockaddrs, guid2)) {
+		return 0;
+	}
+	if (!initPointer(s, &lpConnectEx, guid3)) {
+		return 0;
+	};
+	/*initPointer(s, &lpTransmitFile, guid4);*/
+	return 1;
 }
 

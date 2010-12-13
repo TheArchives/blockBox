@@ -22,45 +22,45 @@ import struct
 from lib.pil import Image, ImageFile
 
 def _accept(s):
-    return s[:8] == "\x00\x00\x00\x00\x00\x00\x00\x04"
+	return s[:8] == "\x00\x00\x00\x00\x00\x00\x00\x04"
 
 ##
 # Image plugin for McIdas area images.
 
 class McIdasImageFile(ImageFile.ImageFile):
 
-    format = "MCIDAS"
-    format_description = "McIdas area file"
+	format = "MCIDAS"
+	format_description = "McIdas area file"
 
-    def _open(self):
+	def _open(self):
 
-        # parse area file directory
-        s = self.fp.read(256)
-        if not _accept(s) or len(s) != 256:
-            raise SyntaxError("not an McIdas area file")
+		# parse area file directory
+		s = self.fp.read(256)
+		if not _accept(s) or len(s) != 256:
+			raise SyntaxError("not an McIdas area file")
 
-        self.area_descriptor_raw = s
-        self.area_descriptor = w = [0] + list(struct.unpack("!64i", s))
+		self.area_descriptor_raw = s
+		self.area_descriptor = w = [0] + list(struct.unpack("!64i", s))
 
-        # get mode
-        if w[11] == 1:
-            mode = rawmode = "L"
-        elif w[11] == 2:
-            # FIXME: add memory map support
-            mode = "I"; rawmode = "I;16B"
-        elif w[11] == 4:
-            # FIXME: add memory map support
-            mode = "I"; rawmode = "I;32B"
-        else:
-            raise SyntaxError("unsupported McIdas format")
+		# get mode
+		if w[11] == 1:
+			mode = rawmode = "L"
+		elif w[11] == 2:
+			# FIXME: add memory map support
+			mode = "I"; rawmode = "I;16B"
+		elif w[11] == 4:
+			# FIXME: add memory map support
+			mode = "I"; rawmode = "I;32B"
+		else:
+			raise SyntaxError("unsupported McIdas format")
 
-        self.mode = mode
-        self.size = w[10], w[9]
+		self.mode = mode
+		self.size = w[10], w[9]
 
-        offset = w[34] + w[15]
-        stride = w[15] + w[10]*w[11]*w[14]
+		offset = w[34] + w[15]
+		stride = w[15] + w[10]*w[11]*w[14]
 
-        self.tile = [("raw", (0, 0) + self.size, offset, (rawmode, stride, 1))]
+		self.tile = [("raw", (0, 0) + self.size, offset, (rawmode, stride, 1))]
 
 # --------------------------------------------------------------------
 # registry
