@@ -6,15 +6,12 @@ import sys
 import urllib
 from os import popen
 
-from lib.twisted.internet import reactor
+from twisted.internet import reactor
 try:
-	import lib.pil
+	import pil
 except ImportError:
-	try:
-		import pil
-	except ImportError:
-		print ("Failed to load PIL, imagedraw is now disabled")
-		noimagedraw = True
+	print ("Failed to load PIL, imagedraw is now disabled")
+	noimagedraw = True
 
 from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *

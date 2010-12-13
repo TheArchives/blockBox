@@ -10,7 +10,14 @@ import logging
 from logging.handlers import SMTPHandler
 from ConfigParser import RawConfigParser as ConfigParser
 
-from lib.twisted.internet import reactor
+try:
+	from twisted.internet import reactor
+except ImportError:
+	try:
+		print ("blockBox could not find Twisted or Zope. Please either check if you have correctly installed Twisted and Zope, or use the official package instead.")
+	except:
+		print ("blockBox could not find Twisted or Zope. Please either check if you have correctly installed Twisted and Zope, or use the official package instead.")
+	exit(1);
 
 from blockbox.constants import *
 from blockbox.server import MyneFactory

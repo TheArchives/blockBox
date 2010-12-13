@@ -4,7 +4,7 @@
 
 from ConfigParser import RawConfigParser as ConfigParser
 
-from lib.twisted.internet import reactor
+from twisted.internet import reactor
 
 class PersistenceEngine(object):
 	def __init__(self, username):

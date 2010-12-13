@@ -20,8 +20,8 @@ import logging
 from ConfigParser import RawConfigParser as ConfigParser
 from Queue import Queue, Empty
 
-from lib.twisted.internet.protocol import Factory
-from lib.twisted.internet import reactor
+from twisted.internet.protocol import Factory
+from twisted.internet import reactor
 
 from blockbox.console import StdinPlugin
 from blockbox.protocol import MyneServerProtocol
@@ -843,6 +843,7 @@ class MyneFactory(Factory):
 			reactor.callLater(float(self.backup_freq * 60), self.AutoBackup)
 
 	def Backup(self, world_id, fromloc, backupname=None):
+		error = None
 		world_dir = ("mapdata/worlds/%s/" % world_id)
 		if world_id == "main" and not self.backup_default and not fromloc == "user": #This is to ensure manual backup still works
 			return

@@ -9,8 +9,8 @@ import traceback
 import datetime
 import cPickle as pickle
 
-from lib.twisted.internet.protocol import Protocol
-from lib.twisted.internet import reactor
+from twisted.internet.protocol import Protocol
+from twisted.internet import reactor
 
 from blockbox.constants import *
 from blockbox.plugins import protocol_plugins
