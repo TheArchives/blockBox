@@ -2,7 +2,7 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-VERSION = "v1.0.02B-nolib"
+VERSION = "v1.0.02B"
 
 FORMAT_LENGTHS = {
 	"b": 1,
@@ -383,19 +383,12 @@ class TemplateDoesNotExist(Exception):
 
 class NotConfigured(Exception):
 	def __init__(self):
-		self.msg = "blockBox is not configured. Read the installation guide if you wish to proceed."
+		self.msg = "blockBox is not configured. Read the installation guide if you wish to proceed."
 	def __str__(self):
 		return self.msg
 
 class StoringMethodNotSupported(Exception):
 	def __init__(self):
-		self.msg = "blockBox currently does not support the storing method supplied. Please refer to the installation guide about storing methods blockBox supports."
-
-	def __str__(self):
-		return self.msg
-class DependenciesNotFound(Exception):
-	def __init__(self):
-		self.msg = "blockBox could not find the dependencies required. Please either check if you have all the dependencies installed correctly, or use the withlib version rather than the nolib version."
-
+		self.msg = "blockBox currently does not support the storing method supplied. Please refer to the installation guide about the storing methods."
 	def __str__(self):
 		return self.msg

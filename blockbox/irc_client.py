@@ -6,9 +6,9 @@ import datetime
 import traceback
 import logging
 
-from twisted.words.protocols import irc
-from twisted.words.protocols.irc import IRC
-from twisted.internet import protocol
+from lib.twisted.words.protocols import irc
+from lib.twisted.words.protocols.irc import IRC
+from lib.twisted.internet import protocol
 
 from constants import *
 from globals import *

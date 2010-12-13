@@ -7,8 +7,8 @@ import logging
 import os
 import json
 
-from twisted.protocols.basic import LineReceiver
-from twisted.internet.protocol import Factory
+from lib.twisted.protocols.basic import LineReceiver
+from lib.twisted.internet.protocol import Factory
 
 class APIProtocol(LineReceiver):
 	"""

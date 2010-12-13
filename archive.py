@@ -12,7 +12,7 @@ import urllib2
 import cookielib
 import re
 
-from twisted.internet import reactor, protocol
+from lib.twisted.internet import reactor, protocol
 
 from blockbox.protocol import MyneServerProtocol, TYPE_FORMATS
 from blockbox.constants import *
@@ -123,9 +123,9 @@ class RipFactory(protocol.ClientFactory):
 def rip(key, username, password):
 	login_url = 'http://minecraft.net/login.jsp'
 	play_url = 'http://minecraft.net/play.jsp?server=%s'
-	cj = cookieCookieJar()
+	cj = cookielib.CookieJar()
 	opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
-	login_data = urlurlencode({'username': username, 'password': password})
+	login_data = urllib.urlencode({'username': username, 'password': password})
 	print ("Logging in...")
 	opener.open(login_url, login_data)
 	print ("Fetching server info...")

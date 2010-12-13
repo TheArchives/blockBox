@@ -8,7 +8,7 @@ import time
 import datetime
 import logging
 
-from twisted.internet import reactor
+from lib.twisted.internet import reactor
 
 from blockbox.constants import *
 from globals import *

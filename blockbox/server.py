@@ -20,8 +20,8 @@ import logging
 from ConfigParser import RawConfigParser as ConfigParser
 from Queue import Queue, Empty
 
-from twisted.internet.protocol import Factory
-from twisted.internet import reactor
+from lib.twisted.internet.protocol import Factory
+from lib.twisted.internet import reactor
 
 from blockbox.console import StdinPlugin
 from blockbox.protocol import MyneServerProtocol
@@ -81,7 +81,8 @@ The Salt is also used to help verify users' identities.
 					self.factory.console.run()
 			except IOError,SystemExit:
 				pass
-			except:				self.logger.error("Minecraft.net seems to be offline.")
+			except:
+				self.logger.error("Minecraft.net seems to be offline.")
 		except IOError,SystemExit:
 			pass
 		except:

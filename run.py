@@ -10,7 +10,7 @@ import logging
 from logging.handlers import SMTPHandler
 from ConfigParser import RawConfigParser as ConfigParser
 
-from twisted.internet import reactor
+from lib.twisted.internet import reactor
 
 from blockbox.constants import *
 from blockbox.server import MyneFactory

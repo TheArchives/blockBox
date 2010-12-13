@@ -5,7 +5,7 @@
 from time import *
 import cPickle
 
-from twisted.internet import reactor
+from lib.twisted.internet import reactor
 
 from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *

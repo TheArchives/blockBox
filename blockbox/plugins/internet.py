@@ -6,12 +6,15 @@ import sys
 import urllib
 from os import popen
 
-from twisted.internet import reactor
+from lib.twisted.internet import reactor
 try:
-	import pil
+	import lib.pil
 except ImportError:
-	print ("Failed to load PIL, imagedraw is now disabled")
-	noimagedraw = True
+	try:
+		import pil
+	except ImportError:
+		print ("Failed to load PIL, imagedraw is now disabled")
+		noimagedraw = True
 
 from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
@@ -61,8 +64,8 @@ class InternetPlugin(ProtocolPlugin):
 			if len(self.tuser) < 1:
 				self.client.sendServerMessage("Please do /tlog first.")
 			else:
-				msg = urllib.quote(" ".join(parts[1:]) + " #blockBox")
-				data = urllib.urlencode({"status": " ".join(parts[1:]) + " #blockBox"})
+				msg = urllib.quote(" ".join(parts[1:]) + " #iCraft")
+				data = urllib.urlencode({"status": " ".join(parts[1:]) + " #iCraft"})
 				urllib.urlopen(("http://%s:%s@twitter.com/statuses/update.xml" % (self.tuser,self.tpass)), data)
 				self.client.sendServerMessage("You have successfully tweeted.")
 				self.twlog.write(self.tuser+"("+self.client.username+")"+" has tweeted: "+msg+"\n")
