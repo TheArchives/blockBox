@@ -9,8 +9,8 @@ import traceback
 import datetime
 import cPickle as pickle
 
-from lib.twisted.internet.protocol import Protocol
-from lib.twisted.internet import reactor
+from twisted.internet.protocol import Protocol
+from twisted.internet import reactor
 
 from blockbox.constants import *
 from blockbox.plugins import protocol_plugins
@@ -257,7 +257,7 @@ class MyneServerProtocol(Protocol):
 					self.logger.info("Kicked '%s'; already logged in to server" % (self.username))
 					self.sendError("You already logged in! Foolish bot owners.")
 				# Check their password
-				correct_pass = hashlib.md5(self.factory.salt + self.username).hexdigest()[-32:].strip("0")
+				correct_pass = hashmd5(self.factory.salt + self.username).hexdigest()[-32:].strip("0")
 				mppass = mppass.strip("0")
 				if not self.transport.getHost().host.split(".")[0:2] == self.transport.getPeer().host.split(".")[0:2]:
 					if self.factory.verify_names and mppass != correct_pass:

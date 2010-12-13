@@ -5,7 +5,7 @@
 import math
 from random import choice
 
-from lib.twisted.internet import reactor
+from twisted.internet import reactor
 
 from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *

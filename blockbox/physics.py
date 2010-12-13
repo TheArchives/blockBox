@@ -7,7 +7,7 @@ import time
 from collections import deque
 from threading import Thread, Lock
 
-from lib.twisted.internet import reactor
+from twisted.internet import reactor
 
 from constants import *
 
