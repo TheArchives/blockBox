@@ -293,7 +293,13 @@ class MyneServerProtocol(Protocol):
 				for client in self.factory.usernames.values():
 					client.sendServerMessage("%s has come online." %self.username)
 				if self.factory.irc_relay:
-					self.factory.irc_relay.sendServerMessage("%s has come online." %self.username)
+					self.factory.irc_relay.sendServerMessage("%s has come online." % self.username)
+				# Are they IP specced?
+				if self.factory.isIpSpecced(self.ip):
+					self.factory.spectators.add(self.username)
+					self.sendSpectatorUpdate()
+					self.sendServerMessage("Your IP has been spectated for: %s" % self.factory.ipSpecReason(self.ip))
+					self.logger.info("User %s autospecced due to its IP being on the IPSpec list." % self.username)
 				reactor.callLater(0.1, self.sendLevel)
 				reactor.callLater(1, self.sendKeepAlive)
 			elif type == TYPE_BLOCKCHANGE:

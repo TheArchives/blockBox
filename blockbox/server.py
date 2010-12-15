@@ -258,6 +258,7 @@ class MyneFactory(Factory):
 		self.silenced = set()
 		self.banned = {}
 		self.ipbanned = {}
+		self.ipspecced = {}
 		self.lastseen = {}
 		# Load up the contents of those.
 		self.loadMeta()
@@ -328,7 +329,7 @@ class MyneFactory(Factory):
 		if config.has_section("silenced"):
 			for name in config.options("silenced"):
 				self.silenced.add(name)
-		# Read in the spectators (experimental)
+		# Read in the spectators
 		if specs.has_section("spectators"):
 			for name in specs.options("spectators"):
 				self.spectators.add(name)
@@ -340,6 +341,10 @@ class MyneFactory(Factory):
 		if config.has_section("ipbanned"):
 			for ip in config.options("ipbanned"):
 				self.ipbanned[ip] = config.get("ipbanned", ip)
+		# Read in the ipspecs
+		if specs.has_section("ipspecced"):
+			for ip in config.options("ipspecced"):
+				self.ipbanned[ip] = config.get("ipspecced", ip)
 
 	def saveMeta(self):
 		"Saves the server's meta back to a file."
@@ -355,6 +360,7 @@ class MyneFactory(Factory):
 		config.add_section("banned")
 		config.add_section("ipbanned")
 		specs.add_section("spectators")
+		specs.add_section("ipspecced")
 		# Write out things
 		for world in self.worlds:
 			config.set("worlds", world, "true")
@@ -373,7 +379,8 @@ class MyneFactory(Factory):
 		for silence in self.silenced:
 			config.set("silenced", silence, "true")
 		for ipban, reason in self.ipbanned.items():
-			config.set("ipbanned", ipban, reason)
+			config.set("ipbanned", ipban, reason)		for ipspec, reason in self.ipspecced.items():
+			specs.set("ipbanned", ipspec, reason)
 		fp = open("data/server.meta", "w")
 		config.write(fp)
 		fp.close()
@@ -495,7 +502,6 @@ class MyneFactory(Factory):
 		"""
 		try:
 			if ASD and len(self.worlds[world_id].clients)>0:
-				#self.logger.error("AUTOSHUTDOWN ERROR DETECTED, PLEASE REPORT THIS ERROR TO BLOCKBOX TEAM")
 				self.worlds[world_id].ASD.kill()
 				self.worlds[world_id].ASD = None
 				return
@@ -802,7 +808,6 @@ class MyneFactory(Factory):
 		return username.lower() in self.mods or self.isAdmin(username)
 
 	def isAdvBuilder(self, username):
-		#print "here" needs to check for op level also.
 		return username.lower() in self.advbuilders or self.isMod(username)
 
 	def isSpectator(self, username):
@@ -813,7 +818,8 @@ class MyneFactory(Factory):
 
 	def isIpBanned(self, ip):
 		return ip in self.ipbanned
-
+	def isIpSpecced(self, ip):
+		return ip in self.ipspecced
 	def addBan(self, username, reason):
 		self.banned[username.lower()] = reason
 
@@ -831,6 +837,14 @@ class MyneFactory(Factory):
 
 	def ipBanReason(self, ip):
 		return self.ipbanned[ip]
+	def addIpSpec(self, ip, reason):
+		self.ipspecced[ip] = reason
+
+	def removeIpSpec(self, ip):
+		del self.ipbanned[ip]
+
+	def ipSpecReason(self, ip):
+		return self.ipspecced[ip]
 
 	def world_exists(self, world_id):
 		"Says if the world exists (even if unbooted)"
@@ -930,7 +944,7 @@ class MyneFactory(Factory):
 			if error is not None:
 				return error
 
-	def messagestrip(factory,message):
+	def messagestrip(self, message):
 		strippedmessage = ""
 		for x in message:
 			if ord(str(x)) < 128:

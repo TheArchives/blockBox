@@ -9,6 +9,7 @@ from blockbox.plugins import ProtocolPlugin
 from blockbox.decorators import *
 from blockbox.constants import *
 from blockbox.irc_client import *
+from blockbox.persistence import PersistenceEngine as Persist
 
 class InteractionPlugin(ProtocolPlugin):
 	"Commands for player interactions."
@@ -34,12 +35,30 @@ class InteractionPlugin(ProtocolPlugin):
 		"inbox": "commandCheckMessages",
 		"c": "commandInboxClear",
 		"clear": "commandInboxClear",
+
+		"spectate": "commandSpectate",
+		"watch": "commandSpectate",
+		"follow": "commandSpectate",
+	}	hooks = {
+		"poschange": "posChanged",
 	}
 	money_logger = logging.getLogger('TransactionLogger')
 
 	def gotClient(self):
 		self.num = int(0)
+		self.spectating = False
 
+	def posChanged(self, x, y, z, h, p):
+		"Hook trigger for when the player moves"
+		spectators = set()
+		for uid in self.client.factory.clients:
+			user = self.client.factory.clients[uid]
+			try:
+				if user.spectating == self.client.id:
+					if user.x != x and user.y != y and user.z != z:
+						user.teleportTo(x >> 5, y >> 5, z >> 5, h, p)
+			except AttributeError:
+				pass
 	@player_list
 	def commandBack(self, parts, fromloc, overriderank):
 		"/back - Guest\nPrints out message of you coming back."
@@ -320,3 +339,20 @@ class InteractionPlugin(ProtocolPlugin):
 		pickle.dump(messages, file)
 		file.close()
 		self.client.sendServerMessage("All your messages have been deleted.")
+
+	@player_list
+	@op_only
+	@only_username_command
+	def commandSpectate(self, user, fromloc, overriderank):
+		"/spectate username - Guest\nAliases: follow, watch\nFollows specified player around"
+		nospec_check = True
+		try:
+			self.client.spectating
+		except AttributeError:
+			nospec_check = False
+		if not nospec_check or self.client.spectating != user.id:
+			self.client.sendServerMessage("You are now spectating %s" % user.username)
+			self.client.spectating = user.id
+		else:
+			self.client.sendServerMessage("You are no longer spectating %s" % user.username)
+			self.client.spectating = False

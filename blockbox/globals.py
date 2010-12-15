@@ -65,14 +65,13 @@ def Rank(self, parts, fromloc, overriderank, server=None):
 			else:
 				return "You must provide a world"
 		if not server:
-			if self.client.isWorldOwner()==False and not overriderank:
+			if not self.client.isMod() and not overriderank:
 				return ("You are not high enough rank!")
 		else:
 			if fromloc != "console":
 				return ("You are not high enough rank!")
-		self.client.world.owner = (username)
+		world.owner = username
 		return ("%s is now a world owner." % username)
-		#make world owner	
 	elif parts[1] == "advbuilder":
 		#make them an advbuilder
 		if not server:

@@ -14,7 +14,6 @@ from blockbox.decorators import *
 from blockbox.constants import *
 from blockbox.persistence import PersistenceEngine as Persist
 from blockbox.timer import ResettableTimer
-from blockbox.persistence import PersistenceEngine as Persist
 
 class CommandPlugin(ProtocolPlugin):
 	commands = {
