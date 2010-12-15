@@ -35,7 +35,7 @@ class MyneServerProtocol(Protocol):
 		self.logger = logging.getLogger("Client")
 		self.quitmsg = "Goodbye."
 		self.homeworld = "main"
-		self.total = 0 #TOFIX: Don't use a client variable for blb count, it makes everything seem retarted
+		self.total = 0 # TOFIX: Don't use a client variable for blb count, it makes everything seem retarted
 		self.ip = self.transport.getPeer().host
 		self.commands = {}
 		self.hooks = {}
@@ -397,7 +397,7 @@ class MyneServerProtocol(Protocol):
 				else:
 					self.title = "\""+t+"\" "
 				self.usertitlename = self.title + self.username
-				override = self.runHook("chatmsg", message)				
+				override = self.runHook("chatmsg", message)
 				goodchars = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " ", "!", "@", "#", "$", "%", "*", "(", ")", "-", "_", "+", "=", "{", "[", "}", "]", ":", ";", "\"", "\'", "<", ",", ">", ".", "?", "/", "\\", "|"]
 				for c in message.lower():
 					if not c in goodchars:
@@ -654,8 +654,8 @@ class MyneServerProtocol(Protocol):
 			name = "Guest"
 		return name
 
-	def colouredUsername(self):
-		if self.world.highlight_ops:
+	def colouredUsername(self, forcecolour=False):
+		if self.world.highlight_ops or forcecolour:
 			return self.userColour() + self.username
 		else:
 			return self.username

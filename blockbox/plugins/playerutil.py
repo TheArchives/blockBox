@@ -301,13 +301,39 @@ class PlayerUtilPlugin(ProtocolPlugin):
 		"/who [username] - Guest\nAliases: pinfo, players, whois\nOnline players, or player lookup."
 		if len(parts) < 2:
 			self.client.sendServerMessage("Do '/who username' for more info.")
-			self.client.sendServerList(["Players:"] + list(self.client.factory.usernames))
+			userlist = set()
+			for user in self.client.factory.usernames:
+				if user is None:
+					pass # To avoid NoneType error
+				else:
+					if user in self.client.factory.spectators:
+						user = COLOUR_BLACK + user
+					elif user in self.client.factory.owner:
+						user = COLOUR_DARKGREEN + user
+					elif user in self.client.factory.directors:
+						user = COLOUR_GREEN + user
+					elif user in self.client.factory.admins:
+						user = COLOUR_RED + user
+					elif user in self.client.factory.mods:
+						user = COLOUR_BLUE + user
+					elif user in self.client.world.owner:
+						user = COLOUR_DARKPURPLE + user
+					elif user in self.client.world.ops:
+						user = COLOUR_DARKCYAN + user
+					elif user in self.client.factory.advbuilders:
+						user = COLOUR_GREY + user
+					elif user in self.client.world.writers:
+						user = COLOUR_CYAN + user
+					else:
+						user = COLOUR_WHITE + user
+				userlist.add(user)
+			self.client.sendServerList(["Players:"] + list(userlist))
 		else:
 			user = parts[1].lower()
 			with Persist(user) as p:
 				if parts[1].lower() in self.client.factory.usernames:
 					#Parts is an array, always, so we get the first item.
-					username = self.client.factory.usernames[parts[1].lower()]
+					username = self.client.factory.usernames[user]
 					if username.isOwner():
 						self.client.sendServerMessage(parts[1]+" - "+COLOUR_DARKGREEN+"Owner")
 					elif username.isDirector():
