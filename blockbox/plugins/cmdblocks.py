@@ -592,7 +592,7 @@ class CommandPlugin(ProtocolPlugin):
 						self.client.sendServerMessage("You can only use 50 commands per block!")
 				else:	   
 					self.command_cmd.append(commandtext)
-					if len(self.command_cmd) > 1:	 
+					if len(self.command_cmd) > 1:
 						self.client.sendServerMessage("Command added.")
 					else:
 						self.client.sendServerMessage("You are now creating a guest sensor command block.")
@@ -725,7 +725,7 @@ class CommandPlugin(ProtocolPlugin):
 			if thiscmd[num:(num+4)] == "$rnd":
 				try:
 					limits = thiscmd[thiscmd.find("(", num)+1:thiscmd.find(")", num+5)].split(",")
-					thiscmd = thiscmd.replace(thiscmd[num:thiscmd.find(")", num)+1], str(random.randint(int(limits[0]), int(limits[1])))) #holy crap this is complicated
+					thiscmd = thiscmd.replace(thiscmd[num:thiscmd.find(")", num)+1], str(random.randint(int(limits[0]), int(limits[1]))))
 				except:
 					self.client.sendServerMessage("$rnd syntax error! Use $rnd(num1,num2)")
 		for num in range(len(thiscmd)):
@@ -737,7 +737,7 @@ class CommandPlugin(ProtocolPlugin):
 					z = int(coords[2])
 					check_offset = self.client.world.blockstore.get_offset(x, y, z)
 					block = ord(self.client.world.blockstore.raw_blocks[check_offset])
-					thiscmd = thiscmd.replace(thiscmd[num:thiscmd.find(")", num)+1], str(block)) #holy crap this is complicated
+					thiscmd = thiscmd.replace(thiscmd[num:thiscmd.find(")", num)+1], str(block))
 				except:
 					self.client.sendServerMessage("$block syntax error! Use $block(x,y,z)")
 		for num in range(len(thiscmd)):
@@ -754,7 +754,7 @@ class CommandPlugin(ProtocolPlugin):
 							lastindex = num2
 					print str(thiscmd[thiscmd.find("(", num)+1:lastindex+1])
 					expression = str(eval(thiscmd[thiscmd.find("(", num)+1:lastindex+1]))
-					thiscmd = thiscmd.replace(thiscmd[num:lastindex+2], expression) #holy crap this is complicated
+					thiscmd = thiscmd.replace(thiscmd[num:lastindex+2], expression)
 				except:
 					self.client.sendServerMessage("$eval syntax error! Use $eval(expression)")
 		blocklist = ["air", "rock", "grass", "dirt", "cobblestone", "wood", "plant", "solid", "water", "still water", "lava", "still lava", "sand", "gravel", "gold ore", "iron ore", "coal ore", "trunk", "leaf", "sponge", "glass", "red cloth", "orange cloth", "yellow cloth", "lime green cloth", "green cloth", "turquoise cloth", "cyan cloth", "blue cloth", "dark blue cloth", "violet cloth", "purple cloth", "magenta cloth", "pink cloth", "black cloth", "gray cloth", "white cloth", "flower", "rose", "red mushroom", "brown mushroom", "gold", "iron", "double step", "step", "brick", "TNT", "bookshelf", "mossy cobblestone", "obsidian"]
@@ -762,7 +762,7 @@ class CommandPlugin(ProtocolPlugin):
 			if thiscmd[num:(num+6)] == "$bname":
 				try:
 					blocknum = int(thiscmd[thiscmd.find("(", num)+1:thiscmd.find(")", num+5)])
-					thiscmd = thiscmd.replace(thiscmd[num:thiscmd.find(")", num)+1], blocklist[blocknum]) #holy crap this is complicated
+					thiscmd = thiscmd.replace(thiscmd[num:thiscmd.find(")", num)+1], blocklist[blocknum])
 				except:
 					self.client.sendServerMessage("$bname syntax error! Use $bname(blockint)")
 		if thiscmd.startswith(" if"):
@@ -775,12 +775,12 @@ class CommandPlugin(ProtocolPlugin):
 				self.client.sendServerMessage("if syntax error! Use if a=b: command!")
 		parts = thiscmd.split()
 		command = str(parts[0])
-		#since whispers aren't commands, we have to handle it seperately...
+		# Since whispers aren't commands, we have to handle it seperately...
 		if command.startswith("@"):
 			runcmd = False
 			username = command.lstrip("@").lower()
 			text = ""
-			firstword = True #This is to keep the @username part from being included as text
+			firstword = True # This is to keep the @username part from being included as text
 			for word in parts:
 				if not firstword:
 					text = text + " " + word

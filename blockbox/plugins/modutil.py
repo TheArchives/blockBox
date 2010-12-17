@@ -50,7 +50,8 @@ class ModUtilPlugin(ProtocolPlugin):
 		"cloak": "commandHide",
 		"overload": "commandOverload",
 		#"send": "commandSend",
-		"blazer": "commandBlazer",
+		"blazer": "commandBlazer",
+		"sendhb": "commandSendHeartbeat",
 	}
 	hooks = {
 		"blockchange": "blockChanged",
@@ -707,3 +708,9 @@ class ModUtilPlugin(ProtocolPlugin):
 				#self.client.sendServerMessage("Player %s was sent." % user.username)
 		#else:
 			#self.client.sendServerMessage("Your Player is in another world!")
+
+	@owner_only
+	def commandSendHeartbeat(self, parts, fromloc, overriderank):
+		"/sendhb - Owner\nSends a heartbeat to the official Minecraft server."
+		self.client.factory.Heartbeat.get_url(True)
+		self.client.sendServerMessage("Heartbeat sent.")

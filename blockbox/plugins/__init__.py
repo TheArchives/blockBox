@@ -50,6 +50,7 @@ class ProtocolPlugin(object):
 				try:
 					self.client.registerCommand(name, getattr(self, fname))
 				except AttributeError:
+					# Nope, can't find the method for that command. Return error
 					self.client.factory.logger.error("Cannot find command code for %s (command name is %s), please report to blockBox team." % (fname, name))
 					return
 		# Register our hooks
@@ -58,7 +59,8 @@ class ProtocolPlugin(object):
 				try:
 					self.client.registerHook(name, getattr(self, fname))
 				except AttributeError:
-					self.client.factory.logger.error("Cannot find hook code for %s, please report to blockBox team." % fname)
+					# Nope, can't find that hook. Return error
+					self.client.factory.logger.error("Cannot find hook for %s, please report to blockBox team." % fname)
 					return
 		# Call clean setup method
 		self.gotClient()

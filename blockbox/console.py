@@ -77,7 +77,7 @@ class StdinPlugin(threading.Thread):
 						message = message.replace(".@", " @")
 						message = message.replace(".#", " #")
 						if message[len(message)-3] == "&":
-							print ("You can not use a color at the end of a message")
+							print ("You cannot use a color at the end of a message.")
 							return
 						if message.startswith("/"):
 							message = message.split(" ")
@@ -220,7 +220,7 @@ class StdinPlugin(threading.Thread):
 									self.server.queue.put((self, TASK_SERVERMESSAGE, ("[MSG] "+(" ".join(message[1:])))))
 							elif message[0] == ("gc"):
 								#ManualGarbageMe
-								self.server.cleanGarbageOnce()
+								self.server.cleanGarbage(onetime=True, slience=False)
 							elif message[0] == ("u"):
 								if len(message) == 1:
 									print ("Please type a message.")

@@ -18,7 +18,7 @@ from blockbox.decorators import *
 from blockbox.irc_client import ChatBotFactory
 from blockbox.persistence import PersistenceEngine as Persist
 
-class MyneServerProtocol(Protocol):
+class BlockBoxProtocol(Protocol):
 	"""
 	Main protocol class for communicating with clients.
 	Commands are mainly provided by plugins (protocol plugins).

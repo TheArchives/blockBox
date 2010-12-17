@@ -58,7 +58,7 @@ The Salt is also used to help verify users' identities.
 			self.logger.error(traceback.format_exc())
 			reactor.callLater(1, self.turl)
 
-	def get_url(self):
+	def get_url(self, onetime=False):
 		try:
 			try:
 				self.factory.last_heartbeat = time.time()
@@ -88,9 +88,10 @@ The Salt is also used to help verify users' identities.
 		except:
 			self.logger.error(traceback.format_exc())
 		finally:
-			reactor.callLater(60, self.turl)
+			if not onetime:
+				reactor.callLater(60, self.turl)
 
-	def bb_get_url(self):
+	def bb_get_url(self, onetime=False):
 		if self.factory.config.getboolean("options", "use_blockbeat"):
 			try:
 				try:
@@ -122,25 +123,26 @@ The Salt is also used to help verify users' identities.
 			except:
 				self.logger.error(traceback.format_exc())
 			finally:
-				reactor.callLater(60, self.bb_turl)
+				if not onetime:
+					reactor.callLater(60, self.bb_turl)
 
-class MyneFactory(Factory):
+class BlockBoxFactory(Factory):
 	"""
 	Factory that deals with the general world actions and cross-player comms.
 	"""
-	protocol = MyneServerProtocol
+	protocol = BlockBoxServerProtocol
 
 	def __init__(self):
 		self.initVariables()
-		self.initLoops()
-		
+		self.initLoops()
 	def initVariables(self):
-		if  (os.path.exists("conf/performance.dist.ini") and not os.path.exists("conf/performance.ini")) or \
+		if  (os.path.exists("conf/options.dist.ini") and not os.path.exists("conf/options.ini")) or \
 			(os.path.exists("conf/plugins.dist.ini") and not os.path.exists("conf/plugins.ini")) or \
 			(os.path.exists("conf/server.dist.ini") and not os.path.exists("conf/server.ini")) or \
 			(os.path.exists("conf/wordfilter.dist.ini") and not os.path.exists("conf/wordfilter.ini")):
 			raise NotConfigured
 		self.logger = logging.getLogger("Server")
+		self.loops = dict()
 		self.ServerVars = dict()
 		self.specs = ConfigParser()
 		self.last_heartbeat = time.time()
@@ -151,7 +153,7 @@ class MyneFactory(Factory):
 		self.save_count = 1
 		self.delay_count = 1
 		self.config.read("conf/server.ini")
-		self.conf_performance.read("conf/performance.ini")
+		self.conf_options.read("conf/options.ini")
 		self.conf_plugins.read("conf/plugins.ini")
 
 		self.use_irc = False
@@ -166,7 +168,7 @@ class MyneFactory(Factory):
 			self.conf_email = ConfigParser()
 			self.conf_email.read("conf/email.ini")
 
-		self.saving = False
+		self.saving = False		self.blblimit = dict()
 		self.max_clients = self.config.getint("main", "max_clients")
 		self.server_name = self.config.get("main", "name")
 		self.server_message = self.config.get("main", "description")
@@ -175,9 +177,9 @@ class MyneFactory(Factory):
 		self.enable_archives = self.config.getboolean("worlds", "enable_archives")
 		self.duplicate_logins = self.config.getboolean("options", "duplicate_logins")
 		self.verify_names = self.config.getboolean("options", "verify_names")
-		self.asd_delay = self.conf_performance.getint("worlds", "asd_delay")
+		self.asd_delay = self.conf_options.getint("worlds", "asd_delay")
 		self.api_password = self.config.get("network", "api_password")
-		self.physics_limit = self.conf_performance.getint("worlds", "physics_limit")
+		self.physics_limit = self.conf_options.getint("worlds", "physics_limit")
 		self.console_delay = self.config.getint("options", "console_delay")
 		self.info_url = self.config.get("info", "info_url")
 		self.credit_name = self.config.get("bank", "credit_name")
@@ -194,7 +196,6 @@ class MyneFactory(Factory):
 			reactor.callLater(float(self.backup_freq * 60),self.AutoBackup)
 		self.useblblimit = self.config.getboolean("blb", "use_blb_limiter")
 		if self.useblblimit:
-			self.blblimit = dict()
 			self.blblimit["player"] = self.config.getint("blb", "player")
 			self.blblimit["builder"] = self.config.getint("blb", "builder")
 			self.blblimit["advbuilder"] = self.config.getint("blb", "advbuilder")
@@ -203,7 +204,7 @@ class MyneFactory(Factory):
 			self.blblimit["mod"] = self.config.getint("blb", "mod")
 			self.blblimit["admin"] = self.config.getint("blb", "admin")
 			self.blblimit["director"] = self.config.getint("blb", "director")
-			self.blblimit["owner"] = self.config.getint("blb", "owner")
+			self.blblimit["owner"] = self.config.getint("blb", "owner")
 		# Parse IRC section
 		if self.use_irc:
 			self.irc_nick = self.conf_irc.get("irc", "nick")
@@ -214,6 +215,7 @@ class MyneFactory(Factory):
 			reactor.connectTCP(self.conf_irc.get("irc", "server"), self.conf_irc.getint("irc", "port"), self.irc_relay)
 		else:
 			self.irc_relay = None
+
 		self.main_loaded = False
 		# Word Filter
 		self.wordfilter.read("conf/wordfilter.ini")
@@ -275,25 +277,24 @@ class MyneFactory(Factory):
 
 	def initLoops(self):
 		# Set up tasks to run during execution
-		reactor.callLater(0.1, self.sendMessages)
-		reactor.callLater(1, self.printInfo)
+		self.loops["sendmessgae"] = reactor.callLater(0.1, self.sendMessages)
+		self.loops["printinfo"] = reactor.callLater(1, self.printInfo)
 		# Initial startup is instant, but it updates every 10 minutes.
 		self.world_save_stack = []
-		reactor.callLater(60, self.saveWorlds)
+		self.loops["saveworlds"] = reactor.callLater(60, self.saveWorlds)
 		if self.enable_archives:
 			self.loadPlugin('archives')
-			reactor.callLater(1, self.loadArchives)
+			self.loops["loadarchives"] = reactor.callLater(1, self.loadArchives)
 		gc.disable()
 		self.cleanGarbage()
+		self.runHook("serverloop")
 
-	def cleanGarbage(self):
+	def cleanGarbage(self, onetime=False, slience=False):
 		count = gc.collect()
-		self.logger.info("%i garbage objects collected, %i were uncollected." % ( count, len(gc.garbage)))
-		reactor.callLater(60*15, self.cleanGarbage)
-
-	def cleanGarbageOnce(self):
-		count = gc.collect()
-		self.logger.info("%i garbage objects collected, %i were uncollected." % ( count, len(gc.garbage)))
+		if not slience:
+			self.logger.info("%i garbage objects collected, %i were uncollected." % (count, len(gc.garbage)))
+		if not onetime:
+			self.loops["gc"] = reactor.callLater(60*15, self.cleanGarbage)
 
 	def loadMeta(self):
 		"Loads the 'meta' - variables that change with the server (worlds, admins, etc.)"
@@ -343,7 +344,7 @@ class MyneFactory(Factory):
 				self.ipbanned[ip] = config.get("ipbanned", ip)
 		# Read in the ipspecs
 		if specs.has_section("ipspecced"):
-			for ip in config.options("ipspecced"):
+			for ip in specs.options("ipspecced"):
 				self.ipbanned[ip] = config.get("ipspecced", ip)
 
 	def saveMeta(self):
@@ -396,11 +397,11 @@ class MyneFactory(Factory):
 			self.delay_count=1
 		else:
 			self.delay_count+=1
-		gc.collect()
+		self.cleanGarbage(onetime=True, slience=True)
 		if (time.time() - self.last_heartbeat) > 180:
 			self.heartbeat = None
 			self.heartbeat = Heartbeat(self)
-		reactor.callLater(60, self.printInfo)
+		self.loops["printinfo"] = reactor.callLater(60, self.printInfo)
 
 	def loadArchive(self, filename):
 		"Boots an archive given a filename. Returns the new world ID."
@@ -544,7 +545,7 @@ class MyneFactory(Factory):
 		world.id = world_id
 		world.factory = self
 		world.start()
-		self.logger.info("Rebooted %s" % world_id)
+		self.logger.info("Rebooted world %s." % world_id)
 
 	def publicWorlds(self):
 		"""
@@ -768,7 +769,7 @@ class MyneFactory(Factory):
 		for world in self.worlds.values():
 			world.read_queue()
 		# Come back soon!
-		reactor.callLater(0.1, self.sendMessages)
+		self.loops["sendmessage"] = reactor.callLater(0.1, self.sendMessages)
 
 	def newWorld(self, new_name, template="default"):
 		"Creates a new world from some template."
@@ -972,7 +973,7 @@ class MyneFactory(Factory):
 							self.archives[name] = {}
 						self.archives[name][when] = "%s/%s" % (name, subfilename)
 		self.logger.info("Loaded %s discrete archives." % len(self.archives))
-		reactor.callLater(60, self.loadArchives)
+		self.loops["loadarchives"] = reactor.callLater(60, self.loadArchives)
 
 	def create_if_not(self, filename):
 		dir = os.path.dirname(filename)
