@@ -12,9 +12,9 @@ from ConfigParser import RawConfigParser as ConfigParser
 
 from lib.twisted.internet import reactor
 
-from blockbox.constants import *
-from blockbox.server import MyneFactory
 from blockbox.api import APIFactory
+from blockbox.constants import *
+from blockbox.server import BlockBoxFactory
 
 logging.basicConfig(
 	format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
@@ -25,7 +25,7 @@ logging.basicConfig(
 logger = logging.getLogger("blockBox")
 logger.info("Starting up blockBox %s..." % VERSION)
 
-factory = MyneFactory()
+factory = BlockBoxFactory()
 api = APIFactory(factory)
 reactor.listenTCP(factory.config.getint("network", "port"), factory)
 reactor.listenTCP(factory.config.getint("network", "api_port"), api)

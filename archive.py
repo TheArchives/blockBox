@@ -14,10 +14,10 @@ import re
 
 from lib.twisted.internet import reactor, protocol
 
-from blockbox.protocol import MyneServerProtocol, TYPE_FORMATS
+from blockbox.protocol import BlockBoxServerProtocol, TYPE_FORMATS
 from blockbox.constants import *
 
-class RipClient(MyneServerProtocol):
+class RipClient(BlockBoxProtocol):
 	"""Once connected, send a message, then print the result."""
 
 	def connectionMade(self):
