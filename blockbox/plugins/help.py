@@ -188,7 +188,7 @@ class HelpPlugin(ProtocolPlugin):
 	def commandCredits(self, parts, fromloc, overriderank):
 		"/credits - Guest\nCredits for the creators, devs and testers."
 		self.client.sendServerMessage("The Credits")
-		list = Credits(self)
+		list = Credits()
 		for each in list:
 			self.client.sendSplitServerMessage(each)
 
