@@ -312,20 +312,17 @@ def Staff(self, server=None):
 		Temp.append (["Mods:"] + list(factory.mods))
 	return Temp
 
-def Credits(self, server=None):
+def Credits(self):
 	Temp = []
-	if server:
-		factory = server
-	else:
-		factory = self.client.factory
 	Temp.append ("Thanks to the following people for making blockBox possible...")
 	Temp.append ("(a full list is available on the blockBox website, which can be found at blockbox.bradness.info)")
 	Temp.append ("Mojang Specifications (Minecraft): Notch, dock, ez, ...")
 	Temp.append ("Creators: aera (Myne), PixelEater (MyneCraft and blockBox), iKJames (iCraft)")
 	#Temp.append ("Devs: Adam01, revenant, gdude2002, gothfox, AndrewPH, Varriount, erronjason, destroyerx1, ntfwc, Dwarfy, goober, willempiee")
 	#Temp.append ("Others: Bidoof_King, Rils, fragmer, PyroPyro, TkTech, the Users, the Testers, the Modders, the Community, ...")
-	Temp.append ("Devs: tyteen4a03, ntfwc")
+	Temp.append ("Devs: tyteen4a03, ntfwc, UberFoX")
 	Temp.append ("Others: Ginger879, Gear3215")
 	return Temp
-def recursive_default():
+
+def recursive_default():
 	return defaultdict(recursive_default)
