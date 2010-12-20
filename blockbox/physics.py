@@ -2,14 +2,13 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-import logging
-import time
+import logging, time
 from collections import deque
 from threading import Thread, Lock
 
 from lib.twisted.internet import reactor
 
-from constants import *
+from blockbox.constants import *
 
 CHR_STEP = chr(BLOCK_STEP)
 CHR_DOUBLESTEP = chr(BLOCK_DOUBLESTEP)

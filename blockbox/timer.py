@@ -2,8 +2,7 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-import threading
-import time
+import threading, time
 
 class ResettableTimer(threading.Thread):
 	"""
@@ -14,7 +13,7 @@ class ResettableTimer(threading.Thread):
 	is explicitly killed with the "kill" method.
 	"""
 
-	def __init__(self, maxtime,inc, expire , update=None):
+	def __init__(self, maxtime, inc, expire , update=None):
 		"""
 		@param maxtime: time in seconds before expiration after resetting
 						in seconds

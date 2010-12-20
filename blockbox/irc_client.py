@@ -2,18 +2,16 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-import datetime
-import traceback
-import logging
+import datetime, logging, traceback
 
 from lib.twisted.words.protocols import irc
 from lib.twisted.words.protocols.irc import IRC
 from lib.twisted.internet import protocol
 
-from constants import *
-from globals import *
-from blockbox.plugins import protocol_plugins
+from blockbox.constants import *
 from blockbox.decorators import *
+from blockbox.globals import *
+from blockbox.plugins import protocol_plugins
 
 class ChatBot(irc.IRCClient):
 	"""An IRC-server chat integration bot."""

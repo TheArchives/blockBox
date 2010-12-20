@@ -2,16 +2,15 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
+import math, sys, traceback
 from random import randint
-import sys, traceback
 from time import time
-import math
 
 from lib.twisted.internet import reactor
 
-from blockbox.plugins import ProtocolPlugin
-from blockbox.decorators import *
 from blockbox.constants import *
+from blockbox.decorators import *
+from blockbox.plugins import ProtocolPlugin
 
 """
 Here is a rundown of how the mobs file works. Mobs are dynamic lists of data that are themselves stored in another list.

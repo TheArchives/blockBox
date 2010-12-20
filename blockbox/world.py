@@ -2,17 +2,14 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-import gzip
-import struct
-import os
-import traceback
-import logging
+import logging, os, traceback
+
 from Queue import Empty
 from ConfigParser import RawConfigParser as ConfigParser
-from array import array
-from deferred import Deferred
-from blockstore import BlockStore
-from constants import *
+
+from blockbox.blockstore import BlockStore
+from blockbox.constants import *
+from blockbox.deferred import Deferred
 
 class World(object):
 	"""

@@ -2,11 +2,8 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-import sys
-import urllib
+import sys, urllib
 from os import popen
-
-from lib.twisted.internet import reactor
 try:
 	import lib.pil
 except ImportError:
@@ -16,9 +13,11 @@ except ImportError:
 		print ("Failed to load PIL, imagedraw is now disabled")
 		noimagedraw = True
 
-from blockbox.plugins import ProtocolPlugin
-from blockbox.decorators import *
+from lib.twisted.internet import reactor
+
 from blockbox.constants import *
+from blockbox.decorators import *
+from blockbox.plugins import ProtocolPlugin
 
 class InternetPlugin(ProtocolPlugin):
 	"Commands for communicating with internet services."
@@ -64,8 +63,8 @@ class InternetPlugin(ProtocolPlugin):
 			if len(self.tuser) < 1:
 				self.client.sendServerMessage("Please do /tlog first.")
 			else:
-				msg = urllib.quote(" ".join(parts[1:]) + " #blockBox")
-				data = urllib.urlencode({"status": " ".join(parts[1:]) + " #blockBox"})
+				msg = urllib.quote(" ".join(parts[1:]) + " #iCraft")
+				data = urllib.urlencode({"status": " ".join(parts[1:]) + " #iCraft"})
 				urllib.urlopen(("http://%s:%s@twitter.com/statuses/update.xml" % (self.tuser,self.tpass)), data)
 				self.client.sendServerMessage("You have successfully tweeted.")
 				self.twlog.write(self.tuser+"("+self.client.username+")"+" has tweeted: "+msg+"\n")

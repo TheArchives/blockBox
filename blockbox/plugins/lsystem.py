@@ -7,9 +7,9 @@ from random import choice
 
 from lib.twisted.internet import reactor
 
-from blockbox.plugins import ProtocolPlugin
-from blockbox.decorators import *
 from blockbox.constants import *
+from blockbox.decorators import *
+from blockbox.plugins import ProtocolPlugin
 
 class LSystemPlugin(ProtocolPlugin):
 	"Interface of Lsystem."

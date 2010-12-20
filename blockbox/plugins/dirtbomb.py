@@ -4,9 +4,9 @@
 
 from lib.twisted.internet import reactor
 
-from blockbox.plugins import ProtocolPlugin
-from blockbox.decorators import *
 from blockbox.constants import *
+from blockbox.decorators import *
+from blockbox.plugins import ProtocolPlugin
 
 class DirtBombPlugin(ProtocolPlugin):
 	"Commands for dirtbomb handling."

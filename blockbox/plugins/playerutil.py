@@ -2,9 +2,11 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-from blockbox.plugins import ProtocolPlugin
-from blockbox.decorators import *
 from blockbox.constants import *
+from blockbox.decorators import *
+from blockbox.globals import *
+from blockbox.persistence import PersistenceEngine as Persist
+from blockbox.plugins import ProtocolPlugin
 from blockbox.globals import *
 
 class PlayerUtilPlugin(ProtocolPlugin):
@@ -47,8 +49,6 @@ class PlayerUtilPlugin(ProtocolPlugin):
 		"derank": "commandDeRank",
 		"colors": "commandColors",
 		"showops": "commandColors",
-		"spec": "commandSpec",
-		"unspec": "commandDeSpec",
 		"writer": "commandOldRanks",
 		"builder": "commandOldRanks",
 		"advbuilder": "commandOldRanks",
@@ -221,7 +221,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 		else:
 			self.client.respawn()	@player_list
 	@op_only
-	@username_command
+	@only_username_command
 	def commandFetch(self, user, fromloc, overriderank):
 		"/fetch username - Op\nAliases: bring\nTeleports a player to be where you are"
 		# Shift the locations right to make them into block coords
@@ -241,7 +241,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 		user.sendServerMessage("You have been fetched by %s" % self.client.username)
 
 	@player_list
-	@username_command
+	@only_username_command
 	def commandInvite(self, user, fromloc, overriderank):
 		rx = self.client.x >> 5
 		ry = self.client.y >> 5
@@ -301,13 +301,39 @@ class PlayerUtilPlugin(ProtocolPlugin):
 		"/who [username] - Guest\nAliases: pinfo, players, whois\nOnline players, or player lookup."
 		if len(parts) < 2:
 			self.client.sendServerMessage("Do '/who username' for more info.")
-			self.client.sendServerList(["Players:"] + list(self.client.factory.usernames))
+			userlist = set()
+			for user in self.client.factory.usernames:
+				if user is None:
+					pass # To avoid NoneType error
+				else:
+					if user in self.client.factory.spectators:
+						user = COLOUR_BLACK + user
+					elif user in self.client.factory.owner:
+						user = COLOUR_DARKGREEN + user
+					elif user in self.client.factory.directors:
+						user = COLOUR_GREEN + user
+					elif user in self.client.factory.admins:
+						user = COLOUR_RED + user
+					elif user in self.client.factory.mods:
+						user = COLOUR_BLUE + user
+					elif user in self.client.world.owner:
+						user = COLOUR_DARKPURPLE + user
+					elif user in self.client.world.ops:
+						user = COLOUR_DARKCYAN + user
+					elif user in self.client.factory.advbuilders:
+						user = COLOUR_GREY + user
+					elif user in self.client.world.writers:
+						user = COLOUR_CYAN + user
+					else:
+						user = COLOUR_WHITE + user
+				userlist.add(user)
+			self.client.sendServerList(["Players:"] + list(userlist))
 		else:
 			user = parts[1].lower()
 			with Persist(user) as p:
 				if parts[1].lower() in self.client.factory.usernames:
 					#Parts is an array, always, so we get the first item.
-					username = self.client.factory.usernames[parts[1].lower()]
+					username = self.client.factory.usernames[user]
 					if username.isOwner():
 						self.client.sendServerMessage(parts[1]+" - "+COLOUR_DARKGREEN+"Owner")
 					elif username.isDirector():
@@ -409,7 +435,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 			desc = "%id, %ih, %im" % (days, hours, mins)
 			self.client.sendServerMessage("%s was last seen %s ago." % (username, desc))
 
-	@username_command
+	@only_username_command
 	def commandLocate(self, user, fromloc, overriderank):
 		"/locate username - Guest\nAliases: find\nTells you what world a user is in."
 		self.client.sendServerMessage("%s is in %s" % (user.username, user.world.id))
@@ -532,24 +558,6 @@ class PlayerUtilPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("%s no longer has staff highlighting." % self.client.world.id)
 
 	@player_list
-	@mod_only
-	@only_username_command
-	def commandSpec(self, username, fromloc, overriderank):
-		"/spec username - Mod\nMakes the player as a spec."
-		self.client.sendServerMessage(Spec(self, username, fromloc, overriderank))
-
-	@player_list
-	@mod_only
-	@only_username_command
-	def commandDeSpec(self, username, fromloc, overriderank):
-		"/unspec username - Mod\nRemoves the player as a spec."
-		try:
-			self.client.factory.spectators.remove(username)
-		except:
-			self.client.sendServerMessage("%s was never a spec." % username)
-		self.client.sendServerMessage("%s is no longer a spec." % username)
-		if username in self.client.factory.usernames:
-			self.client.factory.usernames[username].sendSpectatorUpdate()	@player_list
 	@only_username_command
 	def commandMute(self, username, fromloc, overriderank):
 		"/mute username - Guest\nStops you hearing messages from 'username'."
@@ -585,7 +593,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 			self.flying = False
 			self.client.sendServerMessage("You are no longer flying.")
 
-	@username_command
+	@only_username_command
 	def commandTeleport(self, user, fromloc, overriderank):
 		"/tp username - Guest\nAliases: teleport\nTeleports you to the players location."
 		x = user.x >> 5

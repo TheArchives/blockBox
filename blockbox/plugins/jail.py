@@ -7,9 +7,9 @@ import cPickle
 
 from lib.twisted.internet import reactor
 
-from blockbox.plugins import ProtocolPlugin
-from blockbox.decorators import *
 from blockbox.constants import *
+from blockbox.decorators import *
+from blockbox.plugins import ProtocolPlugin
 
 # jail constants for jail.dat
 J_USERS = 0

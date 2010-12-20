@@ -14,10 +14,10 @@ import re
 
 from lib.twisted.internet import reactor, protocol
 
-from blockbox.protocol import MyneServerProtocol, TYPE_FORMATS
+from blockbox.protocol import BlockBoxServerProtocol, TYPE_FORMATS
 from blockbox.constants import *
 
-class RipClient(MyneServerProtocol):
+class RipClient(BlockBoxServerProtocol):
 	"""Once connected, send a message, then print the result."""
 
 	def connectionMade(self):
@@ -139,8 +139,12 @@ def rip(key, username, password):
 	reactor.run()
 
 def main():
-	config = ConfigParser()		try:
-			config.read(os.path.join(os.path.dirname(__file__), "client.conf"))		except:			logger.error("You need to rename client.example.conf to client.conf")			exit(1);
+	config = ConfigParser()
+		try:
+			config.read(os.path.join(os.path.dirname(__file__), "client.conf"))
+		except:
+			logger.error("You need to rename client.example.conf to client.conf")
+			exit(1);
 	rip(sys.argv[1], config.get("client", "username"), config.get("client", "password"))
 
 # this only runs if the module was *not* imported

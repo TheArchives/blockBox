@@ -2,14 +2,13 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-import logging
-import datetime
+import datetime, logging
 
 from lib.twisted.internet import reactor
 
-from blockbox.plugins import ProtocolPlugin
-from blockbox.decorators import *
 from blockbox.constants import *
+from blockbox.decorators import *
+from blockbox.plugins import ProtocolPlugin
 
 class GreiferDetectorPlugin(ProtocolPlugin):
 
@@ -36,12 +35,12 @@ class GreiferDetectorPlugin(ProtocolPlugin):
 						self.client.adlog.flush()
 					self.var_blockchcount = 0
 				if self.var_blockchcount == 0:
-					reactor.callLater(5, griefcheck)
+					self.client.factory.loops["antigrief"] = reactor.callLater(5, griefcheck)
 				self.var_blockchcount += 1
 
 	def newWorld(self, world):
 		"Hook to reset portal abilities in new worlds if not op."
-		if world.id.find('public') == -1:
+		if world.all_write == False:
 			self.in_publicworld = False
 			self.var_blockchcount = 0
 		else:
