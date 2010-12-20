@@ -4,9 +4,9 @@
 
 from lib.twisted.internet import reactor
 
-from blockbox.plugins import ProtocolPlugin
-from blockbox.decorators import *
 from blockbox.constants import *
+from blockbox.decorators import *
+from blockbox.plugins import ProtocolPlugin
 
 class BlbPlugin(ProtocolPlugin):
 	"Commands for Massive block buildings."
@@ -126,7 +126,7 @@ class BlbPlugin(ProtocolPlugin):
 			block = self.client.GetBlockValue(parts[1])
 			if block == None:
 				return			if ord(block) == 7:
-				if not self.canBreakAdminBlocks(self):
+				if not self.canBreakAdminBlocks():
 					self.client.sendServerMessage("Solid is op-only.")
 					return
 			# If they only provided the type argument, use the last two block places
@@ -204,12 +204,12 @@ class BlbPlugin(ProtocolPlugin):
 	def commandWBlb(self, parts, fromloc, overriderank):
 		"/bwb blockname [x y z x2 y2 z2] - Guest\nBuilds four walls between the two areas.\nHollow, with no roof or floor."
 		if len(parts) < 8 and len(parts) != 2:
-			self.client.sendServerMessage("Please enter a block type")
+			self.client.sendServerMessage("Please enter a block type.")
 		else:
 			block = self.client.GetBlockValue(parts[1])
 			if block == None:
 				return			if ord(block) == 7:
-				if not self.canBreakAdminBlocks(self):
+				if not self.canBreakAdminBlocks():
 					self.client.sendServerMessage("Solid is op-only.")
 					return
 			# If they only provided the type argument, use the last two block places
@@ -258,8 +258,8 @@ class BlbPlugin(ProtocolPlugin):
 								return
 							if i==x or i==x2 or k==z or k==z2:
 								try:
-								   world[i, j, k] = block
-								   self.client.runHook("blockchange", x, y, z, ord(block), ord(block), fromloc)
+									world[i, j, k] = block
+									self.client.runHook("blockchange", x, y, z, ord(block), ord(block), fromloc)
 								except AssertionError:
 									self.client.sendServerMessage("Out of bounds bwb error.")
 									return
@@ -273,14 +273,13 @@ class BlbPlugin(ProtocolPlugin):
 			def do_step():
 				# Do 10 blocks
 				try:
-					for x in range(10):#10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
+					for x in range(10): # 10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
 						block_iter.next()
-					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
+					reactor.callLater(0.01, do_step)  # This is how long (in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if fromloc == 'user':
 						self.client.finalizeMassCMD('bwb', self.client.count)
 					pass
-			do_step()
 
 	@build_list
 	def commandBcb(self, parts, fromloc, overriderank):

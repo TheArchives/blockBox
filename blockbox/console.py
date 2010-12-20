@@ -220,7 +220,7 @@ class StdinPlugin(threading.Thread):
 									self.server.queue.put((self, TASK_SERVERMESSAGE, ("[MSG] "+(" ".join(message[1:])))))
 							elif message[0] == ("gc"):
 								#ManualGarbageMe
-								self.server.cleanGarbage(onetime=True, slience=False)
+								self.server.cleanGarbage()
 							elif message[0] == ("u"):
 								if len(message) == 1:
 									print ("Please type a message.")

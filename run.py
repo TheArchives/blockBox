@@ -4,7 +4,13 @@
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
 import sys
-if not sys.version_info[:2] == (2, 6):	print ("ATTENTION: Do you need help with blockBox? http://blockbox.bradness.info/forum or #blockBox@irc.esper.net")	try:		print ("NOTICE: Sorry, but you need Python 2.6.x (Zope, Twisted and SimpleJSON) to run blockBox; http://www.python.org/download/releases/2.6.5/")	except:		print ("NOTICE: Sorry, but you need Python 2.6.x (Zope, Twisted and SimpleJSON) to run blockBox; http://www.python.org/download/releases/2.6.5/")	exit(1);
+if not sys.version_info[:2] == (2, 6):
+	print ("ATTENTION: Do you need help with blockBox? http://blockbox.bradness.info/forum or #blockBox@irc.esper.net")
+	try:
+		print ("NOTICE: Sorry, but you need Python 2.6.x (Zope, Twisted and SimpleJSON) to run blockBox; http://www.python.org/download/releases/2.6.5/")
+	except:
+		print ("NOTICE: Sorry, but you need Python 2.6.x (Zope, Twisted and SimpleJSON) to run blockBox; http://www.python.org/download/releases/2.6.5/")
+	exit(1);
 
 import logging
 from logging.handlers import SMTPHandler

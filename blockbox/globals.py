@@ -2,6 +2,8 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
+from collections import defaultdict
+
 def Rank(self, parts, fromloc, overriderank, server=None):
 	username = parts[2].lower()
 	if server:
@@ -325,3 +327,5 @@ def Credits(self, server=None):
 	Temp.append ("Devs: tyteen4a03, ntfwc")
 	Temp.append ("Others: Ginger879, Gear3215")
 	return Temp
+def recursive_default():
+	return defaultdict(recursive_default)

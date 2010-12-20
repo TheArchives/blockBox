@@ -3,10 +3,10 @@
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 from lib.twisted.internet import reactor
 
-from blockbox.plugins import ProtocolPlugin
-from blockbox.decorators import *
 from blockbox.constants import *
+from blockbox.decorators import *
 from blockbox.persistence import PersistenceEngine as Persist
+from blockbox.plugins import ProtocolPlugin
 
 maxundos = 3000
 
@@ -30,7 +30,7 @@ class ModUtilPlugin(ProtocolPlugin):
 		"defreeze": "commandUnFreeze",
 		"unstop": "commandUnFreeze",
 		"ipshun": "commandIpSpec",
-		"unipshun": "commandUnipSpec",
+		"unipshun": "commandUnIpSpec",
 		"ipspec": "commandIpSpec",
 		"unipspec": "commandUnIpSpec",
 		"banish": "commandBanish",

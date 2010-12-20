@@ -2,14 +2,13 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-import math
-import random
+import math, random
 
-from blockbox.plugins import ProtocolPlugin
-from blockbox.decorators import *
 from blockbox.constants import *
+from blockbox.decorators import *
 from blockbox.irc_client import *
 from blockbox.persistence import PersistenceEngine as Persist
+from blockbox.plugins import ProtocolPlugin
 
 class InteractionPlugin(ProtocolPlugin):
 	"Commands for player interactions."
@@ -72,11 +71,11 @@ class InteractionPlugin(ProtocolPlugin):
 	def commandAway(self, parts, fromloc, overriderank):
 		 "/away reason - Guest\nAliases: afk, brb\nPrints out message of you going away."
 		 if len(parts) == 1:
-			 self.client.factory.queue.put((self.client, TASK_AWAYMESSAGE, self.client.username + " has gone: Away."))
-			 self.client.gone = 1
+			self.client.factory.queue.put((self.client, TASK_AWAYMESSAGE, self.client.username + " has gone: Away."))
+			self.client.gone = 1
 		 else:
-			 self.client.factory.queue.put((self.client, TASK_AWAYMESSAGE, self.client.username + " has gone: Away"+COLOUR_WHITE+" "+(" ".join(parts[1:]))))
-			 self.client.gone = 1
+			self.client.factory.queue.put((self.client, TASK_AWAYMESSAGE, self.client.username + " has gone: Away"+COLOUR_WHITE+" "+(" ".join(parts[1:]))))
+			self.client.gone = 1
 
 	@player_list
 	def commandMe(self, parts, fromloc, overriderank):
