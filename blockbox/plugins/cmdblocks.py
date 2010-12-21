@@ -2,8 +2,9 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-import datetime, random, time, traceback
 from __future__ import with_statement
+
+import datetime, random, time, traceback
 
 from lib.twisted.internet import reactor
 
@@ -13,7 +14,8 @@ from blockbox.persistence import PersistenceEngine as Persist
 from blockbox.plugins import ProtocolPlugin
 from blockbox.timer import ResettableTimer
 
-class CommandPlugin(ProtocolPlugin):
+class CommandPlugin(ProtocolPlugin):
+
 	commands = {
 		"cmdhelp": "commandCmdHelp",
 		"cmd": "commandCommand",
@@ -25,13 +27,15 @@ class CommandPlugin(ProtocolPlugin):
 		"cmddelend": "commandCommanddelend",
 		"cmdshow": "commandShowcmdblocks",
 		"cmdinfo": "commandcmdinfo",
-	}
+	}
+
 	hooks = {
 		"blockclick": "blockChanged",
 		"newworld": "newWorld",
 		"poschange": "posChanged",
 		"chatmsg": "message"
-	}
+	}
+
 	def gotClient(self):
 		self.twocoordcommands = list(["blb", "bhb", "bwb", "mountain", "hill", "dune", "pit", "lake", "hole", "copy", "replace"])
 		self.onecoordcommands = list(["sphere", "hsphere", "paste"])

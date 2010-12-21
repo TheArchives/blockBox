@@ -2,8 +2,9 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-import math, random
 from __future__ import with_statement
+
+import math, random
 
 from blockbox.constants import *
 from blockbox.decorators import *
@@ -23,12 +24,16 @@ class InteractionPlugin(ProtocolPlugin):
 		"brb": "commandAway",
 		"back": "commandBack",
 		"slap": "commandSlap",
-		"punch": "commandPunch",		"roll": "commandRoll",
+		"punch": "commandPunch",
+		"roll": "commandRoll",
+
 		"bank": "commandBalance",
 		"balance": "commandBalance",
 		"pay": "commandPay",
 		"setbank": "commandSetAccount",
-		"removebank": "commandRemoveAccount",		"count": "commandCount",
+		"removebank": "commandRemoveAccount",
+
+		"count": "commandCount",
 		"countdown": "commandCount",
 
 		"s": "commandSendMessage",
@@ -39,9 +44,12 @@ class InteractionPlugin(ProtocolPlugin):
 		"spectate": "commandSpectate",
 		"watch": "commandSpectate",
 		"follow": "commandSpectate",
-	}	hooks = {
+	}
+
+	hooks = {
 		"poschange": "posChanged",
-	}
+	}
+
 	money_logger = logging.getLogger('TransactionLogger')
 
 	def gotClient(self):
@@ -58,7 +66,8 @@ class InteractionPlugin(ProtocolPlugin):
 					if user.x != x and user.y != y and user.z != z:
 						user.teleportTo(x >> 5, y >> 5, z >> 5, h, p)
 			except AttributeError:
-				pass
+				pass
+
 	@player_list
 	def commandBack(self, parts, fromloc, overriderank):
 		"/back - Guest\nPrints out message of you coming back."
@@ -95,7 +104,9 @@ class InteractionPlugin(ProtocolPlugin):
 		if len(parts) == 1:
 			self.client.sendServerMessage("Please type a message.")
 		else:
-			self.client.factory.queue.put((self.client, TASK_SERVERMESSAGE, ("[MSG] "+(" ".join(parts[1:])))))	@player_list
+			self.client.factory.queue.put((self.client, TASK_SERVERMESSAGE, ("[MSG] "+(" ".join(parts[1:])))))
+
+	@player_list
 	def commandSlap(self, parts, fromloc, overriderank):
 		"/slap username [with object] - Guest\nSlap username [with object]."
 		if len(parts) == 1:

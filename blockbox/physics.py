@@ -2,8 +2,10 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-import logging, time
 from __future__ import generators
+
+import logging, time
+
 from collections import deque
 from threading import Thread, Lock
 

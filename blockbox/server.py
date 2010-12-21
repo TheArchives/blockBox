@@ -2,9 +2,10 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
+from __future__ import with_statement
+
 import datetime, gc, hashlib, logging, os, random, re, shutil, sys, time, threading, traceback, urllib
 
-from __future__ import with_statement
 from collections import defaultdict
 from ConfigParser import RawConfigParser as ConfigParser
 from Queue import Queue, Empty
