@@ -1,0 +1,9 @@
+dat2persist is a handy tool for converting iCraft's .dat files to blockBox's persist format.
+
+HOWTOUSE:
+1. Put lastseen.meta, balances.dat and ranks.dat into the same directory as the dat2persist.exe.
+2. Run dat2persist.exe
+3. ???
+4. PROFIT, now put the generated persist folder into the root directory of your blockBox installation, replacing the current persist folder.
+
+Questions? Feel free to ask in our IRC channel: #blockBox@esper.net

@@ -4,8 +4,9 @@
 
 import datetime, gc, hashlib, logging, os, random, re, shutil, sys, time, threading, traceback, urllib
 
-from ConfigParser import RawConfigParser as ConfigParser
+from __future__ import with_statement
 from collections import defaultdict
+from ConfigParser import RawConfigParser as ConfigParser
 from Queue import Queue, Empty
 
 from lib.twisted.internet import reactor, task

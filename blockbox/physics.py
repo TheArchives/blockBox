@@ -3,6 +3,7 @@
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
 import logging, time
+from __future__ import generators
 from collections import deque
 from threading import Thread, Lock
 
