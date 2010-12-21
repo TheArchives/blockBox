@@ -382,7 +382,8 @@ class TemplateDoesNotExist(Exception):
 
 class NotConfigured(Exception):
 	def __init__(self):
-		self.msg = "blockBox is not configured. Read the installation guide if you wish to proceed."
+		self.msg = "blockBox is not configured. Read the installation guide if you wish to proceed."
+
 	def __str__(self):
 		return self.msg
 
