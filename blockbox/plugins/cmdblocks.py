@@ -3,6 +3,7 @@
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
 import datetime, random, time, traceback
+from __future__ import with_statement
 
 from lib.twisted.internet import reactor
 

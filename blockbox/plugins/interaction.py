@@ -3,6 +3,7 @@
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
 import math, random
+from __future__ import with_statement
 
 from blockbox.constants import *
 from blockbox.decorators import *
