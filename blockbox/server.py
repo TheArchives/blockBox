@@ -168,6 +168,7 @@ class BlockBoxFactory(Factory):
 		self.server_message = self.config.get("main", "description")
 		self.initial_greeting = self.config.get("main", "greeting").replace("\\n", "\n")
 		self.public = self.config.getboolean("main", "public")
+		self.isDebugging = self.config.getboolean("main", "debug_mode")
 		self.enable_archives = self.conf_options.getboolean("worlds", "enable_archives")
 		self.duplicate_logins = self.config.getboolean("options", "duplicate_logins")
 		self.verify_names = self.config.getboolean("options", "verify_names")
