@@ -20,6 +20,7 @@ from lib.twisted.internet import reactor
 
 from blockbox.api import APIFactory
 from blockbox.constants import *
+from blockbox.logger import ColoredLogger
 from blockbox.server import BlockBoxFactory
 
 logging.basicConfig(
