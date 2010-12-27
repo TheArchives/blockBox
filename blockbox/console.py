@@ -2,20 +2,16 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-import threading
-import traceback, sys
-import time
-import datetime
-import logging
+import datetime, logging, sys, threading, time, traceback
 
 from lib.twisted.internet import reactor
 
 from blockbox.constants import *
-from globals import *
+from blockbox.globals import *
 from blockbox.irc_client import ChatBotFactory
 
 class StdinPlugin(threading.Thread):
-
+	"The console."
 	def __init__(self, server):
 		threading.Thread.__init__(self)
 		self.server = server
