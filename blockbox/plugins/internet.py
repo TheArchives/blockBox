@@ -1,5 +1,5 @@
 # blockBox is copyright 2009-2011 the Archives Team, the blockBox Team, and the iCraft team.
-# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted.
+# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
 import sys, urllib
@@ -63,8 +63,8 @@ class InternetPlugin(ProtocolPlugin):
 			if len(self.tuser) < 1:
 				self.client.sendServerMessage("Please do /tlog first.")
 			else:
-				msg = urllib.quote(" ".join(parts[1:]) + " #iCraft")
-				data = urllib.urlencode({"status": " ".join(parts[1:]) + " #iCraft"})
+				msg = urllib.quote(" ".join(parts[1:]) + " #blockBox")
+				data = urllib.urlencode({"status": " ".join(parts[1:]) + " #blockBox"})
 				urllib.urlopen(("http://%s:%s@twitter.com/statuses/update.xml" % (self.tuser,self.tpass)), data)
 				self.client.sendServerMessage("You have successfully tweeted.")
 				self.twlog.write(self.tuser+"("+self.client.username+")"+" has tweeted: "+msg+"\n")

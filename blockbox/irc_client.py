@@ -1,5 +1,5 @@
 # blockBox is copyright 2009-2011 the Archives Team, the blockBox Team, and the iCraft team.
-# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted.
+# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
 import datetime, logging, traceback
@@ -137,17 +137,17 @@ class ChatBot(irc.IRCClient):
 					if not command > 2:
 						self.msg(user, "You must provide a username.")
 					else:
-						self.msg(user,Rank(self, command[1:] + [user], False, True, self.factory))
+						self.msg(user,Rank(command[1:] + [user], False, True, self.factory))
 				elif command[1] == ("derank"):
 					if not command > 2:
 						self.msg(user, "You must provide a username.")
 					else:
-						self.msg(user,DeRank(self, command[1:] + [user], False, True, self.factory))
+						self.msg(user,DeRank(command[1:] + [user], False, True, self.factory))
 				elif command[1] == ("spec"):
 					if not command > 2:
 						self.msg(user, "You must provide a username.")
 					else:
-						self.msg(user,Spec(self, command[1], False, True, self.factory))
+						self.msg(user,Spec(command[1], False, True, self.factory))
 				elif command[1] == ("boot"):
 					world = str(command[2]).lower()
 					self.factory.loadWorld("worlds/"+world, world)

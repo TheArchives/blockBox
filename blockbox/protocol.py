@@ -1,5 +1,5 @@
 # blockBox is copyright 2009-2011 the Archives Team, the blockBox Team, and the iCraft team.
-# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted.
+# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
 import cPickle, datetime, hashlib, logging, os, traceback
@@ -921,13 +921,13 @@ class BlockBoxServerProtocol(Protocol):
 		"Sends an overload - a fake map designed to use as much memory as it can."
 		self.sendPacked(TYPE_INITIAL, 7, "Loading...", "Entering world main", 0)
 		self.sendPacked(TYPE_PRECHUNK)
-		self.factory.loops[self.username]["overloadchunk"] = task.LoopingCall(self.sendOverloadChunk)
-		self.factory.loops[self.username]["overloadchunk"].start(0.001)
+		reactor.callLater(0.001, self.sendOverloadChunk)
 
 	def sendOverloadChunk(self):
 		"Sends a level chunk full of 1s."
 		if self.connected:
 			self.sendPacked(TYPE_CHUNK, 1024, "\1"*1024, 50)
+			reactor.callLater(0.001, self.sendOverloadChunk)
 
 	def sendLevel(self):
 		"Starts the process of sending a level to the client."

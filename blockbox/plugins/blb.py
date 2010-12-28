@@ -1,5 +1,5 @@
 # blockBox is copyright 2009-2011 the Archives Team, the blockBox Team, and the iCraft team.
-# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted.
+# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
 from lib.twisted.internet import reactor
@@ -267,6 +267,7 @@ class BlbPlugin(ProtocolPlugin):
 								self.client.sendBlock(i, j, k, block)
 								self.client.total += 1
 								yield
+			do_step()
 
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
