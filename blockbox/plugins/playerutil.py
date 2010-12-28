@@ -20,8 +20,8 @@ class PlayerUtilPlugin(ProtocolPlugin):
 		"directors": "commandDirectors",
 		"admins": "commandAdmins",
 		"mods": "commandMods",		"banned": "commandBanned",		"worldbanned": "commandWorldBanned",		"ops": "commandOps",
-		"writers": "commandWriters",
-		"builders": "commandWriters",
+		"writers": "commandBuilders",
+		"builders": "commandBuilders",
 		"specced": "commandSpecced",
 		"respawn": "commandRespawn",
 		"fetch": "commandFetch",
@@ -45,7 +45,9 @@ class PlayerUtilPlugin(ProtocolPlugin):
 		"players": "commandWho",
 		"pinfo": "commandWho",
 		"lastseen": "commandLastseen",
-		"b": "commandBack",
+		"b": "commandLastCommand",
+		"lastcmd": "commandLastCommand",
+		"lastcommand": "commandLastCommand",
 		"rank": "commandRank",
 		"setrank": "commandRank",
 		"derank": "commandDeRank",
@@ -72,7 +74,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 	hooks = {
 		"chatmsg": "chatmsg",		"recvmessage": "messageReceived",		"poschange": "posChanged",
 		"newworld": "newWorld",
-		}
+	}
 	def gotClient(self):
 		self.client.var_fetchrequest = False
 		self.client.var_fetchdata = ()		self.lastcommand = None
@@ -218,14 +220,14 @@ class PlayerUtilPlugin(ProtocolPlugin):
 			else:
 				self.client.sendServerMessage("%s is not on the server." % username)
 				return
-			self.client.factory.usernames[username].sendServerMessage("You have been respawned by %s" % self.client.username)
+			self.client.factory.usernames[username].sendServerMessage("You have been respawned by %s." % self.client.username)
 			self.client.world.logger.debug("%s respawned." % username)
 		else:
 			self.client.respawn()	@player_list
 	@op_only
 	@only_username_command
 	def commandFetch(self, user, fromloc, overriderank):
-		"/fetch username - Op\nAliases: bring\nTeleports a player to be where you are"
+		"/fetch username - Op\nAliases: bring\nTeleports a player to be where you are."
 		# Shift the locations right to make them into block coords
 		rx = self.client.x >> 5
 		ry = self.client.y >> 5
@@ -245,13 +247,14 @@ class PlayerUtilPlugin(ProtocolPlugin):
 	@player_list
 	@only_username_command
 	def commandInvite(self, user, fromloc, overriderank):
+		"/invite username - Guest\nInvites a player to teleport to you."
 		rx = self.client.x >> 5
 		ry = self.client.y >> 5
 		rz = self.client.z >> 5
-		user.sendServerMessage("%s would like to fetch you." % self.client.username)
+		user.sendServerMessage("%s would like you to teleport to him." % self.client.username)
 		user.sendServerMessage("Do you wish to accept? [y]es/[n]o")
 		user.var_fetchrequest = True
-		user.var_fetchdata = (self.client,self.client.world,rx,ry,rz)
+		user.var_fetchdata = (self.client,self.client.world, rx, ry, rz)
 		self.client.sendServerMessage("The fetch request has been sent.")
 	@player_list
 	@director_only
@@ -276,17 +279,17 @@ class PlayerUtilPlugin(ProtocolPlugin):
 
 	@info_list
 	def commandOps(self, parts, fromloc, overriderank):
-		"/ops - Guest\nLists this world's ops"
+		"/ops - Guest\nLists this world's ops."
 		if not self.client.world.ops:
 			self.client.sendServerMessage("This world has no Ops.")
 		else:
 			self.client.sendServerList(["Ops for %s:" % self.client.world.id] + list(self.client.world.ops))
 
 	@info_list
-	def commandWriters(self, parts, fromloc, overriderank):
-		"/writers - Guest\nAliases: builders\nLists this world's writers"
+	def commandBuilders(self, parts, fromloc, overriderank):
+		"/builders - Guest\nAliases: writers\nLists this world's builders."
 		if not self.client.world.writers:
-			self.client.sendServerMessage("This world has no Builders.")
+			self.client.sendServerMessage("This world has no builders.")
 		else:
 			self.client.sendServerList(["Builders for %s:" % self.client.world.id] + list(self.client.world.writers))
 	@info_list
@@ -417,7 +420,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 		self.client.sendServerMessage("Your quit message is now: %s" % " ".join(parts[1:]))
 	@player_list
 	def commandQuit(self, parts, fromloc, overriderank):
-		"/quit - Guest\nExit the server."
+		"/quit - Guest\nExits the server."
 		if not len(parts) > 1:
 			self.client.sendError("Quit: %s" % self.client.quitmsg)
 		else:
@@ -443,7 +446,8 @@ class PlayerUtilPlugin(ProtocolPlugin):
 		self.client.sendServerMessage("%s is in %s" % (user.username, user.world.id))
 
 	@info_list
-	def commandBack(self, parts, fromloc, rankoverride):
+	def commandLastCommand(self, parts, fromloc, rankoverride):
+		"/b - Guest\nAliases: lastcmd, lastcommand\nRedos the last command you entered."
 		message = self.lastcommand
 		parts = [x.strip() for x in message.split() if x.strip()]
 		command = parts[0].strip("/")
@@ -499,7 +503,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 	@player_list
 	@mod_only
 	def commandSpecced(self, user, fromloc, overriderank):
-		"/specced - Mod\nShows who is Specced."
+		"/specced - Mod\nShows who is specced."
 		if len(self.client.factory.spectators):
 			self.client.sendServerList(["Specced:"] + list(self.client.factory.spectators))
 		else:
@@ -512,7 +516,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 		if len(parts) < 3:
 			self.client.sendServerMessage("You must specify a rank and username.")
 		else:
-			self.client.sendServerMessage(Rank(self, parts, fromloc, overriderank))
+			self.client.sendServerMessage(Rank(parts, fromloc, overriderank))
 
 	@player_list
 	@op_only
@@ -533,7 +537,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 			if parts[0] == "/writer":
 				parts[0] = "/builder"
 			parts = ["/rank", parts[0][1:]] + parts[1:]
-			self.client.sendServerMessage(Rank(self, parts, fromloc, overriderank))
+			self.client.sendServerMessage(Rank(parts, fromloc, overriderank))
 
 	@player_list
 	@op_only
@@ -545,7 +549,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 			if parts[0] == "/dewriter":
 				parts[0] = "/debuilder"
 			parts = ["/derank", parts[0][1:]] + parts[1:]
-			self.client.sendServerMessage(DeRank(self, parts, fromloc, overriderank))
+			self.client.sendServerMessage(DeRank(parts, fromloc, overriderank))
 
 	@player_list
 	@op_only
@@ -554,17 +558,17 @@ class PlayerUtilPlugin(ProtocolPlugin):
 		"/colors on|off - Op\nAliases: showops\nEnables or disables colors in this world."
 		if onoff == "on":
 			self.client.world.highlight_ops = True
-			self.client.sendServerMessage("%s now has staff highlighting." % self.client.world.id)
+			self.client.sendServerMessage("World %s now has staff highlighting." % self.client.world.id)
 		else:
 			self.client.world.highlight_ops = False
-			self.client.sendServerMessage("%s no longer has staff highlighting." % self.client.world.id)
+			self.client.sendServerMessage("World %s no longer has staff highlighting." % self.client.world.id)
 
 	@player_list
 	@only_username_command
 	def commandMute(self, username, fromloc, overriderank):
 		"/mute username - Guest\nStops you hearing messages from 'username'."
 		self.muted.add(username)
-		self.client.sendServerMessage("%s muted." % username)
+		self.client.sendServerMessage("%s is now muted." % username)
 
 	@player_list
 	@only_username_command
@@ -572,9 +576,9 @@ class PlayerUtilPlugin(ProtocolPlugin):
 		"/unmute username - Guest\nLets you hear messages from this player again"
 		if username in self.muted:
 			self.muted.remove(username)
-			self.client.sendServerMessage("%s unmuted." % username)
+			self.client.sendServerMessage("%s has been unmuted." % username)
 		else:
-			self.client.sendServerMessage("%s wasn't muted to start with" % username)
+			self.client.sendServerMessage("%s was not muted." % username)
 
 	@player_list
 	def commandMuted(self, username, fromloc, overriderank):
@@ -590,7 +594,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 		"/fly on|off - Guest\nEnables or disables dad server-side flying"
 		if onoff == "on":
 			self.flying = True
-			self.client.sendServerMessage("You are now flying")
+			self.client.sendServerMessage("You are now flying.")
 		else:
 			self.flying = False
 			self.client.sendServerMessage("You are no longer flying.")

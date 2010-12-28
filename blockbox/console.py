@@ -100,7 +100,7 @@ class StdinPlugin(threading.Thread):
 									if self.server.isBanned(username):
 										print ("%s is already Banned." % username)
 									else:
-										if not len(message)>2:
+										if len(message) < 2:
 											print ("Please give a reason.")
 										else:
 											self.server.addBan(username, " ".join(message[2:]))
@@ -117,15 +117,16 @@ class StdinPlugin(threading.Thread):
 									print ("Please specify a username.")
 								else:
 									try:
-										print Rank(self, message, 'console', True, self.server)
+										print Rank(message, 'console', True, self.server)
 									except:
+										print (traceback.format_exc())
 										print ("You must specify a rank and username.")
 							elif message[0] == "derank":
 								if len(message) == 1:
 									print ("Please specify a username.")
 								else:
 									try:
-										print DeRank(self, message, 'console', True, self.server)
+										print DeRank(message, 'console', True, self.server)
 									except:
 										print ("You must specify a rank and username.")
 							elif message[0] == "spec":
@@ -133,7 +134,7 @@ class StdinPlugin(threading.Thread):
 									print ("Please specify a username.")
 								else:
 									try:
-										print Spec(self, message[1], 'console', True, self.server)
+										print Spec(message[1], 'console', True, self.server)
 									except:
 										print ("Please specify a username.")
 							elif message[0] == ("boot"):
