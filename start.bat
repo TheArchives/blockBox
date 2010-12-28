@@ -1,4 +1,4 @@
 @ECHO off
-TITLE blockBox - Zippit
+TITLE blockBox
 run.py --run
 PAUSE
