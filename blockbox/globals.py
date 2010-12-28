@@ -1,10 +1,10 @@
 # blockBox is copyright 2009-2011 the Archives Team, the blockBox Team, and the iCraft team.
-# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted.
+# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
 from collections import defaultdict
 
-def Rank(parts, fromloc, overriderank, server=None):
+def Rank(self, parts, fromloc, overriderank, server=None):
 	username = parts[2].lower()
 	if server:
 		factory = server
@@ -20,7 +20,7 @@ def Rank(parts, fromloc, overriderank, server=None):
 			if not server:
 				world = self.client.world
 			else:
-				return "You must provide a world."
+				return "You must provide a world"
 		#Make builder
 		if not server:
 			if not (self.client.username.lower() in world.ops or self.client.isMod() or self.client.isWorldOwner()) and not overriderank:
@@ -34,7 +34,7 @@ def Rank(parts, fromloc, overriderank, server=None):
 			user = factory.usernames[username]
 			if user.world == world:
 				user.sendWriterUpdate()
-		return ("%s is now a builder in world \"%s\"." % (username, world))
+		return ("%s is now a Builder" % username)
 	elif parts[1] == "op":
 		if len(parts) > 3:
 			try:
@@ -45,9 +45,9 @@ def Rank(parts, fromloc, overriderank, server=None):
 			if not server:
 				world = self.client.world
 			else:
-				return "You must provide a world."
+				return "You must provide a world"
 		if not server:
-			if not self.client.isWorldOwner() and not overriderank:
+			if self.client.isWorldOwner()==False and not overriderank:
 				return ("You are not high enough rank!")
 		else:
 			if fromloc != "console":
@@ -65,7 +65,7 @@ def Rank(parts, fromloc, overriderank, server=None):
 			if not server:
 				world = self.client.world
 			else:
-				return "You must provide a world."
+				return "You must provide a world"
 		if not server:
 			if not self.client.isMod() and not overriderank:
 				return ("You are not high enough rank!")
@@ -73,7 +73,7 @@ def Rank(parts, fromloc, overriderank, server=None):
 			if fromloc != "console":
 				return ("You are not high enough rank!")
 		world.owner = username
-		return ("%s is now the world owner of world \"%s\"." % (username, world))
+		return ("%s is now a world owner." % username)
 	elif parts[1] == "advbuilder":
 		#make them an advbuilder
 		if not server:
@@ -125,11 +125,11 @@ def Rank(parts, fromloc, overriderank, server=None):
 		factory.directors.add(username)
 		if username in factory.usernames:
 			factory.usernames[username].sendDirectorUpdate()
-		return ("%s is now a director." % username)
+		return ("%s is now an director." % username)
 	else:
 		return ("Unknown rank \"%s\""%parts[1])
 
-def DeRank(parts, fromloc, overriderank, server=None):
+def DeRank(self, parts, fromloc, overriderank, server=None):
 	username = parts[2].lower()
 	if server:
 		factory = server
@@ -145,7 +145,7 @@ def DeRank(parts, fromloc, overriderank, server=None):
 			if not server:
 				world = self.client.world
 			else:
-				return "You must provide a world."
+				return "You must provide a world"
 		#Make builder
 		if not server:
 			if not ((self.client.username in world.ops) or self.client.isMod()) and overriderank:
@@ -157,12 +157,12 @@ def DeRank(parts, fromloc, overriderank, server=None):
 		try:
 			world.writers.remove(username)
 		except KeyError:
-				return ("%s is not a builder in world \"%s\"." % (username, world))
+				return ("%s is not a Builder." % username)
 		if username in factory.usernames:
 			user = factory.usernames[username]
 			if user.world == world:
 				user.sendWriterUpdate()
-		return ("Removed %s as a builder in world \"%s\"" % (username, world))
+		return ("Removed %s as Builder" % username)
 	elif parts[1] == "op":
 		if len(parts) > 3:
 			try:
@@ -173,10 +173,10 @@ def DeRank(parts, fromloc, overriderank, server=None):
 			if not server:
 				world = self.client.world
 			else:
-				return "You must provide a world."
+				return "You must provide a world"
 		if not server:
 			if not self.client.isWorldOwner() and world != self.client.world:
-				return ("You are not a World Owner!")
+				return ("You are not an World Owner!")
 		else:
 			if fromloc != "console":
 				if not factory.isWorldOwner(parts[-1]):
@@ -184,12 +184,12 @@ def DeRank(parts, fromloc, overriderank, server=None):
 		try:
 			world.ops.remove(username)
 		except KeyError:
-			return ("%s is not an op in world \"%s\"." % (username, world))
+			return ("%s is not an op." % username)
 		if username in factory.usernames:
 			user = factory.usernames[username]
 			if user.world == world:
 				user.sendOpUpdate()
-		return ("%s is no longer an op in world \"%s\"." % (username, world))
+		return ("Deopped %s" % username)
 		#make worldowner
 	elif parts[1] == "worldowner":
 		if len(parts) > 3:
@@ -201,10 +201,10 @@ def DeRank(parts, fromloc, overriderank, server=None):
 			if not server:
 				world = self.client.world
 			else:
-				return "You must provide a world."
+				return "You must provide a world"
 		if not server:
 			if not self.client.isWorldOwner() and world != self.client.world:
-				return ("You are not a World Owner!")
+				return ("You are not an World Owner!")
 		else:
 			if fromloc != "console":
 				if not factory.isWorldOwner(parts[-1]):
@@ -217,7 +217,8 @@ def DeRank(parts, fromloc, overriderank, server=None):
 			user = factory.usernames[username]
 			if user.world == world:
 				user.sendWorldOwnerUpdate()
-		return ("%s is no longer the world owner of world \"%s\"." % (username, world))
+		return ("%s is no longer the world owner." % username)
+		#make worldowner
 	elif parts[1] == "advbuilder":
 		#make them an advbuilder
 		if not server:
@@ -227,13 +228,13 @@ def DeRank(parts, fromloc, overriderank, server=None):
 			if fromloc != "console":
 				if not factory.isMod(parts[-1]):
 					return ("You are not high enough rank!")
-		if username in factory.advbuilders:
-			factory.advbuilders.remove(username)
+		if username in factory.members:
+			factory.members.remove(username)
 		else:
 			return ("No such member \"%s\"" % username.lower())
 		if username in factory.usernames:
-			factory.usernames[username].sendAdvBuilderUpdate()
-		return ("%s is no longer an Advanced Builder." % username.lower())
+			factory.usernames[username].sendMemberUpdate()
+		return ("%s is no longer a Member." % username.lower())
 	elif parts[1] == "mod":
 		#make them a mod
 		if not server:
@@ -249,7 +250,7 @@ def DeRank(parts, fromloc, overriderank, server=None):
 			return ("No such mod \"%s\"" % username.lower())
 		if username in factory.usernames:
 			factory.usernames[username].sendModUpdate()
-		return ("%s is no longer a mod." % username.lower())
+		return ("%s is no longer a Mod." % username.lower())
 	elif parts[1] == "admin":
 		#make them admin
 		if not server:
@@ -279,13 +280,13 @@ def DeRank(parts, fromloc, overriderank, server=None):
 			factory.directors.remove(username)
 			if username in factory.usernames:
 				factory.usernames[username].sendDirectorUpdate()
-			return ("%s is no longer a director." % username.lower())
+			return ("%s is no longer an director." % username.lower())
 		else:
-			return ("No such director \"%s\"" % username.lower())
+			return ("No such director \"%s\""% username.lower())
 	else:
-		return ("Unknown rank \"%s\""% parts[1])
+		return ("Unknown rank \"%s\""%parts[1])
 
-def Spec(username, fromloc, overriderank, server=None):
+def Spec(self, username, fromloc, overriderank, server=None):
 	if server:
 		factory = server
 	else:
@@ -297,7 +298,7 @@ def Spec(username, fromloc, overriderank, server=None):
 		factory.usernames[username].sendSpectatorUpdate()
 	return ("%s is now a spec." % username)
 
-def Staff(server=None):
+def Staff(self, server=None):
 	Temp = []
 	if server:
 		factory = server
@@ -311,7 +312,7 @@ def Staff(server=None):
 		Temp.append (["Mods:"] + list(factory.mods))
 	return Temp
 
-def Credits():
+def Credits(self):
 	Temp = []
 	Temp.append ("Thanks to the following people for making blockBox possible...")
 	Temp.append ("(a full list is available on the blockBox website, which can be found at blockbox.bradness.info)")

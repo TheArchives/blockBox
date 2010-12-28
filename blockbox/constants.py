@@ -1,8 +1,8 @@
 # blockBox is copyright 2009-2011 the Archives Team, the blockBox Team, and the iCraft team.
-# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted.
+# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-VERSION = "v1.0.02B"
+VERSION = "v1.0.02C"
 
 FORMAT_LENGTHS = {
 	"b": 1,

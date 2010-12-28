@@ -1,5 +1,5 @@
 # blockBox is copyright 2009-2011 the Archives Team, the blockBox Team, and the iCraft team.
-# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted.
+# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
 import datetime, logging, sys, threading, time, traceback
@@ -12,6 +12,7 @@ from blockbox.irc_client import ChatBotFactory
 
 class StdinPlugin(threading.Thread):
 	"The console."
+
 	def __init__(self, server):
 		threading.Thread.__init__(self)
 		self.server = server
@@ -119,7 +120,6 @@ class StdinPlugin(threading.Thread):
 									try:
 										print Rank(message, 'console', True, self.server)
 									except:
-										print (traceback.format_exc())
 										print ("You must specify a rank and username.")
 							elif message[0] == "derank":
 								if len(message) == 1:

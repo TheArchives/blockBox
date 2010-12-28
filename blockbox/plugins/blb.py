@@ -1,5 +1,5 @@
 # blockBox is copyright 2009-2011 the Archives Team, the blockBox Team, and the iCraft team.
-# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted.
+# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
 from lib.twisted.internet import reactor
@@ -280,6 +280,7 @@ class BlbPlugin(ProtocolPlugin):
 					if fromloc == 'user':
 						self.client.finalizeMassCMD('bwb', self.client.count)
 					pass
+			do_step()
 
 	@build_list
 	def commandBcb(self, parts, fromloc, overriderank):

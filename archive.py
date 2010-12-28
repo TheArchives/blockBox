@@ -1,21 +1,14 @@
 # blockBox is copyright 2009-2011 the Archives Team, the blockBox Team, and the iCraft team.
-# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted.
+# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-import sys
-import datetime
-import os
-import struct
+import cookielib, datetime, os, re, struct, sys, urllib, urllib2
 from ConfigParser import SafeConfigParser as ConfigParser
-import urllib
-import urllib2
-import cookielib
-import re
 
-from lib.twisted.internet import reactor, protocol
+from lib.twisted.internet import protocol, reactor
 
-from blockbox.protocol import BlockBoxServerProtocol, TYPE_FORMATS
 from blockbox.constants import *
+from blockbox.protocol import BlockBoxServerProtocol, TYPE_FORMATS
 
 class RipClient(BlockBoxServerProtocol):
 	"""Once connected, send a message, then print the result."""
