@@ -1,19 +1,17 @@
-# blockBox is Copyright 2009-2010 of the Archives Team, the blockBox Team, and the iCraft team.
-# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
+# blockBox is copyright 2009-2011 the Archives Team, the blockBox Team, and the iCraft team.
+# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-import datetime
-import traceback
-import logging
+import datetime, logging, traceback
 
 from twisted.words.protocols import irc
 from twisted.words.protocols.irc import IRC
 from twisted.internet import protocol
 
-from constants import *
-from globals import *
-from blockbox.plugins import protocol_plugins
+from blockbox.constants import *
 from blockbox.decorators import *
+from blockbox.globals import *
+from blockbox.plugins import protocol_plugins
 
 class ChatBot(irc.IRCClient):
 	"""An IRC-server chat integration bot."""
@@ -52,7 +50,7 @@ class ChatBot(irc.IRCClient):
 		self.sendPacked(TYPE_ERROR, error)
 		reactor.callLater(0.2, self.transport.loseConnection)
 
-	def lineReceived(self, line): #use instead of priv message
+	def lineReceived(self, line): # use instead of priv message
 		line = irc.lowDequote(line)
 		try:
 			prefix, command, params = irc.parsemsg(line)
@@ -108,7 +106,7 @@ class ChatBot(irc.IRCClient):
 					else:
 						self.msg(user,"You must provide a name.")
 				elif command[1] == ("banned"):
-					self.msg(user,  ", ".join(self.factory.banned))
+					self.msg(user, ", ".join(self.factory.banned))
 				elif command[1] == ("kick"):
 					user = command[2]
 					for client in self.factory.clients.values():
@@ -182,14 +180,14 @@ class ChatBot(irc.IRCClient):
 					if len(msg_command) > 1:
 						if msg_command[1] == ("who"):
 							self.msg(self.factory.irc_channel, "Who's Online?")
-							none=True
+							none = True
 							for key in self.factory.worlds:
 								users =  ", ".join(str(c.username) for c in self.factory.worlds[key].clients)
 								if users:
 									whois = ("%s: %s" % (key,users))
 									self.msg(self.factory.irc_channel, whois)
-									users=None
-									none=False
+									users = None
+									none = False
 							if none:
 								self.msg(self.factory.irc_channel, "No users are online.")
 						elif msg_command[1] == ("worlds"):
@@ -236,9 +234,9 @@ class ChatBot(irc.IRCClient):
 						self.msg(self.factory.irc_channel,"Please include a message to send.")
 					else:
 						try:
-						   world = message[0][1:len(message[0])]
-						   out = " ".join(message[1:])
-						   text = COLOUR_YELLOW+"!"+COLOUR_PURPLE+user+":"+COLOUR_WHITE+" "+out
+							world = message[0][1:len(message[0])]
+							out = " ".join(message[1:])
+							text = COLOUR_YELLOW+"!"+COLOUR_PURPLE+user+":"+COLOUR_WHITE+" "+out
 						except ValueError:
 							self.msg(self.factory.irc_channel,"Please include a message to send.")
 						else:
@@ -352,7 +350,7 @@ class ChatBot(irc.IRCClient):
 	def action(self, user, channel, msg):
 		msg = msg.replace("./", " /")
 		msg = msg.replace(".!", " !")
-		"""This will get called when the bot sees someone do an action."""
+		# This will get called when the bot sees someone do an action.
 		user = user.split('!', 1)[0]
 		msg = "".join([char for char in msg if ord(char) < 128 and char != "" or "0"])
 		self.factory.queue.put((self, TASK_ACTION, (127, COLOUR_PURPLE, user, msg)))
@@ -390,7 +388,7 @@ class ChatBot(irc.IRCClient):
 		username = username.replace("&d", "")
 		username = username.replace("&e", "")
 		username = username.replace("&f", "")
-		self.msg(self.factory.irc_channel, "%s: %s" % (username, message))
+		self.msg(self.factory.irc_channel, "12%s:23 %s 3" % (username, message))
 
 	def sendServerMessage(self, message,admin=False,user="",IRC=False):
 		message = message.replace("./", " /")
@@ -414,9 +412,9 @@ class ChatBot(irc.IRCClient):
 		if admin:
 			for op in self.ops:
 				if not op == user:
-					self.IRCClient.msg(op, "%s" % (message))
+					self.IRCClient.msg(op, "4>> %s4" % (message))
 		else:
-			self.msg(self.factory.irc_channel, "%s" % (message, ))
+			self.msg(self.factory.irc_channel, "4>> %s4" % (message))
 
 	def sendAction(self, username, message):
 		message = message.replace("&0", "01")
@@ -435,9 +433,9 @@ class ChatBot(irc.IRCClient):
 		message = message.replace("&d", "13")
 		message = message.replace("&e", "08")
 		message = message.replace("&f", "00")
-		self.msg(self.factory.irc_channel, "* %s %s" % (username, message))
+		self.msg(self.factory.irc_channel, "13* %s %s13" % (username, message))
 
-	# irc callbacks
+		# irc callbacks
 
 	def irc_NICK(self, prefix, params):
 		"""Called when an IRC user changes their nickname."""
@@ -449,7 +447,6 @@ class ChatBot(irc.IRCClient):
 		msg = "%s%s is now known as %s." % (COLOUR_YELLOW, old_nick, new_nick)
 		self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, "IRC", msg)))
 
-
 	def userKicked(self, kickee, channel, kicker, message):
 		"""Called when I observe someone else being kicked from a channel."""
 		if kickee in self.ops:
@@ -459,7 +456,6 @@ class ChatBot(irc.IRCClient):
 		if not kickee == message:
 			msg = "%sReason: %s" % (COLOUR_YELLOW, message)
 			self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, "IRC", msg)))
-
 
 	def userLeft(self, user, channel):
 		"""Called when I see another user leaving a channel."""
@@ -534,7 +530,7 @@ class ChatBot(irc.IRCClient):
 			self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, "IRC", msg)))
 			msg = "%s(%s)" % (COLOUR_YELLOW, " ".join(args))
 			self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, "IRC", msg)))
-	
+
 	def irc_QUIT(self, user, params):
 		userhost = user
 		user = user.split('!')[0]
@@ -558,7 +554,7 @@ class ChatBotFactory(protocol.ClientFactory):
 	def quit(self, msg):
 		self.isQuitting = True
 		self.instance.sendLine("DISCONNECT :" + msg)
-		
+
 	def clientConnectionLost(self, connector, reason):
 		"""If we get disconnected, reconnect to server."""
 		self.instance = None
@@ -620,7 +616,7 @@ class ChatBotFactory(protocol.ClientFactory):
 			message = message.replace(".#", " #")
 			self.instance.sendAction(username, message)
 
-	def sendServerMessage(self, message,admin=False,user="",IRC=False):
+	def sendServerMessage(self, message, admin=False, user="", IRC=False):
 		if self.instance:
 			message = message.replace("&0", "01")
 			message = message.replace("&1", "02")
@@ -642,4 +638,4 @@ class ChatBotFactory(protocol.ClientFactory):
 			message = message.replace(".!", " !")
 			message = message.replace(".@", " @")
 			message = message.replace(".#", " #")
-			self.instance.sendServerMessage(message,admin,user,IRC)
+			self.instance.sendServerMessage(message, admin, user, IRC)

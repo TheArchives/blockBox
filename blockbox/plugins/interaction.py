@@ -1,14 +1,16 @@
-# blockBox is Copyright 2009-2010 of the Archives Team, the blockBox Team, and the iCraft team.
-# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
+# blockBox is copyright 2009-2011 the Archives Team, the blockBox Team, and the iCraft team.
+# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-import math
-import random
+from __future__ import with_statement
 
-from blockbox.plugins import ProtocolPlugin
-from blockbox.decorators import *
+import math, random
+
 from blockbox.constants import *
+from blockbox.decorators import *
 from blockbox.irc_client import *
+from blockbox.persistence import PersistenceEngine as Persist
+from blockbox.plugins import ProtocolPlugin
 
 class InteractionPlugin(ProtocolPlugin):
 	"Commands for player interactions."
@@ -22,23 +24,49 @@ class InteractionPlugin(ProtocolPlugin):
 		"brb": "commandAway",
 		"back": "commandBack",
 		"slap": "commandSlap",
-		"punch": "commandPunch",		"roll": "commandRoll",
+		"punch": "commandPunch",
+		"roll": "commandRoll",
+
 		"bank": "commandBalance",
 		"balance": "commandBalance",
 		"pay": "commandPay",
 		"setbank": "commandSetAccount",
-		"removebank": "commandRemoveAccount",		"count": "commandCount",
+		"removebank": "commandRemoveAccount",
+
+		"count": "commandCount",
 		"countdown": "commandCount",
 
 		"s": "commandSendMessage",
 		"inbox": "commandCheckMessages",
 		"c": "commandInboxClear",
 		"clear": "commandInboxClear",
-	}
+
+		"spectate": "commandSpectate",
+		"watch": "commandSpectate",
+		"follow": "commandSpectate",
+	}
+
+	hooks = {
+		"poschange": "posChanged",
+	}
+
 	money_logger = logging.getLogger('TransactionLogger')
 
 	def gotClient(self):
 		self.num = int(0)
+		self.spectating = False
+
+	def posChanged(self, x, y, z, h, p):
+		"Hook trigger for when the player moves"
+		spectators = set()
+		for uid in self.client.factory.clients:
+			user = self.client.factory.clients[uid]
+			try:
+				if user.spectating == self.client.id:
+					if user.x != x and user.y != y and user.z != z:
+						user.teleportTo(x >> 5, y >> 5, z >> 5, h, p)
+			except AttributeError:
+				pass
 
 	@player_list
 	def commandBack(self, parts, fromloc, overriderank):
@@ -53,11 +81,11 @@ class InteractionPlugin(ProtocolPlugin):
 	def commandAway(self, parts, fromloc, overriderank):
 		 "/away reason - Guest\nAliases: afk, brb\nPrints out message of you going away."
 		 if len(parts) == 1:
-			 self.client.factory.queue.put((self.client, TASK_AWAYMESSAGE, self.client.username + " has gone: Away."))
-			 self.client.gone = 1
+			self.client.factory.queue.put((self.client, TASK_AWAYMESSAGE, self.client.username + " has gone: Away."))
+			self.client.gone = 1
 		 else:
-			 self.client.factory.queue.put((self.client, TASK_AWAYMESSAGE, self.client.username + " has gone: Away"+COLOUR_WHITE+" "+(" ".join(parts[1:]))))
-			 self.client.gone = 1
+			self.client.factory.queue.put((self.client, TASK_AWAYMESSAGE, self.client.username + " has gone: Away"+COLOUR_WHITE+" "+(" ".join(parts[1:]))))
+			self.client.gone = 1
 
 	@player_list
 	def commandMe(self, parts, fromloc, overriderank):
@@ -76,7 +104,9 @@ class InteractionPlugin(ProtocolPlugin):
 		if len(parts) == 1:
 			self.client.sendServerMessage("Please type a message.")
 		else:
-			self.client.factory.queue.put((self.client, TASK_SERVERMESSAGE, ("[MSG] "+(" ".join(parts[1:])))))	@player_list
+			self.client.factory.queue.put((self.client, TASK_SERVERMESSAGE, ("[MSG] "+(" ".join(parts[1:])))))
+
+	@player_list
 	def commandSlap(self, parts, fromloc, overriderank):
 		"/slap username [with object] - Guest\nSlap username [with object]."
 		if len(parts) == 1:
@@ -320,3 +350,20 @@ class InteractionPlugin(ProtocolPlugin):
 		pickle.dump(messages, file)
 		file.close()
 		self.client.sendServerMessage("All your messages have been deleted.")
+
+	@player_list
+	@op_only
+	@only_username_command
+	def commandSpectate(self, user, fromloc, overriderank):
+		"/spectate username - Guest\nAliases: follow, watch\nFollows specified player around"
+		nospec_check = True
+		try:
+			self.client.spectating
+		except AttributeError:
+			nospec_check = False
+		if not nospec_check or self.client.spectating != user.id:
+			self.client.sendServerMessage("You are now spectating %s" % user.username)
+			self.client.spectating = user.id
+		else:
+			self.client.sendServerMessage("You are no longer spectating %s" % user.username)
+			self.client.spectating = False

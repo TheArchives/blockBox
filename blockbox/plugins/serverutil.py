@@ -1,12 +1,12 @@
-# blockBox is Copyright 2009-2010 of the Archives Team, the blockBox Team, and the iCraft team.
-# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
+# blockBox is copyright 2009-2011 the Archives Team, the blockBox Team, and the iCraft team.
+# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
 from twisted.internet import reactor
 
-from blockbox.plugins import ProtocolPlugin
-from blockbox.decorators import *
 from blockbox.constants import *
+from blockbox.decorators import *
+from blockbox.plugins import ProtocolPlugin
 
 class ServerUtilPlugin(ProtocolPlugin):
 	"Server Maintenance Tools and Commands."
@@ -19,7 +19,8 @@ class ServerUtilPlugin(ProtocolPlugin):
 		#"ircload": "commandIRCLoad",
 		#"ircunload": "commandIRCUnload",
 	}
-	@director_only
+
+	@director_only
 	def commandSRB(self, parts, fromloc, overriderank):
 		"/srb [reason] - Director\nPrints out a reboot message."
 		if len(parts) == 1:

@@ -1,20 +1,17 @@
-# blockBox is Copyright 2009-2010 of the Archives Team, the blockBox Team, and the iCraft team.
-# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
+# blockBox is copyright 2009-2011 the Archives Team, the blockBox Team, and the iCraft team.
+# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-import threading
-import traceback, sys
-import time
-import datetime
-import logging
+import datetime, logging, sys, threading, time, traceback
 
 from twisted.internet import reactor
 
 from blockbox.constants import *
-from globals import *
+from blockbox.globals import *
 from blockbox.irc_client import ChatBotFactory
 
 class StdinPlugin(threading.Thread):
+	"The console."
 
 	def __init__(self, server):
 		threading.Thread.__init__(self)
@@ -77,7 +74,7 @@ class StdinPlugin(threading.Thread):
 						message = message.replace(".@", " @")
 						message = message.replace(".#", " #")
 						if message[len(message)-3] == "&":
-							print ("You can not use a color at the end of a message")
+							print ("You cannot use a color at the end of a message.")
 							return
 						if message.startswith("/"):
 							message = message.split(" ")
@@ -104,7 +101,7 @@ class StdinPlugin(threading.Thread):
 									if self.server.isBanned(username):
 										print ("%s is already Banned." % username)
 									else:
-										if not len(message)>2:
+										if len(message) < 2:
 											print ("Please give a reason.")
 										else:
 											self.server.addBan(username, " ".join(message[2:]))
@@ -121,7 +118,7 @@ class StdinPlugin(threading.Thread):
 									print ("Please specify a username.")
 								else:
 									try:
-										print Rank(self, message, 'console', True, self.server)
+										print Rank(message, 'console', True, self.server)
 									except:
 										print ("You must specify a rank and username.")
 							elif message[0] == "derank":
@@ -129,7 +126,7 @@ class StdinPlugin(threading.Thread):
 									print ("Please specify a username.")
 								else:
 									try:
-										print DeRank(self, message, 'console', True, self.server)
+										print DeRank(message, 'console', True, self.server)
 									except:
 										print ("You must specify a rank and username.")
 							elif message[0] == "spec":
@@ -137,7 +134,7 @@ class StdinPlugin(threading.Thread):
 									print ("Please specify a username.")
 								else:
 									try:
-										print Spec(self, message[1], 'console', True, self.server)
+										print Spec(message[1], 'console', True, self.server)
 									except:
 										print ("Please specify a username.")
 							elif message[0] == ("boot"):
@@ -220,7 +217,7 @@ class StdinPlugin(threading.Thread):
 									self.server.queue.put((self, TASK_SERVERMESSAGE, ("[MSG] "+(" ".join(message[1:])))))
 							elif message[0] == ("gc"):
 								#ManualGarbageMe
-								self.server.cleanGarbageOnce()
+								self.server.cleanGarbage()
 							elif message[0] == ("u"):
 								if len(message) == 1:
 									print ("Please type a message.")

@@ -1,5 +1,5 @@
-# blockBox is Copyright 2009-2010 of the Archives Team, the blockBox Team, and the iCraft team.
-# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
+# blockBox is copyright 2009-2011 the Archives Team, the blockBox Team, and the iCraft team.
+# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
 from time import *
@@ -7,9 +7,9 @@ import cPickle
 
 from twisted.internet import reactor
 
-from blockbox.plugins import ProtocolPlugin
-from blockbox.decorators import *
 from blockbox.constants import *
+from blockbox.decorators import *
+from blockbox.plugins import ProtocolPlugin
 
 # jail constants for jail.dat
 J_USERS = 0
@@ -17,7 +17,8 @@ J_ZONE = 1
 J_WORLD = 2
 
 class JailPlugin(ProtocolPlugin):
-	"Commands for jailing."
+	"Commands for jailing."
+
 	def loadJail(self):
 		file = open('data/jail.dat', 'r')
 		dic = cPickle.load(file)
@@ -86,7 +87,8 @@ class JailPlugin(ProtocolPlugin):
 		"Hook trigger for when the player moves"
 		rx = x >> 5
 		ry = y >> 5
-		rz = z >> 5
+		rz = z >> 5
+
 		if self.jailed:
 			user = self.client.username.lower()
 			injail = False

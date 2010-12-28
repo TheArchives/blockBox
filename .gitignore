@@ -14,7 +14,7 @@ data/*.meta
 persist/*.ini
 conf/email.ini
 conf/irc.ini
-conf/performance.ini
+conf/options.ini
 mapdata/worlds/*
 mapdata/archives/*
 logs/*

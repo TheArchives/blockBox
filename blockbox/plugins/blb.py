@@ -1,15 +1,16 @@
-# blockBox is Copyright 2009-2010 of the Archives Team, the blockBox Team, and the iCraft team.
-# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
+# blockBox is copyright 2009-2011 the Archives Team, the blockBox Team, and the iCraft team.
+# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
 from twisted.internet import reactor
 
-from blockbox.plugins import ProtocolPlugin
-from blockbox.decorators import *
 from blockbox.constants import *
+from blockbox.decorators import *
+from blockbox.plugins import ProtocolPlugin
 
 class BlbPlugin(ProtocolPlugin):
-	"Commands for Massive block buildings."
+	"Commands for Massive block buildings."
+
 	commands = {
 		"blb": "commandBlb",
 		"draw": "commandBlb",
@@ -102,7 +103,8 @@ class BlbPlugin(ProtocolPlugin):
 								yield
 				except AssertionError:
 					self.client.sendServerMessage("Out of bounds blb error.")
-					return				# Now, set up a loop delayed by the reactor
+					return
+				# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
 			def do_step():
 				# Do 10 blocks
@@ -125,8 +127,9 @@ class BlbPlugin(ProtocolPlugin):
 		else:
 			block = self.client.GetBlockValue(parts[1])
 			if block == None:
-				return			if ord(block) == 7:
-				if not self.canBreakAdminBlocks(self):
+				return
+			if ord(block) == 7:
+				if not self.canBreakAdminBlocks():
 					self.client.sendServerMessage("Solid is op-only.")
 					return
 			# If they only provided the type argument, use the last two block places
@@ -204,12 +207,13 @@ class BlbPlugin(ProtocolPlugin):
 	def commandWBlb(self, parts, fromloc, overriderank):
 		"/bwb blockname [x y z x2 y2 z2] - Guest\nBuilds four walls between the two areas.\nHollow, with no roof or floor."
 		if len(parts) < 8 and len(parts) != 2:
-			self.client.sendServerMessage("Please enter a block type")
+			self.client.sendServerMessage("Please enter a block type.")
 		else:
 			block = self.client.GetBlockValue(parts[1])
 			if block == None:
-				return			if ord(block) == 7:
-				if not self.canBreakAdminBlocks(self):
+				return
+			if ord(block) == 7:
+				if not self.canBreakAdminBlocks():
 					self.client.sendServerMessage("Solid is op-only.")
 					return
 			# If they only provided the type argument, use the last two block places
@@ -258,8 +262,8 @@ class BlbPlugin(ProtocolPlugin):
 								return
 							if i==x or i==x2 or k==z or k==z2:
 								try:
-								   world[i, j, k] = block
-								   self.client.runHook("blockchange", x, y, z, ord(block), ord(block), fromloc)
+									world[i, j, k] = block
+									self.client.runHook("blockchange", x, y, z, ord(block), ord(block), fromloc)
 								except AssertionError:
 									self.client.sendServerMessage("Out of bounds bwb error.")
 									return
@@ -273,9 +277,9 @@ class BlbPlugin(ProtocolPlugin):
 			def do_step():
 				# Do 10 blocks
 				try:
-					for x in range(10):#10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
+					for x in range(10): # 10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
 						block_iter.next()
-					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
+					reactor.callLater(0.01, do_step)  # This is how long (in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if fromloc == 'user':
 						self.client.finalizeMassCMD('bwb', self.client.count)
@@ -439,7 +443,8 @@ class BlbPlugin(ProtocolPlugin):
 			op_blocks = [BLOCK_SOLID, BLOCK_WATER, BLOCK_LAVA]
 			if ord(block) in op_blocks and not self.client.isOp():
 				self.client.sendServerMessage("Sorry, but you can't use that block.")
-				return			# Check that block2 is valid
+				return
+			# Check that block2 is valid
 			if ord(block2) > 49:
 				self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
 				return

@@ -1,15 +1,17 @@
-# blockBox is Copyright 2009-2010 of the Archives Team, the blockBox Team, and the iCraft team.
-# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
+# blockBox is copyright 2009-2011 the Archives Team, the blockBox Team, and the iCraft team.
+# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-import logging
-import time
+from __future__ import generators
+
+import logging, time
+
 from collections import deque
 from threading import Thread, Lock
 
 from twisted.internet import reactor
 
-from constants import *
+from blockbox.constants import *
 
 CHR_STEP = chr(BLOCK_STEP)
 CHR_DOUBLESTEP = chr(BLOCK_DOUBLESTEP)

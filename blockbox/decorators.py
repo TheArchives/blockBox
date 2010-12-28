@@ -1,5 +1,5 @@
-# blockBox is Copyright 2009-2010 of the Archives Team, the blockBox Team, and the iCraft team.
-# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
+# blockBox is copyright 2009-2011 the Archives Team, the blockBox Team, and the iCraft team.
+# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
 """
@@ -71,8 +71,8 @@ def info_list(func):
 	func.info_list = True
 	return func
 
-def username_command(func):
-	"Decorator for commands that accept a single username parameter, and need a Client"
+def only_username_command(func):
+	"Decorator for commands that accept a single username parameter, and need a client"
 	def inner(self, parts, fromloc, overriderank):
 		if len(parts) == 1:
 			self.client.sendServerMessage("Please specify a username.")
@@ -86,7 +86,7 @@ def username_command(func):
 			if len(names)==1:
 				user = names[0]
 			if not user in self.client.factory.usernames:
-				self.client.sendServerMessage("No such Player '%s'" % user)
+				self.client.sendServerMessage("No such player '%s'" % user)
 			else:
 				if len(parts) > 2:
 					try:

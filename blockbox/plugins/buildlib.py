@@ -1,18 +1,18 @@
-# blockBox is Copyright 2009-2010 of the Archives Team, the blockBox Team, and the iCraft team.
-# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
+# blockBox is copyright 2009-2011 the Archives Team, the blockBox Team, and the iCraft team.
+# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-import cmath
-import random
+import cmath, random
 
 from twisted.internet import reactor
 
-from blockbox.plugins import ProtocolPlugin
-from blockbox.decorators import *
 from blockbox.constants import *
+from blockbox.decorators import *
+from blockbox.plugins import ProtocolPlugin
 
 class BuildLibPlugin(ProtocolPlugin):
-	"Collections of things that users can build."
+	"Collections of things that users can build."
+
 	commands = {
 		"dune": "commandDune",
 		"hill": "commandHill",
@@ -20,7 +20,8 @@ class BuildLibPlugin(ProtocolPlugin):
 		"lake": "commandLake",
 		"mountain": "commandMountain",
 		"pit": "commandPit",
-		"tree": "commandTree",		"sphere": "commandSphere",
+		"tree": "commandTree",
+		"sphere": "commandSphere",
 		"hsphere": "commandHSphere",
 		"curve": "commandCurve",
 		"line": "commandLine",
@@ -30,7 +31,8 @@ class BuildLibPlugin(ProtocolPlugin):
 		"dome": "commandDome",
 		"ellipsoid": "commandEllipsoid",
 		"ell": "commandEllipsoid",
-		"polytri": "commandPolytri",		"stairs": "commandStairs",
+		"polytri": "commandPolytri",
+		"stairs": "commandStairs",
 	}
 
 	hooks = {
@@ -443,7 +445,8 @@ class BuildLibPlugin(ProtocolPlugin):
 					self.client.total = 0
 				pass
 		do_step()
-	@build_list
+
+	@build_list
 	@writer_only
 	def commandSphere(self, parts, fromloc, overriderank):
 		"/sphere blocktype [x y z] radius - Builder\nPlace/delete a block and /sphere block radius"
@@ -1421,7 +1424,8 @@ class BuildLibPlugin(ProtocolPlugin):
 						self.client.finalizeMassCMD('polytri', self.client.total)
 						self.client.total = 0
 					pass
-			do_step()
+			do_step()
+
 	@build_list
 	@writer_only
 	def commandStairs(self, parts, fromloc, overriderank):

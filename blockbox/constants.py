@@ -1,8 +1,8 @@
-# blockBox is Copyright 2009-2010 of the Archives Team, the blockBox Team, and the iCraft team.
-# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
+# blockBox is copyright 2009-2011 the Archives Team, the blockBox Team, and the iCraft team.
+# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-VERSION = "v1.0.02B"
+VERSION = "v1.0.02C"
 
 FORMAT_LENGTHS = {
 	"b": 1,
@@ -93,7 +93,6 @@ COLOUR_RED = "&c"
 COLOUR_PURPLE = "&d"
 COLOUR_YELLOW = "&e"
 COLOUR_WHITE = "&f"
-
 
 BLOCK_NOTHING = 0
 BLOCK_NONE = 0

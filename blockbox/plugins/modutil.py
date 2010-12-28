@@ -1,12 +1,15 @@
-# blockBox is Copyright 2009-2010 of the Archives Team, the blockBox Team, and the iCraft team.
-# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
+# blockBox is copyright 2009-2011 the Archives Team, the blockBox Team, and the iCraft team.
+# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
+
+from __future__ import with_statement
 
 from twisted.internet import reactor
 
-from blockbox.plugins import ProtocolPlugin
-from blockbox.decorators import *
 from blockbox.constants import *
+from blockbox.decorators import *
+from blockbox.persistence import PersistenceEngine as Persist
+from blockbox.plugins import ProtocolPlugin
 
 maxundos = 3000
 
@@ -19,6 +22,7 @@ class ModUtilPlugin(ProtocolPlugin):
 		"banb": "commandBanBoth",
 		"ipban": "commandIpban",
 		"ipreason": "commandIpreason",
+		"ipspecreason": "commandIpSpecReason",
 		"kick": "commandKick",
 		"banreason": "commandReason",
 		"unban": "commandUnban",
@@ -28,15 +32,17 @@ class ModUtilPlugin(ProtocolPlugin):
 		"unfreeze": "commandUnFreeze",
 		"defreeze": "commandUnFreeze",
 		"unstop": "commandUnFreeze",
-		#"ipshun": "commandIpSpec",
-		#"unipshun": "commandUnipSpec",
-		#"ipspec": "commandIpSpec",
-		#"unipspec": "commandUnIpSpec",
+		"ipshun": "commandIpSpec",
+		"unipshun": "commandUnIpSpec",
+		"ipspec": "commandIpSpec",
+		"unipspec": "commandUnIpSpec",
 		"banish": "commandBanish",
 		"worldkick": "commandBanish",
 		"worldban": "commandWorldBan",
 		"unworldban": "commandUnWorldBan",
 		"deworldban": "commandUnWorldBan",
+		"spec": "commandSpec",
+		"unspec": "commandDeSpec",
 
 		"undo": "commandUndo",
 		"redo": "commandRedo",
@@ -44,17 +50,28 @@ class ModUtilPlugin(ProtocolPlugin):
 		"silence": "commandSilence",
 		"desilence": "commandDesilence",
 		"unsilence": "commandDesilence",
-		"hide": "commandHide",
-		"cloak": "commandHide",
+
+		"hide": "commandHide",
+		"cloak": "commandHide",
+
 		"overload": "commandOverload",
 		#"send": "commandSend",
 		"blazer": "commandBlazer",
+
+		"sendhb": "commandSendHeartbeat",
 	}
-	hooks = {
+
+	hooks = {
 		"blockchange": "blockChanged",
-		"newworld": "newWorld",		"poschange": "posChanged",		"playerpos": "playerMoved",	}	def gotClient(self):
+		"newworld": "newWorld",
+		"playerpos": "playerMoved",
+	}
+
+	def gotClient(self):
 		self.client.var_undolist = []
-		self.client.var_redolist = []		self.hidden = False
+		self.client.var_redolist = []
+		self.hidden = False
+
 	def blockChanged(self, x, y, z, block, selected_block, fromloc):
 		"Hook trigger for block changes."
 		world = self.client.world
@@ -70,17 +87,6 @@ class ModUtilPlugin(ProtocolPlugin):
 		"Hook to reset undolist in new worlds."
 		self.client.var_undolist = []
 
-	def posChanged(self, x, y, z, h, p):
-		"Hook trigger for when the player moves"
-		spectators = set()
-		for uid in self.client.factory.clients:
-			user = self.client.factory.clients[uid]
-			try:
-				if user.spectating == self.client.id:
-					if user.x != x and user.y != y and user.z != z:
-						user.teleportTo(x >> 5, y >> 5, z >> 5, h, p)
-			except AttributeError:
-				pass
 	def playerMoved(self, x, y, z, h, p):
 		"Stops transmission of player positions if hide is on."
 		if self.hidden:
@@ -88,60 +94,80 @@ class ModUtilPlugin(ProtocolPlugin):
 
 	@player_list
 	@mod_only
-	@username_command
-	def commandKick(self, user, fromloc, overriderank, params=[]):
+	def commandKick(self, parts, fromloc, overriderank):
 		"/kick username [reason] - Mod\nKicks the Player off the server."
-		if params:
-			user.sendError("Kicked: %s" % " ".join(params))
-			self.client.sendServerMessage("They were just kicked.")
+		user = parts[1]
+		if len(parts) > 1:
+			user.sendError("Kicked: %s" % " ".join(parts[2:]))
 		else:
-			user.sendError("You got Kicked.")
-			self.client.sendServerMessage("They were just kicked.")
+			user.sendError("You got kicked.")
+		self.client.sendServerMessage("User %s has been kicked." % user)
 
 	@player_list
 	@admin_only
-	@only_username_command
-	def commandBanBoth(self, username, fromloc, overriderank, params=[]):
+	def commandBanBoth(self, parts, fromloc, overriderank):
 		"/banb username reason - Admin\nName and IP ban a Player from this server."
-		if not params:
+		username = parts[1]
+		if len(parts) <= 1:
 			self.client.sendServerMessage("Please give a reason.")
+			return
 		else:
 			if username in self.client.factory.usernames:
-				self.commandIpban(["/banb",username] + params, fromloc, overriderank)
-			self.commandBan(["/banb",username] + params, fromloc, overriderank)
+				self.commandIpban(parts, "command", overriderank)
+			else:
+				# Nope, the user's not online. Let's do it ourselves. Query the IP
+				with Persist(username) as p:
+					ip = p.string("misc", "ip")
+				# User's ip cannot be found (means that user never came on the server). Return error
+				if ip == "":
+					self.client.sendServerMessage("Warning: %s has never come on the server, therefore no IP record of that user.")
+			if self.client.factory.isIpBanned(ip):
+				self.client.sendServerMessage("%s is already IPBanned." % username)
+			else:
+				self.client.factory.addIpBan(ip, " ".join(params))
+			if username in self.client.factory.usernames:
+				self.client.factory.usernames[username].sendError("You got banned: %s" % "".join(params))
+			self.commandBan(parts, "command", overriderank)
 
 	@player_list
 	@admin_only
-	@only_username_command
-	def commandBan(self, username, fromloc, overriderank, params=[]):
+	def commandBan(self, parts, fromloc, overriderank):
 		"/ban username reason - Admin\nBans the Player from this server."
+		username = parts[1]
+		if len(parts) <= 1:
+			self.client.sendServerMessage("Please specify a reason.")
+			return
 		if self.client.factory.isBanned(username):
-			self.client.sendServerMessage("%s is already Banned." % username)
+			self.client.sendServerMessage("%s is already banned." % username)
+			return
 		else:
-			if not params:
-				self.client.sendServerMessage("Please give a reason.")
-			else:
-				self.client.factory.addBan(username, " ".join(params))
-				if username in self.client.factory.usernames:
-					self.client.factory.usernames[username].sendError("You got Banned!")
-				self.client.sendServerMessage("%s has been Banned." % username)
+			self.client.factory.addBan(username, " ".join(parts[2:]))
+			if username in self.client.factory.usernames:
+				self.client.factory.usernames[username].sendError("You got banned: %s" % parts[2:])
+			self.client.sendServerMessage("%s has been banned." % username)
 
 	@player_list
 	@director_only
-	@only_username_command
-	def commandIpban(self, username, fromloc, overriderank, params=[]):
+	def commandIpban(self, parts, fromloc, overriderank):
 		"/ipban username reason - Director\nBan a Player's IP from this server."
-		ip = self.client.factory.usernames[username].transport.getPeer().host
+		username = parts[1]
+		if len(parts) <= 1:
+			self.client.sendServerMessage("Please specify a reason.")
+			return
+		if username in self.client.factory.usernames:
+			ip = self.client.factory.usernames[username].transport.getPeer().host
+		else:
+			with Persist(username) as p:
+				ip = p.string("misc", "ip")
+				if ip == "":
+					self.client.sendServerMessage("%s has never come on the server, therefore no IP record of that user." % username)
 		if self.client.factory.isIpBanned(ip):
 			self.client.sendServerMessage("%s is already IPBanned." % ip)
 		else:
-			if not params:
-				self.client.sendServerMessage("Please give a reason.")
-			else:
-				self.client.factory.addIpBan(ip, " ".join(params))
-				if username in self.client.factory.usernames:
-					self.client.factory.usernames[username].sendError("You got Banned!")
-				self.client.sendServerMessage("%s has been IPBanned." % ip)
+			self.client.factory.addIpBan(ip, " ".join(parts[2:]))
+		if username in self.client.factory.usernames:
+			self.client.factory.usernames[username].sendError("You got banned: %s" % "".join(parts[2:]))
+		self.client.sendServerMessage("IP %s has been IPBanned." % ip)
 
 	@player_list
 	@admin_only
@@ -149,10 +175,30 @@ class ModUtilPlugin(ProtocolPlugin):
 	def commandUnban(self, username, fromloc, overriderank):
 		"/unban username - Admin\nRemoves the Ban on the Player."
 		if not self.client.factory.isBanned(username):
-			self.client.sendServerMessage("%s is not Banned." % username)
+			self.client.sendServerMessage("%s is not banned." % username)
 		else:
 			self.client.factory.removeBan(username)
-			self.client.sendServerMessage("%s was UnBanned." % username)
+			self.client.sendServerMessage("%s has been unbanned." % username)
+
+	@player_list
+	@mod_only
+	@only_username_command
+	def commandSpec(self, username, fromloc, overriderank):
+		"/spec username - Mod\nMakes the player as a spec."
+		self.client.sendServerMessage(Spec(self, username, fromloc, overriderank))
+
+	@player_list
+	@mod_only
+	@only_username_command
+	def commandDeSpec(self, username, fromloc, overriderank):
+		"/unspec username - Mod\nRemoves the player as a spec."
+		try:
+			self.client.factory.spectators.remove(username)
+		except:
+			self.client.sendServerMessage("%s was not specced." % username)
+		self.client.sendServerMessage("%s is no longer a spec." % username)
+		if username in self.client.factory.usernames:
+			self.client.factory.usernames[username].sendSpectatorUpdate()
 
 	@player_list
 	@director_only
@@ -160,10 +206,10 @@ class ModUtilPlugin(ProtocolPlugin):
 	def commandUnipban(self, ip, fromloc, overriderank):
 		"/unipban ip - Director\nRemoves the Ban on the IP."
 		if not self.client.factory.isIpBanned(ip):
-			self.client.sendServerMessage("%s is not Banned." % ip)
+			self.client.sendServerMessage("IP %s is not banned." % ip)
 		else:
 			self.client.factory.removeIpBan(ip)
-			self.client.sendServerMessage("%s UnBanned." % ip)
+			self.client.sendServerMessage("IP %s has been unbanned." % ip)
 
 	@player_list
 	@admin_only
@@ -171,7 +217,7 @@ class ModUtilPlugin(ProtocolPlugin):
 	def commandReason(self, username, fromloc, overriderank):
 		"/banreason username - Admin\nGives the reason a Player was Banned."
 		if not self.client.factory.isBanned(username):
-			self.client.sendServerMessage("%s is not Banned." % username)
+			self.client.sendServerMessage("%s is not banned." % username)
 		else:
 			self.client.sendServerMessage("Reason: %s" % self.client.factory.banReason(username))
 
@@ -181,71 +227,98 @@ class ModUtilPlugin(ProtocolPlugin):
 	def commandIpreason(self, ip, fromloc, overriderank):
 		"/ipreason username - Director\nGives the reason an IP was Banned."
 		if not self.client.factory.isIpBanned(ip):
-			self.client.sendServerMessage("%s is not Banned." % ip)
+			self.client.sendServerMessage("IP %s is not banned." % ip)
 		else:
 			self.client.sendServerMessage("Reason: %s" % self.client.factory.ipBanReason(ip))
 
 	@player_list
+	@director_only
+	@only_string_command("IP")
+	def commandIpSpecReason(self, ip, fromloc, overriderank):
+		"/ipspecreason username - Director\nGives the reason an IP was Banned."
+		if not self.client.factory.isIpSpecced(ip):
+			self.client.sendServerMessage("IP %s is not specced." % ip)
+		else:
+			self.client.sendServerMessage("Reason: %s" % self.client.factory.ipSpecReason(ip))
+
+	@player_list
 	@mod_only
 	def commandUnFreeze(self, parts, fromloc, overriderank):
-		"/unfreeze playername - Mod\nAliases: defreeze, unstop\nUnfreezes the player, allowing them to move again."
-		try:
-			username = parts[1]
-		except:
-			self.client.sendServerMessage("No player name given.")
+		"/unfreeze username - Mod\nAliases: defreeze, unstop\nUnfreezes the player, allowing them to move again."
+		username = parts[1]
+		if username == "":
+			self.client.sendServerMessage("Please specify a username.")
 			return
-		try:
+		if username not in self.client.factory.usernames:
+			self.client.sendServerMessage("User %s is not online." % username)
+			return
+		else:
 			user = self.client.factory.usernames[username]
-		except:
-			self.client.sendServerMessage("Player is not online.")
-			return
-		user.frozen = False
-		user.sendNormalMessage("&4You have been unfrozen by %s!" % self.client.username)
+			user.frozen = False
+			user.sendNormalMessage("&4You have been unfrozen by %s!" % self.client.username)
 
 	@player_list
 	@mod_only
 	def commandFreeze(self, parts, fromloc, overriderank):
-		"/freeze playername - Mod\nAliases: stop\nFreezes the player, preventing them from moving."
-		try:
-			username = parts[1]
-		except:
-			self.client.sendServerMessage("No player name given.")
+		"/freeze username - Mod\nAliases: stop\nFreezes the player, preventing them from moving."
+		username = parts[1]
+		if username == "":
+			self.client.sendServerMessage("Please specify a username.")
 			return
-		try:
+		if username not in self.client.factory.usernames:
+			self.client.sendServerMessage("User %s is not online." % username)
+			return
+		else:
 			user = self.client.factory.usernames[username]
-		except:
-			self.client.sendServerMessage("Player is not online.")
+			user.frozen = True
+			user.sendNormalMessage("&4You have been frozen by %s!" % self.client.username)
+
+	@player_list
+	@mod_only
+	def commandIpSpec(self, username, fromloc, overriderank):
+		"/ipspec username reason - Mod\nAliases: ipshun\nIPSpec a Player's IP in this server."
+		username = parts[1]
+		if len(parts) == 1:
+			self.client.sendServerMessage("Please specify a reason.")
 			return
-		user.frozen = True
-		user.sendNormalMessage("&4You have been frozen by %s!" % self.client.username)
+		if username in factory.mods:
+			self.client.sendServerMessage("You cannot spec a staff!")
+			return
+		if username in self.client.factory.usernames:
+			ip = self.client.factory.usernames[username].transport.getPeer().host
+		else:
+			with Persist(username) as p:
+				ip = p.string("misc", "ip")
+				if ip == "":
+					self.client.sendServerMessage("Warning: %s has never come on the server, therefore no IP record of that user." % username)
+		if self.client.factory.isIpSpecced(ip):
+			self.client.sendServerMessage("%s is already IPSpecced." % ip)
+			return
+		else:
+			self.client.factory.addIpSpec(ip, reason)
+			if username in self.client.factory.usernames:
+				self.client.factory.usernames[username].sendSpectatorUpdate()
+				self.client.factory.usernames[username].sendServerMessage("You got IPSpecced!")
+			self.client.sendServerMessage("%s has been IPSpecced." % ip)
 
-	#@player_list
-	#@mod_only
-	#@only_username_command
-	#def commandIpSpec(self, username, fromloc, overriderank):
-	#	"/ipspec playername - Mod\nAliases: ipshun\nIPSpec a Player's IP in this server."
-	#	ip = self.client.factory.usernames[username].transport.getPeer().host
-	#	if self.client.factory.isIpShunned(ip):
-	#		self.client.sendServerMessage("%s is already IPSpecced." % ip)
-	#	else:
-	#		self.client.factory.addIpShun(ip)
-	#		if username in self.client.factory.usernames:
-	#			self.client.factory.usernames[username].sendServerMessage("You got IPSpecced!")
-	#		self.client.sendServerMessage("%s has been IPSpecced." % ip)
-	#		logging.log(logging.INFO,self.client.username + ' IPSpecced ' + username + ip)
+	@player_list
+	@mod_only
+	@only_string_command("IP")
+	def commandUnIpSpec(self, ip, fromloc, overriderank):
+		"/unipspec ip - Mod\nAliases: unipshun\nRemoves the IPSpec on the IP."
+		if not self.client.factory.isIpSpecced(ip):
+			self.client.sendServerMessage("%s is not IPSpecced." % ip)
+		else:
+			self.client.factory.removeIpSpec(ip)
+			self.client.sendServerMessage("%s has been unIPspecced." % ip)
 
-	#@player_list
-	#@mod_only
-	#@only_string_command("IP")
-	#def commandUnIpSpec(self, ip, fromloc, overriderank):
-	#	"/unipspec ip - Mod\nAliases: unipshun\nRemoves the IPSpec on the IP."
-	#	if not self.client.factory.isIpShunned(ip):
-	#		self.client.sendServerMessage("%s is not IPSpecced." % ip)
-	#	else:
-	#		self.client.factory.removeIpShun(ip)
-	#		self.client.sendServerMessage("%s UnIPSpecced." % ip)
-	#		logging.log(logging.INFO,self.client.username + ' UnIPSpecced ' + ip)
-	@mod_only	def commandSay(self, parts, byuser, overriderank):		"/say message - Mod\nAliases: msg\nPrints out message in the server color."		if len(parts) == 1:			self.client.sendServerMessage("Please type a message.")		else:			self.client.factory.queue.put((self.client, TASK_SERVERMESSAGE, ("[MSG] "+(" ".join(parts[1:])))))
+	@mod_only
+	def commandSay(self, parts, byuser, overriderank):
+		"/say message - Mod\nAliases: msg\nPrints out message in the server color."
+		if len(parts) == 1:
+			self.client.sendServerMessage("Please type a message.")
+		else:
+			self.client.factory.queue.put((self.client, TASK_SERVERMESSAGE, ("[MSG] "+(" ".join(parts[1:])))))
 
 	def chatmsg(self, message):
 		if self.client.var_fetchrequest:
@@ -262,9 +335,10 @@ class ModUtilPlugin(ProtocolPlugin):
 				sender.sendServerMessage("%s did not accept your request." % self.client.username)
 			self.client.var_fetchdata
 			return True
-	@player_list
+
+	@player_list
 	@op_only
-	@username_command
+	@only_username_command
 	def commandBanish(self, user, fromloc, overriderank):
 		"/worldkick username - Op\nAliases: banish\nBanishes the Player to the default world."
 		if user.world == self.client.world:
@@ -299,7 +373,8 @@ class ModUtilPlugin(ProtocolPlugin):
 		else:
 			self.client.world.delete_worldban(username)
 			self.client.sendServerMessage("%s was UnWorldBanned." % username)
-	@build_list
+
+	@build_list
 	def commandUndo(self, parts, fromloc, overriderank):
 		"/undo numchanges [username] - Guest\nUndoes yours or other people's changes (If Mod+)"
 		world = self.client.world
@@ -589,23 +664,8 @@ class ModUtilPlugin(ProtocolPlugin):
 					self.client.total = 0
 				pass
 		do_step()
-	@player_list
-	@op_only
-	@username_command
-	def commandSpectate(self, user, fromloc, overriderank):
-		"/spectate username - Guest\nAliases: follow, watch\nFollows specified player around"
-		nospec_check = True
-		try:
-			self.client.spectating
-		except AttributeError:
-			nospec_check = False
-		if not nospec_check or self.client.spectating != user.id:
-			self.client.sendServerMessage("You are now spectating %s" % user.username)
-			self.client.spectating = user.id
-		else:
-			self.client.sendServerMessage("You are no longer spectating %s" % user.username)
-			self.client.spectating = False
-	@player_list
+
+	@player_list
 	@mod_only
 	@only_username_command
 	def commandSilence(self, username, fromloc, overriderank):
@@ -651,7 +711,7 @@ class ModUtilPlugin(ProtocolPlugin):
 
 	@player_list
 	@admin_only
-	@username_command
+	@only_username_command
 	def commandOverload(self, client, fromloc, overriderank):
 		"/overload username - Admin\nSends the players client a massive fake map."
 		client.sendOverload()
@@ -659,7 +719,7 @@ class ModUtilPlugin(ProtocolPlugin):
 
 	#@player_list
 	#@mod_only
-	#@username_command
+	#@only_username_command
 	#def commandSend(self, client, fromloc, overriderank):
 		#"/send username [world] - Mod\nSends the players client another world."
 		#if user.isMod():
@@ -675,3 +735,9 @@ class ModUtilPlugin(ProtocolPlugin):
 				#self.client.sendServerMessage("Player %s was sent." % user.username)
 		#else:
 			#self.client.sendServerMessage("Your Player is in another world!")
+
+	@owner_only
+	def commandSendHeartbeat(self, parts, fromloc, overriderank):
+		"/sendhb - Owner\nSends a heartbeat to the official Minecraft server."
+		self.client.factory.Heartbeat.get_url(True)
+		self.client.sendServerMessage("Heartbeat sent.")

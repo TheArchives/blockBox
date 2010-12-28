@@ -1,5 +1,5 @@
-# blockBox is Copyright 2009-2010 of the Archives Team, the blockBox Team, and the iCraft team.
-# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
+# blockBox is copyright 2009-2011 the Archives Team, the blockBox Team, and the iCraft team.
+# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
 import math
@@ -7,12 +7,13 @@ from random import choice
 
 from twisted.internet import reactor
 
-from blockbox.plugins import ProtocolPlugin
-from blockbox.decorators import *
 from blockbox.constants import *
+from blockbox.decorators import *
+from blockbox.plugins import ProtocolPlugin
 
 class LSystemPlugin(ProtocolPlugin):
-	"Interface of Lsystem."
+	"Interface of Lsystem."
+
 	commands = {
 		"lbook": "commandLbook",
 		"rec_axiom": "commandRec_Axiom",
@@ -343,7 +344,8 @@ class LSystemPlugin(ProtocolPlugin):
 							if not var_override:
 								self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 								self.client.sendBlock(i, j, k, block)
-							yield
+							yield
+
 					elif item == "B":
 						targetlocation = (drawer_location[0]-drawer_orientationvector[0]*standarddistance,drawer_location[1]-drawer_orientationvector[1]*standarddistance,drawer_location[2]-drawer_orientationvector[2]*standarddistance)
 						var_x,var_y,var_z = drawer_location
@@ -388,7 +390,8 @@ class LSystemPlugin(ProtocolPlugin):
 							if not var_override:
 								self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 								self.client.sendBlock(i, j, k, block)
-							yield
+							yield
+
 					elif item == "G":
 						drawer_location = (drawer_location[0]+drawer_orientationvector[0]*standarddistance,drawer_location[1]+drawer_orientationvector[1]*standarddistance,drawer_location[2]+drawer_orientationvector[2]*standarddistance)
 

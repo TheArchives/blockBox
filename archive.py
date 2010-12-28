@@ -1,23 +1,16 @@
-# blockBox is Copyright 2009-2010 of the Archives Team, the blockBox Team, and the iCraft team.
-# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
+# blockBox is copyright 2009-2011 the Archives Team, the blockBox Team, and the iCraft team.
+# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-import sys
-import datetime
-import os
-import struct
+import cookielib, datetime, os, re, struct, sys, urllib, urllib2
 from ConfigParser import SafeConfigParser as ConfigParser
-import urllib
-import urllib2
-import cookielib
-import re
 
-from twisted.internet import reactor, protocol
+from twisted.internet import protocol, reactor
 
-from blockbox.protocol import MyneServerProtocol, TYPE_FORMATS
 from blockbox.constants import *
+from blockbox.protocol import BlockBoxServerProtocol, TYPE_FORMATS
 
-class RipClient(MyneServerProtocol):
+class RipClient(BlockBoxServerProtocol):
 	"""Once connected, send a message, then print the result."""
 
 	def connectionMade(self):
@@ -139,8 +132,12 @@ def rip(key, username, password):
 	reactor.run()
 
 def main():
-	config = ConfigParser()		try:
-			config.read(os.path.join(os.path.dirname(__file__), "client.conf"))		except:			logger.error("You need to rename client.example.conf to client.conf")			exit(1);
+	config = ConfigParser()
+		try:
+			config.read(os.path.join(os.path.dirname(__file__), "client.conf"))
+		except:
+			logger.error("You need to rename client.example.conf to client.conf")
+			exit(1);
 	rip(sys.argv[1], config.get("client", "username"), config.get("client", "password"))
 
 # this only runs if the module was *not* imported

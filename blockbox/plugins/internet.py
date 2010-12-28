@@ -1,21 +1,20 @@
-# blockBox is Copyright 2009-2010 of the Archives Team, the blockBox Team, and the iCraft team.
-# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
+# blockBox is copyright 2009-2011 the Archives Team, the blockBox Team, and the iCraft team.
+# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-import sys
-import urllib
+import sys, urllib
 from os import popen
-
-from twisted.internet import reactor
 try:
 	import pil
 except ImportError:
 	print ("Failed to load PIL, imagedraw is now disabled")
 	noimagedraw = True
 
-from blockbox.plugins import ProtocolPlugin
-from blockbox.decorators import *
+from twisted.internet import reactor
+
 from blockbox.constants import *
+from blockbox.decorators import *
+from blockbox.plugins import ProtocolPlugin
 
 class InternetPlugin(ProtocolPlugin):
 	"Commands for communicating with internet services."

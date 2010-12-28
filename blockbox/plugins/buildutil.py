@@ -1,39 +1,46 @@
-# blockBox is Copyright 2009-2010 of the Archives Team, the blockBox Team, and the iCraft team.
-# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
+# blockBox is copyright 2009-2011 the Archives Team, the blockBox Team, and the iCraft team.
+# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
 from twisted.internet import reactor
 
-from blockbox.plugins import ProtocolPlugin
-from blockbox.decorators import *
 from blockbox.constants import *
+from blockbox.decorators import *
+from blockbox.plugins import ProtocolPlugin
 
 class BuildUtilPlugin(ProtocolPlugin):
-	"Commands for helping players to build."
+	"Commands for helping players to build."
+
 	commands = {
 		"ruler": "commandRuler",
 		"measure": "commandRuler",
 		"paint": "commandPaint",
 		"bind": "commandBind",
-		"material": "commandBind",		"replace": "commandReplace",
+		"material": "commandBind",
+		"replace": "commandReplace",
 		"brep": "commandReplace",
 		"creplace": "commandCreplace",
 		"crep": "commandCreplace",
-		"fill": "commandFill",		"copy": "commandSave",
+		"fill": "commandFill",
+		"copy": "commandSave",
 		"paste": "commandLoad",
 		"rotate": "commandRotate"
 	}
 
 	hooks = {
-		"preblockchange": "preBlockChanged",		"blockchange": "blockChanged",
-	}
+		"preblockchange": "preBlockChanged",
+		"blockchange": "blockChanged",
+	}
+
 	def gotClient(self):
 		self.painting = False
 		self.block_overrides = {}
 
 	def preBlockChanged(self, x, y, z, block, selected_block, fromloc):
 		"Hook trigger for block changes."
-		if block is BLOCK_AIR and self.painting:			return selected_block
+		if block is BLOCK_AIR and self.painting:
+			return selected_block
+
 	def blockChanged(self, x, y, z, block, selected_block, fromloc):
 		"Hook trigger for block changes."
 		if block in self.block_overrides:
@@ -68,11 +75,13 @@ class BuildUtilPlugin(ProtocolPlugin):
 		else:
 			self.painting = True
 			self.client.sendServerMessage("Painting mode is now on.")
-	@build_list
+
+	@build_list
 	def commandAir(self, params, fromloc, overriderank):
 		"/air - Guest\nAliases: place, stand\nPuts a block under you for easier building in the air."
 		self.client.sendPacked(TYPE_BLOCKSET, self.client.x>>5, (self.client.y>>5)-3, (self.client.z>>5), BLOCK_WHITE)
-	@build_list
+
+	@build_list
 	def commandBind(self, parts, fromloc, overriderank):
 		"/bind blockA blockB - Guest\nAliases: build, material\nBinds blockB to blockA."
 		if len(parts) == 1:
@@ -347,7 +356,9 @@ class BuildUtilPlugin(ProtocolPlugin):
 			self.client.bsaved_blocks = tempblocks
 		if fromloc == 'user':
 			self.client.finalizeMassCMD('rotate', self.client.total)
-			self.client.total = 0	@build_list
+			self.client.total = 0
+
+	@build_list
 	@writer_only
 	def commandReplace(self, parts, fromloc, overriderank):
 		"/replace blockA blockB [x y z x2 y2 z2] - Builder\nAliases: brep\nReplaces all blocks of blockA in this area to blockB."

@@ -1,31 +1,35 @@
-# blockBox is Copyright 2009-2010 of the Archives Team, the blockBox Team, and the iCraft team.
-# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
+# blockBox is copyright 2009-2011 the Archives Team, the blockBox Team, and the iCraft team.
+# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
 from twisted.internet import reactor
 
-from blockbox.plugins import ProtocolPlugin
-from blockbox.decorators import *
 from blockbox.constants import *
+from blockbox.decorators import *
+from blockbox.plugins import ProtocolPlugin
 
 class DirtBombPlugin(ProtocolPlugin):
 	"Commands for dirtbomb handling."
 
 	commands = {
 		"dirtbomb": "commanddirtbomb",
-	}
+	}
+
 	hooks = {
 		"blockchange": "blockChanged",
 		"newworld": "newWorld",
-	}
+	}
+
 	def gotClient(self):
 		self.build_tnt = False
 		self.explosion_radius = 7
-		self.delay = 2
+		self.delay = 2
+
 	def newWorld(self, world):
 		"Hook to reset bomb abilities in new worlds if not op."
 		if not self.client.isOp():
-			self.build_tnt = False
+			self.build_tnt = False
+
 	def blockChanged(self, x, y, z, block, selected_block, fromloc):
 		"Hook trigger for block changes."
 		tobuild = []

@@ -1,24 +1,19 @@
-# blockBox is Copyright 2009-2010 of the Archives Team, the blockBox Team, and the iCraft team.
-# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted,
+# blockBox is copyright 2009-2011 the Archives Team, the blockBox Team, and the iCraft team.
+# blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-import os
-import logging
-import hashlib
-import traceback
-import datetime
-import cPickle as pickle
+import cPickle, datetime, hashlib, logging, os, traceback
 
+from twisted.internet import reactor, task
 from twisted.internet.protocol import Protocol
-from twisted.internet import reactor
 
 from blockbox.constants import *
-from blockbox.plugins import protocol_plugins
 from blockbox.decorators import *
 from blockbox.irc_client import ChatBotFactory
+from blockbox.plugins import protocol_plugins
 from blockbox.persistence import PersistenceEngine as Persist
 
-class MyneServerProtocol(Protocol):
+class BlockBoxServerProtocol(Protocol):
 	"""
 	Main protocol class for communicating with clients.
 	Commands are mainly provided by plugins (protocol plugins).
@@ -35,7 +30,7 @@ class MyneServerProtocol(Protocol):
 		self.logger = logging.getLogger("Client")
 		self.quitmsg = "Goodbye."
 		self.homeworld = "main"
-		self.total = 0 #TOFIX: Don't use a client variable for blb count, it makes everything seem retarted
+		self.total = 0 # TOFIX: Don't use a client variable for blb count, it makes everything seem retarted
 		self.ip = self.transport.getPeer().host
 		self.commands = {}
 		self.hooks = {}
@@ -172,6 +167,7 @@ class MyneServerProtocol(Protocol):
 		del self.plugins
 		del self.commands
 		del self.hooks
+		del self.factory.loops[self.username]
 		self.connected = 0
 
 	def send(self, data):
@@ -293,9 +289,16 @@ class MyneServerProtocol(Protocol):
 				for client in self.factory.usernames.values():
 					client.sendServerMessage("%s has come online." %self.username)
 				if self.factory.irc_relay:
-					self.factory.irc_relay.sendServerMessage("%s has come online." %self.username)
+					self.factory.irc_relay.sendServerMessage("%s has come online." % self.username)
+				# Are they IP specced?
+				if self.factory.isIpSpecced(self.ip):
+					self.factory.spectators.add(self.username)
+					self.sendSpectatorUpdate()
+					self.sendServerMessage("Your IP has been spectated for: %s" % self.factory.ipSpecReason(self.ip))
+					self.logger.info("User %s autospecced due to its IP being on the IPSpec list." % self.username)
 				reactor.callLater(0.1, self.sendLevel)
-				reactor.callLater(1, self.sendKeepAlive)
+				self.factory.loops[self.username]["sendkeepalive"] = task.LoopingCall(self.sendKeepAlive)
+				self.factory.loops[self.username]["sendkeepalive"].start(1)
 			elif type == TYPE_BLOCKCHANGE:
 				x, y, z, created, block = parts
 				if block == 255:
@@ -397,7 +400,7 @@ class MyneServerProtocol(Protocol):
 				else:
 					self.title = "\""+t+"\" "
 				self.usertitlename = self.title + self.username
-				override = self.runHook("chatmsg", message)				
+				override = self.runHook("chatmsg", message)
 				goodchars = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " ", "!", "@", "#", "$", "%", "*", "(", ")", "-", "_", "+", "=", "{", "[", "}", "]", ":", ";", "\"", "\'", "<", ",", ">", ".", "?", "/", "\\", "|"]
 				for c in message.lower():
 					if not c in goodchars:
@@ -654,8 +657,8 @@ class MyneServerProtocol(Protocol):
 			name = "Guest"
 		return name
 
-	def colouredUsername(self):
-		if self.world.highlight_ops:
+	def colouredUsername(self, forcecolour=False):
+		if self.world.highlight_ops or forcecolour:
 			return self.userColour() + self.username
 		else:
 			return self.username
@@ -913,7 +916,6 @@ class MyneServerProtocol(Protocol):
 	def sendKeepAlive(self):
 		if self.connected:
 			self.sendPacked(TYPE_KEEPALIVE)
-			reactor.callLater(1, self.sendKeepAlive)
 
 	def sendOverload(self):
 		"Sends an overload - a fake map designed to use as much memory as it can."
@@ -997,7 +999,8 @@ class MyneServerProtocol(Protocol):
 				self.sendPacked(TYPE_MESSAGE, 127, line.strip())
 			self.sent_first_welcome = True
 			self.runHook("playerjoined",self.username)
-			self.MessageAlert()
+			self.factory.loops[self.username]["messagealert"] = task.LoopingCall(self.MessageAlert)
+			self.factory.loops[self.username]["messagealert"].start(300)
 		else:
 			self.sendPacked(TYPE_MESSAGE, 255, "You are now in world '%s'" % self.world.id)
 
@@ -1153,13 +1156,12 @@ class MyneServerProtocol(Protocol):
 	def MessageAlert(self):
 		if os.path.exists("data/offlinemessage.dat"):
 			file = open('data/offlinemessage.dat', 'r')
-			messages = pickle.load(file)
+			messages = cPickle.load(file)
 			file.close()
 			for client in self.factory.clients.values():
 				if client.username.lower() in messages:
 					client.sendServerMessage("You have an message waiting in your Inbox.")
 					client.sendServerMessage("Use /inbox to check and see.")
-					reactor.callLater(300, self.MessageAlert)
 
 	def setPersist(self):
 		"Load persisted variables, and store some important stuff."
@@ -1169,10 +1171,10 @@ class MyneServerProtocol(Protocol):
 		self.factory.joinWorld(self.homeworld, self)
 
 	def finalizeMassCMD(self, command, block=0):
-		if block is 0:
-			self.sendServerMessage("Your " + command +" has finished.")
+		if block == 0:
+			self.sendServerMessage("Your %s has finished." % command)
 		else:
-			self.sendServerMessage("Your " + command +" has finished, with %d blocks." % abs(block))
+			self.sendServerMessage("Your %s has finished, with %d blocks." % (command, abs(block)))
 
 	def getBlbLimit(self, username, factor=1):
 		"Fetches BLB Limit, and returns limit multiplied by a factor. 0 is returned if blb is disabled for that usergroup, and -1 for no limit."
@@ -1218,6 +1220,6 @@ class MyneServerProtocol(Protocol):
 				limit = 4062
 			else:
 				limit = 128
-
-		limit *= factor
+		if limit > -1:
+			limit *= factor
 		return limit
