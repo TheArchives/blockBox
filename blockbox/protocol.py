@@ -161,8 +161,8 @@ class BlockBoxServerProtocol(Protocol):
 		self.factory.queue.put((self, TASK_PLAYERLEAVE, (self.id,)))
 		if self.username:
 			self.logger.info("Disconnected.")
-			self.runHook("playerquit",self.username)
-			self.logger.debug("(reason: %s)" % (reason,))
+			self.runHook("playerquit", self.username)
+			self.logger.debug("(reason: %s)" % reason)
 		# Kill all plugins
 		del self.plugins
 		del self.commands

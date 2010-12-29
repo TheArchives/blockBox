@@ -705,8 +705,11 @@ class BlockBoxFactory(Factory):
 						try:
 							world = source_client.world
 						except AttributeError:
-							self.logger.warning("Source client for message has no world. Ignoring.")
-							continue
+							if not source_client.connected:
+								continue
+							else:
+								self.logger.warning("Source client for message has no world. Ignoring.")
+								continue
 					# Someone built/deleted a block
 					if task is TASK_BLOCKSET:
 						# Only run it for clients who weren't the source.
