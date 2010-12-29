@@ -271,8 +271,7 @@ class BlockBoxFactory(Factory):
 
 	def initLoops(self):
 		# Set up tasks to run during execution
-		self.loops["_server"]["sendmessgae"] = task.LoopingCall(self.sendMessages)
-		self.loops["_server"]["sendmessgae"].start(0.1)
+		self.loops["_server"]["sendmessgae"] = reactor.callLater(0.1, self.sendMessages)
 		self.loops["_server"]["printinfo"] = task.LoopingCall(self.printInfo)
 		self.loops["_server"]["printinfo"].start(60)
 		# Initial startup is instant, but it updates every 10 minutes.
@@ -694,7 +693,8 @@ class BlockBoxFactory(Factory):
 			while True:
 				# Get the next task
 				source_client, task, data = self.queue.get_nowait()
-				if source_client == None:
+				if source_client == None or not source_client.connected:
+					# Client is None or client is banned
 					pass
 				try:
 					if isinstance(source_client, World):
@@ -705,11 +705,8 @@ class BlockBoxFactory(Factory):
 						try:
 							world = source_client.world
 						except AttributeError:
-							if not source_client.connected:
-								continue
-							else:
-								self.logger.warning("Source client for message has no world. Ignoring.")
-								continue
+							self.logger.warning("Source client for message has no world. Ignoring.")
+							continue
 					# Someone built/deleted a block
 					if task is TASK_BLOCKSET:
 						# Only run it for clients who weren't the source.
@@ -880,6 +877,8 @@ class BlockBoxFactory(Factory):
 		# OK, now, for every world, let them read their queues
 		for world in self.worlds.values():
 			world.read_queue()
+		# Come back soon!
+		self.loops["_server"]["sendmessgae"] = reactor.callLater(0.1, self.sendMessages)
 
 	def newWorld(self, new_name, template="default"):
 		"Creates a new world from some template."
