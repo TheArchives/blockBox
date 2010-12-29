@@ -167,7 +167,10 @@ class BlockBoxServerProtocol(Protocol):
 		del self.plugins
 		del self.commands
 		del self.hooks
-		del self.factory.loops[self.username]
+		try:
+			del self.factory.loops[self.username]
+		except KeyError:
+			pass
 		self.connected = 0
 
 	def send(self, data):
