@@ -695,6 +695,7 @@ class BlockBoxFactory(Factory):
 				# Get the next task
 				source_client, task, data = self.queue.get_nowait()
 				if source_client == None:
+					# Client is None
 					pass
 				try:
 					if isinstance(source_client, World):
