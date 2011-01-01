@@ -750,10 +750,9 @@ class BlockBoxFactory(Factory):
 						#LOL MOAR WORD FILTER
 						id, colour, username, text = data
 						text = self.messagestrip(text)
-						data = (id,colour,username,text)
+						data = (id, colour, username, text)
 						for client in self.clients.values():
 							client.sendIrcMessage(*data)
-						id, colour, username, text = data
 						self.logger.info("<%s> %s" % (username, text))
 						self.chatlog.write("[%s] <%s> %s\n" % (datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M"), username, text))
 						self.chatlog.flush()
@@ -764,7 +763,7 @@ class BlockBoxFactory(Factory):
 						#WORD FALTER
 						id, colour, username, text = data
 						text = self.messagestrip(text)
-						data = (id,colour,username,text)
+						data = (id, colour, username, text)
 						for client in self.clients.values():
 							client.sendAction(*data)
 						id, colour, username, text = data
@@ -794,7 +793,7 @@ class BlockBoxFactory(Factory):
 							if not source_client.username is None:
 								client.sendServerMessage("%s has quit! (%s%s%s)" % (source_client.username, COLOUR_RED, source_client.quitmsg, COLOUR_YELLOW))
 							else:
-								source_client.log("Pinged the server.")
+								source_client.logger.info("Pinged the server.")
 						if not source_client.username is None:
 							if self.irc_relay and world:
 								self.irc_relay.sendServerMessage("%s has quit! (%s%s%s)" % (source_client.username, COLOUR_RED, source_client.quitmsg, COLOUR_BLACK))
@@ -809,9 +808,9 @@ class BlockBoxFactory(Factory):
 							self.irc_relay.sendServerMessage("%s joined '%s'" % (source_client.username, world.id))
 						self.logger.info("%s has now joined '%s'" % (source_client.username, world.id))
 					elif task == TASK_STAFFMESSAGE:
-						# Give all staff the message :D
+						# Give all staff the message
 						id, colour, username, text = data
-						message = self.messagestrip(text);
+						message = self.messagestrip(text)
 						for user, client in self.usernames.items():
 							if self.isMod(user):
 								client.sendMessage(100, COLOUR_YELLOW+"#"+colour, username, message, False, False)
@@ -866,7 +865,9 @@ class BlockBoxFactory(Factory):
 							self.irc_relay.sendServerMessage(message)
 					elif task == TASK_AWAYMESSAGE:
 						# Give all world people the message
-						message = data
+						id, colour, username, text = data
+						message = self.messagestrip(text)
+						data = (id, colour, username, text)
 						for client in world.clients:
 							client.sendNormalMessage(COLOUR_DARKPURPLE + message)
 						self.logger.info("AWAY - %s %s" % (username, text))

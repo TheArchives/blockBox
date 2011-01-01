@@ -72,3 +72,4 @@ class PersistenceEngine(object):
 		self.ini.set(section, name, str(value))
 		with open("persist/%s.ini" % self.username.lower(), "w") as fp:
 			self.ini.write(fp)
+		fp.close()
