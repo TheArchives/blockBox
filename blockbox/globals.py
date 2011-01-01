@@ -4,7 +4,7 @@
 
 from collections import defaultdict
 
-def Rank(parts, fromloc, overriderank, server=None):
+def Rank(self, parts, fromloc, overriderank, server=None):
 	username = parts[2].lower()
 	if server:
 		factory = server
@@ -129,7 +129,7 @@ def Rank(parts, fromloc, overriderank, server=None):
 	else:
 		return ("Unknown rank \"%s\""%parts[1])
 
-def DeRank(parts, fromloc, overriderank, server=None):
+def DeRank(self, parts, fromloc, overriderank, server=None):
 	username = parts[2].lower()
 	if server:
 		factory = server
@@ -285,7 +285,7 @@ def DeRank(parts, fromloc, overriderank, server=None):
 	else:
 		return ("Unknown rank \"%s\""% parts[1])
 
-def Spec(username, fromloc, overriderank, server=None):
+def Spec(self, username, fromloc, overriderank, server=None):
 	if server:
 		factory = server
 	else:
