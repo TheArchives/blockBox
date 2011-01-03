@@ -9,7 +9,6 @@ from blockbox.decorators import *
 from blockbox.globals import *
 from blockbox.persistence import PersistenceEngine as Persist
 from blockbox.plugins import ProtocolPlugin
-from blockbox.globals import *
 
 class PlayerUtilPlugin(ProtocolPlugin):
 	"Commands for player handling, etc."

@@ -9,7 +9,8 @@ from blockbox.decorators import *
 from blockbox.plugins import ProtocolPlugin
 
 class BlbPlugin(ProtocolPlugin):
-	"Commands for Massive block buildings."
+	"Commands for Massive block buildings."
+
 	commands = {
 		"blb": "commandBlb",
 		"draw": "commandBlb",
@@ -102,7 +103,8 @@ class BlbPlugin(ProtocolPlugin):
 								yield
 				except AssertionError:
 					self.client.sendServerMessage("Out of bounds blb error.")
-					return				# Now, set up a loop delayed by the reactor
+					return
+				# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
 			def do_step():
 				# Do 10 blocks
@@ -125,7 +127,8 @@ class BlbPlugin(ProtocolPlugin):
 		else:
 			block = self.client.GetBlockValue(parts[1])
 			if block == None:
-				return			if ord(block) == 7:
+				return
+			if ord(block) == 7:
 				if not self.canBreakAdminBlocks():
 					self.client.sendServerMessage("Solid is op-only.")
 					return
@@ -208,7 +211,8 @@ class BlbPlugin(ProtocolPlugin):
 		else:
 			block = self.client.GetBlockValue(parts[1])
 			if block == None:
-				return			if ord(block) == 7:
+				return
+			if ord(block) == 7:
 				if not self.canBreakAdminBlocks():
 					self.client.sendServerMessage("Solid is op-only.")
 					return
@@ -267,7 +271,6 @@ class BlbPlugin(ProtocolPlugin):
 								self.client.sendBlock(i, j, k, block)
 								self.client.total += 1
 								yield
-			do_step()
 
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
@@ -281,6 +284,7 @@ class BlbPlugin(ProtocolPlugin):
 					if fromloc == 'user':
 						self.client.finalizeMassCMD('bwb', self.client.count)
 					pass
+			do_step()
 
 	@build_list
 	def commandBcb(self, parts, fromloc, overriderank):
@@ -439,7 +443,8 @@ class BlbPlugin(ProtocolPlugin):
 			op_blocks = [BLOCK_SOLID, BLOCK_WATER, BLOCK_LAVA]
 			if ord(block) in op_blocks and not self.client.isOp():
 				self.client.sendServerMessage("Sorry, but you can't use that block.")
-				return			# Check that block2 is valid
+				return
+			# Check that block2 is valid
 			if ord(block2) > 49:
 				self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
 				return
