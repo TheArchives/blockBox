@@ -103,9 +103,8 @@ def plugins_by_module_name(module_name):
 	module = __import__("blockbox.plugins.%s" % module_name, {}, {}, ["*"])
 	except ImportError:
 		return ("ERROR_IMPORTERROR")
-	except IOError
-	:
-		return ("ERROR")
+	except IOError:
+		return ("ERROR_IOERROR")
 	else:
 		for name, val in module.__dict__.items():
 			if isinstance(val, type):
