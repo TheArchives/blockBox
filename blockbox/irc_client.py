@@ -137,17 +137,17 @@ class ChatBot(irc.IRCClient):
 					if not command > 2:
 						self.msg(user, "You must provide a username.")
 					else:
-						self.msg(user,Rank(command[1:] + [user], False, True, self.factory))
+						self.msg(user,Rank(self, command[1:] + [user], False, True, self.factory))
 				elif command[1] == ("derank"):
 					if not command > 2:
 						self.msg(user, "You must provide a username.")
 					else:
-						self.msg(user,DeRank(command[1:] + [user], False, True, self.factory))
+						self.msg(user,DeRank(self, command[1:] + [user], False, True, self.factory))
 				elif command[1] == ("spec"):
 					if not command > 2:
 						self.msg(user, "You must provide a username.")
 					else:
-						self.msg(user,Spec(command[1], False, True, self.factory))
+						self.msg(user,Spec(self, command[1], False, True, self.factory))
 				elif command[1] == ("boot"):
 					world = str(command[2]).lower()
 					self.factory.loadWorld("worlds/"+world, world)
@@ -202,7 +202,7 @@ class ChatBot(irc.IRCClient):
 						elif msg_command[1] == ("credits"):
 							self.msg(self.factory.irc_channel,"Please see your PM for the Credits.")
 							self.msg(user,"The Credits")
-							list = Credits(self, self.factory)
+							list = Credits()
 							for each in list:
 								self.msg(user,"".join(each))
 						elif msg_command[1] == ("help"):

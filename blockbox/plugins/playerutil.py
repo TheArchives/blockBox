@@ -561,7 +561,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 		if len(parts) < 3:
 			self.client.sendServerMessage("You must specify a rank and username.")
 		else:
-			self.client.sendServerMessage(DeRank(self, parts, fromloc, overriderank, self.client.factory))
+			self.client.sendServerMessage(DeRank(self, parts, fromloc, overriderank))
 
 	@player_list
 	@op_only
@@ -635,6 +635,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 			self.flying = False
 			self.client.sendServerMessage("You are no longer flying.")
 
+	@player_list
 	@only_username_command
 	def commandTeleport(self, user, fromloc, overriderank):
 		"/tp username - Guest\nAliases: teleport\nTeleports you to the players location."

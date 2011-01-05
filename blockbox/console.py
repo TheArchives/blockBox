@@ -230,7 +230,7 @@ class StdinPlugin(threading.Thread):
 									try:
 										self.server.unloadPlugin(message[1])
 										self.server.loadPlugin(message[1])
-									except IOError:
+									except ImportError:
 										print ("No such plugin '%s'." % message[1])
 									else:
 										print ("Plugin '%s' reloaded." % message[1])
@@ -240,7 +240,7 @@ class StdinPlugin(threading.Thread):
 								else:
 									try:
 										self.server.unloadPlugin(message[1])
-									except IOError:
+									except KeyError:
 										print ("No such plugin '%s'." % message[1])
 									else:
 										print ("Plugin '%s' unloaded." % message[1])
@@ -250,7 +250,7 @@ class StdinPlugin(threading.Thread):
 								else:
 									try:
 										self.server.loadPlugin(message[1])
-									except IOError:
+									except ImportError:
 										print ("No such plugin '%s'." % message[1])
 									else:
 										print ("Plugin '%s' loaded." % message[1])

@@ -19,7 +19,7 @@ class CorePlugin(ProtocolPlugin):	"Core commands which handles plugin loading/u
 		try:
 			self.client.factory.unloadPlugin(plugin_name)
 			self.client.factory.loadPlugin(plugin_name)
-		except:
+		except ImportError:
 			self.client.sendServerMessage("No such plugin '%s'." % plugin_name)
 		else:
 			self.client.sendServerMessage("Plugin '%s' reloaded." % plugin_name)
@@ -29,7 +29,7 @@ class CorePlugin(ProtocolPlugin):	"Core commands which handles plugin loading/u
 		"/pll plugin - Director\nLoads the plugin."
 		try:
 			self.client.factory.loadPlugin(plugin_name)
-		except:
+		except ImportError:
 			self.client.sendServerMessage("No such plugin '%s'." % plugin_name)
 		else:
 			self.client.sendServerMessage("Plugin '%s' loaded." % plugin_name)
