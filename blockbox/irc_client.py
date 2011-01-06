@@ -549,6 +549,7 @@ class ChatBotFactory(protocol.ClientFactory):
 	def __init__(self, main_factory):
 		self.main_factory = main_factory
 		self.instance = None
+		self.failtime = 0
 		self.isQuitting = False
 
 	def quit(self, msg):
@@ -558,8 +559,9 @@ class ChatBotFactory(protocol.ClientFactory):
 	def clientConnectionLost(self, connector, reason):
 		"""If we get disconnected, reconnect to server."""
 		self.instance = None
-		if not self.isQuitting:
+		if not self.isQuitting and self.failtime <= 5:
 			connector.connect()
+			self.failtime += 1
 
 	def clientConnectionFailed(self, connector, reason):
 		self.logger.warning("Connection failed: %s" % reason)
@@ -567,6 +569,7 @@ class ChatBotFactory(protocol.ClientFactory):
 
 	def disconnect(self):
 		self.transport.loseConnection()
+		self.failtime = 0
 
 	def sendMessage(self, username, message):
 		if self.instance:

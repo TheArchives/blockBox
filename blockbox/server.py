@@ -267,8 +267,10 @@ class BlockBoxFactory(Factory):
 		self.heartbeat = Heartbeat(self)
 		# Boot worlds that got loaded
 		for world in self.worlds:
-			self.loadWorld("mapdata/worlds/%s" % world, world)
-
+			try:
+				self.loadWorld("mapdata/worlds/%s" % world, world)
+			except AssertionError:
+				continue
 	def initLoops(self):
 		# Set up tasks to run during execution
 		self.loops["_server"]["sendmessgae"] = task.LoopingCall(self.sendMessages)
@@ -595,7 +597,12 @@ class BlockBoxFactory(Factory):
 		Loads the given world file under the given world ID, or a random one.
 		Returns the ID of the new world.
 		"""
-		world = self.worlds[world_id] =  World(filename)
+		try:
+			world = self.worlds[world_id] = World(filename)
+		except AssertionError:
+			raise WorldFileDoesNotExist
+#			self.logger.critical("Blocks file/world meta for world %s not found, ignoring world" % world_id)
+			return False
 		world.source = filename
 		world.clients = set()
 		world.id = world_id

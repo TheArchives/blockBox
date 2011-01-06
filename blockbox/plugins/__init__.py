@@ -100,11 +100,10 @@ def load_plugin(plugin_name):
 
 def plugins_by_module_name(module_name):
 	"Given a module name, returns the plugin classes in it."
-	module = __import__("blockbox.plugins.%s" % module_name, {}, {}, ["*"])
+	try:
+		module = __import__("blockbox.plugins.%s" % module_name, {}, {}, ["*"])
 	except ImportError:
-		return ("ERROR_IMPORTERROR")
-	except IOError:
-		return ("ERROR_IOERROR")
+		raise ValueError("Cannot load plugin %s." % module_name)
 	else:
 		for name, val in module.__dict__.items():
 			if isinstance(val, type):
