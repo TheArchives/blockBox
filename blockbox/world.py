@@ -65,7 +65,6 @@ class World(object):
 		self.flush_deferred = None
 		if load:
 			assert os.path.isfile(self.blocks_path), "No blocks file: %s" % self.blocks_path
-			assert os.path.isfile(self.meta_path), "No meta file: %s" % self.meta_path
 			self.load_meta()
 
 	def start(self):
@@ -153,18 +152,7 @@ class World(object):
 	def load_meta(self):
 		config = ConfigParser()
 		config.read(self.meta_path)
-		try:
-			self.x = config.getint("size", "x")
-		except IOError, MissingSectionHeaderError:
-			# Take the last backup, if any.
-			try:
-				backups = os.listdir(self.basename+"backup/")
-				backups.sort(lambda x, y: int(x) - int(y))
-				backup_number = str(int(backups[-1]))
-				shutil.copy(self.basename+"backup/%s/world.meta" % backup_number, self.basename)
-			except:
-				self.logger.error("world.meta for world %s is missing, world cannot be loaded." % self.id)
-				return ("ERROR_WORLD_META_MISSING")
+		self.x = config.getint("size", "x")
 		self.y = config.getint("size", "y")
 		self.z = config.getint("size", "z")
 		self.spawn = (

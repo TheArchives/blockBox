@@ -560,8 +560,8 @@ class ChatBotFactory(protocol.ClientFactory):
 		"""If we get disconnected, reconnect to server."""
 		self.instance = None
 		if not self.isQuitting and self.failtime <= 5:
-			connector.connect()
 			self.failtime += 1
+			connector.connect()
 
 	def clientConnectionFailed(self, connector, reason):
 		self.logger.warning("Connection failed: %s" % reason)
@@ -569,7 +569,6 @@ class ChatBotFactory(protocol.ClientFactory):
 
 	def disconnect(self):
 		self.transport.loseConnection()
-		self.failtime = 0
 
 	def sendMessage(self, username, message):
 		if self.instance:
