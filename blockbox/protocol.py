@@ -10,6 +10,7 @@ from twisted.internet.protocol import Protocol
 from blockbox.constants import *
 from blockbox.decorators import *
 from blockbox.irc_client import ChatBotFactory
+from blockbox.globals import recursive_default
 from blockbox.plugins import protocol_plugins
 from blockbox.persistence import PersistenceEngine as Persist
 
@@ -34,6 +35,7 @@ class BlockBoxServerProtocol(Protocol):
 		self.ip = self.transport.getPeer().host
 		self.commands = {}
 		self.hooks = {}
+		self.loops = recursive_default()
 		self.plugins = [plugin(self) for plugin in protocol_plugins]
 		self.ClientVars = dict()
 		# Set identification variable to false
@@ -300,8 +302,8 @@ class BlockBoxServerProtocol(Protocol):
 					self.sendServerMessage("Your IP has been spectated for: %s" % self.factory.ipSpecReason(self.ip))
 					self.logger.info("User %s autospecced due to its IP being on the IPSpec list." % self.username)
 				reactor.callLater(0.1, self.sendLevel)
-				self.factory.loops[self.username]["sendkeepalive"] = task.LoopingCall(self.sendKeepAlive)
-				self.factory.loops[self.username]["sendkeepalive"].start(1)
+				self.loops["sendkeepalive"] = task.LoopingCall(self.sendKeepAlive)
+				self.loops["sendkeepalive"].start(1)
 			elif type == TYPE_BLOCKCHANGE:
 				x, y, z, created, block = parts
 				if block == 255:
@@ -1002,8 +1004,8 @@ class BlockBoxServerProtocol(Protocol):
 				self.sendPacked(TYPE_MESSAGE, 127, line.strip())
 			self.sent_first_welcome = True
 			self.runHook("playerjoined",self.username)
-			self.factory.loops[self.username]["messagealert"] = task.LoopingCall(self.MessageAlert)
-			self.factory.loops[self.username]["messagealert"].start(300)
+			self.loops["messagealert"] = task.LoopingCall(self.MessageAlert)
+			self.loops["messagealert"].start(300)
 		else:
 			self.sendPacked(TYPE_MESSAGE, 255, "You are now in world '%s'" % self.world.id)
 

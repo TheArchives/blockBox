@@ -6,12 +6,15 @@ from blockbox.constants import *
 from blockbox.decorators import *
 from blockbox.plugins import ProtocolPlugin
 
-class CorePlugin(ProtocolPlugin):	"Core commands which handles plugin loading/unloading, etc."
+class CorePlugin(ProtocolPlugin):
+	"Core commands which handles plugin loading/unloading, etc."
+
 	commands = {
 		"pll": "commandPluginload",
 		"plu": "commandPluginunload",
 		"plr": "commandPluginreload",
-	}
+	}
+
 	@admin_only
 	@only_string_command("plugin name")
 	def commandPluginreload(self, plugin_name, fromloc, overriderank):
@@ -19,20 +22,22 @@ class CorePlugin(ProtocolPlugin):	"Core commands which handles plugin loading/u
 		try:
 			self.client.factory.unloadPlugin(plugin_name)
 			self.client.factory.loadPlugin(plugin_name)
-		except:
+		except ImportError:
 			self.client.sendServerMessage("No such plugin '%s'." % plugin_name)
 		else:
-			self.client.sendServerMessage("Plugin '%s' reloaded." % plugin_name)
+			self.client.sendServerMessage("Plugin '%s' reloaded." % plugin_name)
+
 	@director_only
 	@only_string_command("plugin name")
 	def commandPluginload(self, plugin_name, fromloc, overriderank):
 		"/pll plugin - Director\nLoads the plugin."
 		try:
 			self.client.factory.loadPlugin(plugin_name)
-		except:
+		except ImportError:
 			self.client.sendServerMessage("No such plugin '%s'." % plugin_name)
 		else:
-			self.client.sendServerMessage("Plugin '%s' loaded." % plugin_name)
+			self.client.sendServerMessage("Plugin '%s' loaded." % plugin_name)
+
 	@director_only
 	@only_string_command("plugin name")
 	def commandPluginunload(self, plugin_name, fromloc, overriderank):

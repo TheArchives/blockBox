@@ -70,11 +70,11 @@ The Salt is also used to help verify users' identities.
 				open('data/url.txt', 'w').write(self.url)
 				if not self.factory.console.is_alive():
 					self.factory.console.run()
-			except IOError,SystemExit:
+			except IOError, SystemExit:
 				pass
 			except:
 				self.logger.error("Minecraft.net seems to be offline.")
-		except IOError,SystemExit:
+		except IOError, SystemExit:
 			pass
 		except:
 			self.logger.error(traceback.format_exc())
@@ -148,6 +148,19 @@ class BlockBoxFactory(Factory):
 		self.config.read("conf/server.ini")
 		self.conf_options.read("conf/options.ini")
 		self.conf_plugins.read("conf/plugins.ini")
+		# Initialise internal datastructures
+		self.worlds = {}
+		self.directors = set()
+		self.admins = set()
+		self.mods = set()
+		self.worldowners = set()
+		self.advbuilders = set()
+		self.spectators = set()
+		self.silenced = set()
+		self.banned = {}
+		self.ipbanned = {}
+		self.ipspecced = {}
+		self.lastseen = {}
 
 		self.use_irc = False
 		if  (os.path.exists("conf/irc.ini")):
@@ -187,7 +200,6 @@ class BlockBoxFactory(Factory):
 		self.backup_main = self.conf_options.getboolean("backup", "backup_main")
 		self.backup_max = self.conf_options.getint("backup", "backup_max")
 		self.backup_auto = self.conf_options.getboolean("backup", "backup_auto")
-		self.loops["_server"]["autobackup"] = task.LoopingCall(self.AutoBackup)
 		self.useblblimit = self.conf_options.getboolean("blb", "use_blb_limiter")
 		if self.useblblimit:
 			self.blblimit["player"] = self.conf_options.getint("blb", "player")
@@ -243,20 +255,7 @@ class BlockBoxFactory(Factory):
 				([BLOCK_DIRT]*(grass_to-1) + [BLOCK_GRASS] + [BLOCK_AIR]*(sy-grass_to)) # Levels
 			)
 			self.logger.info("Generated.")
-		# Initialise internal datastructures
-		self.worlds = {}
-		self.directors = set()
-		self.admins = set()
-		self.mods = set()
-		self.worldowners = set()
-		self.advbuilders = set()
-		self.spectators = set()
-		self.silenced = set()
-		self.banned = {}
-		self.ipbanned = {}
-		self.ipspecced = {}
-		self.lastseen = {}
-		# Load up the contents of those.
+		# Load up the contents of data.
 		self.loadMeta()
 		# Set up a few more things.
 		self.queue = Queue()
@@ -271,25 +270,27 @@ class BlockBoxFactory(Factory):
 
 	def initLoops(self):
 		# Set up tasks to run during execution
-		self.loops["_server"]["sendmessgae"] = task.LoopingCall(self.sendMessages)
-		self.loops["_server"]["sendmessgae"].start(0.1)
-		self.loops["_server"]["printinfo"] = task.LoopingCall(self.printInfo)
-		self.loops["_server"]["printinfo"].start(60)
+		#self.loops["sendmessgae"] = task.LoopingCall(self.sendMessages)
+		#self.loops["sendmessgae"].start(0.1)
+		self.loops["sendmessgae"] = reactor.callLater(0.1, self.sendMessages)
+		self.loops["printinfo"] = task.LoopingCall(self.printInfo)
+		self.loops["printinfo"].start(60)
 		# Initial startup is instant, but it updates every 10 minutes.
 		self.world_save_stack = []
 		#self.loops["_server"]["saveworlds"] = reactor.callLater(60, self.saveWorlds)
-		self.loops["_server"]["saveworlds"] = task.LoopingCall(self.saveWorlds)
-		self.loops["_server"]["saveworlds"].start(60)
+		self.loops["saveworlds"] = task.LoopingCall(self.saveWorlds)
+		self.loops["saveworlds"].start(60)
 		if self.enable_archives:
 			if "archives" not in protocol_plugins:
 				self.loadPlugin("archives")
-				self.loops["_server"]["loadarchives"] = task.LoopingCall(self.loadArchives)
-				self.loops["_server"]["loadarchives"].start(60)
+			self.loops["loadarchives"] = task.LoopingCall(self.loadArchives)
+			self.loops["loadarchives"].start(60)
 		gc.disable()
-		self.loops["_server"]["gc"] = task.LoopingCall(self.cleanGarbage)
-		self.loops["_server"]["gc"].start(900)
+		self.loops["gc"] = task.LoopingCall(self.cleanGarbage)
+		self.loops["gc"].start(900)
 		if self.backup_auto:
-			self.loops["_server"]["autobackup"].start(float(self.backup_freq * 60))
+			self.loops["autobackup"] = task.LoopingCall(self.AutoBackup)
+			self.loops["autobackup"].start(float(self.backup_freq * 60))
 
 	def reloadOptions(self, toReload="all"):
 		self.reloading = True
@@ -392,8 +393,8 @@ class BlockBoxFactory(Factory):
 				# Look in the loopsToReset set
 				for toreset in loopsToReset:
 					if toreset in self.loops:
-						self.loops["_server"][toreset].stop()
-						self.loops["_server"][toreset].start(loopsToReset[toreset])
+						self.loops[toreset].stop()
+						self.loops[toreset].start(loopsToReset[toreset])
 			elif todo == "resettimer":
 				for toreset in timersToReset:
 					if toreset in self.timers:
@@ -537,7 +538,7 @@ class BlockBoxFactory(Factory):
 			else:
 				reactor.callLater(1, self.saveWorlds)
 
-	def saveWorld(self, world_id, shutdown = False):
+	def saveWorld(self, world_id, shutdown=False):
 		try:
 			world = self.worlds[world_id]
 			world.save_meta()
@@ -595,7 +596,7 @@ class BlockBoxFactory(Factory):
 		Loads the given world file under the given world ID, or a random one.
 		Returns the ID of the new world.
 		"""
-		world = self.worlds[world_id] =  World(filename)
+		world = self.worlds[world_id] = World(filename)
 		world.source = filename
 		world.clients = set()
 		world.id = world_id
@@ -750,10 +751,9 @@ class BlockBoxFactory(Factory):
 						#LOL MOAR WORD FILTER
 						id, colour, username, text = data
 						text = self.messagestrip(text)
-						data = (id,colour,username,text)
+						data = (id, colour, username, text)
 						for client in self.clients.values():
 							client.sendIrcMessage(*data)
-						id, colour, username, text = data
 						self.logger.info("<%s> %s" % (username, text))
 						self.chatlog.write("[%s] <%s> %s\n" % (datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M"), username, text))
 						self.chatlog.flush()
@@ -764,7 +764,7 @@ class BlockBoxFactory(Factory):
 						#WORD FALTER
 						id, colour, username, text = data
 						text = self.messagestrip(text)
-						data = (id,colour,username,text)
+						data = (id, colour, username, text)
 						for client in self.clients.values():
 							client.sendAction(*data)
 						id, colour, username, text = data
@@ -794,7 +794,7 @@ class BlockBoxFactory(Factory):
 							if not source_client.username is None:
 								client.sendServerMessage("%s has quit! (%s%s%s)" % (source_client.username, COLOUR_RED, source_client.quitmsg, COLOUR_YELLOW))
 							else:
-								source_client.log("Pinged the server.")
+								source_client.logger.info("Pinged the server.")
 						if not source_client.username is None:
 							if self.irc_relay and world:
 								self.irc_relay.sendServerMessage("%s has quit! (%s%s%s)" % (source_client.username, COLOUR_RED, source_client.quitmsg, COLOUR_BLACK))
@@ -809,9 +809,9 @@ class BlockBoxFactory(Factory):
 							self.irc_relay.sendServerMessage("%s joined '%s'" % (source_client.username, world.id))
 						self.logger.info("%s has now joined '%s'" % (source_client.username, world.id))
 					elif task == TASK_STAFFMESSAGE:
-						# Give all staff the message :D
+						# Give all staff the message
 						id, colour, username, text = data
-						message = self.messagestrip(text);
+						message = self.messagestrip(text)
 						for user, client in self.usernames.items():
 							if self.isMod(user):
 								client.sendMessage(100, COLOUR_YELLOW+"#"+colour, username, message, False, False)
@@ -866,7 +866,9 @@ class BlockBoxFactory(Factory):
 							self.irc_relay.sendServerMessage(message)
 					elif task == TASK_AWAYMESSAGE:
 						# Give all world people the message
-						message = data
+						id, colour, username, text = data
+						message = self.messagestrip(text)
+						data = (id, colour, username, text)
 						for client in world.clients:
 							client.sendNormalMessage(COLOUR_DARKPURPLE + message)
 						self.logger.info("AWAY - %s %s" % (username, text))
@@ -972,7 +974,7 @@ class BlockBoxFactory(Factory):
 	def Backup(self, world_id, fromloc, backupname=None):
 		error = None
 		world_dir = ("mapdata/worlds/%s/" % world_id)
-		if world_id == "main" and not self.backup_main and not fromloc == "user": # This is to ensure manual backup still works
+		if world_id == "main" and not self.backup_main and not fromloc == "user" and not fromloc == "console": # This is to ensure manual backup still works
 			return
 		if not os.path.exists(world_dir):
 			if fromloc == "console":

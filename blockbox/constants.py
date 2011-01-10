@@ -381,6 +381,7 @@ class TemplateDoesNotExist(Exception):
 	pass
 
 class NotConfigured(Exception):
+	"""Raised when configuration files are missing."""
 	def __init__(self):
 		self.msg = "blockBox is not configured. Read the installation guide if you wish to proceed."
 
@@ -388,8 +389,12 @@ class NotConfigured(Exception):
 		return self.msg
 
 class StoringMethodNotSupported(Exception):
+
 	def __init__(self):
 		self.msg = "blockBox currently does not support the storing method supplied. Please refer to the installation guide about storing methods blockBox supports."
 
 	def __str__(self):
 		return self.msg
+
+class WorldFileDoesNotExist(Exception):
+	pass

@@ -9,7 +9,6 @@ from blockbox.decorators import *
 from blockbox.globals import *
 from blockbox.persistence import PersistenceEngine as Persist
 from blockbox.plugins import ProtocolPlugin
-from blockbox.globals import *
 
 class PlayerUtilPlugin(ProtocolPlugin):
 	"Commands for player handling, etc."
@@ -19,35 +18,45 @@ class PlayerUtilPlugin(ProtocolPlugin):
 		"advbuilders": "commandAdvBuilders",
 		"directors": "commandDirectors",
 		"admins": "commandAdmins",
-		"mods": "commandMods",		"banned": "commandBanned",		"worldbanned": "commandWorldBanned",		"ops": "commandOps",
+		"mods": "commandMods",
+		"banned": "commandBanned",
+		"worldbanned": "commandWorldBanned",
+		"ops": "commandOps",
 		"writers": "commandBuilders",
 		"builders": "commandBuilders",
-		"specced": "commandSpecced",
-		"respawn": "commandRespawn",
+		"specced": "commandSpecced",
+
+		"respawn": "commandRespawn",
+
 		"fetch": "commandFetch",
 		"bring": "commandFetch",
 		"invite": "commandInvite",
 
 		"title": "commandSetTitle",
-		"settitle": "commandSetTitle",
+		"settitle": "commandSetTitle",
+
 		"goto": "commandGoto",
 		"tp": "commandTeleport",
 		"teleport": "commandTeleport",
 
-		"where": "commandWhere",		"locate": "commandLocate",
+		"where": "commandWhere",
+		"locate": "commandLocate",
 		"find": "commandLocate",
 
 		"quitmsg": "commandQuitMsg",
 
-		"quit": "commandQuit",
+		"quit": "commandQuit",
+
 		"who": "commandWho",
 		"whois": "commandWho",
 		"players": "commandWho",
 		"pinfo": "commandWho",
-		"lastseen": "commandLastseen",
+		"lastseen": "commandLastseen",
+
 		"b": "commandLastCommand",
 		"lastcmd": "commandLastCommand",
-		"lastcommand": "commandLastCommand",
+		"lastcommand": "commandLastCommand",
+
 		"rank": "commandRank",
 		"setrank": "commandRank",
 		"derank": "commandDeRank",
@@ -66,27 +75,41 @@ class PlayerUtilPlugin(ProtocolPlugin):
 		"deop": "commandOldDeRanks",
 		"demod": "commandOldDeRanks",
 		"deadmin": "commandOldDeRanks",
-		"dedirector": "commandOldDeRanks",		"mute": "commandMute",
+		"dedirector": "commandOldDeRanks",
+
+		"mute": "commandMute",
 		"unmute": "commandUnmute",
-		"muted": "commandMuted",		"fly": "commandFly",
+		"muted": "commandMuted",
+
+		"fly": "commandFly",
 	}
 
 	hooks = {
-		"chatmsg": "chatmsg",		"recvmessage": "messageReceived",		"poschange": "posChanged",
+		"chatmsg": "chatmsg",
+		"recvmessage": "messageReceived",
+		"poschange": "posChanged",
 		"newworld": "newWorld",
-	}
+	}
+
 	def gotClient(self):
 		self.client.var_fetchrequest = False
-		self.client.var_fetchdata = ()		self.lastcommand = None
-		self.savedcommands = list({})		self.muted = set()		self.flying = False
-		self.last_flying_block = None
+		self.client.var_fetchdata = ()
+		self.lastcommand = None
+		self.savedcommands = list({})
+		self.muted = set()
+		self.flying = False
+		self.last_flying_block = None
+
 	def chatmsg(self, message):
 		if message.startswith("/") and not message.split()[0].lower() == "/b":
 			self.lastcommand = message
-	def messageReceived(self, colour, username, text, fromloc):
+
+	def messageReceived(self, colour, username, text, fromloc):
 		"Stop viewing a message if we've muted them."
 		if username.lower() in self.muted:
-			return False	def posChanged(self, x, y, z, h, p):
+			return False
+
+	def posChanged(self, x, y, z, h, p):
 		"Hook trigger for when the player moves"
 		# Are we fake-flying them?
 		if self.flying:
@@ -145,11 +168,13 @@ class PlayerUtilPlugin(ProtocolPlugin):
 		"Hook to reset flying abilities in new worlds if not op."
 		if self.client.isSpectator():
 			self.flying = False
-	def setCsBlock(self, x, y, z, type):
+
+	def setCsBlock(self, x, y, z, type):
 		if y > -1 and x > -1 and z > -1:
 			if y < self.client.world.y and x < self.client.world.x and z < self.client.world.z:
 				if ord(self.client.world.blockstore.raw_blocks[self.client.world.blockstore.get_offset(x, y, z)]) is 0:
-					self.client.sendPacked(TYPE_BLOCKSET, x, y, z, type)
+					self.client.sendPacked(TYPE_BLOCKSET, x, y, z, type)
+
 	@info_list
 	def commandStaff(self, parts, fromloc, overriderank):
 		"/staff - Guest\nLists all server staff."
@@ -189,7 +214,8 @@ class PlayerUtilPlugin(ProtocolPlugin):
 			self.client.sendServerList(["Mods:"] + list(self.client.factory.mods))
 		else:
 			self.client.sendServerMessage("Mods: No one.")
-	@player_list
+
+	@player_list
 	@admin_only
 	def commandBanned(self, user, fromloc, overriderank):
 		"/banned - Admin\nShows who is Banned."
@@ -199,7 +225,9 @@ class PlayerUtilPlugin(ProtocolPlugin):
 		if len(done):
 			self.client.sendServerList(["Banned:"] + done.split(' '))
 		else:
-			self.client.sendServerList(["Banned: No one."])	@player_list
+			self.client.sendServerList(["Banned: No one."])
+
+	@player_list
 	@op_only
 	def commandWorldBanned(self, user, fromloc, overriderank):
 		"/worldbanned - Op\nShows who is WorldBanned."
@@ -210,9 +238,10 @@ class PlayerUtilPlugin(ProtocolPlugin):
 			self.client.sendServerList(["WorldBanned:"] + done.split(' '))
 		else:
 			self.client.sendServerList(["WorldBanned: No one."])
-	@player_list
+
+	@player_list
 	@only_username_command
-	def commandRespawn(self, username, fromloc, rankoverride):
+	def commandRespawn(self, username, fromloc, overriderank):
 		"/respawn [username] - Guest\n Respawns player, specify username if you would like to respawn another player (Mod+ only)"
 		if len(username) == 1 and self.client.isMod():
 			if username in self.client.factory.usernames:
@@ -223,7 +252,9 @@ class PlayerUtilPlugin(ProtocolPlugin):
 			self.client.factory.usernames[username].sendServerMessage("You have been respawned by %s." % self.client.username)
 			self.client.world.logger.debug("%s respawned." % username)
 		else:
-			self.client.respawn()	@player_list
+			self.client.respawn()
+
+	@player_list
 	@op_only
 	@only_username_command
 	def commandFetch(self, user, fromloc, overriderank):
@@ -255,7 +286,8 @@ class PlayerUtilPlugin(ProtocolPlugin):
 		user.sendServerMessage("Do you wish to accept? [y]es/[n]o")
 		user.var_fetchrequest = True
 		user.var_fetchdata = (self.client,self.client.world, rx, ry, rz)
-		self.client.sendServerMessage("The fetch request has been sent.")
+		self.client.sendServerMessage("The fetch request has been sent.")
+
 	@player_list
 	@director_only
 	def commandSetTitle(self, parts, fromloc, overriderank):
@@ -292,7 +324,8 @@ class PlayerUtilPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("This world has no builders.")
 		else:
 			self.client.sendServerList(["Builders for %s:" % self.client.world.id] + list(self.client.world.writers))
-	@info_list
+
+	@info_list
 	def commandWhere(self, parts, fromloc, overriderank):
 		"/where - Guest\nReturns your current coordinates"
 		x = self.client.x >> 5
@@ -300,7 +333,8 @@ class PlayerUtilPlugin(ProtocolPlugin):
 		z = self.client.z >> 5
 		h = self.client.h
 		p = self.client.p
-		self.client.sendServerMessage("You are at %s, %s, %s [h%s, p%s]" % (x, y, z, h, p))
+		self.client.sendServerMessage("You are at %s, %s, %s [h%s, p%s]" % (x, y, z, h, p))
+
 	@player_list
 	def commandWho(self, parts, fromloc, overriderank):
 		"/who [username] - Guest\nAliases: pinfo, players, whois\nOnline players, or player lookup."
@@ -411,13 +445,15 @@ class PlayerUtilPlugin(ProtocolPlugin):
 					if p.int("bank", "balance", -1) is not -1:
 						self.client.sendServerMessage("Balance: C%d." %(p.int("bank", "balance", 0)))
 					else:
-						self.client.sendServerMessage("Balance: N/A")
+						self.client.sendServerMessage("Balance: N/A")
+
 	@player_list
 	def commandQuitMsg(self, parts, fromloc, overriderank):
 		"/quitmsg - Guest\nSets your quit message."
 		self.client.persist.set("main", "quitmsg", " ".join(parts[1:]))
 		self.client.quitmsg = " ".join(parts[1:])
-		self.client.sendServerMessage("Your quit message is now: %s" % " ".join(parts[1:]))
+		self.client.sendServerMessage("Your quit message is now: %s" % " ".join(parts[1:]))
+
 	@player_list
 	def commandQuit(self, parts, fromloc, overriderank):
 		"/quit - Guest\nExits the server."
@@ -516,7 +552,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 		if len(parts) < 3:
 			self.client.sendServerMessage("You must specify a rank and username.")
 		else:
-			self.client.sendServerMessage(Rank(parts, fromloc, overriderank))
+			self.client.sendServerMessage(Rank(self, parts, fromloc, overriderank))
 
 	@player_list
 	@op_only
@@ -537,7 +573,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 			if parts[0] == "/writer":
 				parts[0] = "/builder"
 			parts = ["/rank", parts[0][1:]] + parts[1:]
-			self.client.sendServerMessage(Rank(parts, fromloc, overriderank))
+			self.client.sendServerMessage(Rank(self, parts, fromloc, overriderank))
 
 	@player_list
 	@op_only
@@ -549,7 +585,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 			if parts[0] == "/dewriter":
 				parts[0] = "/debuilder"
 			parts = ["/derank", parts[0][1:]] + parts[1:]
-			self.client.sendServerMessage(DeRank(parts, fromloc, overriderank))
+			self.client.sendServerMessage(DeRank(self, parts, fromloc, overriderank))
 
 	@player_list
 	@op_only
@@ -599,6 +635,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 			self.flying = False
 			self.client.sendServerMessage("You are no longer flying.")
 
+	@player_list
 	@only_username_command
 	def commandTeleport(self, user, fromloc, overriderank):
 		"/tp username - Guest\nAliases: teleport\nTeleports you to the players location."

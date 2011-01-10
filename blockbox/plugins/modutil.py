@@ -18,7 +18,6 @@ class ModUtilPlugin(ProtocolPlugin):
 
 	commands = {
 		"ban": "commandBan",
-		"ban": "commandSay",
 		"banb": "commandBanBoth",
 		"ipban": "commandIpban",
 		"ipreason": "commandIpreason",
@@ -92,16 +91,39 @@ class ModUtilPlugin(ProtocolPlugin):
 		if self.hidden:
 			return False
 
+	def chatmsg(self, message):
+		if self.client.var_fetchrequest:
+			self.client.var_fetchrequest = False
+			if message in ["y"]:
+				sender,world,rx,ry,rz = self.client.var_fetchdata
+				if self.client.world == world:
+					self.client.teleportTo(rx, ry, rz)
+				else:
+					self.client.changeToWorld(world.id, position=(rx, ry, rz))
+				sender.sendServerMessage("%s has accepted your fetch request." % self.client.username)
+			else:
+				sender = self.client.var_fetchdata[0]
+				sender.sendServerMessage("%s did not accept your request." % self.client.username)
+			self.client.var_fetchdata
+			return True
+
 	@player_list
 	@mod_only
 	def commandKick(self, parts, fromloc, overriderank):
 		"/kick username [reason] - Mod\nKicks the Player off the server."
-		user = parts[1]
-		if len(parts) > 1:
-			user.sendError("Kicked: %s" % " ".join(parts[2:]))
+		if len(parts) < 1:
+			self.client.sendServerMessage("Please specify user to kick.")
+			return
 		else:
-			user.sendError("You got kicked.")
-		self.client.sendServerMessage("User %s has been kicked." % user)
+			username = parts[1]
+			if username in self.client.factory.usernames:
+				if len(parts) > 1:
+					self.client.factory.usernames[username].sendError("Kicked: %s" % " ".join(parts[2:]))
+				else:
+					self.client.factory.usernames[username].sendError("You got kicked.")
+				self.client.sendServerMessage("User %s has been kicked." % username)
+			else:
+				self.client.sendServerMessage("User %s is not online." % username)
 
 	@player_list
 	@admin_only
@@ -118,7 +140,7 @@ class ModUtilPlugin(ProtocolPlugin):
 				# Nope, the user's not online. Let's do it ourselves. Query the IP
 				with Persist(username) as p:
 					ip = p.string("misc", "ip")
-				# User's ip cannot be found (means that user never came on the server). Return error
+				# User's ip cannot be found (means that user never came on the server). Return warning
 				if ip == "":
 					self.client.sendServerMessage("Warning: %s has never come on the server, therefore no IP record of that user.")
 			if self.client.factory.isIpBanned(ip):
@@ -161,8 +183,10 @@ class ModUtilPlugin(ProtocolPlugin):
 				ip = p.string("misc", "ip")
 				if ip == "":
 					self.client.sendServerMessage("%s has never come on the server, therefore no IP record of that user." % username)
+					return
 		if self.client.factory.isIpBanned(ip):
 			self.client.sendServerMessage("%s is already IPBanned." % ip)
+			return
 		else:
 			self.client.factory.addIpBan(ip, " ".join(parts[2:]))
 		if username in self.client.factory.usernames:
@@ -192,13 +216,7 @@ class ModUtilPlugin(ProtocolPlugin):
 	@only_username_command
 	def commandDeSpec(self, username, fromloc, overriderank):
 		"/unspec username - Mod\nRemoves the player as a spec."
-		try:
-			self.client.factory.spectators.remove(username)
-		except:
-			self.client.sendServerMessage("%s was not specced." % username)
-		self.client.sendServerMessage("%s is no longer a spec." % username)
-		if username in self.client.factory.usernames:
-			self.client.factory.usernames[username].sendSpectatorUpdate()
+		self.client.sendServerMessage(DeSpec(self, username, fromloc, overriderank))
 
 	@player_list
 	@director_only
@@ -243,35 +261,19 @@ class ModUtilPlugin(ProtocolPlugin):
 
 	@player_list
 	@mod_only
-	def commandUnFreeze(self, parts, fromloc, overriderank):
+	@only_username_command
+	def commandUnFreeze(self, user, fromloc, overriderank):
 		"/unfreeze username - Mod\nAliases: defreeze, unstop\nUnfreezes the player, allowing them to move again."
-		username = parts[1]
-		if username == "":
-			self.client.sendServerMessage("Please specify a username.")
-			return
-		if username not in self.client.factory.usernames:
-			self.client.sendServerMessage("User %s is not online." % username)
-			return
-		else:
-			user = self.client.factory.usernames[username]
-			user.frozen = False
-			user.sendNormalMessage("&4You have been unfrozen by %s!" % self.client.username)
+		user.frozen = False
+		user.sendNormalMessage("&4You have been unfrozen by %s!" % self.client.username)
 
 	@player_list
 	@mod_only
-	def commandFreeze(self, parts, fromloc, overriderank):
+	@only_username_command
+	def commandFreeze(self, user, fromloc, overriderank):
 		"/freeze username - Mod\nAliases: stop\nFreezes the player, preventing them from moving."
-		username = parts[1]
-		if username == "":
-			self.client.sendServerMessage("Please specify a username.")
-			return
-		if username not in self.client.factory.usernames:
-			self.client.sendServerMessage("User %s is not online." % username)
-			return
-		else:
-			user = self.client.factory.usernames[username]
-			user.frozen = True
-			user.sendNormalMessage("&4You have been frozen by %s!" % self.client.username)
+		user.frozen = True
+		user.sendNormalMessage("&4You have been frozen by %s!" % self.client.username)
 
 	@player_list
 	@mod_only
@@ -319,22 +321,6 @@ class ModUtilPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("Please type a message.")
 		else:
 			self.client.factory.queue.put((self.client, TASK_SERVERMESSAGE, ("[MSG] "+(" ".join(parts[1:])))))
-
-	def chatmsg(self, message):
-		if self.client.var_fetchrequest:
-			self.client.var_fetchrequest = False
-			if message in ["y"]:
-				sender,world,rx,ry,rz = self.client.var_fetchdata
-				if self.client.world == world:
-					self.client.teleportTo(rx, ry, rz)
-				else:
-					self.client.changeToWorld(world.id, position=(rx, ry, rz))
-				sender.sendServerMessage("%s has accepted your fetch request." % self.client.username)
-			else:
-				sender = self.client.var_fetchdata[0]
-				sender.sendServerMessage("%s did not accept your request." % self.client.username)
-			self.client.var_fetchdata
-			return True
 
 	@player_list
 	@op_only

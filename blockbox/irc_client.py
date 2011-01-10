@@ -202,7 +202,7 @@ class ChatBot(irc.IRCClient):
 						elif msg_command[1] == ("credits"):
 							self.msg(self.factory.irc_channel,"Please see your PM for the Credits.")
 							self.msg(user,"The Credits")
-							list = Credits(self, self.factory)
+							list = Credits()
 							for each in list:
 								self.msg(user,"".join(each))
 						elif msg_command[1] == ("help"):
@@ -549,6 +549,7 @@ class ChatBotFactory(protocol.ClientFactory):
 	def __init__(self, main_factory):
 		self.main_factory = main_factory
 		self.instance = None
+		self.failtime = 0
 		self.isQuitting = False
 
 	def quit(self, msg):
@@ -558,7 +559,8 @@ class ChatBotFactory(protocol.ClientFactory):
 	def clientConnectionLost(self, connector, reason):
 		"""If we get disconnected, reconnect to server."""
 		self.instance = None
-		if not self.isQuitting:
+		if not self.isQuitting and self.failtime <= 5:
+			self.failtime += 1
 			connector.connect()
 
 	def clientConnectionFailed(self, connector, reason):

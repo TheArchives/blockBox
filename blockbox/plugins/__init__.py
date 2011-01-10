@@ -82,10 +82,7 @@ class ProtocolPlugin(object):
 def load_plugins(plugins):
 	"Given a list of plugin names, imports them so they register."
 	for module_name in plugins:
-		try:
-			__import__("blockbox.plugins.%s" % module_name)
-		except ImportError:
-			logging.getLogger("Plugins").error("Cannot load plugin %s." % module_name)
+		__import__("blockbox.plugins.%s" % module_name)
 
 def unload_plugin(plugin_name):
 	"Given a plugin name, reloads and re-imports its code."

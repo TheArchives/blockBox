@@ -282,7 +282,7 @@ class BlbPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)  # This is how long (in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if fromloc == 'user':
-						self.client.finalizeMassCMD('bwb', self.client.count)
+						self.client.finalizeMassCMD('bwb', self.client.total)
 					pass
 			do_step()
 
@@ -626,7 +626,8 @@ class BlbPlugin(ProtocolPlugin):
 					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if fromloc == 'user':
-						self.client.finalizeMassCMD('bfb', count)
+						self.client.finalizeMassCMD('bfb', self.client.total)
+						self.client.total = 0
 					pass
 			do_step()
 
