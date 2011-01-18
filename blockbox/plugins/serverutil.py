@@ -10,16 +10,21 @@ from blockbox.plugins import ProtocolPlugin
 
 class ServerUtilPlugin(ProtocolPlugin):
 	"Server Maintenance Tools and Commands."
+
 	commands = {
 		"srb": "commandSRB",
 		"srs": "commandSRS",
 		"u": "commandUrgent",
 		"urgent": "commandUrgent",
+
 		#"irc_cpr": "commandIRCReload",
 		#"ircload": "commandIRCLoad",
 		#"ircunload": "commandIRCUnload",
+
+		"sendhb": "commandSendHeartbeat",
 	}
-	@director_only
+
+	@director_only
 	def commandSRB(self, parts, fromloc, overriderank):
 		"/srb [reason] - Director\nPrints out a reboot message."
 		if len(parts) == 1:
@@ -71,3 +76,9 @@ class ServerUtilPlugin(ProtocolPlugin):
 		self.client.factory.irc_relay.disconnect()
 		self.client.factory.irc_relay = None
 		self.client.sendServerMessage("IRC Bot unloaded.")
+
+	@owner_only
+	def commandSendHeartbeat(self, parts, fromloc, overriderank):
+		"/sendhb - Owner\nSends a heartbeat to the official Minecraft server."
+		self.client.factory.Heartbeat.get_url(True)
+		self.client.sendServerMessage("Heartbeat sent.")

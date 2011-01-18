@@ -2,7 +2,7 @@
 # See LICENSE for details.
 
 """
-Copyright information for lib.twisted.
+Copyright information for Twisted.
 """
 
 from twisted import __version__ as version, version as longversion

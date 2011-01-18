@@ -10,7 +10,7 @@ from lib.twisted.internet.protocol import Protocol
 from blockbox.constants import *
 from blockbox.decorators import *
 from blockbox.irc_client import ChatBotFactory
-from blockbox.globals import recursive_default
+from blockbox.globals import *
 from blockbox.plugins import protocol_plugins
 from blockbox.persistence import PersistenceEngine as Persist
 
@@ -36,6 +36,7 @@ class BlockBoxServerProtocol(Protocol):
 		self.commands = {}
 		self.hooks = {}
 		self.loops = recursive_default()
+		self.timers = recursive_default()
 		self.plugins = [plugin(self) for plugin in protocol_plugins]
 		self.ClientVars = dict()
 		# Set identification variable to false
@@ -47,9 +48,9 @@ class BlockBoxServerProtocol(Protocol):
 			self.sendError("No availible player slots.")
 			return
 		# Open the Whisper Log, Adminchat log and WorldChat Log
-		self.factory.create_if_not("logs/whisper.log")
-		self.factory.create_if_not("logs/staff.log")
-		self.factory.create_if_not("logs/world.log")
+		create_if_not("logs/whisper.log")
+		create_if_not("logs/staff.log")
+		create_if_not("logs/world.log")
 		self.whisperlog = open("logs/whisper.log", "a")
 		self.wclog = open("logs/world.log", "a")
 		self.adlog = open("logs/staff.log", "a")
@@ -169,10 +170,8 @@ class BlockBoxServerProtocol(Protocol):
 		del self.plugins
 		del self.commands
 		del self.hooks
-		try:
-			del self.factory.loops[self.username]
-		except KeyError:
-			pass
+		del self.loops
+		del self.timers
 		self.connected = 0
 
 	def send(self, data):
@@ -295,12 +294,6 @@ class BlockBoxServerProtocol(Protocol):
 					client.sendServerMessage("%s has come online." %self.username)
 				if self.factory.irc_relay:
 					self.factory.irc_relay.sendServerMessage("%s has come online." % self.username)
-				# Are they IP specced?
-				if self.factory.isIpSpecced(self.ip):
-					self.factory.spectators.add(self.username)
-					self.sendSpectatorUpdate()
-					self.sendServerMessage("Your IP has been spectated for: %s" % self.factory.ipSpecReason(self.ip))
-					self.logger.info("User %s autospecced due to its IP being on the IPSpec list." % self.username)
 				reactor.callLater(0.1, self.sendLevel)
 				self.loops["sendkeepalive"] = task.LoopingCall(self.sendKeepAlive)
 				self.loops["sendkeepalive"].start(1)

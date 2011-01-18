@@ -21,17 +21,17 @@ from lib.zope.interface import Declaration
 
 def _flatten(implements, include_None=0):
 
-	try:
-		r = implements.flattened()
-	except AttributeError:
-		if implements is None:
-			r=()
-		else:
-			r = Declaration(implements).flattened()
+    try:
+        r = implements.flattened()
+    except AttributeError:
+        if implements is None:
+            r=()
+        else:
+            r = Declaration(implements).flattened()
 
-	if not include_None:
-		return r
+    if not include_None:
+        return r
 
-	r = list(r)
-	r.append(None)
-	return r
+    r = list(r)
+    r.append(None)
+    return r

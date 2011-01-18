@@ -7,10 +7,10 @@ use the gtk2reactor instead.
 
 In order to use this support, simply do the following::
 
-	|  from lib.twisted.internet import glib2reactor
-	|  glib2reactor.install()
+    |  from lib.twisted.internet import glib2reactor
+    |  glib2reactor.install()
 
-Then use lib.twisted.internet APIs as usual.  The other methods here are not
+Then use twisted.internet APIs as usual.  The other methods here are not
 intended to be called directly.
 
 When installing the reactor, you can choose whether to use the glib
@@ -25,25 +25,25 @@ from lib.twisted.internet import gtk2reactor
 
 
 class Glib2Reactor(gtk2reactor.Gtk2Reactor):
-	"""
-	The reactor using the glib mainloop.
-	"""
+    """
+    The reactor using the glib mainloop.
+    """
 
-	def __init__(self):
-		"""
-		Override init to set the C{useGtk} flag.
-		"""
-		gtk2reactor.Gtk2Reactor.__init__(self, useGtk=False)
+    def __init__(self):
+        """
+        Override init to set the C{useGtk} flag.
+        """
+        gtk2reactor.Gtk2Reactor.__init__(self, useGtk=False)
 
 
 
 def install():
-	"""
-	Configure the twisted mainloop to be run inside the glib mainloop.
-	"""
-	reactor = Glib2Reactor()
-	from lib.twisted.internet.main import installReactor
-	installReactor(reactor)
-	
+    """
+    Configure the twisted mainloop to be run inside the glib mainloop.
+    """
+    reactor = Glib2Reactor()
+    from lib.twisted.internet.main import installReactor
+    installReactor(reactor)
+    
 __all__ = ['install']
 

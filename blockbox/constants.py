@@ -29,6 +29,7 @@ TYPE_PLAYERDIR = 11
 TYPE_PLAYERLEAVE = 12
 TYPE_MESSAGE = 13
 TYPE_ERROR = 14
+TYPE_SMP = 255
 
 TYPE_FORMATS = {
 	TYPE_INITIAL: Format("bssb"),
@@ -46,6 +47,7 @@ TYPE_FORMATS = {
 	TYPE_PLAYERLEAVE: Format("b"),
 	TYPE_MESSAGE: Format("bs"),
 	TYPE_ERROR: Format("s"),
+	TYPE_SMP: Format(""),
 }
 
 TASK_BLOCKSET = 1
@@ -372,7 +374,61 @@ BLOCK_MOSSYROCK = 48
 BLOCK_OBSIDIAN = 49
 BLOCK_OPSIDIAN = 49
 
-VIPS = set(["notch", "ez", "dock", "pixeleater", "andrewph", "ikjames", "goober", "gothfox", "destroyerx1", "willempiee", "dwarfy", "erronjason", "adam01", "aera", "andrewgodwin", "revenant", "gdude2002", "varriount", "notmeh", "bidoof_king", "rils", "fragmer", "tktech", "pyropyro", "mmavipc", "tyteen4a03", "uberfox"])
+BlockList = []
+while len(BlockList) != 50:
+	BlockList.append('')
+BlockList[0]="air"
+BlockList[1]="rock"
+BlockList[2]="grass"
+BlockList[3]="dirt"
+BlockList[4]="stone"
+BlockList[5]="wood"
+BlockList[6]="plant"
+BlockList[7]="adminblock"
+BlockList[8]="water"
+BlockList[9]="still_water"
+BlockList[10]="lava"
+BlockList[11]="still_lava"
+BlockList[12]="sand"
+BlockList[13]="gravel"
+BlockList[14]="goldore"
+BlockList[15]="ironore"
+BlockList[16]="coal"
+BlockList[17]="log"
+BlockList[18]="leaves"
+BlockList[19]="sponge"
+BlockList[20]="glass"
+BlockList[21]="red"
+BlockList[22]="orange"
+BlockList[23]="yellow"
+BlockList[24]="lime"
+BlockList[25]="green"
+BlockList[26]="turquoise"
+BlockList[27]="cyan"
+BlockList[28]="blue"
+BlockList[29]="indigo"
+BlockList[30]="violet"
+BlockList[31]="purple"
+BlockList[32]="magenta"
+BlockList[33]="pink"
+BlockList[34]="black"
+BlockList[35]="grey"
+BlockList[36]="white"
+BlockList[37]="yellow_flower"
+BlockList[38]="red_flower"
+BlockList[39]="brown_mushroom"
+BlockList[40]="red_mushroom"
+BlockList[41]="gold"
+BlockList[42]="iron"
+BlockList[43]="step"
+BlockList[44]="doublestep"
+BlockList[45]="brick"
+BlockList[46]="tnt"
+BlockList[47]="bookcase"
+BlockList[48]="moss"
+BlockList[49]="obsidian"
+
+VIPS = set(["notch", "ez", "dock", "pixeleater", "andrewph", "ikjames", "goober", "gothfox", "destroyerx1", "willempiee", "dwarfy", "erronjason", "adam01", "aera", "andrewgodwin", "revenant", "gdude2002", "varriount", "notmeh", "bidoof_king", "rils", "fragmer", "tktech", "pyropyro", "fizyplankton", "tyteen4a03", "uberfox"])
 
 class ServerFull(Exception):
 	pass

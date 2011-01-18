@@ -1,4 +1,4 @@
-# -*- test-case-name: lib.twisted.test.test_context -*-
+# -*- test-case-name: twisted.test.test_context -*-
 # Copyright (c) 2001-2004 Twisted Matrix Laboratories.
 # See LICENSE for details.
 
@@ -15,9 +15,9 @@ This is thread-safe.
 """
 
 try:
-	from threading import local
+    from threading import local
 except ImportError:
-	local = None
+    local = None
 
 from lib.twisted.python import threadable
 
@@ -26,65 +26,65 @@ defaultContextDict = {}
 setDefault = defaultContextDict.__setitem__
 
 class ContextTracker:
-	def __init__(self):
-		self.contexts = [defaultContextDict]
+    def __init__(self):
+        self.contexts = [defaultContextDict]
 
-	def callWithContext(self, ctx, func, *args, **kw):
-		newContext = self.contexts[-1].copy()
-		newContext.update(ctx)
-		self.contexts.append(newContext)
-		try:
-			return func(*args,**kw)
-		finally:
-			self.contexts.pop()
+    def callWithContext(self, ctx, func, *args, **kw):
+        newContext = self.contexts[-1].copy()
+        newContext.update(ctx)
+        self.contexts.append(newContext)
+        try:
+            return func(*args,**kw)
+        finally:
+            self.contexts.pop()
 
-	def getContext(self, key, default=None):
-		return self.contexts[-1].get(key, default)
+    def getContext(self, key, default=None):
+        return self.contexts[-1].get(key, default)
 
 
 class _ThreadedContextTracker:
-	def __init__(self):
-		self.threadId = threadable.getThreadID
-		self.contextPerThread = {}
+    def __init__(self):
+        self.threadId = threadable.getThreadID
+        self.contextPerThread = {}
 
-	def currentContext(self):
-		tkey = self.threadId()
-		try:
-			return self.contextPerThread[tkey]
-		except KeyError:
-			ct = self.contextPerThread[tkey] = ContextTracker()
-			return ct
+    def currentContext(self):
+        tkey = self.threadId()
+        try:
+            return self.contextPerThread[tkey]
+        except KeyError:
+            ct = self.contextPerThread[tkey] = ContextTracker()
+            return ct
 
-	def callWithContext(self, ctx, func, *args, **kw):
-		return self.currentContext().callWithContext(ctx, func, *args, **kw)
+    def callWithContext(self, ctx, func, *args, **kw):
+        return self.currentContext().callWithContext(ctx, func, *args, **kw)
 
-	def getContext(self, key, default=None):
-		return self.currentContext().getContext(key, default)
+    def getContext(self, key, default=None):
+        return self.currentContext().getContext(key, default)
 
 
 class _TLSContextTracker(_ThreadedContextTracker):
-	def __init__(self):
-		self.storage = local()
+    def __init__(self):
+        self.storage = local()
 
-	def currentContext(self):
-		try:
-			return self.storage.ct
-		except AttributeError:
-			ct = self.storage.ct = ContextTracker()
-			return ct
+    def currentContext(self):
+        try:
+            return self.storage.ct
+        except AttributeError:
+            ct = self.storage.ct = ContextTracker()
+            return ct
 
 if local is None:
-	ThreadedContextTracker = _ThreadedContextTracker
+    ThreadedContextTracker = _ThreadedContextTracker
 else:
-	ThreadedContextTracker = _TLSContextTracker
+    ThreadedContextTracker = _TLSContextTracker
 
 def installContextTracker(ctr):
-	global theContextTracker
-	global call
-	global get
+    global theContextTracker
+    global call
+    global get
 
-	theContextTracker = ctr
-	call = theContextTracker.callWithContext
-	get = theContextTracker.getContext
+    theContextTracker = ctr
+    call = theContextTracker.callWithContext
+    get = theContextTracker.getContext
 
 installContextTracker(ThreadedContextTracker())

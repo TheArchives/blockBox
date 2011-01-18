@@ -1,2 +1,2 @@
 def now():
-	return CFAbsoluteTimeGetCurrent()
+    return CFAbsoluteTimeGetCurrent()

@@ -20,14 +20,14 @@ exports several helper methods. Interface is used to create an interface with
 a class statement, as in:
 
   class IMyInterface(Interface):
-	'''Interface documentation
-	'''
+    '''Interface documentation
+    '''
 
-	def meth(arg1, arg2):
-		'''Documentation for meth
-		'''
+    def meth(arg1, arg2):
+        '''Documentation for meth
+        '''
 
-	# Note that there is no self argument
+    # Note that there is no self argument
 
 To find out what you can do with interfaces, see the interface
 interface, `IInterface` in the `interfaces` module.
@@ -35,8 +35,8 @@ interface, `IInterface` in the `interfaces` module.
 The package has several public modules:
 
   o `declarations` provides utilities to declare interfaces on objects. It
-	also provides a wide range of helpful utilities that aid in managing
-	declared interfaces. Most of its public names are however imported here.
+    also provides a wide range of helpful utilities that aid in managing
+    declared interfaces. Most of its public names are however imported here.
 
   o `document` has a utility for documenting an interface as structured text.
 

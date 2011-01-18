@@ -1,38 +1,17 @@
 Ticket numbers in this file can be looked up by visiting
 http://twistedmatrix.com/trac/ticket/<number>
 
-Twisted Words 10.2.0 (2010-11-29)
-=================================
-
-Features
---------
- - lib.twisted.words.protocols.irc.IRCClient.msg now enforces a maximum
-   length for messages, splitting up messages that are too long.
-   (#4416)
-
-Bugfixes
---------
- - lib.twisted.words.protocols.irc.IRCClient no longer invokes privmsg()
-   in the default noticed() implementation. (#4419)
- - lib.twisted.words.im.ircsupport.IRCProto now sends the correct name in
-   the USER command. (#4641)
-
-Deprecations and Removals
--------------------------
- - Remove lib.twisted.words.im.proxyui and lib.twisted.words.im.tap. (#1823)
-
-
 Twisted Words 10.1.0 (2010-06-27)
 =================================
 
 Bugfixes
 --------
- - lib.twisted.words.im.basechat.ChatUI now has a functional
+ - twisted.words.im.basechat.ChatUI now has a functional
    contactChangedNick with unit tests. (#229)
- - lib.twisted.words.protocols.jabber.error.StanzaError now correctly sets
+ - twisted.words.protocols.jabber.error.StanzaError now correctly sets
    a default error type and code for the remote-server-timeout
    condition (#4311)
- - lib.twisted.words.protocols.jabber.xmlstream.ListenAuthenticator now
+ - twisted.words.protocols.jabber.xmlstream.ListenAuthenticator now
    uses unicode objects for session identifiers (#4345)
 
 
@@ -41,17 +20,17 @@ Twisted Words 10.0.0 (2010-03-01)
 
 Features
 --------
- - lib.twisted.words.protocols.irc.IRCClient.irc_MODE now takes ISUPPORT
+ - twisted.words.protocols.irc.IRCClient.irc_MODE now takes ISUPPORT
    parameters into account when parsing mode messages with arguments
    that take parameters (#3296)
 
 Bugfixes
 --------
- - When lib.twisted.words.protocols.irc.IRCClient's versionNum and
+ - When twisted.words.protocols.irc.IRCClient's versionNum and
    versionEnv attributes are set to None, they will no longer be
    included in the client's response to CTCP VERSION queries. (#3660)
 
- - lib.twisted.words.protocols.jabber.xmlstream.hashPassword now only
+ - twisted.words.protocols.jabber.xmlstream.hashPassword now only
    accepts unicode as input (#3741, #3742, #3847)
 
 Other
@@ -74,8 +53,8 @@ Features
 
 Fixes
 -----
- - The lib.twisted.words IRC server now always sends an MOTD, which at least makes
-   Pidgin able to successfully connect to a lib.twisted.words IRC server (#2385)
+ - The twisted.words IRC server now always sends an MOTD, which at least makes
+   Pidgin able to successfully connect to a twisted.words IRC server (#2385)
  - The IRC client will now dispatch "RPL MOTD" messages received before a
    "RPL MOTD START" instead of raising an exception (#3676)
  - The IRC client protocol implementation no longer updates its 'nickname'
@@ -100,7 +79,7 @@ Words 8.2.0 (2008-12-16)
 
 Feature
 -------
- - There is now a standalone XMPP router included in lib.twisted.words: it can be
+ - There is now a standalone XMPP router included in twisted.words: it can be
    used with the 'twistd xmpp-router' command line (#3407)
  - A server factory for Jabber XML Streams has been added (#3435)
  - Domish now allows for iterating child elements with specific qualified names
@@ -184,14 +163,14 @@ Features
    establishment were added. (#1046) The following were done in
    support of this change:
    - Rework ConnectAuthenticator to work with initializer objects that
-	 provide a stream initialization step.
+     provide a stream initialization step.
    - Reimplement iq:auth as an initializer.
    - Reimplement TLS negotiation as an initializer.
    - Add XMPPAuthenticator as a XMPP 1.0 client authenticator (only), along
-	 with XMPPClientFactory.
+     with XMPPClientFactory.
    - Add support for working with pre-XMPP-1.0 error stanzas.
    - Remove hasFeature() from XmlStream as you can test (uri, name) in
-	 xs.features.
+     xs.features.
    - Add sendFooter() and sendStreamError() to XmlStream
 
 Fixes
@@ -240,14 +219,14 @@ Fixes
 
    - Fix digest authentication in Jabber
    - Add Jabber xmlstream module that contains the Jabber specific bits that
-	 got factored out of Twisted Xish's xmlstream, and make it suitable for
-	 implementing full XMPP support.
+     got factored out of Twisted Xish's xmlstream, and make it suitable for
+     implementing full XMPP support.
  - Xish:
    - Fixed serialization in _ListSerializer
    - Removed unneeded extra whitespace generated in serialization
    - Removed _Serializer in favour of _ListSerializer
    - Use unicode objects for representing serialized XML, instead of utf-8
-	 encoded str objects.
+     encoded str objects.
    - Properly catch XML parser errors
    - Rework and fix element stream test cases
    - Strip xmlstream from all Jabber specifics that moved to Twisted Words

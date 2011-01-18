@@ -4,7 +4,7 @@
 #include "Python.h"
 #include "structmember.h"
 #ifndef Py_PYTHON_H
-	#error Python headers needed to compile C extensions, please install development version of Python.
+    #error Python headers needed to compile C extensions, please install development version of Python.
 #endif
 #ifndef PY_LONG_LONG
   #define PY_LONG_LONG LONG_LONG
@@ -23,29 +23,29 @@
   #define PY_FORMAT_SIZE_T ""
   #define PyInt_FromSsize_t(z) PyInt_FromLong(z)
   #define PyInt_AsSsize_t(o)   PyInt_AsLong(o)
-  #define PyNumber_Index(o)	PyNumber_Int(o)
-  #define PyIndex_Check(o)	 PyNumber_Check(o)
+  #define PyNumber_Index(o)    PyNumber_Int(o)
+  #define PyIndex_Check(o)     PyNumber_Check(o)
 #endif
 #if PY_VERSION_HEX < 0x02060000
   #define Py_REFCNT(ob) (((PyObject*)(ob))->ob_refcnt)
   #define Py_TYPE(ob)   (((PyObject*)(ob))->ob_type)
   #define Py_SIZE(ob)   (((PyVarObject*)(ob))->ob_size)
   #define PyVarObject_HEAD_INIT(type, size) \
-		  PyObject_HEAD_INIT(type) size,
+          PyObject_HEAD_INIT(type) size,
   #define PyType_Modified(t)
 
   typedef struct {
-	   void *buf;
-	   PyObject *obj;
-	   Py_ssize_t len;
-	   Py_ssize_t itemsize;
-	   int readonly;
-	   int ndim;
-	   char *format;
-	   Py_ssize_t *shape;
-	   Py_ssize_t *strides;
-	   Py_ssize_t *suboffsets;
-	   void *internal;
+       void *buf;
+       PyObject *obj;
+       Py_ssize_t len;
+       Py_ssize_t itemsize;
+       int readonly;
+       int ndim;
+       char *format;
+       Py_ssize_t *shape;
+       Py_ssize_t *strides;
+       Py_ssize_t *suboffsets;
+       void *internal;
   } Py_buffer;
 
   #define PyBUF_SIMPLE 0
@@ -72,39 +72,39 @@
   #define Py_TPFLAGS_HAVE_NEWBUFFER 0
 #endif
 #if PY_MAJOR_VERSION >= 3
-  #define PyBaseString_Type			PyUnicode_Type
-  #define PyString_Type				PyBytes_Type
-  #define PyString_CheckExact		  PyBytes_CheckExact
-  #define PyInt_Type				   PyLong_Type
-  #define PyInt_Check(op)			  PyLong_Check(op)
-  #define PyInt_CheckExact(op)		 PyLong_CheckExact(op)
-  #define PyInt_FromString			 PyLong_FromString
-  #define PyInt_FromUnicode			PyLong_FromUnicode
-  #define PyInt_FromLong			   PyLong_FromLong
-  #define PyInt_FromSize_t			 PyLong_FromSize_t
-  #define PyInt_FromSsize_t			PyLong_FromSsize_t
-  #define PyInt_AsLong				 PyLong_AsLong
-  #define PyInt_AS_LONG				PyLong_AS_LONG
-  #define PyInt_AsSsize_t			  PyLong_AsSsize_t
-  #define PyInt_AsUnsignedLongMask	 PyLong_AsUnsignedLongMask
+  #define PyBaseString_Type            PyUnicode_Type
+  #define PyString_Type                PyBytes_Type
+  #define PyString_CheckExact          PyBytes_CheckExact
+  #define PyInt_Type                   PyLong_Type
+  #define PyInt_Check(op)              PyLong_Check(op)
+  #define PyInt_CheckExact(op)         PyLong_CheckExact(op)
+  #define PyInt_FromString             PyLong_FromString
+  #define PyInt_FromUnicode            PyLong_FromUnicode
+  #define PyInt_FromLong               PyLong_FromLong
+  #define PyInt_FromSize_t             PyLong_FromSize_t
+  #define PyInt_FromSsize_t            PyLong_FromSsize_t
+  #define PyInt_AsLong                 PyLong_AsLong
+  #define PyInt_AS_LONG                PyLong_AS_LONG
+  #define PyInt_AsSsize_t              PyLong_AsSsize_t
+  #define PyInt_AsUnsignedLongMask     PyLong_AsUnsignedLongMask
   #define PyInt_AsUnsignedLongLongMask PyLong_AsUnsignedLongLongMask
-  #define __Pyx_PyNumber_Divide(x,y)		 PyNumber_TrueDivide(x,y)
+  #define __Pyx_PyNumber_Divide(x,y)         PyNumber_TrueDivide(x,y)
 #else
-  #define __Pyx_PyNumber_Divide(x,y)		 PyNumber_Divide(x,y)
-  #define PyBytes_Type				 PyString_Type
+  #define __Pyx_PyNumber_Divide(x,y)         PyNumber_Divide(x,y)
+  #define PyBytes_Type                 PyString_Type
 #endif
 #if PY_MAJOR_VERSION >= 3
   #define PyMethod_New(func, self, klass) PyInstanceMethod_New(func)
 #endif
 #if !defined(WIN32) && !defined(MS_WINDOWS)
   #ifndef __stdcall
-	#define __stdcall
+    #define __stdcall
   #endif
   #ifndef __cdecl
-	#define __cdecl
+    #define __cdecl
   #endif
   #ifndef __fastcall
-	#define __fastcall
+    #define __fastcall
   #endif
 #else
   #define _USE_MATH_DEFINES
@@ -160,13 +160,13 @@ static int __pyx_skip_dispatch = 0;
 /* Type Conversion Predeclarations */
 
 #if PY_MAJOR_VERSION < 3
-#define __Pyx_PyBytes_FromString		  PyString_FromString
+#define __Pyx_PyBytes_FromString          PyString_FromString
 #define __Pyx_PyBytes_FromStringAndSize   PyString_FromStringAndSize
-#define __Pyx_PyBytes_AsString			PyString_AsString
+#define __Pyx_PyBytes_AsString            PyString_AsString
 #else
-#define __Pyx_PyBytes_FromString		  PyBytes_FromString
+#define __Pyx_PyBytes_FromString          PyBytes_FromString
 #define __Pyx_PyBytes_FromStringAndSize   PyBytes_FromStringAndSize
-#define __Pyx_PyBytes_AsString			PyBytes_AsString
+#define __Pyx_PyBytes_AsString            PyBytes_AsString
 #endif
 
 #define __Pyx_PyBool_FromLong(b) ((b) ? (Py_INCREF(Py_True), Py_True) : (Py_INCREF(Py_False), Py_False))
@@ -178,26 +178,26 @@ static INLINE PyObject* __Pyx_PyNumber_Int(PyObject* x);
 #define T_PYSSIZET T_INT
 #elif !defined(T_LONGLONG)
 #define T_PYSSIZET \
-		((sizeof(Py_ssize_t) == sizeof(int))  ? T_INT  : \
-		((sizeof(Py_ssize_t) == sizeof(long)) ? T_LONG : -1))
+        ((sizeof(Py_ssize_t) == sizeof(int))  ? T_INT  : \
+        ((sizeof(Py_ssize_t) == sizeof(long)) ? T_LONG : -1))
 #else
 #define T_PYSSIZET \
-		((sizeof(Py_ssize_t) == sizeof(int))		  ? T_INT	  : \
-		((sizeof(Py_ssize_t) == sizeof(long))		 ? T_LONG	 : \
-		((sizeof(Py_ssize_t) == sizeof(PY_LONG_LONG)) ? T_LONGLONG : -1)))
+        ((sizeof(Py_ssize_t) == sizeof(int))          ? T_INT      : \
+        ((sizeof(Py_ssize_t) == sizeof(long))         ? T_LONG     : \
+        ((sizeof(Py_ssize_t) == sizeof(PY_LONG_LONG)) ? T_LONGLONG : -1)))
 #endif
 #endif
 
 #if !defined(T_SIZET)
 #if !defined(T_ULONGLONG)
 #define T_SIZET \
-		((sizeof(size_t) == sizeof(unsigned int))  ? T_UINT  : \
-		((sizeof(size_t) == sizeof(unsigned long)) ? T_ULONG : -1))
+        ((sizeof(size_t) == sizeof(unsigned int))  ? T_UINT  : \
+        ((sizeof(size_t) == sizeof(unsigned long)) ? T_ULONG : -1))
 #else
 #define T_SIZET \
-		((sizeof(size_t) == sizeof(unsigned int))		  ? T_UINT	  : \
-		((sizeof(size_t) == sizeof(unsigned long))		 ? T_ULONG	 : \
-		((sizeof(size_t) == sizeof(unsigned PY_LONG_LONG)) ? T_ULONGLONG : -1)))
+        ((sizeof(size_t) == sizeof(unsigned int))          ? T_UINT      : \
+        ((sizeof(size_t) == sizeof(unsigned long))         ? T_ULONG     : \
+        ((sizeof(size_t) == sizeof(unsigned PY_LONG_LONG)) ? T_ULONGLONG : -1)))
 #endif
 #endif
 
@@ -210,7 +210,7 @@ static INLINE size_t __Pyx_PyInt_AsSize_t(PyObject*);
 
 #ifdef __GNUC__
 /* Test for GCC > 2.95 */
-#if __GNUC__ > 2 ||			   (__GNUC__ == 2 && (__GNUC_MINOR__ > 95)) 
+#if __GNUC__ > 2 ||               (__GNUC__ == 2 && (__GNUC_MINOR__ > 95)) 
 #define likely(x)   __builtin_expect(!!(x), 1)
 #define unlikely(x) __builtin_expect(!!(x), 0)
 #else /* __GNUC__ > 2 ... */
@@ -221,7 +221,7 @@ static INLINE size_t __Pyx_PyInt_AsSize_t(PyObject*);
 #define likely(x)   (x)
 #define unlikely(x) (x)
 #endif /* __GNUC__ */
-	
+    
 static PyObject *__pyx_m;
 static PyObject *__pyx_b;
 static PyObject *__pyx_empty_tuple;
@@ -263,15 +263,15 @@ static __Pyx_RefnannyAPIStruct *__Pyx_Refnanny = NULL;
 #define __Pyx_XGOTREF(r) if((r) == NULL) ; else __Pyx_GOTREF(r)
 
 static void __Pyx_RaiseDoubleKeywordsError(
-	const char* func_name, PyObject* kw_name); /*proto*/
+    const char* func_name, PyObject* kw_name); /*proto*/
 
 static void __Pyx_RaiseArgtupleInvalid(const char* func_name, int exact,
-	Py_ssize_t num_min, Py_ssize_t num_max, Py_ssize_t num_found); /*proto*/
+    Py_ssize_t num_min, Py_ssize_t num_max, Py_ssize_t num_found); /*proto*/
 
-static int __Pyx_ParseOptionalKeywords(PyObject *kwds, PyObject **argnames[],	 PyObject *kwds2, PyObject *values[], Py_ssize_t num_pos_args,	 const char* function_name); /*proto*/
+static int __Pyx_ParseOptionalKeywords(PyObject *kwds, PyObject **argnames[],     PyObject *kwds2, PyObject *values[], Py_ssize_t num_pos_args,     const char* function_name); /*proto*/
 
 static INLINE int __Pyx_CheckKeywordStrings(PyObject *kwdict,
-	const char* function_name, int kw_allowed); /*proto*/
+    const char* function_name, int kw_allowed); /*proto*/
 
 static INLINE void __Pyx_ErrRestore(PyObject *type, PyObject *value, PyObject *tb); /*proto*/
 static INLINE void __Pyx_ErrFetch(PyObject **type, PyObject **value, PyObject **tb); /*proto*/
@@ -342,11 +342,11 @@ typedef unsigned long __pyx_t_11iocpsupport_ULONG_PTR;
 typedef int __pyx_t_11iocpsupport_BOOL;
 
 /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":104
- * #	BOOL (*lpTransmitFile)(SOCKET s, HANDLE hFile, DWORD size, DWORD buffer_size, OVERLAPPED *ov, TRANSMIT_FILE_BUFFERS *buff, DWORD flags)
+ * #    BOOL (*lpTransmitFile)(SOCKET s, HANDLE hFile, DWORD size, DWORD buffer_size, OVERLAPPED *ov, TRANSMIT_FILE_BUFFERS *buff, DWORD flags)
  * 
- * cdef struct myOVERLAPPED:			 # <<<<<<<<<<<<<<
- *	 OVERLAPPED ov
- *	 PyObject *obj
+ * cdef struct myOVERLAPPED:             # <<<<<<<<<<<<<<
+ *     OVERLAPPED ov
+ *     PyObject *obj
  */
 
 struct __pyx_t_11iocpsupport_myOVERLAPPED {
@@ -355,11 +355,11 @@ struct __pyx_t_11iocpsupport_myOVERLAPPED {
 };
 
 /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":129
- *			 setattr(self, k, v)
+ *             setattr(self, k, v)
  * 
- * cdef class CompletionPort:			 # <<<<<<<<<<<<<<
- *	 cdef HANDLE port
- *	 def __init__(self):
+ * cdef class CompletionPort:             # <<<<<<<<<<<<<<
+ *     cdef HANDLE port
+ *     def __init__(self):
  */
 
 struct __pyx_obj_11iocpsupport_CompletionPort {
@@ -469,11 +469,11 @@ static PyObject *__pyx_kp_11;
 static char __pyx_k_11[] = "length of address length buffer needs to be sizeof(int)";
 
 /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":108
- *	 PyObject *obj
+ *     PyObject *obj
  * 
- * cdef myOVERLAPPED *makeOV() except NULL:			 # <<<<<<<<<<<<<<
- *	 cdef myOVERLAPPED *res
- *	 res = <myOVERLAPPED *>PyMem_Malloc(sizeof(myOVERLAPPED))
+ * cdef myOVERLAPPED *makeOV() except NULL:             # <<<<<<<<<<<<<<
+ *     cdef myOVERLAPPED *res
+ *     res = <myOVERLAPPED *>PyMem_Malloc(sizeof(myOVERLAPPED))
  */
 
 static  struct __pyx_t_11iocpsupport_myOVERLAPPED *__pyx_f_11iocpsupport_makeOV(void) {
@@ -485,50 +485,50 @@ static  struct __pyx_t_11iocpsupport_myOVERLAPPED *__pyx_f_11iocpsupport_makeOV(
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":110
  * cdef myOVERLAPPED *makeOV() except NULL:
- *	 cdef myOVERLAPPED *res
- *	 res = <myOVERLAPPED *>PyMem_Malloc(sizeof(myOVERLAPPED))			 # <<<<<<<<<<<<<<
- *	 if not res:
- *		 raise MemoryError
+ *     cdef myOVERLAPPED *res
+ *     res = <myOVERLAPPED *>PyMem_Malloc(sizeof(myOVERLAPPED))             # <<<<<<<<<<<<<<
+ *     if not res:
+ *         raise MemoryError
  */
   __pyx_t_1 = PyMem_Malloc((sizeof(struct __pyx_t_11iocpsupport_myOVERLAPPED))); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 110; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_res = ((struct __pyx_t_11iocpsupport_myOVERLAPPED *)__pyx_t_1);
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":111
- *	 cdef myOVERLAPPED *res
- *	 res = <myOVERLAPPED *>PyMem_Malloc(sizeof(myOVERLAPPED))
- *	 if not res:			 # <<<<<<<<<<<<<<
- *		 raise MemoryError
- *	 memset(res, 0, sizeof(myOVERLAPPED))
+ *     cdef myOVERLAPPED *res
+ *     res = <myOVERLAPPED *>PyMem_Malloc(sizeof(myOVERLAPPED))
+ *     if not res:             # <<<<<<<<<<<<<<
+ *         raise MemoryError
+ *     memset(res, 0, sizeof(myOVERLAPPED))
  */
   __pyx_t_2 = (!(__pyx_v_res != 0));
   if (__pyx_t_2) {
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":112
- *	 res = <myOVERLAPPED *>PyMem_Malloc(sizeof(myOVERLAPPED))
- *	 if not res:
- *		 raise MemoryError			 # <<<<<<<<<<<<<<
- *	 memset(res, 0, sizeof(myOVERLAPPED))
- *	 return res
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":112
+ *     res = <myOVERLAPPED *>PyMem_Malloc(sizeof(myOVERLAPPED))
+ *     if not res:
+ *         raise MemoryError             # <<<<<<<<<<<<<<
+ *     memset(res, 0, sizeof(myOVERLAPPED))
+ *     return res
  */
-	__Pyx_Raise(__pyx_builtin_MemoryError, 0, 0);
-	{__pyx_filename = __pyx_f[0]; __pyx_lineno = 112; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-	goto __pyx_L3;
+    __Pyx_Raise(__pyx_builtin_MemoryError, 0, 0);
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 112; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    goto __pyx_L3;
   }
   __pyx_L3:;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":113
- *	 if not res:
- *		 raise MemoryError
- *	 memset(res, 0, sizeof(myOVERLAPPED))			 # <<<<<<<<<<<<<<
- *	 return res
+ *     if not res:
+ *         raise MemoryError
+ *     memset(res, 0, sizeof(myOVERLAPPED))             # <<<<<<<<<<<<<<
+ *     return res
  * 
  */
   memset(__pyx_v_res, 0, (sizeof(struct __pyx_t_11iocpsupport_myOVERLAPPED)));
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":114
- *		 raise MemoryError
- *	 memset(res, 0, sizeof(myOVERLAPPED))
- *	 return res			 # <<<<<<<<<<<<<<
+ *         raise MemoryError
+ *     memset(res, 0, sizeof(myOVERLAPPED))
+ *     return res             # <<<<<<<<<<<<<<
  * 
  * cdef void raise_error(int err, object message) except *:
  */
@@ -546,11 +546,11 @@ static  struct __pyx_t_11iocpsupport_myOVERLAPPED *__pyx_f_11iocpsupport_makeOV(
 }
 
 /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":116
- *	 return res
+ *     return res
  * 
- * cdef void raise_error(int err, object message) except *:			 # <<<<<<<<<<<<<<
- *	 if not err:
- *		 err = GetLastError()
+ * cdef void raise_error(int err, object message) except *:             # <<<<<<<<<<<<<<
+ *     if not err:
+ *         err = GetLastError()
  */
 
 static  void __pyx_f_11iocpsupport_raise_error(int __pyx_v_err, PyObject *__pyx_v_message) {
@@ -562,29 +562,29 @@ static  void __pyx_f_11iocpsupport_raise_error(int __pyx_v_err, PyObject *__pyx_
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":117
  * 
  * cdef void raise_error(int err, object message) except *:
- *	 if not err:			 # <<<<<<<<<<<<<<
- *		 err = GetLastError()
- *	 raise WindowsError(message, err)
+ *     if not err:             # <<<<<<<<<<<<<<
+ *         err = GetLastError()
+ *     raise WindowsError(message, err)
  */
   __pyx_t_1 = (!__pyx_v_err);
   if (__pyx_t_1) {
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":118
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":118
  * cdef void raise_error(int err, object message) except *:
- *	 if not err:
- *		 err = GetLastError()			 # <<<<<<<<<<<<<<
- *	 raise WindowsError(message, err)
+ *     if not err:
+ *         err = GetLastError()             # <<<<<<<<<<<<<<
+ *     raise WindowsError(message, err)
  * 
  */
-	__pyx_v_err = GetLastError();
-	goto __pyx_L3;
+    __pyx_v_err = GetLastError();
+    goto __pyx_L3;
   }
   __pyx_L3:;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":119
- *	 if not err:
- *		 err = GetLastError()
- *	 raise WindowsError(message, err)			 # <<<<<<<<<<<<<<
+ *     if not err:
+ *         err = GetLastError()
+ *     raise WindowsError(message, err)             # <<<<<<<<<<<<<<
  * 
  * class Event:
  */
@@ -617,9 +617,9 @@ static  void __pyx_f_11iocpsupport_raise_error(int __pyx_v_err, PyObject *__pyx_
 /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":122
  * 
  * class Event:
- *	 def __init__(self, callback, owner, **kw):			 # <<<<<<<<<<<<<<
- *		 self.callback = callback
- *		 self.owner = owner
+ *     def __init__(self, callback, owner, **kw):             # <<<<<<<<<<<<<<
+ *         self.callback = callback
+ *         self.owner = owner
  */
 
 static PyObject *__pyx_pf_11iocpsupport_5Event___init__(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
@@ -645,45 +645,45 @@ static PyObject *__pyx_pf_11iocpsupport_5Event___init__(PyObject *__pyx_self, Py
   __pyx_v_kw = PyDict_New(); if (unlikely(!__pyx_v_kw)) return NULL;
   __Pyx_GOTREF(__pyx_v_kw);
   if (unlikely(__pyx_kwds)) {
-	Py_ssize_t kw_args = PyDict_Size(__pyx_kwds);
-	PyObject* values[3] = {0,0,0};
-	switch (PyTuple_GET_SIZE(__pyx_args)) {
-	  case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
-	  case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
-	  case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
-	  case  0: break;
-	  default: goto __pyx_L5_argtuple_error;
-	}
-	switch (PyTuple_GET_SIZE(__pyx_args)) {
-	  case  0:
-	  values[0] = PyDict_GetItem(__pyx_kwds, __pyx_kp_self);
-	  if (likely(values[0])) kw_args--;
-	  else goto __pyx_L5_argtuple_error;
-	  case  1:
-	  values[1] = PyDict_GetItem(__pyx_kwds, __pyx_kp_callback);
-	  if (likely(values[1])) kw_args--;
-	  else {
-		__Pyx_RaiseArgtupleInvalid("__init__", 1, 3, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 122; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	  }
-	  case  2:
-	  values[2] = PyDict_GetItem(__pyx_kwds, __pyx_kp_owner);
-	  if (likely(values[2])) kw_args--;
-	  else {
-		__Pyx_RaiseArgtupleInvalid("__init__", 1, 3, 3, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 122; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	  }
-	}
-	if (unlikely(kw_args > 0)) {
-	  if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, __pyx_v_kw, values, PyTuple_GET_SIZE(__pyx_args), "__init__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 122; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	}
-	__pyx_v_self = values[0];
-	__pyx_v_callback = values[1];
-	__pyx_v_owner = values[2];
+    Py_ssize_t kw_args = PyDict_Size(__pyx_kwds);
+    PyObject* values[3] = {0,0,0};
+    switch (PyTuple_GET_SIZE(__pyx_args)) {
+      case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+      case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+      case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+      case  0: break;
+      default: goto __pyx_L5_argtuple_error;
+    }
+    switch (PyTuple_GET_SIZE(__pyx_args)) {
+      case  0:
+      values[0] = PyDict_GetItem(__pyx_kwds, __pyx_kp_self);
+      if (likely(values[0])) kw_args--;
+      else goto __pyx_L5_argtuple_error;
+      case  1:
+      values[1] = PyDict_GetItem(__pyx_kwds, __pyx_kp_callback);
+      if (likely(values[1])) kw_args--;
+      else {
+        __Pyx_RaiseArgtupleInvalid("__init__", 1, 3, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 122; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+      }
+      case  2:
+      values[2] = PyDict_GetItem(__pyx_kwds, __pyx_kp_owner);
+      if (likely(values[2])) kw_args--;
+      else {
+        __Pyx_RaiseArgtupleInvalid("__init__", 1, 3, 3, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 122; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+      }
+    }
+    if (unlikely(kw_args > 0)) {
+      if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, __pyx_v_kw, values, PyTuple_GET_SIZE(__pyx_args), "__init__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 122; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    }
+    __pyx_v_self = values[0];
+    __pyx_v_callback = values[1];
+    __pyx_v_owner = values[2];
   } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
-	goto __pyx_L5_argtuple_error;
+    goto __pyx_L5_argtuple_error;
   } else {
-	__pyx_v_self = PyTuple_GET_ITEM(__pyx_args, 0);
-	__pyx_v_callback = PyTuple_GET_ITEM(__pyx_args, 1);
-	__pyx_v_owner = PyTuple_GET_ITEM(__pyx_args, 2);
+    __pyx_v_self = PyTuple_GET_ITEM(__pyx_args, 0);
+    __pyx_v_callback = PyTuple_GET_ITEM(__pyx_args, 1);
+    __pyx_v_owner = PyTuple_GET_ITEM(__pyx_args, 2);
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
@@ -698,28 +698,28 @@ static PyObject *__pyx_pf_11iocpsupport_5Event___init__(PyObject *__pyx_self, Py
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":123
  * class Event:
- *	 def __init__(self, callback, owner, **kw):
- *		 self.callback = callback			 # <<<<<<<<<<<<<<
- *		 self.owner = owner
- *		 self.ignore = False
+ *     def __init__(self, callback, owner, **kw):
+ *         self.callback = callback             # <<<<<<<<<<<<<<
+ *         self.owner = owner
+ *         self.ignore = False
  */
   if (PyObject_SetAttr(__pyx_v_self, __pyx_kp_callback, __pyx_v_callback) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 123; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":124
- *	 def __init__(self, callback, owner, **kw):
- *		 self.callback = callback
- *		 self.owner = owner			 # <<<<<<<<<<<<<<
- *		 self.ignore = False
- *		 for k, v in kw.items():
+ *     def __init__(self, callback, owner, **kw):
+ *         self.callback = callback
+ *         self.owner = owner             # <<<<<<<<<<<<<<
+ *         self.ignore = False
+ *         for k, v in kw.items():
  */
   if (PyObject_SetAttr(__pyx_v_self, __pyx_kp_owner, __pyx_v_owner) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 124; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":125
- *		 self.callback = callback
- *		 self.owner = owner
- *		 self.ignore = False			 # <<<<<<<<<<<<<<
- *		 for k, v in kw.items():
- *			 setattr(self, k, v)
+ *         self.callback = callback
+ *         self.owner = owner
+ *         self.ignore = False             # <<<<<<<<<<<<<<
+ *         for k, v in kw.items():
+ *             setattr(self, k, v)
  */
   __pyx_t_1 = __Pyx_PyBool_FromLong(0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -727,10 +727,10 @@ static PyObject *__pyx_pf_11iocpsupport_5Event___init__(PyObject *__pyx_self, Py
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":126
- *		 self.owner = owner
- *		 self.ignore = False
- *		 for k, v in kw.items():			 # <<<<<<<<<<<<<<
- *			 setattr(self, k, v)
+ *         self.owner = owner
+ *         self.ignore = False
+ *         for k, v in kw.items():             # <<<<<<<<<<<<<<
+ *             setattr(self, k, v)
  * 
  */
   __pyx_t_1 = PyObject_GetAttr(__pyx_v_kw, __pyx_kp_items); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 126; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -739,64 +739,64 @@ static PyObject *__pyx_pf_11iocpsupport_5Event___init__(PyObject *__pyx_self, Py
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (PyList_CheckExact(__pyx_t_3) || PyTuple_CheckExact(__pyx_t_3)) {
-	__pyx_t_2 = 0; __pyx_t_1 = __pyx_t_3; __Pyx_INCREF(__pyx_t_1);
+    __pyx_t_2 = 0; __pyx_t_1 = __pyx_t_3; __Pyx_INCREF(__pyx_t_1);
   } else {
-	__pyx_t_2 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 126; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-	__Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_2 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 126; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_1);
   }
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   for (;;) {
-	if (likely(PyList_CheckExact(__pyx_t_1))) {
-	  if (__pyx_t_2 >= PyList_GET_SIZE(__pyx_t_1)) break;
-	  __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_3); __pyx_t_2++;
-	} else if (likely(PyTuple_CheckExact(__pyx_t_1))) {
-	  if (__pyx_t_2 >= PyTuple_GET_SIZE(__pyx_t_1)) break;
-	  __pyx_t_3 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_3); __pyx_t_2++;
-	} else {
-	  __pyx_t_3 = PyIter_Next(__pyx_t_1);
-	  if (!__pyx_t_3) {
-		if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 126; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-		break;
-	  }
-	  __Pyx_GOTREF(__pyx_t_3);
-	}
-	if (PyTuple_CheckExact(__pyx_t_3) && likely(PyTuple_GET_SIZE(__pyx_t_3) == 2)) {
-	  PyObject* tuple = __pyx_t_3;
-	  __pyx_2 = PyTuple_GET_ITEM(tuple, 0); __Pyx_INCREF(__pyx_2);
-	  __pyx_3 = PyTuple_GET_ITEM(tuple, 1); __Pyx_INCREF(__pyx_3);
-	  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-	  __Pyx_DECREF(__pyx_v_k);
-	  __pyx_v_k = __pyx_2;
-	  __pyx_2 = 0;
-	  __Pyx_DECREF(__pyx_v_v);
-	  __pyx_v_v = __pyx_3;
-	  __pyx_3 = 0;
-	} else {
-	  __pyx_1 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 126; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-	  __Pyx_GOTREF(__pyx_1);
-	  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-	  __pyx_2 = __Pyx_UnpackItem(__pyx_1, 0); if (unlikely(!__pyx_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 126; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-	  __Pyx_GOTREF(__pyx_2);
-	  __pyx_3 = __Pyx_UnpackItem(__pyx_1, 1); if (unlikely(!__pyx_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 126; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-	  __Pyx_GOTREF(__pyx_3);
-	  if (__Pyx_EndUnpack(__pyx_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 126; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-	  __Pyx_DECREF(__pyx_1); __pyx_1 = 0;
-	  __Pyx_DECREF(__pyx_v_k);
-	  __pyx_v_k = __pyx_2;
-	  __pyx_2 = 0;
-	  __Pyx_DECREF(__pyx_v_v);
-	  __pyx_v_v = __pyx_3;
-	  __pyx_3 = 0;
-	}
+    if (likely(PyList_CheckExact(__pyx_t_1))) {
+      if (__pyx_t_2 >= PyList_GET_SIZE(__pyx_t_1)) break;
+      __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_3); __pyx_t_2++;
+    } else if (likely(PyTuple_CheckExact(__pyx_t_1))) {
+      if (__pyx_t_2 >= PyTuple_GET_SIZE(__pyx_t_1)) break;
+      __pyx_t_3 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_3); __pyx_t_2++;
+    } else {
+      __pyx_t_3 = PyIter_Next(__pyx_t_1);
+      if (!__pyx_t_3) {
+        if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 126; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        break;
+      }
+      __Pyx_GOTREF(__pyx_t_3);
+    }
+    if (PyTuple_CheckExact(__pyx_t_3) && likely(PyTuple_GET_SIZE(__pyx_t_3) == 2)) {
+      PyObject* tuple = __pyx_t_3;
+      __pyx_2 = PyTuple_GET_ITEM(tuple, 0); __Pyx_INCREF(__pyx_2);
+      __pyx_3 = PyTuple_GET_ITEM(tuple, 1); __Pyx_INCREF(__pyx_3);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      __Pyx_DECREF(__pyx_v_k);
+      __pyx_v_k = __pyx_2;
+      __pyx_2 = 0;
+      __Pyx_DECREF(__pyx_v_v);
+      __pyx_v_v = __pyx_3;
+      __pyx_3 = 0;
+    } else {
+      __pyx_1 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 126; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_1);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      __pyx_2 = __Pyx_UnpackItem(__pyx_1, 0); if (unlikely(!__pyx_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 126; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_2);
+      __pyx_3 = __Pyx_UnpackItem(__pyx_1, 1); if (unlikely(!__pyx_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 126; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_3);
+      if (__Pyx_EndUnpack(__pyx_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 126; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_DECREF(__pyx_1); __pyx_1 = 0;
+      __Pyx_DECREF(__pyx_v_k);
+      __pyx_v_k = __pyx_2;
+      __pyx_2 = 0;
+      __Pyx_DECREF(__pyx_v_v);
+      __pyx_v_v = __pyx_3;
+      __pyx_3 = 0;
+    }
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":127
- *		 self.ignore = False
- *		 for k, v in kw.items():
- *			 setattr(self, k, v)			 # <<<<<<<<<<<<<<
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":127
+ *         self.ignore = False
+ *         for k, v in kw.items():
+ *             setattr(self, k, v)             # <<<<<<<<<<<<<<
  * 
  * cdef class CompletionPort:
  */
-	__pyx_t_4 = PyObject_SetAttr(__pyx_v_self, __pyx_v_k, __pyx_v_v); if (unlikely(__pyx_t_4 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 127; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = PyObject_SetAttr(__pyx_v_self, __pyx_v_k, __pyx_v_v); if (unlikely(__pyx_t_4 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 127; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
@@ -821,10 +821,10 @@ static PyObject *__pyx_pf_11iocpsupport_5Event___init__(PyObject *__pyx_self, Py
 
 /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":131
  * cdef class CompletionPort:
- *	 cdef HANDLE port
- *	 def __init__(self):			 # <<<<<<<<<<<<<<
- *		 cdef HANDLE res
- *		 res = CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0)
+ *     cdef HANDLE port
+ *     def __init__(self):             # <<<<<<<<<<<<<<
+ *         cdef HANDLE res
+ *         res = CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0)
  */
 
 static int __pyx_pf_11iocpsupport_14CompletionPort___init__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
@@ -834,46 +834,46 @@ static int __pyx_pf_11iocpsupport_14CompletionPort___init__(PyObject *__pyx_v_se
   int __pyx_t_1;
   __Pyx_SetupRefcountContext("__init__");
   if (unlikely(PyTuple_GET_SIZE(__pyx_args) > 0)) {
-	__Pyx_RaiseArgtupleInvalid("__init__", 1, 0, 0, PyTuple_GET_SIZE(__pyx_args)); return -1;}
+    __Pyx_RaiseArgtupleInvalid("__init__", 1, 0, 0, PyTuple_GET_SIZE(__pyx_args)); return -1;}
   if (unlikely(__pyx_kwds) && unlikely(PyDict_Size(__pyx_kwds) > 0) && unlikely(!__Pyx_CheckKeywordStrings(__pyx_kwds, "__init__", 0))) return -1;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":133
- *	 def __init__(self):
- *		 cdef HANDLE res
- *		 res = CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0)			 # <<<<<<<<<<<<<<
- *		 if not res:
- *			 raise_error(0, 'CreateIoCompletionPort')
+ *     def __init__(self):
+ *         cdef HANDLE res
+ *         res = CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0)             # <<<<<<<<<<<<<<
+ *         if not res:
+ *             raise_error(0, 'CreateIoCompletionPort')
  */
   __pyx_v_res = CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0);
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":134
- *		 cdef HANDLE res
- *		 res = CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0)
- *		 if not res:			 # <<<<<<<<<<<<<<
- *			 raise_error(0, 'CreateIoCompletionPort')
- *		 self.port = res
+ *         cdef HANDLE res
+ *         res = CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0)
+ *         if not res:             # <<<<<<<<<<<<<<
+ *             raise_error(0, 'CreateIoCompletionPort')
+ *         self.port = res
  */
   __pyx_t_1 = (!__pyx_v_res);
   if (__pyx_t_1) {
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":135
- *		 res = CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0)
- *		 if not res:
- *			 raise_error(0, 'CreateIoCompletionPort')			 # <<<<<<<<<<<<<<
- *		 self.port = res
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":135
+ *         res = CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0)
+ *         if not res:
+ *             raise_error(0, 'CreateIoCompletionPort')             # <<<<<<<<<<<<<<
+ *         self.port = res
  * 
  */
-	__pyx_f_11iocpsupport_raise_error(0, __pyx_kp_2); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 135; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-	goto __pyx_L5;
+    __pyx_f_11iocpsupport_raise_error(0, __pyx_kp_2); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 135; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    goto __pyx_L5;
   }
   __pyx_L5:;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":136
- *		 if not res:
- *			 raise_error(0, 'CreateIoCompletionPort')
- *		 self.port = res			 # <<<<<<<<<<<<<<
+ *         if not res:
+ *             raise_error(0, 'CreateIoCompletionPort')
+ *         self.port = res             # <<<<<<<<<<<<<<
  * 
- *	 def addHandle(self, long handle, long key=0):
+ *     def addHandle(self, long handle, long key=0):
  */
   ((struct __pyx_obj_11iocpsupport_CompletionPort *)__pyx_v_self)->port = __pyx_v_res;
 
@@ -888,11 +888,11 @@ static int __pyx_pf_11iocpsupport_14CompletionPort___init__(PyObject *__pyx_v_se
 }
 
 /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":138
- *		 self.port = res
+ *         self.port = res
  * 
- *	 def addHandle(self, long handle, long key=0):			 # <<<<<<<<<<<<<<
- *		 cdef HANDLE res
- *		 res = CreateIoCompletionPort(handle, self.port, key, 0)
+ *     def addHandle(self, long handle, long key=0):             # <<<<<<<<<<<<<<
+ *         cdef HANDLE res
+ *         res = CreateIoCompletionPort(handle, self.port, key, 0)
  */
 
 static PyObject *__pyx_pf_11iocpsupport_14CompletionPort_addHandle(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
@@ -905,42 +905,42 @@ static PyObject *__pyx_pf_11iocpsupport_14CompletionPort_addHandle(PyObject *__p
   static PyObject **__pyx_pyargnames[] = {&__pyx_kp_handle,&__pyx_kp_key,0};
   __Pyx_SetupRefcountContext("addHandle");
   if (unlikely(__pyx_kwds)) {
-	Py_ssize_t kw_args = PyDict_Size(__pyx_kwds);
-	PyObject* values[2] = {0,0};
-	switch (PyTuple_GET_SIZE(__pyx_args)) {
-	  case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
-	  case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
-	  case  0: break;
-	  default: goto __pyx_L5_argtuple_error;
-	}
-	switch (PyTuple_GET_SIZE(__pyx_args)) {
-	  case  0:
-	  values[0] = PyDict_GetItem(__pyx_kwds, __pyx_kp_handle);
-	  if (likely(values[0])) kw_args--;
-	  else goto __pyx_L5_argtuple_error;
-	  case  1:
-	  if (kw_args > 1) {
-		PyObject* value = PyDict_GetItem(__pyx_kwds, __pyx_kp_key);
-		if (unlikely(value)) { values[1] = value; kw_args--; }
-	  }
-	}
-	if (unlikely(kw_args > 0)) {
-	  if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, PyTuple_GET_SIZE(__pyx_args), "addHandle") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	}
-	__pyx_v_handle = __Pyx_PyInt_AsLong(values[0]); if (unlikely((__pyx_v_handle == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	if (values[1]) {
-	  __pyx_v_key = __Pyx_PyInt_AsLong(values[1]); if (unlikely((__pyx_v_key == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	} else {
-	  __pyx_v_key = 0;
-	}
+    Py_ssize_t kw_args = PyDict_Size(__pyx_kwds);
+    PyObject* values[2] = {0,0};
+    switch (PyTuple_GET_SIZE(__pyx_args)) {
+      case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+      case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+      case  0: break;
+      default: goto __pyx_L5_argtuple_error;
+    }
+    switch (PyTuple_GET_SIZE(__pyx_args)) {
+      case  0:
+      values[0] = PyDict_GetItem(__pyx_kwds, __pyx_kp_handle);
+      if (likely(values[0])) kw_args--;
+      else goto __pyx_L5_argtuple_error;
+      case  1:
+      if (kw_args > 1) {
+        PyObject* value = PyDict_GetItem(__pyx_kwds, __pyx_kp_key);
+        if (unlikely(value)) { values[1] = value; kw_args--; }
+      }
+    }
+    if (unlikely(kw_args > 0)) {
+      if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, PyTuple_GET_SIZE(__pyx_args), "addHandle") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    }
+    __pyx_v_handle = __Pyx_PyInt_AsLong(values[0]); if (unlikely((__pyx_v_handle == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    if (values[1]) {
+      __pyx_v_key = __Pyx_PyInt_AsLong(values[1]); if (unlikely((__pyx_v_key == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    } else {
+      __pyx_v_key = 0;
+    }
   } else {
-	__pyx_v_key = 0;
-	switch (PyTuple_GET_SIZE(__pyx_args)) {
-	  case  2: __pyx_v_key = __Pyx_PyInt_AsLong(PyTuple_GET_ITEM(__pyx_args, 1)); if (unlikely((__pyx_v_key == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	  case  1: __pyx_v_handle = __Pyx_PyInt_AsLong(PyTuple_GET_ITEM(__pyx_args, 0)); if (unlikely((__pyx_v_handle == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	  break;
-	  default: goto __pyx_L5_argtuple_error;
-	}
+    __pyx_v_key = 0;
+    switch (PyTuple_GET_SIZE(__pyx_args)) {
+      case  2: __pyx_v_key = __Pyx_PyInt_AsLong(PyTuple_GET_ITEM(__pyx_args, 1)); if (unlikely((__pyx_v_key == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+      case  1: __pyx_v_handle = __Pyx_PyInt_AsLong(PyTuple_GET_ITEM(__pyx_args, 0)); if (unlikely((__pyx_v_handle == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+      break;
+      default: goto __pyx_L5_argtuple_error;
+    }
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
@@ -951,33 +951,33 @@ static PyObject *__pyx_pf_11iocpsupport_14CompletionPort_addHandle(PyObject *__p
   __pyx_L4_argument_unpacking_done:;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":140
- *	 def addHandle(self, long handle, long key=0):
- *		 cdef HANDLE res
- *		 res = CreateIoCompletionPort(handle, self.port, key, 0)			 # <<<<<<<<<<<<<<
- *		 if not res:
- *			 raise_error(0, 'CreateIoCompletionPort')
+ *     def addHandle(self, long handle, long key=0):
+ *         cdef HANDLE res
+ *         res = CreateIoCompletionPort(handle, self.port, key, 0)             # <<<<<<<<<<<<<<
+ *         if not res:
+ *             raise_error(0, 'CreateIoCompletionPort')
  */
   __pyx_v_res = CreateIoCompletionPort(__pyx_v_handle, ((struct __pyx_obj_11iocpsupport_CompletionPort *)__pyx_v_self)->port, __pyx_v_key, 0);
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":141
- *		 cdef HANDLE res
- *		 res = CreateIoCompletionPort(handle, self.port, key, 0)
- *		 if not res:			 # <<<<<<<<<<<<<<
- *			 raise_error(0, 'CreateIoCompletionPort')
+ *         cdef HANDLE res
+ *         res = CreateIoCompletionPort(handle, self.port, key, 0)
+ *         if not res:             # <<<<<<<<<<<<<<
+ *             raise_error(0, 'CreateIoCompletionPort')
  * 
  */
   __pyx_t_1 = (!__pyx_v_res);
   if (__pyx_t_1) {
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":142
- *		 res = CreateIoCompletionPort(handle, self.port, key, 0)
- *		 if not res:
- *			 raise_error(0, 'CreateIoCompletionPort')			 # <<<<<<<<<<<<<<
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":142
+ *         res = CreateIoCompletionPort(handle, self.port, key, 0)
+ *         if not res:
+ *             raise_error(0, 'CreateIoCompletionPort')             # <<<<<<<<<<<<<<
  * 
- *	 def getEvent(self, long timeout):
+ *     def getEvent(self, long timeout):
  */
-	__pyx_f_11iocpsupport_raise_error(0, __pyx_kp_3); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 142; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-	goto __pyx_L6;
+    __pyx_f_11iocpsupport_raise_error(0, __pyx_kp_3); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 142; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    goto __pyx_L6;
   }
   __pyx_L6:;
 
@@ -993,11 +993,11 @@ static PyObject *__pyx_pf_11iocpsupport_14CompletionPort_addHandle(PyObject *__p
 }
 
 /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":144
- *			 raise_error(0, 'CreateIoCompletionPort')
+ *             raise_error(0, 'CreateIoCompletionPort')
  * 
- *	 def getEvent(self, long timeout):			 # <<<<<<<<<<<<<<
- *		 cdef PyThreadState *_save
- *		 cdef unsigned long bytes, key, rc
+ *     def getEvent(self, long timeout):             # <<<<<<<<<<<<<<
+ *         cdef PyThreadState *_save
+ *         cdef unsigned long bytes, key, rc
  */
 
 static PyObject *__pyx_pf_11iocpsupport_14CompletionPort_getEvent(PyObject *__pyx_v_self, PyObject *__pyx_arg_timeout); /*proto*/
@@ -1017,7 +1017,7 @@ static PyObject *__pyx_pf_11iocpsupport_14CompletionPort_getEvent(PyObject *__py
   PyObject *__pyx_t_5 = NULL;
   __Pyx_SetupRefcountContext("getEvent");
   assert(__pyx_arg_timeout); {
-	__pyx_v_timeout = __Pyx_PyInt_AsLong(__pyx_arg_timeout); if (unlikely((__pyx_v_timeout == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 144; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_timeout = __Pyx_PyInt_AsLong(__pyx_arg_timeout); if (unlikely((__pyx_v_timeout == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 144; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -1027,71 +1027,71 @@ static PyObject *__pyx_pf_11iocpsupport_14CompletionPort_getEvent(PyObject *__py
   __pyx_v_obj = Py_None; __Pyx_INCREF(Py_None);
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":149
- *		 cdef myOVERLAPPED *ov
+ *         cdef myOVERLAPPED *ov
  * 
- *		 _save = PyEval_SaveThread()			 # <<<<<<<<<<<<<<
- *		 rc = GetQueuedCompletionStatus(self.port, &bytes, &key, <OVERLAPPED **>&ov, timeout)
- *		 PyEval_RestoreThread(_save)
+ *         _save = PyEval_SaveThread()             # <<<<<<<<<<<<<<
+ *         rc = GetQueuedCompletionStatus(self.port, &bytes, &key, <OVERLAPPED **>&ov, timeout)
+ *         PyEval_RestoreThread(_save)
  */
   __pyx_v__save = PyEval_SaveThread();
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":150
  * 
- *		 _save = PyEval_SaveThread()
- *		 rc = GetQueuedCompletionStatus(self.port, &bytes, &key, <OVERLAPPED **>&ov, timeout)			 # <<<<<<<<<<<<<<
- *		 PyEval_RestoreThread(_save)
+ *         _save = PyEval_SaveThread()
+ *         rc = GetQueuedCompletionStatus(self.port, &bytes, &key, <OVERLAPPED **>&ov, timeout)             # <<<<<<<<<<<<<<
+ *         PyEval_RestoreThread(_save)
  * 
  */
   __pyx_v_rc = GetQueuedCompletionStatus(((struct __pyx_obj_11iocpsupport_CompletionPort *)__pyx_v_self)->port, (&__pyx_v_bytes), (&__pyx_v_key), ((OVERLAPPED **)(&__pyx_v_ov)), __pyx_v_timeout);
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":151
- *		 _save = PyEval_SaveThread()
- *		 rc = GetQueuedCompletionStatus(self.port, &bytes, &key, <OVERLAPPED **>&ov, timeout)
- *		 PyEval_RestoreThread(_save)			 # <<<<<<<<<<<<<<
+ *         _save = PyEval_SaveThread()
+ *         rc = GetQueuedCompletionStatus(self.port, &bytes, &key, <OVERLAPPED **>&ov, timeout)
+ *         PyEval_RestoreThread(_save)             # <<<<<<<<<<<<<<
  * 
- *		 if not rc:
+ *         if not rc:
  */
   PyEval_RestoreThread(__pyx_v__save);
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":153
- *		 PyEval_RestoreThread(_save)
+ *         PyEval_RestoreThread(_save)
  * 
- *		 if not rc:			 # <<<<<<<<<<<<<<
- *			 rc = GetLastError()
- *		 else:
+ *         if not rc:             # <<<<<<<<<<<<<<
+ *             rc = GetLastError()
+ *         else:
  */
   __pyx_t_1 = (!__pyx_v_rc);
   if (__pyx_t_1) {
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":154
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":154
  * 
- *		 if not rc:
- *			 rc = GetLastError()			 # <<<<<<<<<<<<<<
- *		 else:
- *			 rc = 0
+ *         if not rc:
+ *             rc = GetLastError()             # <<<<<<<<<<<<<<
+ *         else:
+ *             rc = 0
  */
-	__pyx_v_rc = GetLastError();
-	goto __pyx_L5;
+    __pyx_v_rc = GetLastError();
+    goto __pyx_L5;
   }
   /*else*/ {
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":156
- *			 rc = GetLastError()
- *		 else:
- *			 rc = 0			 # <<<<<<<<<<<<<<
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":156
+ *             rc = GetLastError()
+ *         else:
+ *             rc = 0             # <<<<<<<<<<<<<<
  * 
- *		 obj = None
+ *         obj = None
  */
-	__pyx_v_rc = 0;
+    __pyx_v_rc = 0;
   }
   __pyx_L5:;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":158
- *			 rc = 0
+ *             rc = 0
  * 
- *		 obj = None			 # <<<<<<<<<<<<<<
- *		 if ov:
- *			 if ov.obj:
+ *         obj = None             # <<<<<<<<<<<<<<
+ *         if ov:
+ *             if ov.obj:
  */
   __Pyx_INCREF(Py_None);
   __Pyx_DECREF(__pyx_v_obj);
@@ -1099,65 +1099,65 @@ static PyObject *__pyx_pf_11iocpsupport_14CompletionPort_getEvent(PyObject *__py
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":159
  * 
- *		 obj = None
- *		 if ov:			 # <<<<<<<<<<<<<<
- *			 if ov.obj:
- *				 obj = <object>ov.obj
+ *         obj = None
+ *         if ov:             # <<<<<<<<<<<<<<
+ *             if ov.obj:
+ *                 obj = <object>ov.obj
  */
   __pyx_t_1 = (__pyx_v_ov != 0);
   if (__pyx_t_1) {
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":160
- *		 obj = None
- *		 if ov:
- *			 if ov.obj:			 # <<<<<<<<<<<<<<
- *				 obj = <object>ov.obj
- *				 Py_DECREF(obj) # we are stealing a reference here
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":160
+ *         obj = None
+ *         if ov:
+ *             if ov.obj:             # <<<<<<<<<<<<<<
+ *                 obj = <object>ov.obj
+ *                 Py_DECREF(obj) # we are stealing a reference here
  */
-	__pyx_t_1 = (__pyx_v_ov->obj != 0);
-	if (__pyx_t_1) {
+    __pyx_t_1 = (__pyx_v_ov->obj != 0);
+    if (__pyx_t_1) {
 
-	  /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":161
- *		 if ov:
- *			 if ov.obj:
- *				 obj = <object>ov.obj			 # <<<<<<<<<<<<<<
- *				 Py_DECREF(obj) # we are stealing a reference here
- *			 PyMem_Free(ov)
+      /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":161
+ *         if ov:
+ *             if ov.obj:
+ *                 obj = <object>ov.obj             # <<<<<<<<<<<<<<
+ *                 Py_DECREF(obj) # we are stealing a reference here
+ *             PyMem_Free(ov)
  */
-	  __Pyx_INCREF(((PyObject *)__pyx_v_ov->obj));
-	  __Pyx_DECREF(__pyx_v_obj);
-	  __pyx_v_obj = ((PyObject *)__pyx_v_ov->obj);
+      __Pyx_INCREF(((PyObject *)__pyx_v_ov->obj));
+      __Pyx_DECREF(__pyx_v_obj);
+      __pyx_v_obj = ((PyObject *)__pyx_v_ov->obj);
 
-	  /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":162
- *			 if ov.obj:
- *				 obj = <object>ov.obj
- *				 Py_DECREF(obj) # we are stealing a reference here			 # <<<<<<<<<<<<<<
- *			 PyMem_Free(ov)
+      /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":162
+ *             if ov.obj:
+ *                 obj = <object>ov.obj
+ *                 Py_DECREF(obj) # we are stealing a reference here             # <<<<<<<<<<<<<<
+ *             PyMem_Free(ov)
  * 
  */
-	  Py_DECREF(__pyx_v_obj);
-	  goto __pyx_L7;
-	}
-	__pyx_L7:;
+      Py_DECREF(__pyx_v_obj);
+      goto __pyx_L7;
+    }
+    __pyx_L7:;
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":163
- *				 obj = <object>ov.obj
- *				 Py_DECREF(obj) # we are stealing a reference here
- *			 PyMem_Free(ov)			 # <<<<<<<<<<<<<<
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":163
+ *                 obj = <object>ov.obj
+ *                 Py_DECREF(obj) # we are stealing a reference here
+ *             PyMem_Free(ov)             # <<<<<<<<<<<<<<
  * 
- *		 return (rc, bytes, key, obj)
+ *         return (rc, bytes, key, obj)
  */
-	PyMem_Free(__pyx_v_ov);
-	goto __pyx_L6;
+    PyMem_Free(__pyx_v_ov);
+    goto __pyx_L6;
   }
   __pyx_L6:;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":165
- *			 PyMem_Free(ov)
+ *             PyMem_Free(ov)
  * 
- *		 return (rc, bytes, key, obj)			 # <<<<<<<<<<<<<<
+ *         return (rc, bytes, key, obj)             # <<<<<<<<<<<<<<
  * 
- *	 def postEvent(self, unsigned long bytes, unsigned long key, obj):
+ *     def postEvent(self, unsigned long bytes, unsigned long key, obj):
  */
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_2 = PyLong_FromUnsignedLong(__pyx_v_rc); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 165; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -1201,11 +1201,11 @@ static PyObject *__pyx_pf_11iocpsupport_14CompletionPort_getEvent(PyObject *__py
 }
 
 /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":167
- *		 return (rc, bytes, key, obj)
+ *         return (rc, bytes, key, obj)
  * 
- *	 def postEvent(self, unsigned long bytes, unsigned long key, obj):			 # <<<<<<<<<<<<<<
- *		 cdef myOVERLAPPED *ov
- *		 cdef unsigned long rc
+ *     def postEvent(self, unsigned long bytes, unsigned long key, obj):             # <<<<<<<<<<<<<<
+ *         cdef myOVERLAPPED *ov
+ *         cdef unsigned long rc
  */
 
 static PyObject *__pyx_pf_11iocpsupport_14CompletionPort_postEvent(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
@@ -1221,45 +1221,45 @@ static PyObject *__pyx_pf_11iocpsupport_14CompletionPort_postEvent(PyObject *__p
   static PyObject **__pyx_pyargnames[] = {&__pyx_kp_bytes,&__pyx_kp_key,&__pyx_kp_obj,0};
   __Pyx_SetupRefcountContext("postEvent");
   if (unlikely(__pyx_kwds)) {
-	Py_ssize_t kw_args = PyDict_Size(__pyx_kwds);
-	PyObject* values[3] = {0,0,0};
-	switch (PyTuple_GET_SIZE(__pyx_args)) {
-	  case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
-	  case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
-	  case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
-	  case  0: break;
-	  default: goto __pyx_L5_argtuple_error;
-	}
-	switch (PyTuple_GET_SIZE(__pyx_args)) {
-	  case  0:
-	  values[0] = PyDict_GetItem(__pyx_kwds, __pyx_kp_bytes);
-	  if (likely(values[0])) kw_args--;
-	  else goto __pyx_L5_argtuple_error;
-	  case  1:
-	  values[1] = PyDict_GetItem(__pyx_kwds, __pyx_kp_key);
-	  if (likely(values[1])) kw_args--;
-	  else {
-		__Pyx_RaiseArgtupleInvalid("postEvent", 1, 3, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 167; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	  }
-	  case  2:
-	  values[2] = PyDict_GetItem(__pyx_kwds, __pyx_kp_obj);
-	  if (likely(values[2])) kw_args--;
-	  else {
-		__Pyx_RaiseArgtupleInvalid("postEvent", 1, 3, 3, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 167; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	  }
-	}
-	if (unlikely(kw_args > 0)) {
-	  if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, PyTuple_GET_SIZE(__pyx_args), "postEvent") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 167; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	}
-	__pyx_v_bytes = __Pyx_PyInt_AsUnsignedLong(values[0]); if (unlikely((__pyx_v_bytes == (unsigned long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 167; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	__pyx_v_key = __Pyx_PyInt_AsUnsignedLong(values[1]); if (unlikely((__pyx_v_key == (unsigned long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 167; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	__pyx_v_obj = values[2];
+    Py_ssize_t kw_args = PyDict_Size(__pyx_kwds);
+    PyObject* values[3] = {0,0,0};
+    switch (PyTuple_GET_SIZE(__pyx_args)) {
+      case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+      case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+      case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+      case  0: break;
+      default: goto __pyx_L5_argtuple_error;
+    }
+    switch (PyTuple_GET_SIZE(__pyx_args)) {
+      case  0:
+      values[0] = PyDict_GetItem(__pyx_kwds, __pyx_kp_bytes);
+      if (likely(values[0])) kw_args--;
+      else goto __pyx_L5_argtuple_error;
+      case  1:
+      values[1] = PyDict_GetItem(__pyx_kwds, __pyx_kp_key);
+      if (likely(values[1])) kw_args--;
+      else {
+        __Pyx_RaiseArgtupleInvalid("postEvent", 1, 3, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 167; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+      }
+      case  2:
+      values[2] = PyDict_GetItem(__pyx_kwds, __pyx_kp_obj);
+      if (likely(values[2])) kw_args--;
+      else {
+        __Pyx_RaiseArgtupleInvalid("postEvent", 1, 3, 3, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 167; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+      }
+    }
+    if (unlikely(kw_args > 0)) {
+      if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, PyTuple_GET_SIZE(__pyx_args), "postEvent") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 167; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    }
+    __pyx_v_bytes = __Pyx_PyInt_AsUnsignedLong(values[0]); if (unlikely((__pyx_v_bytes == (unsigned long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 167; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_key = __Pyx_PyInt_AsUnsignedLong(values[1]); if (unlikely((__pyx_v_key == (unsigned long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 167; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_obj = values[2];
   } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
-	goto __pyx_L5_argtuple_error;
+    goto __pyx_L5_argtuple_error;
   } else {
-	__pyx_v_bytes = __Pyx_PyInt_AsUnsignedLong(PyTuple_GET_ITEM(__pyx_args, 0)); if (unlikely((__pyx_v_bytes == (unsigned long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 167; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	__pyx_v_key = __Pyx_PyInt_AsUnsignedLong(PyTuple_GET_ITEM(__pyx_args, 1)); if (unlikely((__pyx_v_key == (unsigned long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 167; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	__pyx_v_obj = PyTuple_GET_ITEM(__pyx_args, 2);
+    __pyx_v_bytes = __Pyx_PyInt_AsUnsignedLong(PyTuple_GET_ITEM(__pyx_args, 0)); if (unlikely((__pyx_v_bytes == (unsigned long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 167; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_key = __Pyx_PyInt_AsUnsignedLong(PyTuple_GET_ITEM(__pyx_args, 1)); if (unlikely((__pyx_v_key == (unsigned long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 167; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_obj = PyTuple_GET_ITEM(__pyx_args, 2);
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
@@ -1270,85 +1270,85 @@ static PyObject *__pyx_pf_11iocpsupport_14CompletionPort_postEvent(PyObject *__p
   __pyx_L4_argument_unpacking_done:;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":171
- *		 cdef unsigned long rc
+ *         cdef unsigned long rc
  * 
- *		 if obj is not None:			 # <<<<<<<<<<<<<<
- *			 ov = makeOV()
- *			 Py_INCREF(obj) # give ov its own reference to obj
+ *         if obj is not None:             # <<<<<<<<<<<<<<
+ *             ov = makeOV()
+ *             Py_INCREF(obj) # give ov its own reference to obj
  */
   __pyx_t_1 = (__pyx_v_obj != Py_None);
   if (__pyx_t_1) {
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":172
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":172
  * 
- *		 if obj is not None:
- *			 ov = makeOV()			 # <<<<<<<<<<<<<<
- *			 Py_INCREF(obj) # give ov its own reference to obj
- *			 ov.obj = <PyObject *>obj
+ *         if obj is not None:
+ *             ov = makeOV()             # <<<<<<<<<<<<<<
+ *             Py_INCREF(obj) # give ov its own reference to obj
+ *             ov.obj = <PyObject *>obj
  */
-	__pyx_t_2 = __pyx_f_11iocpsupport_makeOV(); if (unlikely(__pyx_t_2 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 172; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-	__pyx_v_ov = __pyx_t_2;
+    __pyx_t_2 = __pyx_f_11iocpsupport_makeOV(); if (unlikely(__pyx_t_2 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 172; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_v_ov = __pyx_t_2;
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":173
- *		 if obj is not None:
- *			 ov = makeOV()
- *			 Py_INCREF(obj) # give ov its own reference to obj			 # <<<<<<<<<<<<<<
- *			 ov.obj = <PyObject *>obj
- *		 else:
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":173
+ *         if obj is not None:
+ *             ov = makeOV()
+ *             Py_INCREF(obj) # give ov its own reference to obj             # <<<<<<<<<<<<<<
+ *             ov.obj = <PyObject *>obj
+ *         else:
  */
-	Py_INCREF(__pyx_v_obj);
+    Py_INCREF(__pyx_v_obj);
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":174
- *			 ov = makeOV()
- *			 Py_INCREF(obj) # give ov its own reference to obj
- *			 ov.obj = <PyObject *>obj			 # <<<<<<<<<<<<<<
- *		 else:
- *			 ov = NULL
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":174
+ *             ov = makeOV()
+ *             Py_INCREF(obj) # give ov its own reference to obj
+ *             ov.obj = <PyObject *>obj             # <<<<<<<<<<<<<<
+ *         else:
+ *             ov = NULL
  */
-	__pyx_v_ov->obj = ((struct PyObject *)__pyx_v_obj);
-	goto __pyx_L6;
+    __pyx_v_ov->obj = ((struct PyObject *)__pyx_v_obj);
+    goto __pyx_L6;
   }
   /*else*/ {
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":176
- *			 ov.obj = <PyObject *>obj
- *		 else:
- *			 ov = NULL			 # <<<<<<<<<<<<<<
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":176
+ *             ov.obj = <PyObject *>obj
+ *         else:
+ *             ov = NULL             # <<<<<<<<<<<<<<
  * 
- *		 rc = PostQueuedCompletionStatus(self.port, bytes, key, <OVERLAPPED *>ov)
+ *         rc = PostQueuedCompletionStatus(self.port, bytes, key, <OVERLAPPED *>ov)
  */
-	__pyx_v_ov = NULL;
+    __pyx_v_ov = NULL;
   }
   __pyx_L6:;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":178
- *			 ov = NULL
+ *             ov = NULL
  * 
- *		 rc = PostQueuedCompletionStatus(self.port, bytes, key, <OVERLAPPED *>ov)			 # <<<<<<<<<<<<<<
- *		 if not rc:
- *			 raise_error(0, 'PostQueuedCompletionStatus')
+ *         rc = PostQueuedCompletionStatus(self.port, bytes, key, <OVERLAPPED *>ov)             # <<<<<<<<<<<<<<
+ *         if not rc:
+ *             raise_error(0, 'PostQueuedCompletionStatus')
  */
   __pyx_v_rc = PostQueuedCompletionStatus(((struct __pyx_obj_11iocpsupport_CompletionPort *)__pyx_v_self)->port, __pyx_v_bytes, __pyx_v_key, ((OVERLAPPED *)__pyx_v_ov));
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":179
  * 
- *		 rc = PostQueuedCompletionStatus(self.port, bytes, key, <OVERLAPPED *>ov)
- *		 if not rc:			 # <<<<<<<<<<<<<<
- *			 raise_error(0, 'PostQueuedCompletionStatus')
+ *         rc = PostQueuedCompletionStatus(self.port, bytes, key, <OVERLAPPED *>ov)
+ *         if not rc:             # <<<<<<<<<<<<<<
+ *             raise_error(0, 'PostQueuedCompletionStatus')
  * 
  */
   __pyx_t_1 = (!__pyx_v_rc);
   if (__pyx_t_1) {
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":180
- *		 rc = PostQueuedCompletionStatus(self.port, bytes, key, <OVERLAPPED *>ov)
- *		 if not rc:
- *			 raise_error(0, 'PostQueuedCompletionStatus')			 # <<<<<<<<<<<<<<
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":180
+ *         rc = PostQueuedCompletionStatus(self.port, bytes, key, <OVERLAPPED *>ov)
+ *         if not rc:
+ *             raise_error(0, 'PostQueuedCompletionStatus')             # <<<<<<<<<<<<<<
  * 
- *	 def __del__(self):
+ *     def __del__(self):
  */
-	__pyx_f_11iocpsupport_raise_error(0, __pyx_kp_4); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 180; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-	goto __pyx_L7;
+    __pyx_f_11iocpsupport_raise_error(0, __pyx_kp_4); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 180; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    goto __pyx_L7;
   }
   __pyx_L7:;
 
@@ -1364,10 +1364,10 @@ static PyObject *__pyx_pf_11iocpsupport_14CompletionPort_postEvent(PyObject *__p
 }
 
 /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":182
- *			 raise_error(0, 'PostQueuedCompletionStatus')
+ *             raise_error(0, 'PostQueuedCompletionStatus')
  * 
- *	 def __del__(self):			 # <<<<<<<<<<<<<<
- *		 CloseHandle(self.port)
+ *     def __del__(self):             # <<<<<<<<<<<<<<
+ *         CloseHandle(self.port)
  * 
  */
 
@@ -1378,8 +1378,8 @@ static PyObject *__pyx_pf_11iocpsupport_14CompletionPort___del__(PyObject *__pyx
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":183
  * 
- *	 def __del__(self):
- *		 CloseHandle(self.port)			 # <<<<<<<<<<<<<<
+ *     def __del__(self):
+ *         CloseHandle(self.port)             # <<<<<<<<<<<<<<
  * 
  * def makesockaddr(object buff):
  */
@@ -1392,11 +1392,11 @@ static PyObject *__pyx_pf_11iocpsupport_14CompletionPort___del__(PyObject *__pyx
 }
 
 /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":185
- *		 CloseHandle(self.port)
+ *         CloseHandle(self.port)
  * 
- * def makesockaddr(object buff):			 # <<<<<<<<<<<<<<
- *	 cdef void *mem_buffer
- *	 cdef int size
+ * def makesockaddr(object buff):             # <<<<<<<<<<<<<<
+ *     cdef void *mem_buffer
+ *     cdef int size
  */
 
 static PyObject *__pyx_pf_11iocpsupport_makesockaddr(PyObject *__pyx_self, PyObject *__pyx_v_buff); /*proto*/
@@ -1410,18 +1410,18 @@ static PyObject *__pyx_pf_11iocpsupport_makesockaddr(PyObject *__pyx_self, PyObj
   __pyx_self = __pyx_self;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":189
- *	 cdef int size
+ *     cdef int size
  * 
- *	 PyObject_AsReadBuffer(buff, &mem_buffer, &size)			 # <<<<<<<<<<<<<<
- *	 # XXX: this should really return the address family as well
- *	 return _makesockaddr(<sockaddr *>mem_buffer, size)
+ *     PyObject_AsReadBuffer(buff, &mem_buffer, &size)             # <<<<<<<<<<<<<<
+ *     # XXX: this should really return the address family as well
+ *     return _makesockaddr(<sockaddr *>mem_buffer, size)
  */
   __pyx_t_1 = PyObject_AsReadBuffer(__pyx_v_buff, (&__pyx_v_mem_buffer), (&__pyx_v_size)); if (unlikely(__pyx_t_1 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 189; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":191
- *	 PyObject_AsReadBuffer(buff, &mem_buffer, &size)
- *	 # XXX: this should really return the address family as well
- *	 return _makesockaddr(<sockaddr *>mem_buffer, size)			 # <<<<<<<<<<<<<<
+ *     PyObject_AsReadBuffer(buff, &mem_buffer, &size)
+ *     # XXX: this should really return the address family as well
+ *     return _makesockaddr(<sockaddr *>mem_buffer, size)             # <<<<<<<<<<<<<<
  * 
  * cdef object _makesockaddr(sockaddr *addr, int len):
  */
@@ -1445,11 +1445,11 @@ static PyObject *__pyx_pf_11iocpsupport_makesockaddr(PyObject *__pyx_self, PyObj
 }
 
 /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":193
- *	 return _makesockaddr(<sockaddr *>mem_buffer, size)
+ *     return _makesockaddr(<sockaddr *>mem_buffer, size)
  * 
- * cdef object _makesockaddr(sockaddr *addr, int len):			 # <<<<<<<<<<<<<<
- *	 cdef sockaddr_in *sin
- *	 if not len:
+ * cdef object _makesockaddr(sockaddr *addr, int len):             # <<<<<<<<<<<<<<
+ *     cdef sockaddr_in *sin
+ *     if not len:
  */
 
 static  PyObject *__pyx_f_11iocpsupport__makesockaddr(struct sockaddr *__pyx_v_addr, int __pyx_v_len) {
@@ -1463,88 +1463,88 @@ static  PyObject *__pyx_f_11iocpsupport__makesockaddr(struct sockaddr *__pyx_v_a
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":195
  * cdef object _makesockaddr(sockaddr *addr, int len):
- *	 cdef sockaddr_in *sin
- *	 if not len:			 # <<<<<<<<<<<<<<
- *		 return None
- *	 if addr.sa_family == AF_INET:
+ *     cdef sockaddr_in *sin
+ *     if not len:             # <<<<<<<<<<<<<<
+ *         return None
+ *     if addr.sa_family == AF_INET:
  */
   __pyx_t_1 = (!__pyx_v_len);
   if (__pyx_t_1) {
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":196
- *	 cdef sockaddr_in *sin
- *	 if not len:
- *		 return None			 # <<<<<<<<<<<<<<
- *	 if addr.sa_family == AF_INET:
- *		 sin = <sockaddr_in *>addr
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":196
+ *     cdef sockaddr_in *sin
+ *     if not len:
+ *         return None             # <<<<<<<<<<<<<<
+ *     if addr.sa_family == AF_INET:
+ *         sin = <sockaddr_in *>addr
  */
-	__Pyx_XDECREF(__pyx_r);
-	__Pyx_INCREF(Py_None);
-	__pyx_r = Py_None;
-	goto __pyx_L0;
-	goto __pyx_L3;
+    __Pyx_XDECREF(__pyx_r);
+    __Pyx_INCREF(Py_None);
+    __pyx_r = Py_None;
+    goto __pyx_L0;
+    goto __pyx_L3;
   }
   __pyx_L3:;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":197
- *	 if not len:
- *		 return None
- *	 if addr.sa_family == AF_INET:			 # <<<<<<<<<<<<<<
- *		 sin = <sockaddr_in *>addr
- *		 return PyString_FromString(inet_ntoa(sin.sin_addr)), ntohs(sin.sin_port)
+ *     if not len:
+ *         return None
+ *     if addr.sa_family == AF_INET:             # <<<<<<<<<<<<<<
+ *         sin = <sockaddr_in *>addr
+ *         return PyString_FromString(inet_ntoa(sin.sin_addr)), ntohs(sin.sin_port)
  */
   __pyx_t_1 = (__pyx_v_addr->sa_family == AF_INET);
   if (__pyx_t_1) {
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":198
- *		 return None
- *	 if addr.sa_family == AF_INET:
- *		 sin = <sockaddr_in *>addr			 # <<<<<<<<<<<<<<
- *		 return PyString_FromString(inet_ntoa(sin.sin_addr)), ntohs(sin.sin_port)
- *	 else:
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":198
+ *         return None
+ *     if addr.sa_family == AF_INET:
+ *         sin = <sockaddr_in *>addr             # <<<<<<<<<<<<<<
+ *         return PyString_FromString(inet_ntoa(sin.sin_addr)), ntohs(sin.sin_port)
+ *     else:
  */
-	__pyx_v_sin = ((struct sockaddr_in *)__pyx_v_addr);
+    __pyx_v_sin = ((struct sockaddr_in *)__pyx_v_addr);
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":199
- *	 if addr.sa_family == AF_INET:
- *		 sin = <sockaddr_in *>addr
- *		 return PyString_FromString(inet_ntoa(sin.sin_addr)), ntohs(sin.sin_port)			 # <<<<<<<<<<<<<<
- *	 else:
- *		 return PyString_FromStringAndSize(addr.sa_data, sizeof(addr.sa_data))
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":199
+ *     if addr.sa_family == AF_INET:
+ *         sin = <sockaddr_in *>addr
+ *         return PyString_FromString(inet_ntoa(sin.sin_addr)), ntohs(sin.sin_port)             # <<<<<<<<<<<<<<
+ *     else:
+ *         return PyString_FromStringAndSize(addr.sa_data, sizeof(addr.sa_data))
  */
-	__Pyx_XDECREF(__pyx_r);
-	__pyx_t_2 = PyString_FromString(inet_ntoa(__pyx_v_sin->sin_addr)); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 199; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-	__Pyx_GOTREF(__pyx_t_2);
-	__pyx_t_3 = PyInt_FromLong(ntohs(__pyx_v_sin->sin_port)); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 199; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-	__Pyx_GOTREF(__pyx_t_3);
-	__pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 199; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-	__Pyx_GOTREF(((PyObject *)__pyx_t_4));
-	PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_2);
-	__Pyx_GIVEREF(__pyx_t_2);
-	PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_t_3);
-	__Pyx_GIVEREF(__pyx_t_3);
-	__pyx_t_2 = 0;
-	__pyx_t_3 = 0;
-	__pyx_r = ((PyObject *)__pyx_t_4);
-	__pyx_t_4 = 0;
-	goto __pyx_L0;
-	goto __pyx_L4;
+    __Pyx_XDECREF(__pyx_r);
+    __pyx_t_2 = PyString_FromString(inet_ntoa(__pyx_v_sin->sin_addr)); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 199; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_t_3 = PyInt_FromLong(ntohs(__pyx_v_sin->sin_port)); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 199; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 199; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(((PyObject *)__pyx_t_4));
+    PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_2);
+    __Pyx_GIVEREF(__pyx_t_2);
+    PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_t_3);
+    __Pyx_GIVEREF(__pyx_t_3);
+    __pyx_t_2 = 0;
+    __pyx_t_3 = 0;
+    __pyx_r = ((PyObject *)__pyx_t_4);
+    __pyx_t_4 = 0;
+    goto __pyx_L0;
+    goto __pyx_L4;
   }
   /*else*/ {
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":201
- *		 return PyString_FromString(inet_ntoa(sin.sin_addr)), ntohs(sin.sin_port)
- *	 else:
- *		 return PyString_FromStringAndSize(addr.sa_data, sizeof(addr.sa_data))			 # <<<<<<<<<<<<<<
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":201
+ *         return PyString_FromString(inet_ntoa(sin.sin_addr)), ntohs(sin.sin_port)
+ *     else:
+ *         return PyString_FromStringAndSize(addr.sa_data, sizeof(addr.sa_data))             # <<<<<<<<<<<<<<
  * 
  * cdef object fillinetaddr(sockaddr_in *dest, object addr):
  */
-	__Pyx_XDECREF(__pyx_r);
-	__pyx_t_4 = PyString_FromStringAndSize(__pyx_v_addr->sa_data, (sizeof(__pyx_v_addr->sa_data))); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 201; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-	__Pyx_GOTREF(__pyx_t_4);
-	__pyx_r = __pyx_t_4;
-	__pyx_t_4 = 0;
-	goto __pyx_L0;
+    __Pyx_XDECREF(__pyx_r);
+    __pyx_t_4 = PyString_FromStringAndSize(__pyx_v_addr->sa_data, (sizeof(__pyx_v_addr->sa_data))); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 201; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_4);
+    __pyx_r = __pyx_t_4;
+    __pyx_t_4 = 0;
+    goto __pyx_L0;
   }
   __pyx_L4:;
 
@@ -1563,11 +1563,11 @@ static  PyObject *__pyx_f_11iocpsupport__makesockaddr(struct sockaddr *__pyx_v_a
 }
 
 /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":203
- *		 return PyString_FromStringAndSize(addr.sa_data, sizeof(addr.sa_data))
+ *         return PyString_FromStringAndSize(addr.sa_data, sizeof(addr.sa_data))
  * 
- * cdef object fillinetaddr(sockaddr_in *dest, object addr):			 # <<<<<<<<<<<<<<
- *	 cdef unsigned short port
- *	 cdef unsigned long res
+ * cdef object fillinetaddr(sockaddr_in *dest, object addr):             # <<<<<<<<<<<<<<
+ *     cdef unsigned short port
+ *     cdef unsigned long res
  */
 
 static  PyObject *__pyx_f_11iocpsupport_fillinetaddr(struct sockaddr_in *__pyx_v_dest, PyObject *__pyx_v_addr) {
@@ -1586,94 +1586,94 @@ static  PyObject *__pyx_f_11iocpsupport_fillinetaddr(struct sockaddr_in *__pyx_v
   __pyx_v_host = Py_None; __Pyx_INCREF(Py_None);
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":207
- *	 cdef unsigned long res
- *	 cdef char *hoststr
- *	 host, port = addr			 # <<<<<<<<<<<<<<
+ *     cdef unsigned long res
+ *     cdef char *hoststr
+ *     host, port = addr             # <<<<<<<<<<<<<<
  * 
- *	 hoststr = PyString_AsString(host)
+ *     hoststr = PyString_AsString(host)
  */
   if (PyTuple_CheckExact(__pyx_v_addr) && likely(PyTuple_GET_SIZE(__pyx_v_addr) == 2)) {
-	PyObject* tuple = __pyx_v_addr;
-	__pyx_2 = PyTuple_GET_ITEM(tuple, 0); __Pyx_INCREF(__pyx_2);
-	__pyx_3 = PyTuple_GET_ITEM(tuple, 1); __Pyx_INCREF(__pyx_3);
-	__pyx_t_1 = __Pyx_PyInt_AsUnsignedShort(__pyx_3); if (unlikely((__pyx_t_1 == (unsigned short)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 207; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-	__Pyx_DECREF(__pyx_3); __pyx_3 = 0;
-	__Pyx_DECREF(__pyx_v_host);
-	__pyx_v_host = __pyx_2;
-	__pyx_2 = 0;
-	__pyx_v_port = __pyx_t_1;
+    PyObject* tuple = __pyx_v_addr;
+    __pyx_2 = PyTuple_GET_ITEM(tuple, 0); __Pyx_INCREF(__pyx_2);
+    __pyx_3 = PyTuple_GET_ITEM(tuple, 1); __Pyx_INCREF(__pyx_3);
+    __pyx_t_1 = __Pyx_PyInt_AsUnsignedShort(__pyx_3); if (unlikely((__pyx_t_1 == (unsigned short)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 207; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_DECREF(__pyx_3); __pyx_3 = 0;
+    __Pyx_DECREF(__pyx_v_host);
+    __pyx_v_host = __pyx_2;
+    __pyx_2 = 0;
+    __pyx_v_port = __pyx_t_1;
   } else {
-	__pyx_1 = PyObject_GetIter(__pyx_v_addr); if (unlikely(!__pyx_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 207; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-	__Pyx_GOTREF(__pyx_1);
-	__pyx_2 = __Pyx_UnpackItem(__pyx_1, 0); if (unlikely(!__pyx_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 207; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-	__Pyx_GOTREF(__pyx_2);
-	__pyx_3 = __Pyx_UnpackItem(__pyx_1, 1); if (unlikely(!__pyx_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 207; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-	__Pyx_GOTREF(__pyx_3);
-	__pyx_t_1 = __Pyx_PyInt_AsUnsignedShort(__pyx_3); if (unlikely((__pyx_t_1 == (unsigned short)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 207; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-	__Pyx_DECREF(__pyx_3); __pyx_3 = 0;
-	if (__Pyx_EndUnpack(__pyx_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 207; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-	__Pyx_DECREF(__pyx_1); __pyx_1 = 0;
-	__Pyx_DECREF(__pyx_v_host);
-	__pyx_v_host = __pyx_2;
-	__pyx_2 = 0;
-	__pyx_v_port = __pyx_t_1;
+    __pyx_1 = PyObject_GetIter(__pyx_v_addr); if (unlikely(!__pyx_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 207; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_1);
+    __pyx_2 = __Pyx_UnpackItem(__pyx_1, 0); if (unlikely(!__pyx_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 207; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_2);
+    __pyx_3 = __Pyx_UnpackItem(__pyx_1, 1); if (unlikely(!__pyx_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 207; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_3);
+    __pyx_t_1 = __Pyx_PyInt_AsUnsignedShort(__pyx_3); if (unlikely((__pyx_t_1 == (unsigned short)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 207; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_DECREF(__pyx_3); __pyx_3 = 0;
+    if (__Pyx_EndUnpack(__pyx_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 207; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_DECREF(__pyx_1); __pyx_1 = 0;
+    __Pyx_DECREF(__pyx_v_host);
+    __pyx_v_host = __pyx_2;
+    __pyx_2 = 0;
+    __pyx_v_port = __pyx_t_1;
   }
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":209
- *	 host, port = addr
+ *     host, port = addr
  * 
- *	 hoststr = PyString_AsString(host)			 # <<<<<<<<<<<<<<
- *	 res = inet_addr(hoststr)
- *	 if res == INADDR_ANY:
+ *     hoststr = PyString_AsString(host)             # <<<<<<<<<<<<<<
+ *     res = inet_addr(hoststr)
+ *     if res == INADDR_ANY:
  */
   __pyx_t_2 = PyString_AsString(__pyx_v_host); if (unlikely(__pyx_t_2 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 209; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_hoststr = __pyx_t_2;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":210
  * 
- *	 hoststr = PyString_AsString(host)
- *	 res = inet_addr(hoststr)			 # <<<<<<<<<<<<<<
- *	 if res == INADDR_ANY:
- *		 raise ValueError, 'invalid IP address'
+ *     hoststr = PyString_AsString(host)
+ *     res = inet_addr(hoststr)             # <<<<<<<<<<<<<<
+ *     if res == INADDR_ANY:
+ *         raise ValueError, 'invalid IP address'
  */
   __pyx_v_res = inet_addr(__pyx_v_hoststr);
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":211
- *	 hoststr = PyString_AsString(host)
- *	 res = inet_addr(hoststr)
- *	 if res == INADDR_ANY:			 # <<<<<<<<<<<<<<
- *		 raise ValueError, 'invalid IP address'
- *	 dest.sin_addr.s_addr = res
+ *     hoststr = PyString_AsString(host)
+ *     res = inet_addr(hoststr)
+ *     if res == INADDR_ANY:             # <<<<<<<<<<<<<<
+ *         raise ValueError, 'invalid IP address'
+ *     dest.sin_addr.s_addr = res
  */
   __pyx_t_3 = (__pyx_v_res == INADDR_ANY);
   if (__pyx_t_3) {
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":212
- *	 res = inet_addr(hoststr)
- *	 if res == INADDR_ANY:
- *		 raise ValueError, 'invalid IP address'			 # <<<<<<<<<<<<<<
- *	 dest.sin_addr.s_addr = res
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":212
+ *     res = inet_addr(hoststr)
+ *     if res == INADDR_ANY:
+ *         raise ValueError, 'invalid IP address'             # <<<<<<<<<<<<<<
+ *     dest.sin_addr.s_addr = res
  * 
  */
-	__Pyx_Raise(__pyx_builtin_ValueError, __pyx_kp_5, 0);
-	{__pyx_filename = __pyx_f[0]; __pyx_lineno = 212; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-	goto __pyx_L3;
+    __Pyx_Raise(__pyx_builtin_ValueError, __pyx_kp_5, 0);
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 212; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    goto __pyx_L3;
   }
   __pyx_L3:;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":213
- *	 if res == INADDR_ANY:
- *		 raise ValueError, 'invalid IP address'
- *	 dest.sin_addr.s_addr = res			 # <<<<<<<<<<<<<<
+ *     if res == INADDR_ANY:
+ *         raise ValueError, 'invalid IP address'
+ *     dest.sin_addr.s_addr = res             # <<<<<<<<<<<<<<
  * 
- *	 dest.sin_port = htons(port)
+ *     dest.sin_port = htons(port)
  */
   __pyx_v_dest->sin_addr.s_addr = __pyx_v_res;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":215
- *	 dest.sin_addr.s_addr = res
+ *     dest.sin_addr.s_addr = res
  * 
- *	 dest.sin_port = htons(port)			 # <<<<<<<<<<<<<<
+ *     dest.sin_port = htons(port)             # <<<<<<<<<<<<<<
  * 
  * def AllocateReadBuffer(int size):
  */
@@ -1695,10 +1695,10 @@ static  PyObject *__pyx_f_11iocpsupport_fillinetaddr(struct sockaddr_in *__pyx_v
 }
 
 /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":217
- *	 dest.sin_port = htons(port)
+ *     dest.sin_port = htons(port)
  * 
- * def AllocateReadBuffer(int size):			 # <<<<<<<<<<<<<<
- *	 return PyBuffer_New(size)
+ * def AllocateReadBuffer(int size):             # <<<<<<<<<<<<<<
+ *     return PyBuffer_New(size)
  * 
  */
 
@@ -1710,7 +1710,7 @@ static PyObject *__pyx_pf_11iocpsupport_AllocateReadBuffer(PyObject *__pyx_self,
   __Pyx_SetupRefcountContext("AllocateReadBuffer");
   __pyx_self = __pyx_self;
   assert(__pyx_arg_size); {
-	__pyx_v_size = __Pyx_PyInt_AsInt(__pyx_arg_size); if (unlikely((__pyx_v_size == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 217; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_size = __Pyx_PyInt_AsInt(__pyx_arg_size); if (unlikely((__pyx_v_size == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 217; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -1721,7 +1721,7 @@ static PyObject *__pyx_pf_11iocpsupport_AllocateReadBuffer(PyObject *__pyx_self,
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":218
  * 
  * def AllocateReadBuffer(int size):
- *	 return PyBuffer_New(size)			 # <<<<<<<<<<<<<<
+ *     return PyBuffer_New(size)             # <<<<<<<<<<<<<<
  * 
  * def maxAddrLen(long s):
  */
@@ -1745,11 +1745,11 @@ static PyObject *__pyx_pf_11iocpsupport_AllocateReadBuffer(PyObject *__pyx_self,
 }
 
 /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":220
- *	 return PyBuffer_New(size)
+ *     return PyBuffer_New(size)
  * 
- * def maxAddrLen(long s):			 # <<<<<<<<<<<<<<
- *	 cdef WSAPROTOCOL_INFO wsa_pi
- *	 cdef int size, rc
+ * def maxAddrLen(long s):             # <<<<<<<<<<<<<<
+ *     cdef WSAPROTOCOL_INFO wsa_pi
+ *     cdef int size, rc
  */
 
 static PyObject *__pyx_pf_11iocpsupport_maxAddrLen(PyObject *__pyx_self, PyObject *__pyx_arg_s); /*proto*/
@@ -1764,7 +1764,7 @@ static PyObject *__pyx_pf_11iocpsupport_maxAddrLen(PyObject *__pyx_self, PyObjec
   __Pyx_SetupRefcountContext("maxAddrLen");
   __pyx_self = __pyx_self;
   assert(__pyx_arg_s); {
-	__pyx_v_s = __Pyx_PyInt_AsLong(__pyx_arg_s); if (unlikely((__pyx_v_s == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 220; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_s = __Pyx_PyInt_AsLong(__pyx_arg_s); if (unlikely((__pyx_v_s == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 220; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -1773,49 +1773,49 @@ static PyObject *__pyx_pf_11iocpsupport_maxAddrLen(PyObject *__pyx_self, PyObjec
   __pyx_L4_argument_unpacking_done:;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":224
- *	 cdef int size, rc
+ *     cdef int size, rc
  * 
- *	 size = sizeof(wsa_pi)			 # <<<<<<<<<<<<<<
- *	 rc = getsockopt(s, SOL_SOCKET, SO_PROTOCOL_INFO, <char *>&wsa_pi, &size)
- *	 if rc == SOCKET_ERROR:
+ *     size = sizeof(wsa_pi)             # <<<<<<<<<<<<<<
+ *     rc = getsockopt(s, SOL_SOCKET, SO_PROTOCOL_INFO, <char *>&wsa_pi, &size)
+ *     if rc == SOCKET_ERROR:
  */
   __pyx_v_size = (sizeof(__pyx_v_wsa_pi));
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":225
  * 
- *	 size = sizeof(wsa_pi)
- *	 rc = getsockopt(s, SOL_SOCKET, SO_PROTOCOL_INFO, <char *>&wsa_pi, &size)			 # <<<<<<<<<<<<<<
- *	 if rc == SOCKET_ERROR:
- *		 raise_error(WSAGetLastError(), 'getsockopt')
+ *     size = sizeof(wsa_pi)
+ *     rc = getsockopt(s, SOL_SOCKET, SO_PROTOCOL_INFO, <char *>&wsa_pi, &size)             # <<<<<<<<<<<<<<
+ *     if rc == SOCKET_ERROR:
+ *         raise_error(WSAGetLastError(), 'getsockopt')
  */
   __pyx_v_rc = getsockopt(__pyx_v_s, SOL_SOCKET, SO_PROTOCOL_INFO, ((char *)(&__pyx_v_wsa_pi)), (&__pyx_v_size));
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":226
- *	 size = sizeof(wsa_pi)
- *	 rc = getsockopt(s, SOL_SOCKET, SO_PROTOCOL_INFO, <char *>&wsa_pi, &size)
- *	 if rc == SOCKET_ERROR:			 # <<<<<<<<<<<<<<
- *		 raise_error(WSAGetLastError(), 'getsockopt')
- *	 return wsa_pi.iMaxSockAddr
+ *     size = sizeof(wsa_pi)
+ *     rc = getsockopt(s, SOL_SOCKET, SO_PROTOCOL_INFO, <char *>&wsa_pi, &size)
+ *     if rc == SOCKET_ERROR:             # <<<<<<<<<<<<<<
+ *         raise_error(WSAGetLastError(), 'getsockopt')
+ *     return wsa_pi.iMaxSockAddr
  */
   __pyx_t_1 = (__pyx_v_rc == SOCKET_ERROR);
   if (__pyx_t_1) {
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":227
- *	 rc = getsockopt(s, SOL_SOCKET, SO_PROTOCOL_INFO, <char *>&wsa_pi, &size)
- *	 if rc == SOCKET_ERROR:
- *		 raise_error(WSAGetLastError(), 'getsockopt')			 # <<<<<<<<<<<<<<
- *	 return wsa_pi.iMaxSockAddr
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":227
+ *     rc = getsockopt(s, SOL_SOCKET, SO_PROTOCOL_INFO, <char *>&wsa_pi, &size)
+ *     if rc == SOCKET_ERROR:
+ *         raise_error(WSAGetLastError(), 'getsockopt')             # <<<<<<<<<<<<<<
+ *     return wsa_pi.iMaxSockAddr
  * 
  */
-	__pyx_f_11iocpsupport_raise_error(WSAGetLastError(), __pyx_kp_6); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 227; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-	goto __pyx_L5;
+    __pyx_f_11iocpsupport_raise_error(WSAGetLastError(), __pyx_kp_6); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 227; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    goto __pyx_L5;
   }
   __pyx_L5:;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":228
- *	 if rc == SOCKET_ERROR:
- *		 raise_error(WSAGetLastError(), 'getsockopt')
- *	 return wsa_pi.iMaxSockAddr			 # <<<<<<<<<<<<<<
+ *     if rc == SOCKET_ERROR:
+ *         raise_error(WSAGetLastError(), 'getsockopt')
+ *     return wsa_pi.iMaxSockAddr             # <<<<<<<<<<<<<<
  * 
  * cdef int getAddrFamily(SOCKET s) except *:
  */
@@ -1839,11 +1839,11 @@ static PyObject *__pyx_pf_11iocpsupport_maxAddrLen(PyObject *__pyx_self, PyObjec
 }
 
 /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":230
- *	 return wsa_pi.iMaxSockAddr
+ *     return wsa_pi.iMaxSockAddr
  * 
- * cdef int getAddrFamily(SOCKET s) except *:			 # <<<<<<<<<<<<<<
- *	 cdef WSAPROTOCOL_INFO wsa_pi
- *	 cdef int size, rc
+ * cdef int getAddrFamily(SOCKET s) except *:             # <<<<<<<<<<<<<<
+ *     cdef WSAPROTOCOL_INFO wsa_pi
+ *     cdef int size, rc
  */
 
 static  int __pyx_f_11iocpsupport_getAddrFamily(__pyx_t_11iocpsupport_SOCKET __pyx_v_s) {
@@ -1855,49 +1855,49 @@ static  int __pyx_f_11iocpsupport_getAddrFamily(__pyx_t_11iocpsupport_SOCKET __p
   __Pyx_SetupRefcountContext("getAddrFamily");
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":234
- *	 cdef int size, rc
+ *     cdef int size, rc
  * 
- *	 size = sizeof(wsa_pi)			 # <<<<<<<<<<<<<<
- *	 rc = getsockopt(s, SOL_SOCKET, SO_PROTOCOL_INFO, <char *>&wsa_pi, &size)
- *	 if rc == SOCKET_ERROR:
+ *     size = sizeof(wsa_pi)             # <<<<<<<<<<<<<<
+ *     rc = getsockopt(s, SOL_SOCKET, SO_PROTOCOL_INFO, <char *>&wsa_pi, &size)
+ *     if rc == SOCKET_ERROR:
  */
   __pyx_v_size = (sizeof(__pyx_v_wsa_pi));
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":235
  * 
- *	 size = sizeof(wsa_pi)
- *	 rc = getsockopt(s, SOL_SOCKET, SO_PROTOCOL_INFO, <char *>&wsa_pi, &size)			 # <<<<<<<<<<<<<<
- *	 if rc == SOCKET_ERROR:
- *		 raise_error(WSAGetLastError(), 'getsockopt')
+ *     size = sizeof(wsa_pi)
+ *     rc = getsockopt(s, SOL_SOCKET, SO_PROTOCOL_INFO, <char *>&wsa_pi, &size)             # <<<<<<<<<<<<<<
+ *     if rc == SOCKET_ERROR:
+ *         raise_error(WSAGetLastError(), 'getsockopt')
  */
   __pyx_v_rc = getsockopt(__pyx_v_s, SOL_SOCKET, SO_PROTOCOL_INFO, ((char *)(&__pyx_v_wsa_pi)), (&__pyx_v_size));
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":236
- *	 size = sizeof(wsa_pi)
- *	 rc = getsockopt(s, SOL_SOCKET, SO_PROTOCOL_INFO, <char *>&wsa_pi, &size)
- *	 if rc == SOCKET_ERROR:			 # <<<<<<<<<<<<<<
- *		 raise_error(WSAGetLastError(), 'getsockopt')
- *	 return wsa_pi.iAddressFamily
+ *     size = sizeof(wsa_pi)
+ *     rc = getsockopt(s, SOL_SOCKET, SO_PROTOCOL_INFO, <char *>&wsa_pi, &size)
+ *     if rc == SOCKET_ERROR:             # <<<<<<<<<<<<<<
+ *         raise_error(WSAGetLastError(), 'getsockopt')
+ *     return wsa_pi.iAddressFamily
  */
   __pyx_t_1 = (__pyx_v_rc == SOCKET_ERROR);
   if (__pyx_t_1) {
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":237
- *	 rc = getsockopt(s, SOL_SOCKET, SO_PROTOCOL_INFO, <char *>&wsa_pi, &size)
- *	 if rc == SOCKET_ERROR:
- *		 raise_error(WSAGetLastError(), 'getsockopt')			 # <<<<<<<<<<<<<<
- *	 return wsa_pi.iAddressFamily
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":237
+ *     rc = getsockopt(s, SOL_SOCKET, SO_PROTOCOL_INFO, <char *>&wsa_pi, &size)
+ *     if rc == SOCKET_ERROR:
+ *         raise_error(WSAGetLastError(), 'getsockopt')             # <<<<<<<<<<<<<<
+ *     return wsa_pi.iAddressFamily
  * 
  */
-	__pyx_f_11iocpsupport_raise_error(WSAGetLastError(), __pyx_kp_7); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 237; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-	goto __pyx_L3;
+    __pyx_f_11iocpsupport_raise_error(WSAGetLastError(), __pyx_kp_7); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 237; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    goto __pyx_L3;
   }
   __pyx_L3:;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":238
- *	 if rc == SOCKET_ERROR:
- *		 raise_error(WSAGetLastError(), 'getsockopt')
- *	 return wsa_pi.iAddressFamily			 # <<<<<<<<<<<<<<
+ *     if rc == SOCKET_ERROR:
+ *         raise_error(WSAGetLastError(), 'getsockopt')
+ *     return wsa_pi.iAddressFamily             # <<<<<<<<<<<<<<
  * 
  * import socket # for WSAStartup
  */
@@ -1917,9 +1917,9 @@ static  int __pyx_f_11iocpsupport_getAddrFamily(__pyx_t_11iocpsupport_SOCKET __p
 /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\acceptex.pxi":5
  * 
  * 
- * def accept(long listening, long accepting, object buff, object obj):			 # <<<<<<<<<<<<<<
- *	 cdef unsigned long bytes
- *	 cdef int size, rc
+ * def accept(long listening, long accepting, object buff, object obj):             # <<<<<<<<<<<<<<
+ *     cdef unsigned long bytes
+ *     cdef int size, rc
  */
 
 static PyObject *__pyx_pf_11iocpsupport_accept(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
@@ -1942,54 +1942,54 @@ static PyObject *__pyx_pf_11iocpsupport_accept(PyObject *__pyx_self, PyObject *_
   __Pyx_SetupRefcountContext("accept");
   __pyx_self = __pyx_self;
   if (unlikely(__pyx_kwds)) {
-	Py_ssize_t kw_args = PyDict_Size(__pyx_kwds);
-	PyObject* values[4] = {0,0,0,0};
-	switch (PyTuple_GET_SIZE(__pyx_args)) {
-	  case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
-	  case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
-	  case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
-	  case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
-	  case  0: break;
-	  default: goto __pyx_L5_argtuple_error;
-	}
-	switch (PyTuple_GET_SIZE(__pyx_args)) {
-	  case  0:
-	  values[0] = PyDict_GetItem(__pyx_kwds, __pyx_kp_listening);
-	  if (likely(values[0])) kw_args--;
-	  else goto __pyx_L5_argtuple_error;
-	  case  1:
-	  values[1] = PyDict_GetItem(__pyx_kwds, __pyx_kp_accepting);
-	  if (likely(values[1])) kw_args--;
-	  else {
-		__Pyx_RaiseArgtupleInvalid("accept", 1, 4, 4, 1); {__pyx_filename = __pyx_f[1]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	  }
-	  case  2:
-	  values[2] = PyDict_GetItem(__pyx_kwds, __pyx_kp_buff);
-	  if (likely(values[2])) kw_args--;
-	  else {
-		__Pyx_RaiseArgtupleInvalid("accept", 1, 4, 4, 2); {__pyx_filename = __pyx_f[1]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	  }
-	  case  3:
-	  values[3] = PyDict_GetItem(__pyx_kwds, __pyx_kp_obj);
-	  if (likely(values[3])) kw_args--;
-	  else {
-		__Pyx_RaiseArgtupleInvalid("accept", 1, 4, 4, 3); {__pyx_filename = __pyx_f[1]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	  }
-	}
-	if (unlikely(kw_args > 0)) {
-	  if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, PyTuple_GET_SIZE(__pyx_args), "accept") < 0)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	}
-	__pyx_v_listening = __Pyx_PyInt_AsLong(values[0]); if (unlikely((__pyx_v_listening == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	__pyx_v_accepting = __Pyx_PyInt_AsLong(values[1]); if (unlikely((__pyx_v_accepting == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	__pyx_v_buff = values[2];
-	__pyx_v_obj = values[3];
+    Py_ssize_t kw_args = PyDict_Size(__pyx_kwds);
+    PyObject* values[4] = {0,0,0,0};
+    switch (PyTuple_GET_SIZE(__pyx_args)) {
+      case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
+      case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+      case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+      case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+      case  0: break;
+      default: goto __pyx_L5_argtuple_error;
+    }
+    switch (PyTuple_GET_SIZE(__pyx_args)) {
+      case  0:
+      values[0] = PyDict_GetItem(__pyx_kwds, __pyx_kp_listening);
+      if (likely(values[0])) kw_args--;
+      else goto __pyx_L5_argtuple_error;
+      case  1:
+      values[1] = PyDict_GetItem(__pyx_kwds, __pyx_kp_accepting);
+      if (likely(values[1])) kw_args--;
+      else {
+        __Pyx_RaiseArgtupleInvalid("accept", 1, 4, 4, 1); {__pyx_filename = __pyx_f[1]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+      }
+      case  2:
+      values[2] = PyDict_GetItem(__pyx_kwds, __pyx_kp_buff);
+      if (likely(values[2])) kw_args--;
+      else {
+        __Pyx_RaiseArgtupleInvalid("accept", 1, 4, 4, 2); {__pyx_filename = __pyx_f[1]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+      }
+      case  3:
+      values[3] = PyDict_GetItem(__pyx_kwds, __pyx_kp_obj);
+      if (likely(values[3])) kw_args--;
+      else {
+        __Pyx_RaiseArgtupleInvalid("accept", 1, 4, 4, 3); {__pyx_filename = __pyx_f[1]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+      }
+    }
+    if (unlikely(kw_args > 0)) {
+      if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, PyTuple_GET_SIZE(__pyx_args), "accept") < 0)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    }
+    __pyx_v_listening = __Pyx_PyInt_AsLong(values[0]); if (unlikely((__pyx_v_listening == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_accepting = __Pyx_PyInt_AsLong(values[1]); if (unlikely((__pyx_v_accepting == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_buff = values[2];
+    __pyx_v_obj = values[3];
   } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
-	goto __pyx_L5_argtuple_error;
+    goto __pyx_L5_argtuple_error;
   } else {
-	__pyx_v_listening = __Pyx_PyInt_AsLong(PyTuple_GET_ITEM(__pyx_args, 0)); if (unlikely((__pyx_v_listening == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	__pyx_v_accepting = __Pyx_PyInt_AsLong(PyTuple_GET_ITEM(__pyx_args, 1)); if (unlikely((__pyx_v_accepting == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	__pyx_v_buff = PyTuple_GET_ITEM(__pyx_args, 2);
-	__pyx_v_obj = PyTuple_GET_ITEM(__pyx_args, 3);
+    __pyx_v_listening = __Pyx_PyInt_AsLong(PyTuple_GET_ITEM(__pyx_args, 0)); if (unlikely((__pyx_v_listening == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_accepting = __Pyx_PyInt_AsLong(PyTuple_GET_ITEM(__pyx_args, 1)); if (unlikely((__pyx_v_accepting == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_buff = PyTuple_GET_ITEM(__pyx_args, 2);
+    __pyx_v_obj = PyTuple_GET_ITEM(__pyx_args, 3);
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
@@ -2000,117 +2000,117 @@ static PyObject *__pyx_pf_11iocpsupport_accept(PyObject *__pyx_self, PyObject *_
   __pyx_L4_argument_unpacking_done:;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\acceptex.pxi":11
- *	 cdef myOVERLAPPED *ov
+ *     cdef myOVERLAPPED *ov
  * 
- *	 PyObject_AsWriteBuffer(buff, &mem_buffer, &size)			 # <<<<<<<<<<<<<<
+ *     PyObject_AsWriteBuffer(buff, &mem_buffer, &size)             # <<<<<<<<<<<<<<
  * 
- *	 ov = makeOV()
+ *     ov = makeOV()
  */
   __pyx_t_1 = PyObject_AsWriteBuffer(__pyx_v_buff, (&__pyx_v_mem_buffer), (&__pyx_v_size)); if (unlikely(__pyx_t_1 == -1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 11; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\acceptex.pxi":13
- *	 PyObject_AsWriteBuffer(buff, &mem_buffer, &size)
+ *     PyObject_AsWriteBuffer(buff, &mem_buffer, &size)
  * 
- *	 ov = makeOV()			 # <<<<<<<<<<<<<<
- *	 if obj is not None:
- *		 ov.obj = <PyObject *>obj
+ *     ov = makeOV()             # <<<<<<<<<<<<<<
+ *     if obj is not None:
+ *         ov.obj = <PyObject *>obj
  */
   __pyx_t_2 = __pyx_f_11iocpsupport_makeOV(); if (unlikely(__pyx_t_2 == NULL)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 13; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_ov = __pyx_t_2;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\acceptex.pxi":14
  * 
- *	 ov = makeOV()
- *	 if obj is not None:			 # <<<<<<<<<<<<<<
- *		 ov.obj = <PyObject *>obj
+ *     ov = makeOV()
+ *     if obj is not None:             # <<<<<<<<<<<<<<
+ *         ov.obj = <PyObject *>obj
  * 
  */
   __pyx_t_3 = (__pyx_v_obj != Py_None);
   if (__pyx_t_3) {
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\acceptex.pxi":15
- *	 ov = makeOV()
- *	 if obj is not None:
- *		 ov.obj = <PyObject *>obj			 # <<<<<<<<<<<<<<
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\acceptex.pxi":15
+ *     ov = makeOV()
+ *     if obj is not None:
+ *         ov.obj = <PyObject *>obj             # <<<<<<<<<<<<<<
  * 
- *	 rc = lpAcceptEx(listening, accepting, mem_buffer, 0, size / 2, size / 2,
+ *     rc = lpAcceptEx(listening, accepting, mem_buffer, 0, size / 2, size / 2,
  */
-	__pyx_v_ov->obj = ((struct PyObject *)__pyx_v_obj);
-	goto __pyx_L6;
+    __pyx_v_ov->obj = ((struct PyObject *)__pyx_v_obj);
+    goto __pyx_L6;
   }
   __pyx_L6:;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\acceptex.pxi":18
  * 
- *	 rc = lpAcceptEx(listening, accepting, mem_buffer, 0, size / 2, size / 2,
- *					 &bytes, <OVERLAPPED *>ov)			 # <<<<<<<<<<<<<<
- *	 if not rc:
- *		 rc = WSAGetLastError()
+ *     rc = lpAcceptEx(listening, accepting, mem_buffer, 0, size / 2, size / 2,
+ *                     &bytes, <OVERLAPPED *>ov)             # <<<<<<<<<<<<<<
+ *     if not rc:
+ *         rc = WSAGetLastError()
  */
   __pyx_v_rc = lpAcceptEx(__pyx_v_listening, __pyx_v_accepting, __pyx_v_mem_buffer, 0, (__pyx_v_size / 2), (__pyx_v_size / 2), (&__pyx_v_bytes), ((OVERLAPPED *)__pyx_v_ov));
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\acceptex.pxi":19
- *	 rc = lpAcceptEx(listening, accepting, mem_buffer, 0, size / 2, size / 2,
- *					 &bytes, <OVERLAPPED *>ov)
- *	 if not rc:			 # <<<<<<<<<<<<<<
- *		 rc = WSAGetLastError()
- *		 if rc != ERROR_IO_PENDING:
+ *     rc = lpAcceptEx(listening, accepting, mem_buffer, 0, size / 2, size / 2,
+ *                     &bytes, <OVERLAPPED *>ov)
+ *     if not rc:             # <<<<<<<<<<<<<<
+ *         rc = WSAGetLastError()
+ *         if rc != ERROR_IO_PENDING:
  */
   __pyx_t_3 = (!__pyx_v_rc);
   if (__pyx_t_3) {
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\acceptex.pxi":20
- *					 &bytes, <OVERLAPPED *>ov)
- *	 if not rc:
- *		 rc = WSAGetLastError()			 # <<<<<<<<<<<<<<
- *		 if rc != ERROR_IO_PENDING:
- *			 return rc
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\acceptex.pxi":20
+ *                     &bytes, <OVERLAPPED *>ov)
+ *     if not rc:
+ *         rc = WSAGetLastError()             # <<<<<<<<<<<<<<
+ *         if rc != ERROR_IO_PENDING:
+ *             return rc
  */
-	__pyx_v_rc = WSAGetLastError();
+    __pyx_v_rc = WSAGetLastError();
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\acceptex.pxi":21
- *	 if not rc:
- *		 rc = WSAGetLastError()
- *		 if rc != ERROR_IO_PENDING:			 # <<<<<<<<<<<<<<
- *			 return rc
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\acceptex.pxi":21
+ *     if not rc:
+ *         rc = WSAGetLastError()
+ *         if rc != ERROR_IO_PENDING:             # <<<<<<<<<<<<<<
+ *             return rc
  * 
  */
-	__pyx_t_3 = (__pyx_v_rc != ERROR_IO_PENDING);
-	if (__pyx_t_3) {
+    __pyx_t_3 = (__pyx_v_rc != ERROR_IO_PENDING);
+    if (__pyx_t_3) {
 
-	  /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\acceptex.pxi":22
- *		 rc = WSAGetLastError()
- *		 if rc != ERROR_IO_PENDING:
- *			 return rc			 # <<<<<<<<<<<<<<
+      /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\acceptex.pxi":22
+ *         rc = WSAGetLastError()
+ *         if rc != ERROR_IO_PENDING:
+ *             return rc             # <<<<<<<<<<<<<<
  * 
- *	 # operation is in progress
+ *     # operation is in progress
  */
-	  __Pyx_XDECREF(__pyx_r);
-	  __pyx_t_4 = PyInt_FromLong(__pyx_v_rc); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 22; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-	  __Pyx_GOTREF(__pyx_t_4);
-	  __pyx_r = __pyx_t_4;
-	  __pyx_t_4 = 0;
-	  goto __pyx_L0;
-	  goto __pyx_L8;
-	}
-	__pyx_L8:;
-	goto __pyx_L7;
+      __Pyx_XDECREF(__pyx_r);
+      __pyx_t_4 = PyInt_FromLong(__pyx_v_rc); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 22; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_4);
+      __pyx_r = __pyx_t_4;
+      __pyx_t_4 = 0;
+      goto __pyx_L0;
+      goto __pyx_L8;
+    }
+    __pyx_L8:;
+    goto __pyx_L7;
   }
   __pyx_L7:;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\acceptex.pxi":25
  * 
- *	 # operation is in progress
- *	 Py_XINCREF(obj)			 # <<<<<<<<<<<<<<
- *	 return rc
+ *     # operation is in progress
+ *     Py_XINCREF(obj)             # <<<<<<<<<<<<<<
+ *     return rc
  * 
  */
   Py_XINCREF(__pyx_v_obj);
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\acceptex.pxi":26
- *	 # operation is in progress
- *	 Py_XINCREF(obj)
- *	 return rc			 # <<<<<<<<<<<<<<
+ *     # operation is in progress
+ *     Py_XINCREF(obj)
+ *     return rc             # <<<<<<<<<<<<<<
  * 
  * def get_accept_addrs(long s, object buff):
  */
@@ -2134,11 +2134,11 @@ static PyObject *__pyx_pf_11iocpsupport_accept(PyObject *__pyx_self, PyObject *_
 }
 
 /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\acceptex.pxi":28
- *	 return rc
+ *     return rc
  * 
- * def get_accept_addrs(long s, object buff):			 # <<<<<<<<<<<<<<
- *	 cdef WSAPROTOCOL_INFO wsa_pi
- *	 cdef int size, locallen, remotelen
+ * def get_accept_addrs(long s, object buff):             # <<<<<<<<<<<<<<
+ *     cdef WSAPROTOCOL_INFO wsa_pi
+ *     cdef int size, locallen, remotelen
  */
 
 static PyObject *__pyx_pf_11iocpsupport_get_accept_addrs(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
@@ -2161,36 +2161,36 @@ static PyObject *__pyx_pf_11iocpsupport_get_accept_addrs(PyObject *__pyx_self, P
   __Pyx_SetupRefcountContext("get_accept_addrs");
   __pyx_self = __pyx_self;
   if (unlikely(__pyx_kwds)) {
-	Py_ssize_t kw_args = PyDict_Size(__pyx_kwds);
-	PyObject* values[2] = {0,0};
-	switch (PyTuple_GET_SIZE(__pyx_args)) {
-	  case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
-	  case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
-	  case  0: break;
-	  default: goto __pyx_L5_argtuple_error;
-	}
-	switch (PyTuple_GET_SIZE(__pyx_args)) {
-	  case  0:
-	  values[0] = PyDict_GetItem(__pyx_kwds, __pyx_kp_s);
-	  if (likely(values[0])) kw_args--;
-	  else goto __pyx_L5_argtuple_error;
-	  case  1:
-	  values[1] = PyDict_GetItem(__pyx_kwds, __pyx_kp_buff);
-	  if (likely(values[1])) kw_args--;
-	  else {
-		__Pyx_RaiseArgtupleInvalid("get_accept_addrs", 1, 2, 2, 1); {__pyx_filename = __pyx_f[1]; __pyx_lineno = 28; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	  }
-	}
-	if (unlikely(kw_args > 0)) {
-	  if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, PyTuple_GET_SIZE(__pyx_args), "get_accept_addrs") < 0)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 28; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	}
-	__pyx_v_s = __Pyx_PyInt_AsLong(values[0]); if (unlikely((__pyx_v_s == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 28; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	__pyx_v_buff = values[1];
+    Py_ssize_t kw_args = PyDict_Size(__pyx_kwds);
+    PyObject* values[2] = {0,0};
+    switch (PyTuple_GET_SIZE(__pyx_args)) {
+      case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+      case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+      case  0: break;
+      default: goto __pyx_L5_argtuple_error;
+    }
+    switch (PyTuple_GET_SIZE(__pyx_args)) {
+      case  0:
+      values[0] = PyDict_GetItem(__pyx_kwds, __pyx_kp_s);
+      if (likely(values[0])) kw_args--;
+      else goto __pyx_L5_argtuple_error;
+      case  1:
+      values[1] = PyDict_GetItem(__pyx_kwds, __pyx_kp_buff);
+      if (likely(values[1])) kw_args--;
+      else {
+        __Pyx_RaiseArgtupleInvalid("get_accept_addrs", 1, 2, 2, 1); {__pyx_filename = __pyx_f[1]; __pyx_lineno = 28; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+      }
+    }
+    if (unlikely(kw_args > 0)) {
+      if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, PyTuple_GET_SIZE(__pyx_args), "get_accept_addrs") < 0)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 28; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    }
+    __pyx_v_s = __Pyx_PyInt_AsLong(values[0]); if (unlikely((__pyx_v_s == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 28; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_buff = values[1];
   } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
-	goto __pyx_L5_argtuple_error;
+    goto __pyx_L5_argtuple_error;
   } else {
-	__pyx_v_s = __Pyx_PyInt_AsLong(PyTuple_GET_ITEM(__pyx_args, 0)); if (unlikely((__pyx_v_s == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 28; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	__pyx_v_buff = PyTuple_GET_ITEM(__pyx_args, 1);
+    __pyx_v_s = __Pyx_PyInt_AsLong(PyTuple_GET_ITEM(__pyx_args, 0)); if (unlikely((__pyx_v_s == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 28; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_buff = PyTuple_GET_ITEM(__pyx_args, 1);
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
@@ -2201,27 +2201,27 @@ static PyObject *__pyx_pf_11iocpsupport_get_accept_addrs(PyObject *__pyx_self, P
   __pyx_L4_argument_unpacking_done:;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\acceptex.pxi":34
- *	 cdef sockaddr *localaddr, *remoteaddr
+ *     cdef sockaddr *localaddr, *remoteaddr
  * 
- *	 PyObject_AsReadBuffer(buff, &mem_buffer, &size)			 # <<<<<<<<<<<<<<
+ *     PyObject_AsReadBuffer(buff, &mem_buffer, &size)             # <<<<<<<<<<<<<<
  * 
- *	 lpGetAcceptExSockaddrs(mem_buffer, 0, size / 2, size / 2, &localaddr, &locallen, &remoteaddr, &remotelen)
+ *     lpGetAcceptExSockaddrs(mem_buffer, 0, size / 2, size / 2, &localaddr, &locallen, &remoteaddr, &remotelen)
  */
   __pyx_t_1 = PyObject_AsReadBuffer(__pyx_v_buff, (&__pyx_v_mem_buffer), (&__pyx_v_size)); if (unlikely(__pyx_t_1 == -1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 34; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\acceptex.pxi":36
- *	 PyObject_AsReadBuffer(buff, &mem_buffer, &size)
+ *     PyObject_AsReadBuffer(buff, &mem_buffer, &size)
  * 
- *	 lpGetAcceptExSockaddrs(mem_buffer, 0, size / 2, size / 2, &localaddr, &locallen, &remoteaddr, &remotelen)			 # <<<<<<<<<<<<<<
- *	 return remoteaddr.sa_family, _makesockaddr(localaddr, locallen), _makesockaddr(remoteaddr, remotelen)
+ *     lpGetAcceptExSockaddrs(mem_buffer, 0, size / 2, size / 2, &localaddr, &locallen, &remoteaddr, &remotelen)             # <<<<<<<<<<<<<<
+ *     return remoteaddr.sa_family, _makesockaddr(localaddr, locallen), _makesockaddr(remoteaddr, remotelen)
  * 
  */
   lpGetAcceptExSockaddrs(__pyx_v_mem_buffer, 0, (__pyx_v_size / 2), (__pyx_v_size / 2), (&__pyx_v_localaddr), (&__pyx_v_locallen), (&__pyx_v_remoteaddr), (&__pyx_v_remotelen));
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\acceptex.pxi":37
  * 
- *	 lpGetAcceptExSockaddrs(mem_buffer, 0, size / 2, size / 2, &localaddr, &locallen, &remoteaddr, &remotelen)
- *	 return remoteaddr.sa_family, _makesockaddr(localaddr, locallen), _makesockaddr(remoteaddr, remotelen)			 # <<<<<<<<<<<<<<
+ *     lpGetAcceptExSockaddrs(mem_buffer, 0, size / 2, size / 2, &localaddr, &locallen, &remoteaddr, &remotelen)
+ *     return remoteaddr.sa_family, _makesockaddr(localaddr, locallen), _makesockaddr(remoteaddr, remotelen)             # <<<<<<<<<<<<<<
  * 
  */
   __Pyx_XDECREF(__pyx_r);
@@ -2264,9 +2264,9 @@ static PyObject *__pyx_pf_11iocpsupport_get_accept_addrs(PyObject *__pyx_self, P
 /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\connectex.pxi":5
  * 
  * 
- * def connect(long s, object addr, object obj):			 # <<<<<<<<<<<<<<
- *	 cdef int family, rc
- *	 cdef myOVERLAPPED *ov
+ * def connect(long s, object addr, object obj):             # <<<<<<<<<<<<<<
+ *     cdef int family, rc
+ *     cdef myOVERLAPPED *ov
  */
 
 static PyObject *__pyx_pf_11iocpsupport_connect(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
@@ -2289,45 +2289,45 @@ static PyObject *__pyx_pf_11iocpsupport_connect(PyObject *__pyx_self, PyObject *
   __Pyx_SetupRefcountContext("connect");
   __pyx_self = __pyx_self;
   if (unlikely(__pyx_kwds)) {
-	Py_ssize_t kw_args = PyDict_Size(__pyx_kwds);
-	PyObject* values[3] = {0,0,0};
-	switch (PyTuple_GET_SIZE(__pyx_args)) {
-	  case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
-	  case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
-	  case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
-	  case  0: break;
-	  default: goto __pyx_L5_argtuple_error;
-	}
-	switch (PyTuple_GET_SIZE(__pyx_args)) {
-	  case  0:
-	  values[0] = PyDict_GetItem(__pyx_kwds, __pyx_kp_s);
-	  if (likely(values[0])) kw_args--;
-	  else goto __pyx_L5_argtuple_error;
-	  case  1:
-	  values[1] = PyDict_GetItem(__pyx_kwds, __pyx_kp_addr);
-	  if (likely(values[1])) kw_args--;
-	  else {
-		__Pyx_RaiseArgtupleInvalid("connect", 1, 3, 3, 1); {__pyx_filename = __pyx_f[2]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	  }
-	  case  2:
-	  values[2] = PyDict_GetItem(__pyx_kwds, __pyx_kp_obj);
-	  if (likely(values[2])) kw_args--;
-	  else {
-		__Pyx_RaiseArgtupleInvalid("connect", 1, 3, 3, 2); {__pyx_filename = __pyx_f[2]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	  }
-	}
-	if (unlikely(kw_args > 0)) {
-	  if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, PyTuple_GET_SIZE(__pyx_args), "connect") < 0)) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	}
-	__pyx_v_s = __Pyx_PyInt_AsLong(values[0]); if (unlikely((__pyx_v_s == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	__pyx_v_addr = values[1];
-	__pyx_v_obj = values[2];
+    Py_ssize_t kw_args = PyDict_Size(__pyx_kwds);
+    PyObject* values[3] = {0,0,0};
+    switch (PyTuple_GET_SIZE(__pyx_args)) {
+      case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+      case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+      case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+      case  0: break;
+      default: goto __pyx_L5_argtuple_error;
+    }
+    switch (PyTuple_GET_SIZE(__pyx_args)) {
+      case  0:
+      values[0] = PyDict_GetItem(__pyx_kwds, __pyx_kp_s);
+      if (likely(values[0])) kw_args--;
+      else goto __pyx_L5_argtuple_error;
+      case  1:
+      values[1] = PyDict_GetItem(__pyx_kwds, __pyx_kp_addr);
+      if (likely(values[1])) kw_args--;
+      else {
+        __Pyx_RaiseArgtupleInvalid("connect", 1, 3, 3, 1); {__pyx_filename = __pyx_f[2]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+      }
+      case  2:
+      values[2] = PyDict_GetItem(__pyx_kwds, __pyx_kp_obj);
+      if (likely(values[2])) kw_args--;
+      else {
+        __Pyx_RaiseArgtupleInvalid("connect", 1, 3, 3, 2); {__pyx_filename = __pyx_f[2]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+      }
+    }
+    if (unlikely(kw_args > 0)) {
+      if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, PyTuple_GET_SIZE(__pyx_args), "connect") < 0)) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    }
+    __pyx_v_s = __Pyx_PyInt_AsLong(values[0]); if (unlikely((__pyx_v_s == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_addr = values[1];
+    __pyx_v_obj = values[2];
   } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
-	goto __pyx_L5_argtuple_error;
+    goto __pyx_L5_argtuple_error;
   } else {
-	__pyx_v_s = __Pyx_PyInt_AsLong(PyTuple_GET_ITEM(__pyx_args, 0)); if (unlikely((__pyx_v_s == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	__pyx_v_addr = PyTuple_GET_ITEM(__pyx_args, 1);
-	__pyx_v_obj = PyTuple_GET_ITEM(__pyx_args, 2);
+    __pyx_v_s = __Pyx_PyInt_AsLong(PyTuple_GET_ITEM(__pyx_args, 0)); if (unlikely((__pyx_v_s == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_addr = PyTuple_GET_ITEM(__pyx_args, 1);
+    __pyx_v_obj = PyTuple_GET_ITEM(__pyx_args, 2);
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
@@ -2338,10 +2338,10 @@ static PyObject *__pyx_pf_11iocpsupport_connect(PyObject *__pyx_self, PyObject *
   __pyx_L4_argument_unpacking_done:;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\connectex.pxi":10
- *	 cdef sockaddr name
+ *     cdef sockaddr name
  * 
- *	 if not have_connectex:			 # <<<<<<<<<<<<<<
- *		 raise ValueError, 'ConnectEx is not available on this system'
+ *     if not have_connectex:             # <<<<<<<<<<<<<<
+ *         raise ValueError, 'ConnectEx is not available on this system'
  * 
  */
   __pyx_1 = __Pyx_GetName(__pyx_m, __pyx_kp_have_connectex); if (unlikely(!__pyx_1)) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 10; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -2351,177 +2351,177 @@ static PyObject *__pyx_pf_11iocpsupport_connect(PyObject *__pyx_self, PyObject *
   __pyx_t_2 = (!__pyx_t_1);
   if (__pyx_t_2) {
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\connectex.pxi":11
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\connectex.pxi":11
  * 
- *	 if not have_connectex:
- *		 raise ValueError, 'ConnectEx is not available on this system'			 # <<<<<<<<<<<<<<
+ *     if not have_connectex:
+ *         raise ValueError, 'ConnectEx is not available on this system'             # <<<<<<<<<<<<<<
  * 
- *	 family = getAddrFamily(s)
+ *     family = getAddrFamily(s)
  */
-	__Pyx_Raise(__pyx_builtin_ValueError, __pyx_kp_8, 0);
-	{__pyx_filename = __pyx_f[2]; __pyx_lineno = 11; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-	goto __pyx_L6;
+    __Pyx_Raise(__pyx_builtin_ValueError, __pyx_kp_8, 0);
+    {__pyx_filename = __pyx_f[2]; __pyx_lineno = 11; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    goto __pyx_L6;
   }
   __pyx_L6:;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\connectex.pxi":13
- *		 raise ValueError, 'ConnectEx is not available on this system'
+ *         raise ValueError, 'ConnectEx is not available on this system'
  * 
- *	 family = getAddrFamily(s)			 # <<<<<<<<<<<<<<
- *	 if family == AF_INET:
- *		 fillinetaddr(<sockaddr_in *>&name, addr)
+ *     family = getAddrFamily(s)             # <<<<<<<<<<<<<<
+ *     if family == AF_INET:
+ *         fillinetaddr(<sockaddr_in *>&name, addr)
  */
   __pyx_t_3 = __pyx_f_11iocpsupport_getAddrFamily(__pyx_v_s); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 13; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_family = __pyx_t_3;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\connectex.pxi":14
  * 
- *	 family = getAddrFamily(s)
- *	 if family == AF_INET:			 # <<<<<<<<<<<<<<
- *		 fillinetaddr(<sockaddr_in *>&name, addr)
- *	 else:
+ *     family = getAddrFamily(s)
+ *     if family == AF_INET:             # <<<<<<<<<<<<<<
+ *         fillinetaddr(<sockaddr_in *>&name, addr)
+ *     else:
  */
   __pyx_t_2 = (__pyx_v_family == AF_INET);
   if (__pyx_t_2) {
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\connectex.pxi":15
- *	 family = getAddrFamily(s)
- *	 if family == AF_INET:
- *		 fillinetaddr(<sockaddr_in *>&name, addr)			 # <<<<<<<<<<<<<<
- *	 else:
- *		 raise ValueError, 'unsupported address family'
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\connectex.pxi":15
+ *     family = getAddrFamily(s)
+ *     if family == AF_INET:
+ *         fillinetaddr(<sockaddr_in *>&name, addr)             # <<<<<<<<<<<<<<
+ *     else:
+ *         raise ValueError, 'unsupported address family'
  */
-	__pyx_t_4 = __pyx_f_11iocpsupport_fillinetaddr(((struct sockaddr_in *)(&__pyx_v_name)), __pyx_v_addr); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 15; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-	__Pyx_GOTREF(__pyx_t_4);
-	__Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-	goto __pyx_L7;
+    __pyx_t_4 = __pyx_f_11iocpsupport_fillinetaddr(((struct sockaddr_in *)(&__pyx_v_name)), __pyx_v_addr); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 15; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_4);
+    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    goto __pyx_L7;
   }
   /*else*/ {
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\connectex.pxi":17
- *		 fillinetaddr(<sockaddr_in *>&name, addr)
- *	 else:
- *		 raise ValueError, 'unsupported address family'			 # <<<<<<<<<<<<<<
- *	 name.sa_family = family
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\connectex.pxi":17
+ *         fillinetaddr(<sockaddr_in *>&name, addr)
+ *     else:
+ *         raise ValueError, 'unsupported address family'             # <<<<<<<<<<<<<<
+ *     name.sa_family = family
  * 
  */
-	__Pyx_Raise(__pyx_builtin_ValueError, __pyx_kp_9, 0);
-	{__pyx_filename = __pyx_f[2]; __pyx_lineno = 17; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_Raise(__pyx_builtin_ValueError, __pyx_kp_9, 0);
+    {__pyx_filename = __pyx_f[2]; __pyx_lineno = 17; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
   __pyx_L7:;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\connectex.pxi":18
- *	 else:
- *		 raise ValueError, 'unsupported address family'
- *	 name.sa_family = family			 # <<<<<<<<<<<<<<
+ *     else:
+ *         raise ValueError, 'unsupported address family'
+ *     name.sa_family = family             # <<<<<<<<<<<<<<
  * 
- *	 ov = makeOV()
+ *     ov = makeOV()
  */
   __pyx_v_name.sa_family = __pyx_v_family;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\connectex.pxi":20
- *	 name.sa_family = family
+ *     name.sa_family = family
  * 
- *	 ov = makeOV()			 # <<<<<<<<<<<<<<
- *	 if obj is not None:
- *		 ov.obj = <PyObject *>obj
+ *     ov = makeOV()             # <<<<<<<<<<<<<<
+ *     if obj is not None:
+ *         ov.obj = <PyObject *>obj
  */
   __pyx_t_5 = __pyx_f_11iocpsupport_makeOV(); if (unlikely(__pyx_t_5 == NULL)) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 20; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_ov = __pyx_t_5;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\connectex.pxi":21
  * 
- *	 ov = makeOV()
- *	 if obj is not None:			 # <<<<<<<<<<<<<<
- *		 ov.obj = <PyObject *>obj
+ *     ov = makeOV()
+ *     if obj is not None:             # <<<<<<<<<<<<<<
+ *         ov.obj = <PyObject *>obj
  * 
  */
   __pyx_t_2 = (__pyx_v_obj != Py_None);
   if (__pyx_t_2) {
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\connectex.pxi":22
- *	 ov = makeOV()
- *	 if obj is not None:
- *		 ov.obj = <PyObject *>obj			 # <<<<<<<<<<<<<<
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\connectex.pxi":22
+ *     ov = makeOV()
+ *     if obj is not None:
+ *         ov.obj = <PyObject *>obj             # <<<<<<<<<<<<<<
  * 
- *	 rc = lpConnectEx(s, &name, sizeof(name), NULL, 0, NULL, <OVERLAPPED *>ov)
+ *     rc = lpConnectEx(s, &name, sizeof(name), NULL, 0, NULL, <OVERLAPPED *>ov)
  */
-	__pyx_v_ov->obj = ((struct PyObject *)__pyx_v_obj);
-	goto __pyx_L8;
+    __pyx_v_ov->obj = ((struct PyObject *)__pyx_v_obj);
+    goto __pyx_L8;
   }
   __pyx_L8:;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\connectex.pxi":24
- *		 ov.obj = <PyObject *>obj
+ *         ov.obj = <PyObject *>obj
  * 
- *	 rc = lpConnectEx(s, &name, sizeof(name), NULL, 0, NULL, <OVERLAPPED *>ov)			 # <<<<<<<<<<<<<<
+ *     rc = lpConnectEx(s, &name, sizeof(name), NULL, 0, NULL, <OVERLAPPED *>ov)             # <<<<<<<<<<<<<<
  * 
- *	 if not rc:
+ *     if not rc:
  */
   __pyx_v_rc = lpConnectEx(__pyx_v_s, (&__pyx_v_name), (sizeof(__pyx_v_name)), NULL, 0, NULL, ((OVERLAPPED *)__pyx_v_ov));
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\connectex.pxi":26
- *	 rc = lpConnectEx(s, &name, sizeof(name), NULL, 0, NULL, <OVERLAPPED *>ov)
+ *     rc = lpConnectEx(s, &name, sizeof(name), NULL, 0, NULL, <OVERLAPPED *>ov)
  * 
- *	 if not rc:			 # <<<<<<<<<<<<<<
- *		 rc = WSAGetLastError()
- *		 if rc != ERROR_IO_PENDING:
+ *     if not rc:             # <<<<<<<<<<<<<<
+ *         rc = WSAGetLastError()
+ *         if rc != ERROR_IO_PENDING:
  */
   __pyx_t_2 = (!__pyx_v_rc);
   if (__pyx_t_2) {
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\connectex.pxi":27
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\connectex.pxi":27
  * 
- *	 if not rc:
- *		 rc = WSAGetLastError()			 # <<<<<<<<<<<<<<
- *		 if rc != ERROR_IO_PENDING:
- *			 return rc
+ *     if not rc:
+ *         rc = WSAGetLastError()             # <<<<<<<<<<<<<<
+ *         if rc != ERROR_IO_PENDING:
+ *             return rc
  */
-	__pyx_v_rc = WSAGetLastError();
+    __pyx_v_rc = WSAGetLastError();
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\connectex.pxi":28
- *	 if not rc:
- *		 rc = WSAGetLastError()
- *		 if rc != ERROR_IO_PENDING:			 # <<<<<<<<<<<<<<
- *			 return rc
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\connectex.pxi":28
+ *     if not rc:
+ *         rc = WSAGetLastError()
+ *         if rc != ERROR_IO_PENDING:             # <<<<<<<<<<<<<<
+ *             return rc
  * 
  */
-	__pyx_t_2 = (__pyx_v_rc != ERROR_IO_PENDING);
-	if (__pyx_t_2) {
+    __pyx_t_2 = (__pyx_v_rc != ERROR_IO_PENDING);
+    if (__pyx_t_2) {
 
-	  /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\connectex.pxi":29
- *		 rc = WSAGetLastError()
- *		 if rc != ERROR_IO_PENDING:
- *			 return rc			 # <<<<<<<<<<<<<<
+      /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\connectex.pxi":29
+ *         rc = WSAGetLastError()
+ *         if rc != ERROR_IO_PENDING:
+ *             return rc             # <<<<<<<<<<<<<<
  * 
- *	 # operation is in progress
+ *     # operation is in progress
  */
-	  __Pyx_XDECREF(__pyx_r);
-	  __pyx_t_4 = PyInt_FromLong(__pyx_v_rc); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 29; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-	  __Pyx_GOTREF(__pyx_t_4);
-	  __pyx_r = __pyx_t_4;
-	  __pyx_t_4 = 0;
-	  goto __pyx_L0;
-	  goto __pyx_L10;
-	}
-	__pyx_L10:;
-	goto __pyx_L9;
+      __Pyx_XDECREF(__pyx_r);
+      __pyx_t_4 = PyInt_FromLong(__pyx_v_rc); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 29; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_4);
+      __pyx_r = __pyx_t_4;
+      __pyx_t_4 = 0;
+      goto __pyx_L0;
+      goto __pyx_L10;
+    }
+    __pyx_L10:;
+    goto __pyx_L9;
   }
   __pyx_L9:;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\connectex.pxi":32
  * 
- *	 # operation is in progress
- *	 Py_XINCREF(obj)			 # <<<<<<<<<<<<<<
- *	 return rc
+ *     # operation is in progress
+ *     Py_XINCREF(obj)             # <<<<<<<<<<<<<<
+ *     return rc
  * 
  */
   Py_XINCREF(__pyx_v_obj);
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\connectex.pxi":33
- *	 # operation is in progress
- *	 Py_XINCREF(obj)
- *	 return rc			 # <<<<<<<<<<<<<<
+ *     # operation is in progress
+ *     Py_XINCREF(obj)
+ *     return rc             # <<<<<<<<<<<<<<
  * 
  */
   __Pyx_XDECREF(__pyx_r);
@@ -2547,9 +2547,9 @@ static PyObject *__pyx_pf_11iocpsupport_connect(PyObject *__pyx_self, PyObject *
 /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":5
  * 
  * 
- * def recv(long s, object bufflist, object obj, unsigned long flags = 0):			 # <<<<<<<<<<<<<<
- *	 cdef int rc, buffcount, i, res
- *	 cdef myOVERLAPPED *ov
+ * def recv(long s, object bufflist, object obj, unsigned long flags = 0):             # <<<<<<<<<<<<<<
+ *     cdef int rc, buffcount, i, res
+ *     cdef myOVERLAPPED *ov
  */
 
 static PyObject *__pyx_pf_11iocpsupport_recv(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
@@ -2579,62 +2579,62 @@ static PyObject *__pyx_pf_11iocpsupport_recv(PyObject *__pyx_self, PyObject *__p
   __Pyx_SetupRefcountContext("recv");
   __pyx_self = __pyx_self;
   if (unlikely(__pyx_kwds)) {
-	Py_ssize_t kw_args = PyDict_Size(__pyx_kwds);
-	PyObject* values[4] = {0,0,0,0};
-	switch (PyTuple_GET_SIZE(__pyx_args)) {
-	  case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
-	  case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
-	  case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
-	  case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
-	  case  0: break;
-	  default: goto __pyx_L5_argtuple_error;
-	}
-	switch (PyTuple_GET_SIZE(__pyx_args)) {
-	  case  0:
-	  values[0] = PyDict_GetItem(__pyx_kwds, __pyx_kp_s);
-	  if (likely(values[0])) kw_args--;
-	  else goto __pyx_L5_argtuple_error;
-	  case  1:
-	  values[1] = PyDict_GetItem(__pyx_kwds, __pyx_kp_bufflist);
-	  if (likely(values[1])) kw_args--;
-	  else {
-		__Pyx_RaiseArgtupleInvalid("recv", 0, 3, 4, 1); {__pyx_filename = __pyx_f[3]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	  }
-	  case  2:
-	  values[2] = PyDict_GetItem(__pyx_kwds, __pyx_kp_obj);
-	  if (likely(values[2])) kw_args--;
-	  else {
-		__Pyx_RaiseArgtupleInvalid("recv", 0, 3, 4, 2); {__pyx_filename = __pyx_f[3]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	  }
-	  case  3:
-	  if (kw_args > 0) {
-		PyObject* value = PyDict_GetItem(__pyx_kwds, __pyx_kp_flags);
-		if (unlikely(value)) { values[3] = value; kw_args--; }
-	  }
-	}
-	if (unlikely(kw_args > 0)) {
-	  if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, PyTuple_GET_SIZE(__pyx_args), "recv") < 0)) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	}
-	__pyx_v_s = __Pyx_PyInt_AsLong(values[0]); if (unlikely((__pyx_v_s == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	__pyx_v_bufflist = values[1];
-	__pyx_v_obj = values[2];
-	if (values[3]) {
-	  __pyx_v_flags = __Pyx_PyInt_AsUnsignedLong(values[3]); if (unlikely((__pyx_v_flags == (unsigned long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	} else {
-	  __pyx_v_flags = 0;
-	}
+    Py_ssize_t kw_args = PyDict_Size(__pyx_kwds);
+    PyObject* values[4] = {0,0,0,0};
+    switch (PyTuple_GET_SIZE(__pyx_args)) {
+      case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
+      case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+      case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+      case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+      case  0: break;
+      default: goto __pyx_L5_argtuple_error;
+    }
+    switch (PyTuple_GET_SIZE(__pyx_args)) {
+      case  0:
+      values[0] = PyDict_GetItem(__pyx_kwds, __pyx_kp_s);
+      if (likely(values[0])) kw_args--;
+      else goto __pyx_L5_argtuple_error;
+      case  1:
+      values[1] = PyDict_GetItem(__pyx_kwds, __pyx_kp_bufflist);
+      if (likely(values[1])) kw_args--;
+      else {
+        __Pyx_RaiseArgtupleInvalid("recv", 0, 3, 4, 1); {__pyx_filename = __pyx_f[3]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+      }
+      case  2:
+      values[2] = PyDict_GetItem(__pyx_kwds, __pyx_kp_obj);
+      if (likely(values[2])) kw_args--;
+      else {
+        __Pyx_RaiseArgtupleInvalid("recv", 0, 3, 4, 2); {__pyx_filename = __pyx_f[3]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+      }
+      case  3:
+      if (kw_args > 0) {
+        PyObject* value = PyDict_GetItem(__pyx_kwds, __pyx_kp_flags);
+        if (unlikely(value)) { values[3] = value; kw_args--; }
+      }
+    }
+    if (unlikely(kw_args > 0)) {
+      if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, PyTuple_GET_SIZE(__pyx_args), "recv") < 0)) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    }
+    __pyx_v_s = __Pyx_PyInt_AsLong(values[0]); if (unlikely((__pyx_v_s == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_bufflist = values[1];
+    __pyx_v_obj = values[2];
+    if (values[3]) {
+      __pyx_v_flags = __Pyx_PyInt_AsUnsignedLong(values[3]); if (unlikely((__pyx_v_flags == (unsigned long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    } else {
+      __pyx_v_flags = 0;
+    }
   } else {
-	__pyx_v_flags = 0;
-	switch (PyTuple_GET_SIZE(__pyx_args)) {
-	  case  4:
-	  __pyx_v_flags = __Pyx_PyInt_AsUnsignedLong(PyTuple_GET_ITEM(__pyx_args, 3)); if (unlikely((__pyx_v_flags == (unsigned long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	  case  3:
-	  __pyx_v_obj = PyTuple_GET_ITEM(__pyx_args, 2);
-	  __pyx_v_bufflist = PyTuple_GET_ITEM(__pyx_args, 1);
-	  __pyx_v_s = __Pyx_PyInt_AsLong(PyTuple_GET_ITEM(__pyx_args, 0)); if (unlikely((__pyx_v_s == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	  break;
-	  default: goto __pyx_L5_argtuple_error;
-	}
+    __pyx_v_flags = 0;
+    switch (PyTuple_GET_SIZE(__pyx_args)) {
+      case  4:
+      __pyx_v_flags = __Pyx_PyInt_AsUnsignedLong(PyTuple_GET_ITEM(__pyx_args, 3)); if (unlikely((__pyx_v_flags == (unsigned long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+      case  3:
+      __pyx_v_obj = PyTuple_GET_ITEM(__pyx_args, 2);
+      __pyx_v_bufflist = PyTuple_GET_ITEM(__pyx_args, 1);
+      __pyx_v_s = __Pyx_PyInt_AsLong(PyTuple_GET_ITEM(__pyx_args, 0)); if (unlikely((__pyx_v_s == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+      break;
+      default: goto __pyx_L5_argtuple_error;
+    }
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
@@ -2646,11 +2646,11 @@ static PyObject *__pyx_pf_11iocpsupport_recv(PyObject *__pyx_self, PyObject *__p
   __Pyx_INCREF(__pyx_v_bufflist);
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":12
- *	 cdef PyObject **buffers
+ *     cdef PyObject **buffers
  * 
- *	 bufflist = PySequence_Fast(bufflist, 'second argument needs to be a list')			 # <<<<<<<<<<<<<<
- *	 buffcount = PySequence_Fast_GET_SIZE(bufflist)
- *	 buffers = PySequence_Fast_ITEMS(bufflist)
+ *     bufflist = PySequence_Fast(bufflist, 'second argument needs to be a list')             # <<<<<<<<<<<<<<
+ *     buffcount = PySequence_Fast_GET_SIZE(bufflist)
+ *     buffers = PySequence_Fast_ITEMS(bufflist)
  */
   __pyx_t_1 = PySequence_Fast(__pyx_v_bufflist, __pyx_k_10); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 12; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -2660,231 +2660,231 @@ static PyObject *__pyx_pf_11iocpsupport_recv(PyObject *__pyx_self, PyObject *__p
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":13
  * 
- *	 bufflist = PySequence_Fast(bufflist, 'second argument needs to be a list')
- *	 buffcount = PySequence_Fast_GET_SIZE(bufflist)			 # <<<<<<<<<<<<<<
- *	 buffers = PySequence_Fast_ITEMS(bufflist)
+ *     bufflist = PySequence_Fast(bufflist, 'second argument needs to be a list')
+ *     buffcount = PySequence_Fast_GET_SIZE(bufflist)             # <<<<<<<<<<<<<<
+ *     buffers = PySequence_Fast_ITEMS(bufflist)
  * 
  */
   __pyx_v_buffcount = PySequence_Fast_GET_SIZE(__pyx_v_bufflist);
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":14
- *	 bufflist = PySequence_Fast(bufflist, 'second argument needs to be a list')
- *	 buffcount = PySequence_Fast_GET_SIZE(bufflist)
- *	 buffers = PySequence_Fast_ITEMS(bufflist)			 # <<<<<<<<<<<<<<
+ *     bufflist = PySequence_Fast(bufflist, 'second argument needs to be a list')
+ *     buffcount = PySequence_Fast_GET_SIZE(bufflist)
+ *     buffers = PySequence_Fast_ITEMS(bufflist)             # <<<<<<<<<<<<<<
  * 
- *	 ws_buf = <WSABUF *>PyMem_Malloc(buffcount*sizeof(WSABUF))
+ *     ws_buf = <WSABUF *>PyMem_Malloc(buffcount*sizeof(WSABUF))
  */
   __pyx_v_buffers = PySequence_Fast_ITEMS(__pyx_v_bufflist);
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":16
- *	 buffers = PySequence_Fast_ITEMS(bufflist)
+ *     buffers = PySequence_Fast_ITEMS(bufflist)
  * 
- *	 ws_buf = <WSABUF *>PyMem_Malloc(buffcount*sizeof(WSABUF))			 # <<<<<<<<<<<<<<
+ *     ws_buf = <WSABUF *>PyMem_Malloc(buffcount*sizeof(WSABUF))             # <<<<<<<<<<<<<<
  * 
- *	 try:
+ *     try:
  */
   __pyx_t_2 = PyMem_Malloc((__pyx_v_buffcount * (sizeof(WSABUF)))); if (unlikely(__pyx_t_2 == NULL)) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 16; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_ws_buf = ((WSABUF *)__pyx_t_2);
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":18
- *	 ws_buf = <WSABUF *>PyMem_Malloc(buffcount*sizeof(WSABUF))
+ *     ws_buf = <WSABUF *>PyMem_Malloc(buffcount*sizeof(WSABUF))
  * 
- *	 try:			 # <<<<<<<<<<<<<<
- *		 for i from 0 <= i < buffcount:
- *			 PyObject_AsWriteBuffer(<object>buffers[i], <void **>&ws_buf[i].buf, <int *>&ws_buf[i].len)
+ *     try:             # <<<<<<<<<<<<<<
+ *         for i from 0 <= i < buffcount:
+ *             PyObject_AsWriteBuffer(<object>buffers[i], <void **>&ws_buf[i].buf, <int *>&ws_buf[i].len)
  */
   /*try:*/ {
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":19
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":19
  * 
- *	 try:
- *		 for i from 0 <= i < buffcount:			 # <<<<<<<<<<<<<<
- *			 PyObject_AsWriteBuffer(<object>buffers[i], <void **>&ws_buf[i].buf, <int *>&ws_buf[i].len)
+ *     try:
+ *         for i from 0 <= i < buffcount:             # <<<<<<<<<<<<<<
+ *             PyObject_AsWriteBuffer(<object>buffers[i], <void **>&ws_buf[i].buf, <int *>&ws_buf[i].len)
  * 
  */
-	__pyx_t_3 = __pyx_v_buffcount;
-	for (__pyx_v_i = 0; __pyx_v_i < __pyx_t_3; __pyx_v_i++) {
+    __pyx_t_3 = __pyx_v_buffcount;
+    for (__pyx_v_i = 0; __pyx_v_i < __pyx_t_3; __pyx_v_i++) {
 
-	  /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":20
- *	 try:
- *		 for i from 0 <= i < buffcount:
- *			 PyObject_AsWriteBuffer(<object>buffers[i], <void **>&ws_buf[i].buf, <int *>&ws_buf[i].len)			 # <<<<<<<<<<<<<<
+      /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":20
+ *     try:
+ *         for i from 0 <= i < buffcount:
+ *             PyObject_AsWriteBuffer(<object>buffers[i], <void **>&ws_buf[i].buf, <int *>&ws_buf[i].len)             # <<<<<<<<<<<<<<
  * 
- *		 ov = makeOV()
+ *         ov = makeOV()
  */
-	  __pyx_t_4 = (__pyx_v_buffers[__pyx_v_i]);
-	  __pyx_t_5 = PyObject_AsWriteBuffer(((PyObject *)__pyx_t_4), ((void **)(&(__pyx_v_ws_buf[__pyx_v_i]).buf)), ((int *)(&(__pyx_v_ws_buf[__pyx_v_i]).len))); if (unlikely(__pyx_t_5 == -1)) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 20; __pyx_clineno = __LINE__; goto __pyx_L7;}
-	}
+      __pyx_t_4 = (__pyx_v_buffers[__pyx_v_i]);
+      __pyx_t_5 = PyObject_AsWriteBuffer(((PyObject *)__pyx_t_4), ((void **)(&(__pyx_v_ws_buf[__pyx_v_i]).buf)), ((int *)(&(__pyx_v_ws_buf[__pyx_v_i]).len))); if (unlikely(__pyx_t_5 == -1)) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 20; __pyx_clineno = __LINE__; goto __pyx_L7;}
+    }
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":22
- *			 PyObject_AsWriteBuffer(<object>buffers[i], <void **>&ws_buf[i].buf, <int *>&ws_buf[i].len)
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":22
+ *             PyObject_AsWriteBuffer(<object>buffers[i], <void **>&ws_buf[i].buf, <int *>&ws_buf[i].len)
  * 
- *		 ov = makeOV()			 # <<<<<<<<<<<<<<
- *		 if obj is not None:
- *			 ov.obj = <PyObject *>obj
+ *         ov = makeOV()             # <<<<<<<<<<<<<<
+ *         if obj is not None:
+ *             ov.obj = <PyObject *>obj
  */
-	__pyx_t_6 = __pyx_f_11iocpsupport_makeOV(); if (unlikely(__pyx_t_6 == NULL)) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 22; __pyx_clineno = __LINE__; goto __pyx_L7;}
-	__pyx_v_ov = __pyx_t_6;
+    __pyx_t_6 = __pyx_f_11iocpsupport_makeOV(); if (unlikely(__pyx_t_6 == NULL)) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 22; __pyx_clineno = __LINE__; goto __pyx_L7;}
+    __pyx_v_ov = __pyx_t_6;
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":23
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":23
  * 
- *		 ov = makeOV()
- *		 if obj is not None:			 # <<<<<<<<<<<<<<
- *			 ov.obj = <PyObject *>obj
+ *         ov = makeOV()
+ *         if obj is not None:             # <<<<<<<<<<<<<<
+ *             ov.obj = <PyObject *>obj
  * 
  */
-	__pyx_t_7 = (__pyx_v_obj != Py_None);
-	if (__pyx_t_7) {
+    __pyx_t_7 = (__pyx_v_obj != Py_None);
+    if (__pyx_t_7) {
 
-	  /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":24
- *		 ov = makeOV()
- *		 if obj is not None:
- *			 ov.obj = <PyObject *>obj			 # <<<<<<<<<<<<<<
+      /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":24
+ *         ov = makeOV()
+ *         if obj is not None:
+ *             ov.obj = <PyObject *>obj             # <<<<<<<<<<<<<<
  * 
- *		 rc = WSARecv(s, ws_buf, buffcount, &bytes, &flags, <OVERLAPPED *>ov, NULL)
+ *         rc = WSARecv(s, ws_buf, buffcount, &bytes, &flags, <OVERLAPPED *>ov, NULL)
  */
-	  __pyx_v_ov->obj = ((struct PyObject *)__pyx_v_obj);
-	  goto __pyx_L11;
-	}
-	__pyx_L11:;
+      __pyx_v_ov->obj = ((struct PyObject *)__pyx_v_obj);
+      goto __pyx_L11;
+    }
+    __pyx_L11:;
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":26
- *			 ov.obj = <PyObject *>obj
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":26
+ *             ov.obj = <PyObject *>obj
  * 
- *		 rc = WSARecv(s, ws_buf, buffcount, &bytes, &flags, <OVERLAPPED *>ov, NULL)			 # <<<<<<<<<<<<<<
+ *         rc = WSARecv(s, ws_buf, buffcount, &bytes, &flags, <OVERLAPPED *>ov, NULL)             # <<<<<<<<<<<<<<
  * 
- *		 if rc == SOCKET_ERROR:
+ *         if rc == SOCKET_ERROR:
  */
-	__pyx_v_rc = WSARecv(__pyx_v_s, __pyx_v_ws_buf, __pyx_v_buffcount, (&__pyx_v_bytes), (&__pyx_v_flags), ((OVERLAPPED *)__pyx_v_ov), NULL);
+    __pyx_v_rc = WSARecv(__pyx_v_s, __pyx_v_ws_buf, __pyx_v_buffcount, (&__pyx_v_bytes), (&__pyx_v_flags), ((OVERLAPPED *)__pyx_v_ov), NULL);
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":28
- *		 rc = WSARecv(s, ws_buf, buffcount, &bytes, &flags, <OVERLAPPED *>ov, NULL)
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":28
+ *         rc = WSARecv(s, ws_buf, buffcount, &bytes, &flags, <OVERLAPPED *>ov, NULL)
  * 
- *		 if rc == SOCKET_ERROR:			 # <<<<<<<<<<<<<<
- *			 rc = WSAGetLastError()
- *			 if rc != ERROR_IO_PENDING:
+ *         if rc == SOCKET_ERROR:             # <<<<<<<<<<<<<<
+ *             rc = WSAGetLastError()
+ *             if rc != ERROR_IO_PENDING:
  */
-	__pyx_t_7 = (__pyx_v_rc == SOCKET_ERROR);
-	if (__pyx_t_7) {
+    __pyx_t_7 = (__pyx_v_rc == SOCKET_ERROR);
+    if (__pyx_t_7) {
 
-	  /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":29
+      /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":29
  * 
- *		 if rc == SOCKET_ERROR:
- *			 rc = WSAGetLastError()			 # <<<<<<<<<<<<<<
- *			 if rc != ERROR_IO_PENDING:
- *				 return rc, 0
+ *         if rc == SOCKET_ERROR:
+ *             rc = WSAGetLastError()             # <<<<<<<<<<<<<<
+ *             if rc != ERROR_IO_PENDING:
+ *                 return rc, 0
  */
-	  __pyx_v_rc = WSAGetLastError();
+      __pyx_v_rc = WSAGetLastError();
 
-	  /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":30
- *		 if rc == SOCKET_ERROR:
- *			 rc = WSAGetLastError()
- *			 if rc != ERROR_IO_PENDING:			 # <<<<<<<<<<<<<<
- *				 return rc, 0
+      /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":30
+ *         if rc == SOCKET_ERROR:
+ *             rc = WSAGetLastError()
+ *             if rc != ERROR_IO_PENDING:             # <<<<<<<<<<<<<<
+ *                 return rc, 0
  * 
  */
-	  __pyx_t_7 = (__pyx_v_rc != ERROR_IO_PENDING);
-	  if (__pyx_t_7) {
+      __pyx_t_7 = (__pyx_v_rc != ERROR_IO_PENDING);
+      if (__pyx_t_7) {
 
-		/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":31
- *			 rc = WSAGetLastError()
- *			 if rc != ERROR_IO_PENDING:
- *				 return rc, 0			 # <<<<<<<<<<<<<<
+        /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":31
+ *             rc = WSAGetLastError()
+ *             if rc != ERROR_IO_PENDING:
+ *                 return rc, 0             # <<<<<<<<<<<<<<
  * 
- *		 Py_XINCREF(obj)
+ *         Py_XINCREF(obj)
  */
-		__Pyx_XDECREF(__pyx_r);
-		__pyx_t_1 = PyInt_FromLong(__pyx_v_rc); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 31; __pyx_clineno = __LINE__; goto __pyx_L7;}
-		__Pyx_GOTREF(__pyx_t_1);
-		__pyx_t_8 = PyTuple_New(2); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 31; __pyx_clineno = __LINE__; goto __pyx_L7;}
-		__Pyx_GOTREF(((PyObject *)__pyx_t_8));
-		PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_1);
-		__Pyx_GIVEREF(__pyx_t_1);
-		__Pyx_INCREF(__pyx_int_0);
-		PyTuple_SET_ITEM(__pyx_t_8, 1, __pyx_int_0);
-		__Pyx_GIVEREF(__pyx_int_0);
-		__pyx_t_1 = 0;
-		__pyx_r = ((PyObject *)__pyx_t_8);
-		__pyx_t_8 = 0;
-		goto __pyx_L6;
-		goto __pyx_L13;
-	  }
-	  __pyx_L13:;
-	  goto __pyx_L12;
-	}
-	__pyx_L12:;
+        __Pyx_XDECREF(__pyx_r);
+        __pyx_t_1 = PyInt_FromLong(__pyx_v_rc); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 31; __pyx_clineno = __LINE__; goto __pyx_L7;}
+        __Pyx_GOTREF(__pyx_t_1);
+        __pyx_t_8 = PyTuple_New(2); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 31; __pyx_clineno = __LINE__; goto __pyx_L7;}
+        __Pyx_GOTREF(((PyObject *)__pyx_t_8));
+        PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_1);
+        __Pyx_GIVEREF(__pyx_t_1);
+        __Pyx_INCREF(__pyx_int_0);
+        PyTuple_SET_ITEM(__pyx_t_8, 1, __pyx_int_0);
+        __Pyx_GIVEREF(__pyx_int_0);
+        __pyx_t_1 = 0;
+        __pyx_r = ((PyObject *)__pyx_t_8);
+        __pyx_t_8 = 0;
+        goto __pyx_L6;
+        goto __pyx_L13;
+      }
+      __pyx_L13:;
+      goto __pyx_L12;
+    }
+    __pyx_L12:;
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":33
- *				 return rc, 0
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":33
+ *                 return rc, 0
  * 
- *		 Py_XINCREF(obj)			 # <<<<<<<<<<<<<<
- *		 return rc, bytes
- *	 finally:
+ *         Py_XINCREF(obj)             # <<<<<<<<<<<<<<
+ *         return rc, bytes
+ *     finally:
  */
-	Py_XINCREF(__pyx_v_obj);
+    Py_XINCREF(__pyx_v_obj);
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":34
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":34
  * 
- *		 Py_XINCREF(obj)
- *		 return rc, bytes			 # <<<<<<<<<<<<<<
- *	 finally:
- *		 PyMem_Free(ws_buf)
+ *         Py_XINCREF(obj)
+ *         return rc, bytes             # <<<<<<<<<<<<<<
+ *     finally:
+ *         PyMem_Free(ws_buf)
  */
-	__Pyx_XDECREF(__pyx_r);
-	__pyx_t_8 = PyInt_FromLong(__pyx_v_rc); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 34; __pyx_clineno = __LINE__; goto __pyx_L7;}
-	__Pyx_GOTREF(__pyx_t_8);
-	__pyx_t_1 = PyLong_FromUnsignedLong(__pyx_v_bytes); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 34; __pyx_clineno = __LINE__; goto __pyx_L7;}
-	__Pyx_GOTREF(__pyx_t_1);
-	__pyx_t_9 = PyTuple_New(2); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 34; __pyx_clineno = __LINE__; goto __pyx_L7;}
-	__Pyx_GOTREF(((PyObject *)__pyx_t_9));
-	PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_8);
-	__Pyx_GIVEREF(__pyx_t_8);
-	PyTuple_SET_ITEM(__pyx_t_9, 1, __pyx_t_1);
-	__Pyx_GIVEREF(__pyx_t_1);
-	__pyx_t_8 = 0;
-	__pyx_t_1 = 0;
-	__pyx_r = ((PyObject *)__pyx_t_9);
-	__pyx_t_9 = 0;
-	goto __pyx_L6;
+    __Pyx_XDECREF(__pyx_r);
+    __pyx_t_8 = PyInt_FromLong(__pyx_v_rc); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 34; __pyx_clineno = __LINE__; goto __pyx_L7;}
+    __Pyx_GOTREF(__pyx_t_8);
+    __pyx_t_1 = PyLong_FromUnsignedLong(__pyx_v_bytes); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 34; __pyx_clineno = __LINE__; goto __pyx_L7;}
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_9 = PyTuple_New(2); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 34; __pyx_clineno = __LINE__; goto __pyx_L7;}
+    __Pyx_GOTREF(((PyObject *)__pyx_t_9));
+    PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_8);
+    __Pyx_GIVEREF(__pyx_t_8);
+    PyTuple_SET_ITEM(__pyx_t_9, 1, __pyx_t_1);
+    __Pyx_GIVEREF(__pyx_t_1);
+    __pyx_t_8 = 0;
+    __pyx_t_1 = 0;
+    __pyx_r = ((PyObject *)__pyx_t_9);
+    __pyx_t_9 = 0;
+    goto __pyx_L6;
   }
   /*finally:*/ {
-	int __pyx_why;
-	PyObject *__pyx_exc_type, *__pyx_exc_value, *__pyx_exc_tb;
-	int __pyx_exc_lineno;
-	__pyx_exc_type = 0; __pyx_exc_value = 0; __pyx_exc_tb = 0; __pyx_exc_lineno = 0;
-	__pyx_why = 0; goto __pyx_L8;
-	__pyx_L6: __pyx_exc_type = 0; __pyx_exc_value = 0; __pyx_exc_tb = 0; __pyx_exc_lineno = 0;
-	__pyx_why = 3; goto __pyx_L8;
-	__pyx_L7: {
-	  __pyx_why = 4;
-	  __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-	  __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-	  __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
-	  __Pyx_ErrFetch(&__pyx_exc_type, &__pyx_exc_value, &__pyx_exc_tb);
-	  __pyx_exc_lineno = __pyx_lineno;
-	  goto __pyx_L8;
-	}
-	__pyx_L8:;
+    int __pyx_why;
+    PyObject *__pyx_exc_type, *__pyx_exc_value, *__pyx_exc_tb;
+    int __pyx_exc_lineno;
+    __pyx_exc_type = 0; __pyx_exc_value = 0; __pyx_exc_tb = 0; __pyx_exc_lineno = 0;
+    __pyx_why = 0; goto __pyx_L8;
+    __pyx_L6: __pyx_exc_type = 0; __pyx_exc_value = 0; __pyx_exc_tb = 0; __pyx_exc_lineno = 0;
+    __pyx_why = 3; goto __pyx_L8;
+    __pyx_L7: {
+      __pyx_why = 4;
+      __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
+      __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+      __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
+      __Pyx_ErrFetch(&__pyx_exc_type, &__pyx_exc_value, &__pyx_exc_tb);
+      __pyx_exc_lineno = __pyx_lineno;
+      goto __pyx_L8;
+    }
+    __pyx_L8:;
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":36
- *		 return rc, bytes
- *	 finally:
- *		 PyMem_Free(ws_buf)			 # <<<<<<<<<<<<<<
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":36
+ *         return rc, bytes
+ *     finally:
+ *         PyMem_Free(ws_buf)             # <<<<<<<<<<<<<<
  * 
  * def recvfrom(long s, object buff, object addr_buff, object addr_len_buff, object obj, unsigned long flags = 0):
  */
-	PyMem_Free(__pyx_v_ws_buf);
-	switch (__pyx_why) {
-	  case 3: goto __pyx_L0;
-	  case 4: {
-		__Pyx_ErrRestore(__pyx_exc_type, __pyx_exc_value, __pyx_exc_tb);
-		__pyx_lineno = __pyx_exc_lineno;
-		__pyx_exc_type = 0;
-		__pyx_exc_value = 0;
-		__pyx_exc_tb = 0;
-		goto __pyx_L1_error;
-	  }
-	}
+    PyMem_Free(__pyx_v_ws_buf);
+    switch (__pyx_why) {
+      case 3: goto __pyx_L0;
+      case 4: {
+        __Pyx_ErrRestore(__pyx_exc_type, __pyx_exc_value, __pyx_exc_tb);
+        __pyx_lineno = __pyx_exc_lineno;
+        __pyx_exc_type = 0;
+        __pyx_exc_value = 0;
+        __pyx_exc_tb = 0;
+        goto __pyx_L1_error;
+      }
+    }
   }
 
   __pyx_r = Py_None; __Pyx_INCREF(Py_None);
@@ -2903,11 +2903,11 @@ static PyObject *__pyx_pf_11iocpsupport_recv(PyObject *__pyx_self, PyObject *__p
 }
 
 /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":38
- *		 PyMem_Free(ws_buf)
+ *         PyMem_Free(ws_buf)
  * 
- * def recvfrom(long s, object buff, object addr_buff, object addr_len_buff, object obj, unsigned long flags = 0):			 # <<<<<<<<<<<<<<
- *	 cdef int rc, c_addr_buff_len, c_addr_len_buff_len
- *	 cdef myOVERLAPPED *ov
+ * def recvfrom(long s, object buff, object addr_buff, object addr_len_buff, object obj, unsigned long flags = 0):             # <<<<<<<<<<<<<<
+ *     cdef int rc, c_addr_buff_len, c_addr_len_buff_len
+ *     cdef myOVERLAPPED *ov
  */
 
 static PyObject *__pyx_pf_11iocpsupport_recvfrom(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
@@ -2937,80 +2937,80 @@ static PyObject *__pyx_pf_11iocpsupport_recvfrom(PyObject *__pyx_self, PyObject 
   __Pyx_SetupRefcountContext("recvfrom");
   __pyx_self = __pyx_self;
   if (unlikely(__pyx_kwds)) {
-	Py_ssize_t kw_args = PyDict_Size(__pyx_kwds);
-	PyObject* values[6] = {0,0,0,0,0,0};
-	switch (PyTuple_GET_SIZE(__pyx_args)) {
-	  case  6: values[5] = PyTuple_GET_ITEM(__pyx_args, 5);
-	  case  5: values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
-	  case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
-	  case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
-	  case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
-	  case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
-	  case  0: break;
-	  default: goto __pyx_L5_argtuple_error;
-	}
-	switch (PyTuple_GET_SIZE(__pyx_args)) {
-	  case  0:
-	  values[0] = PyDict_GetItem(__pyx_kwds, __pyx_kp_s);
-	  if (likely(values[0])) kw_args--;
-	  else goto __pyx_L5_argtuple_error;
-	  case  1:
-	  values[1] = PyDict_GetItem(__pyx_kwds, __pyx_kp_buff);
-	  if (likely(values[1])) kw_args--;
-	  else {
-		__Pyx_RaiseArgtupleInvalid("recvfrom", 0, 5, 6, 1); {__pyx_filename = __pyx_f[3]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	  }
-	  case  2:
-	  values[2] = PyDict_GetItem(__pyx_kwds, __pyx_kp_addr_buff);
-	  if (likely(values[2])) kw_args--;
-	  else {
-		__Pyx_RaiseArgtupleInvalid("recvfrom", 0, 5, 6, 2); {__pyx_filename = __pyx_f[3]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	  }
-	  case  3:
-	  values[3] = PyDict_GetItem(__pyx_kwds, __pyx_kp_addr_len_buff);
-	  if (likely(values[3])) kw_args--;
-	  else {
-		__Pyx_RaiseArgtupleInvalid("recvfrom", 0, 5, 6, 3); {__pyx_filename = __pyx_f[3]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	  }
-	  case  4:
-	  values[4] = PyDict_GetItem(__pyx_kwds, __pyx_kp_obj);
-	  if (likely(values[4])) kw_args--;
-	  else {
-		__Pyx_RaiseArgtupleInvalid("recvfrom", 0, 5, 6, 4); {__pyx_filename = __pyx_f[3]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	  }
-	  case  5:
-	  if (kw_args > 0) {
-		PyObject* value = PyDict_GetItem(__pyx_kwds, __pyx_kp_flags);
-		if (unlikely(value)) { values[5] = value; kw_args--; }
-	  }
-	}
-	if (unlikely(kw_args > 0)) {
-	  if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, PyTuple_GET_SIZE(__pyx_args), "recvfrom") < 0)) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	}
-	__pyx_v_s = __Pyx_PyInt_AsLong(values[0]); if (unlikely((__pyx_v_s == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	__pyx_v_buff = values[1];
-	__pyx_v_addr_buff = values[2];
-	__pyx_v_addr_len_buff = values[3];
-	__pyx_v_obj = values[4];
-	if (values[5]) {
-	  __pyx_v_flags = __Pyx_PyInt_AsUnsignedLong(values[5]); if (unlikely((__pyx_v_flags == (unsigned long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	} else {
-	  __pyx_v_flags = 0;
-	}
+    Py_ssize_t kw_args = PyDict_Size(__pyx_kwds);
+    PyObject* values[6] = {0,0,0,0,0,0};
+    switch (PyTuple_GET_SIZE(__pyx_args)) {
+      case  6: values[5] = PyTuple_GET_ITEM(__pyx_args, 5);
+      case  5: values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
+      case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
+      case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+      case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+      case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+      case  0: break;
+      default: goto __pyx_L5_argtuple_error;
+    }
+    switch (PyTuple_GET_SIZE(__pyx_args)) {
+      case  0:
+      values[0] = PyDict_GetItem(__pyx_kwds, __pyx_kp_s);
+      if (likely(values[0])) kw_args--;
+      else goto __pyx_L5_argtuple_error;
+      case  1:
+      values[1] = PyDict_GetItem(__pyx_kwds, __pyx_kp_buff);
+      if (likely(values[1])) kw_args--;
+      else {
+        __Pyx_RaiseArgtupleInvalid("recvfrom", 0, 5, 6, 1); {__pyx_filename = __pyx_f[3]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+      }
+      case  2:
+      values[2] = PyDict_GetItem(__pyx_kwds, __pyx_kp_addr_buff);
+      if (likely(values[2])) kw_args--;
+      else {
+        __Pyx_RaiseArgtupleInvalid("recvfrom", 0, 5, 6, 2); {__pyx_filename = __pyx_f[3]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+      }
+      case  3:
+      values[3] = PyDict_GetItem(__pyx_kwds, __pyx_kp_addr_len_buff);
+      if (likely(values[3])) kw_args--;
+      else {
+        __Pyx_RaiseArgtupleInvalid("recvfrom", 0, 5, 6, 3); {__pyx_filename = __pyx_f[3]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+      }
+      case  4:
+      values[4] = PyDict_GetItem(__pyx_kwds, __pyx_kp_obj);
+      if (likely(values[4])) kw_args--;
+      else {
+        __Pyx_RaiseArgtupleInvalid("recvfrom", 0, 5, 6, 4); {__pyx_filename = __pyx_f[3]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+      }
+      case  5:
+      if (kw_args > 0) {
+        PyObject* value = PyDict_GetItem(__pyx_kwds, __pyx_kp_flags);
+        if (unlikely(value)) { values[5] = value; kw_args--; }
+      }
+    }
+    if (unlikely(kw_args > 0)) {
+      if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, PyTuple_GET_SIZE(__pyx_args), "recvfrom") < 0)) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    }
+    __pyx_v_s = __Pyx_PyInt_AsLong(values[0]); if (unlikely((__pyx_v_s == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_buff = values[1];
+    __pyx_v_addr_buff = values[2];
+    __pyx_v_addr_len_buff = values[3];
+    __pyx_v_obj = values[4];
+    if (values[5]) {
+      __pyx_v_flags = __Pyx_PyInt_AsUnsignedLong(values[5]); if (unlikely((__pyx_v_flags == (unsigned long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    } else {
+      __pyx_v_flags = 0;
+    }
   } else {
-	__pyx_v_flags = 0;
-	switch (PyTuple_GET_SIZE(__pyx_args)) {
-	  case  6:
-	  __pyx_v_flags = __Pyx_PyInt_AsUnsignedLong(PyTuple_GET_ITEM(__pyx_args, 5)); if (unlikely((__pyx_v_flags == (unsigned long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	  case  5:
-	  __pyx_v_obj = PyTuple_GET_ITEM(__pyx_args, 4);
-	  __pyx_v_addr_len_buff = PyTuple_GET_ITEM(__pyx_args, 3);
-	  __pyx_v_addr_buff = PyTuple_GET_ITEM(__pyx_args, 2);
-	  __pyx_v_buff = PyTuple_GET_ITEM(__pyx_args, 1);
-	  __pyx_v_s = __Pyx_PyInt_AsLong(PyTuple_GET_ITEM(__pyx_args, 0)); if (unlikely((__pyx_v_s == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	  break;
-	  default: goto __pyx_L5_argtuple_error;
-	}
+    __pyx_v_flags = 0;
+    switch (PyTuple_GET_SIZE(__pyx_args)) {
+      case  6:
+      __pyx_v_flags = __Pyx_PyInt_AsUnsignedLong(PyTuple_GET_ITEM(__pyx_args, 5)); if (unlikely((__pyx_v_flags == (unsigned long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+      case  5:
+      __pyx_v_obj = PyTuple_GET_ITEM(__pyx_args, 4);
+      __pyx_v_addr_len_buff = PyTuple_GET_ITEM(__pyx_args, 3);
+      __pyx_v_addr_buff = PyTuple_GET_ITEM(__pyx_args, 2);
+      __pyx_v_buff = PyTuple_GET_ITEM(__pyx_args, 1);
+      __pyx_v_s = __Pyx_PyInt_AsLong(PyTuple_GET_ITEM(__pyx_args, 0)); if (unlikely((__pyx_v_s == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+      break;
+      default: goto __pyx_L5_argtuple_error;
+    }
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
@@ -3021,175 +3021,175 @@ static PyObject *__pyx_pf_11iocpsupport_recvfrom(PyObject *__pyx_self, PyObject 
   __pyx_L4_argument_unpacking_done:;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":46
- *	 cdef int *c_addr_len_buff
+ *     cdef int *c_addr_len_buff
  * 
- *	 PyObject_AsWriteBuffer(buff, <void **>&ws_buf.buf, <int *>&ws_buf.len)			 # <<<<<<<<<<<<<<
- *	 PyObject_AsWriteBuffer(addr_buff, <void **>&c_addr_buff, &c_addr_buff_len)
- *	 PyObject_AsWriteBuffer(addr_len_buff, <void **>&c_addr_len_buff, &c_addr_len_buff_len)
+ *     PyObject_AsWriteBuffer(buff, <void **>&ws_buf.buf, <int *>&ws_buf.len)             # <<<<<<<<<<<<<<
+ *     PyObject_AsWriteBuffer(addr_buff, <void **>&c_addr_buff, &c_addr_buff_len)
+ *     PyObject_AsWriteBuffer(addr_len_buff, <void **>&c_addr_len_buff, &c_addr_len_buff_len)
  */
   __pyx_t_1 = PyObject_AsWriteBuffer(__pyx_v_buff, ((void **)(&__pyx_v_ws_buf.buf)), ((int *)(&__pyx_v_ws_buf.len))); if (unlikely(__pyx_t_1 == -1)) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 46; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":47
  * 
- *	 PyObject_AsWriteBuffer(buff, <void **>&ws_buf.buf, <int *>&ws_buf.len)
- *	 PyObject_AsWriteBuffer(addr_buff, <void **>&c_addr_buff, &c_addr_buff_len)			 # <<<<<<<<<<<<<<
- *	 PyObject_AsWriteBuffer(addr_len_buff, <void **>&c_addr_len_buff, &c_addr_len_buff_len)
+ *     PyObject_AsWriteBuffer(buff, <void **>&ws_buf.buf, <int *>&ws_buf.len)
+ *     PyObject_AsWriteBuffer(addr_buff, <void **>&c_addr_buff, &c_addr_buff_len)             # <<<<<<<<<<<<<<
+ *     PyObject_AsWriteBuffer(addr_len_buff, <void **>&c_addr_len_buff, &c_addr_len_buff_len)
  * 
  */
   __pyx_t_1 = PyObject_AsWriteBuffer(__pyx_v_addr_buff, ((void **)(&__pyx_v_c_addr_buff)), (&__pyx_v_c_addr_buff_len)); if (unlikely(__pyx_t_1 == -1)) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 47; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":48
- *	 PyObject_AsWriteBuffer(buff, <void **>&ws_buf.buf, <int *>&ws_buf.len)
- *	 PyObject_AsWriteBuffer(addr_buff, <void **>&c_addr_buff, &c_addr_buff_len)
- *	 PyObject_AsWriteBuffer(addr_len_buff, <void **>&c_addr_len_buff, &c_addr_len_buff_len)			 # <<<<<<<<<<<<<<
+ *     PyObject_AsWriteBuffer(buff, <void **>&ws_buf.buf, <int *>&ws_buf.len)
+ *     PyObject_AsWriteBuffer(addr_buff, <void **>&c_addr_buff, &c_addr_buff_len)
+ *     PyObject_AsWriteBuffer(addr_len_buff, <void **>&c_addr_len_buff, &c_addr_len_buff_len)             # <<<<<<<<<<<<<<
  * 
- *	 if c_addr_len_buff_len != sizeof(int):
+ *     if c_addr_len_buff_len != sizeof(int):
  */
   __pyx_t_1 = PyObject_AsWriteBuffer(__pyx_v_addr_len_buff, ((void **)(&__pyx_v_c_addr_len_buff)), (&__pyx_v_c_addr_len_buff_len)); if (unlikely(__pyx_t_1 == -1)) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 48; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":50
- *	 PyObject_AsWriteBuffer(addr_len_buff, <void **>&c_addr_len_buff, &c_addr_len_buff_len)
+ *     PyObject_AsWriteBuffer(addr_len_buff, <void **>&c_addr_len_buff, &c_addr_len_buff_len)
  * 
- *	 if c_addr_len_buff_len != sizeof(int):			 # <<<<<<<<<<<<<<
- *		 raise ValueError, 'length of address length buffer needs to be sizeof(int)'
+ *     if c_addr_len_buff_len != sizeof(int):             # <<<<<<<<<<<<<<
+ *         raise ValueError, 'length of address length buffer needs to be sizeof(int)'
  * 
  */
   __pyx_t_2 = (__pyx_v_c_addr_len_buff_len != (sizeof(int)));
   if (__pyx_t_2) {
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":51
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":51
  * 
- *	 if c_addr_len_buff_len != sizeof(int):
- *		 raise ValueError, 'length of address length buffer needs to be sizeof(int)'			 # <<<<<<<<<<<<<<
+ *     if c_addr_len_buff_len != sizeof(int):
+ *         raise ValueError, 'length of address length buffer needs to be sizeof(int)'             # <<<<<<<<<<<<<<
  * 
- *	 c_addr_len_buff[0] = c_addr_buff_len
+ *     c_addr_len_buff[0] = c_addr_buff_len
  */
-	__Pyx_Raise(__pyx_builtin_ValueError, __pyx_kp_11, 0);
-	{__pyx_filename = __pyx_f[3]; __pyx_lineno = 51; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-	goto __pyx_L6;
+    __Pyx_Raise(__pyx_builtin_ValueError, __pyx_kp_11, 0);
+    {__pyx_filename = __pyx_f[3]; __pyx_lineno = 51; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    goto __pyx_L6;
   }
   __pyx_L6:;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":53
- *		 raise ValueError, 'length of address length buffer needs to be sizeof(int)'
+ *         raise ValueError, 'length of address length buffer needs to be sizeof(int)'
  * 
- *	 c_addr_len_buff[0] = c_addr_buff_len			 # <<<<<<<<<<<<<<
+ *     c_addr_len_buff[0] = c_addr_buff_len             # <<<<<<<<<<<<<<
  * 
- *	 ov = makeOV()
+ *     ov = makeOV()
  */
   (__pyx_v_c_addr_len_buff[0]) = __pyx_v_c_addr_buff_len;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":55
- *	 c_addr_len_buff[0] = c_addr_buff_len
+ *     c_addr_len_buff[0] = c_addr_buff_len
  * 
- *	 ov = makeOV()			 # <<<<<<<<<<<<<<
- *	 if obj is not None:
- *		 ov.obj = <PyObject *>obj
+ *     ov = makeOV()             # <<<<<<<<<<<<<<
+ *     if obj is not None:
+ *         ov.obj = <PyObject *>obj
  */
   __pyx_t_3 = __pyx_f_11iocpsupport_makeOV(); if (unlikely(__pyx_t_3 == NULL)) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 55; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_ov = __pyx_t_3;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":56
  * 
- *	 ov = makeOV()
- *	 if obj is not None:			 # <<<<<<<<<<<<<<
- *		 ov.obj = <PyObject *>obj
+ *     ov = makeOV()
+ *     if obj is not None:             # <<<<<<<<<<<<<<
+ *         ov.obj = <PyObject *>obj
  * 
  */
   __pyx_t_2 = (__pyx_v_obj != Py_None);
   if (__pyx_t_2) {
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":57
- *	 ov = makeOV()
- *	 if obj is not None:
- *		 ov.obj = <PyObject *>obj			 # <<<<<<<<<<<<<<
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":57
+ *     ov = makeOV()
+ *     if obj is not None:
+ *         ov.obj = <PyObject *>obj             # <<<<<<<<<<<<<<
  * 
- *	 rc = WSARecvFrom(s, &ws_buf, 1, &bytes, &flags, c_addr_buff, c_addr_len_buff, <OVERLAPPED *>ov, NULL)
+ *     rc = WSARecvFrom(s, &ws_buf, 1, &bytes, &flags, c_addr_buff, c_addr_len_buff, <OVERLAPPED *>ov, NULL)
  */
-	__pyx_v_ov->obj = ((struct PyObject *)__pyx_v_obj);
-	goto __pyx_L7;
+    __pyx_v_ov->obj = ((struct PyObject *)__pyx_v_obj);
+    goto __pyx_L7;
   }
   __pyx_L7:;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":59
- *		 ov.obj = <PyObject *>obj
+ *         ov.obj = <PyObject *>obj
  * 
- *	 rc = WSARecvFrom(s, &ws_buf, 1, &bytes, &flags, c_addr_buff, c_addr_len_buff, <OVERLAPPED *>ov, NULL)			 # <<<<<<<<<<<<<<
+ *     rc = WSARecvFrom(s, &ws_buf, 1, &bytes, &flags, c_addr_buff, c_addr_len_buff, <OVERLAPPED *>ov, NULL)             # <<<<<<<<<<<<<<
  * 
- *	 if rc == SOCKET_ERROR:
+ *     if rc == SOCKET_ERROR:
  */
   __pyx_v_rc = WSARecvFrom(__pyx_v_s, (&__pyx_v_ws_buf), 1, (&__pyx_v_bytes), (&__pyx_v_flags), __pyx_v_c_addr_buff, __pyx_v_c_addr_len_buff, ((OVERLAPPED *)__pyx_v_ov), NULL);
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":61
- *	 rc = WSARecvFrom(s, &ws_buf, 1, &bytes, &flags, c_addr_buff, c_addr_len_buff, <OVERLAPPED *>ov, NULL)
+ *     rc = WSARecvFrom(s, &ws_buf, 1, &bytes, &flags, c_addr_buff, c_addr_len_buff, <OVERLAPPED *>ov, NULL)
  * 
- *	 if rc == SOCKET_ERROR:			 # <<<<<<<<<<<<<<
- *		 rc = WSAGetLastError()
- *		 if rc != ERROR_IO_PENDING:
+ *     if rc == SOCKET_ERROR:             # <<<<<<<<<<<<<<
+ *         rc = WSAGetLastError()
+ *         if rc != ERROR_IO_PENDING:
  */
   __pyx_t_2 = (__pyx_v_rc == SOCKET_ERROR);
   if (__pyx_t_2) {
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":62
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":62
  * 
- *	 if rc == SOCKET_ERROR:
- *		 rc = WSAGetLastError()			 # <<<<<<<<<<<<<<
- *		 if rc != ERROR_IO_PENDING:
- *			 return rc, 0
+ *     if rc == SOCKET_ERROR:
+ *         rc = WSAGetLastError()             # <<<<<<<<<<<<<<
+ *         if rc != ERROR_IO_PENDING:
+ *             return rc, 0
  */
-	__pyx_v_rc = WSAGetLastError();
+    __pyx_v_rc = WSAGetLastError();
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":63
- *	 if rc == SOCKET_ERROR:
- *		 rc = WSAGetLastError()
- *		 if rc != ERROR_IO_PENDING:			 # <<<<<<<<<<<<<<
- *			 return rc, 0
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":63
+ *     if rc == SOCKET_ERROR:
+ *         rc = WSAGetLastError()
+ *         if rc != ERROR_IO_PENDING:             # <<<<<<<<<<<<<<
+ *             return rc, 0
  * 
  */
-	__pyx_t_2 = (__pyx_v_rc != ERROR_IO_PENDING);
-	if (__pyx_t_2) {
+    __pyx_t_2 = (__pyx_v_rc != ERROR_IO_PENDING);
+    if (__pyx_t_2) {
 
-	  /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":64
- *		 rc = WSAGetLastError()
- *		 if rc != ERROR_IO_PENDING:
- *			 return rc, 0			 # <<<<<<<<<<<<<<
+      /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":64
+ *         rc = WSAGetLastError()
+ *         if rc != ERROR_IO_PENDING:
+ *             return rc, 0             # <<<<<<<<<<<<<<
  * 
- *	 Py_XINCREF(obj)
+ *     Py_XINCREF(obj)
  */
-	  __Pyx_XDECREF(__pyx_r);
-	  __pyx_t_4 = PyInt_FromLong(__pyx_v_rc); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 64; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-	  __Pyx_GOTREF(__pyx_t_4);
-	  __pyx_t_5 = PyTuple_New(2); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 64; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-	  __Pyx_GOTREF(((PyObject *)__pyx_t_5));
-	  PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4);
-	  __Pyx_GIVEREF(__pyx_t_4);
-	  __Pyx_INCREF(__pyx_int_0);
-	  PyTuple_SET_ITEM(__pyx_t_5, 1, __pyx_int_0);
-	  __Pyx_GIVEREF(__pyx_int_0);
-	  __pyx_t_4 = 0;
-	  __pyx_r = ((PyObject *)__pyx_t_5);
-	  __pyx_t_5 = 0;
-	  goto __pyx_L0;
-	  goto __pyx_L9;
-	}
-	__pyx_L9:;
-	goto __pyx_L8;
+      __Pyx_XDECREF(__pyx_r);
+      __pyx_t_4 = PyInt_FromLong(__pyx_v_rc); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 64; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_4);
+      __pyx_t_5 = PyTuple_New(2); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 64; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(((PyObject *)__pyx_t_5));
+      PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4);
+      __Pyx_GIVEREF(__pyx_t_4);
+      __Pyx_INCREF(__pyx_int_0);
+      PyTuple_SET_ITEM(__pyx_t_5, 1, __pyx_int_0);
+      __Pyx_GIVEREF(__pyx_int_0);
+      __pyx_t_4 = 0;
+      __pyx_r = ((PyObject *)__pyx_t_5);
+      __pyx_t_5 = 0;
+      goto __pyx_L0;
+      goto __pyx_L9;
+    }
+    __pyx_L9:;
+    goto __pyx_L8;
   }
   __pyx_L8:;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":66
- *			 return rc, 0
+ *             return rc, 0
  * 
- *	 Py_XINCREF(obj)			 # <<<<<<<<<<<<<<
- *	 return rc, bytes
+ *     Py_XINCREF(obj)             # <<<<<<<<<<<<<<
+ *     return rc, bytes
  * 
  */
   Py_XINCREF(__pyx_v_obj);
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsarecv.pxi":67
  * 
- *	 Py_XINCREF(obj)
- *	 return rc, bytes			 # <<<<<<<<<<<<<<
+ *     Py_XINCREF(obj)
+ *     return rc, bytes             # <<<<<<<<<<<<<<
  * 
  */
   __Pyx_XDECREF(__pyx_r);
@@ -3226,9 +3226,9 @@ static PyObject *__pyx_pf_11iocpsupport_recvfrom(PyObject *__pyx_self, PyObject 
 /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsasend.pxi":5
  * 
  * 
- * def send(long s, object buff, object obj, unsigned long flags = 0):			 # <<<<<<<<<<<<<<
- *	 cdef int rc
- *	 cdef myOVERLAPPED *ov
+ * def send(long s, object buff, object obj, unsigned long flags = 0):             # <<<<<<<<<<<<<<
+ *     cdef int rc
+ *     cdef myOVERLAPPED *ov
  */
 
 static PyObject *__pyx_pf_11iocpsupport_send(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
@@ -3252,62 +3252,62 @@ static PyObject *__pyx_pf_11iocpsupport_send(PyObject *__pyx_self, PyObject *__p
   __Pyx_SetupRefcountContext("send");
   __pyx_self = __pyx_self;
   if (unlikely(__pyx_kwds)) {
-	Py_ssize_t kw_args = PyDict_Size(__pyx_kwds);
-	PyObject* values[4] = {0,0,0,0};
-	switch (PyTuple_GET_SIZE(__pyx_args)) {
-	  case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
-	  case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
-	  case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
-	  case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
-	  case  0: break;
-	  default: goto __pyx_L5_argtuple_error;
-	}
-	switch (PyTuple_GET_SIZE(__pyx_args)) {
-	  case  0:
-	  values[0] = PyDict_GetItem(__pyx_kwds, __pyx_kp_s);
-	  if (likely(values[0])) kw_args--;
-	  else goto __pyx_L5_argtuple_error;
-	  case  1:
-	  values[1] = PyDict_GetItem(__pyx_kwds, __pyx_kp_buff);
-	  if (likely(values[1])) kw_args--;
-	  else {
-		__Pyx_RaiseArgtupleInvalid("send", 0, 3, 4, 1); {__pyx_filename = __pyx_f[4]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	  }
-	  case  2:
-	  values[2] = PyDict_GetItem(__pyx_kwds, __pyx_kp_obj);
-	  if (likely(values[2])) kw_args--;
-	  else {
-		__Pyx_RaiseArgtupleInvalid("send", 0, 3, 4, 2); {__pyx_filename = __pyx_f[4]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	  }
-	  case  3:
-	  if (kw_args > 0) {
-		PyObject* value = PyDict_GetItem(__pyx_kwds, __pyx_kp_flags);
-		if (unlikely(value)) { values[3] = value; kw_args--; }
-	  }
-	}
-	if (unlikely(kw_args > 0)) {
-	  if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, PyTuple_GET_SIZE(__pyx_args), "send") < 0)) {__pyx_filename = __pyx_f[4]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	}
-	__pyx_v_s = __Pyx_PyInt_AsLong(values[0]); if (unlikely((__pyx_v_s == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[4]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	__pyx_v_buff = values[1];
-	__pyx_v_obj = values[2];
-	if (values[3]) {
-	  __pyx_v_flags = __Pyx_PyInt_AsUnsignedLong(values[3]); if (unlikely((__pyx_v_flags == (unsigned long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[4]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	} else {
-	  __pyx_v_flags = 0;
-	}
+    Py_ssize_t kw_args = PyDict_Size(__pyx_kwds);
+    PyObject* values[4] = {0,0,0,0};
+    switch (PyTuple_GET_SIZE(__pyx_args)) {
+      case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
+      case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+      case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+      case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+      case  0: break;
+      default: goto __pyx_L5_argtuple_error;
+    }
+    switch (PyTuple_GET_SIZE(__pyx_args)) {
+      case  0:
+      values[0] = PyDict_GetItem(__pyx_kwds, __pyx_kp_s);
+      if (likely(values[0])) kw_args--;
+      else goto __pyx_L5_argtuple_error;
+      case  1:
+      values[1] = PyDict_GetItem(__pyx_kwds, __pyx_kp_buff);
+      if (likely(values[1])) kw_args--;
+      else {
+        __Pyx_RaiseArgtupleInvalid("send", 0, 3, 4, 1); {__pyx_filename = __pyx_f[4]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+      }
+      case  2:
+      values[2] = PyDict_GetItem(__pyx_kwds, __pyx_kp_obj);
+      if (likely(values[2])) kw_args--;
+      else {
+        __Pyx_RaiseArgtupleInvalid("send", 0, 3, 4, 2); {__pyx_filename = __pyx_f[4]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+      }
+      case  3:
+      if (kw_args > 0) {
+        PyObject* value = PyDict_GetItem(__pyx_kwds, __pyx_kp_flags);
+        if (unlikely(value)) { values[3] = value; kw_args--; }
+      }
+    }
+    if (unlikely(kw_args > 0)) {
+      if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, PyTuple_GET_SIZE(__pyx_args), "send") < 0)) {__pyx_filename = __pyx_f[4]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    }
+    __pyx_v_s = __Pyx_PyInt_AsLong(values[0]); if (unlikely((__pyx_v_s == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[4]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_buff = values[1];
+    __pyx_v_obj = values[2];
+    if (values[3]) {
+      __pyx_v_flags = __Pyx_PyInt_AsUnsignedLong(values[3]); if (unlikely((__pyx_v_flags == (unsigned long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[4]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    } else {
+      __pyx_v_flags = 0;
+    }
   } else {
-	__pyx_v_flags = 0;
-	switch (PyTuple_GET_SIZE(__pyx_args)) {
-	  case  4:
-	  __pyx_v_flags = __Pyx_PyInt_AsUnsignedLong(PyTuple_GET_ITEM(__pyx_args, 3)); if (unlikely((__pyx_v_flags == (unsigned long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[4]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	  case  3:
-	  __pyx_v_obj = PyTuple_GET_ITEM(__pyx_args, 2);
-	  __pyx_v_buff = PyTuple_GET_ITEM(__pyx_args, 1);
-	  __pyx_v_s = __Pyx_PyInt_AsLong(PyTuple_GET_ITEM(__pyx_args, 0)); if (unlikely((__pyx_v_s == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[4]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-	  break;
-	  default: goto __pyx_L5_argtuple_error;
-	}
+    __pyx_v_flags = 0;
+    switch (PyTuple_GET_SIZE(__pyx_args)) {
+      case  4:
+      __pyx_v_flags = __Pyx_PyInt_AsUnsignedLong(PyTuple_GET_ITEM(__pyx_args, 3)); if (unlikely((__pyx_v_flags == (unsigned long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[4]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+      case  3:
+      __pyx_v_obj = PyTuple_GET_ITEM(__pyx_args, 2);
+      __pyx_v_buff = PyTuple_GET_ITEM(__pyx_args, 1);
+      __pyx_v_s = __Pyx_PyInt_AsLong(PyTuple_GET_ITEM(__pyx_args, 0)); if (unlikely((__pyx_v_s == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[4]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+      break;
+      default: goto __pyx_L5_argtuple_error;
+    }
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
@@ -3318,127 +3318,127 @@ static PyObject *__pyx_pf_11iocpsupport_send(PyObject *__pyx_self, PyObject *__p
   __pyx_L4_argument_unpacking_done:;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsasend.pxi":11
- *	 cdef unsigned long bytes
+ *     cdef unsigned long bytes
  * 
- *	 PyObject_AsReadBuffer(buff, <void **>&ws_buf.buf, <int *>&ws_buf.len)			 # <<<<<<<<<<<<<<
+ *     PyObject_AsReadBuffer(buff, <void **>&ws_buf.buf, <int *>&ws_buf.len)             # <<<<<<<<<<<<<<
  * 
- *	 ov = makeOV()
+ *     ov = makeOV()
  */
   __pyx_t_1 = PyObject_AsReadBuffer(__pyx_v_buff, ((void **)(&__pyx_v_ws_buf.buf)), ((int *)(&__pyx_v_ws_buf.len))); if (unlikely(__pyx_t_1 == -1)) {__pyx_filename = __pyx_f[4]; __pyx_lineno = 11; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsasend.pxi":13
- *	 PyObject_AsReadBuffer(buff, <void **>&ws_buf.buf, <int *>&ws_buf.len)
+ *     PyObject_AsReadBuffer(buff, <void **>&ws_buf.buf, <int *>&ws_buf.len)
  * 
- *	 ov = makeOV()			 # <<<<<<<<<<<<<<
- *	 if obj is not None:
- *		 ov.obj = <PyObject *>obj
+ *     ov = makeOV()             # <<<<<<<<<<<<<<
+ *     if obj is not None:
+ *         ov.obj = <PyObject *>obj
  */
   __pyx_t_2 = __pyx_f_11iocpsupport_makeOV(); if (unlikely(__pyx_t_2 == NULL)) {__pyx_filename = __pyx_f[4]; __pyx_lineno = 13; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_ov = __pyx_t_2;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsasend.pxi":14
  * 
- *	 ov = makeOV()
- *	 if obj is not None:			 # <<<<<<<<<<<<<<
- *		 ov.obj = <PyObject *>obj
+ *     ov = makeOV()
+ *     if obj is not None:             # <<<<<<<<<<<<<<
+ *         ov.obj = <PyObject *>obj
  * 
  */
   __pyx_t_3 = (__pyx_v_obj != Py_None);
   if (__pyx_t_3) {
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsasend.pxi":15
- *	 ov = makeOV()
- *	 if obj is not None:
- *		 ov.obj = <PyObject *>obj			 # <<<<<<<<<<<<<<
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsasend.pxi":15
+ *     ov = makeOV()
+ *     if obj is not None:
+ *         ov.obj = <PyObject *>obj             # <<<<<<<<<<<<<<
  * 
- *	 rc = WSASend(s, &ws_buf, 1, &bytes, flags, <OVERLAPPED *>ov, NULL)
+ *     rc = WSASend(s, &ws_buf, 1, &bytes, flags, <OVERLAPPED *>ov, NULL)
  */
-	__pyx_v_ov->obj = ((struct PyObject *)__pyx_v_obj);
-	goto __pyx_L6;
+    __pyx_v_ov->obj = ((struct PyObject *)__pyx_v_obj);
+    goto __pyx_L6;
   }
   __pyx_L6:;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsasend.pxi":17
- *		 ov.obj = <PyObject *>obj
+ *         ov.obj = <PyObject *>obj
  * 
- *	 rc = WSASend(s, &ws_buf, 1, &bytes, flags, <OVERLAPPED *>ov, NULL)			 # <<<<<<<<<<<<<<
+ *     rc = WSASend(s, &ws_buf, 1, &bytes, flags, <OVERLAPPED *>ov, NULL)             # <<<<<<<<<<<<<<
  * 
- *	 if rc == SOCKET_ERROR:
+ *     if rc == SOCKET_ERROR:
  */
   __pyx_v_rc = WSASend(__pyx_v_s, (&__pyx_v_ws_buf), 1, (&__pyx_v_bytes), __pyx_v_flags, ((OVERLAPPED *)__pyx_v_ov), NULL);
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsasend.pxi":19
- *	 rc = WSASend(s, &ws_buf, 1, &bytes, flags, <OVERLAPPED *>ov, NULL)
+ *     rc = WSASend(s, &ws_buf, 1, &bytes, flags, <OVERLAPPED *>ov, NULL)
  * 
- *	 if rc == SOCKET_ERROR:			 # <<<<<<<<<<<<<<
- *		 rc = WSAGetLastError()
- *		 if rc != ERROR_IO_PENDING:
+ *     if rc == SOCKET_ERROR:             # <<<<<<<<<<<<<<
+ *         rc = WSAGetLastError()
+ *         if rc != ERROR_IO_PENDING:
  */
   __pyx_t_3 = (__pyx_v_rc == SOCKET_ERROR);
   if (__pyx_t_3) {
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsasend.pxi":20
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsasend.pxi":20
  * 
- *	 if rc == SOCKET_ERROR:
- *		 rc = WSAGetLastError()			 # <<<<<<<<<<<<<<
- *		 if rc != ERROR_IO_PENDING:
- *			 return rc, bytes
+ *     if rc == SOCKET_ERROR:
+ *         rc = WSAGetLastError()             # <<<<<<<<<<<<<<
+ *         if rc != ERROR_IO_PENDING:
+ *             return rc, bytes
  */
-	__pyx_v_rc = WSAGetLastError();
+    __pyx_v_rc = WSAGetLastError();
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsasend.pxi":21
- *	 if rc == SOCKET_ERROR:
- *		 rc = WSAGetLastError()
- *		 if rc != ERROR_IO_PENDING:			 # <<<<<<<<<<<<<<
- *			 return rc, bytes
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsasend.pxi":21
+ *     if rc == SOCKET_ERROR:
+ *         rc = WSAGetLastError()
+ *         if rc != ERROR_IO_PENDING:             # <<<<<<<<<<<<<<
+ *             return rc, bytes
  * 
  */
-	__pyx_t_3 = (__pyx_v_rc != ERROR_IO_PENDING);
-	if (__pyx_t_3) {
+    __pyx_t_3 = (__pyx_v_rc != ERROR_IO_PENDING);
+    if (__pyx_t_3) {
 
-	  /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsasend.pxi":22
- *		 rc = WSAGetLastError()
- *		 if rc != ERROR_IO_PENDING:
- *			 return rc, bytes			 # <<<<<<<<<<<<<<
+      /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsasend.pxi":22
+ *         rc = WSAGetLastError()
+ *         if rc != ERROR_IO_PENDING:
+ *             return rc, bytes             # <<<<<<<<<<<<<<
  * 
- *	 Py_XINCREF(obj)
+ *     Py_XINCREF(obj)
  */
-	  __Pyx_XDECREF(__pyx_r);
-	  __pyx_t_4 = PyInt_FromLong(__pyx_v_rc); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[4]; __pyx_lineno = 22; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-	  __Pyx_GOTREF(__pyx_t_4);
-	  __pyx_t_5 = PyLong_FromUnsignedLong(__pyx_v_bytes); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[4]; __pyx_lineno = 22; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-	  __Pyx_GOTREF(__pyx_t_5);
-	  __pyx_t_6 = PyTuple_New(2); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[4]; __pyx_lineno = 22; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-	  __Pyx_GOTREF(((PyObject *)__pyx_t_6));
-	  PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_4);
-	  __Pyx_GIVEREF(__pyx_t_4);
-	  PyTuple_SET_ITEM(__pyx_t_6, 1, __pyx_t_5);
-	  __Pyx_GIVEREF(__pyx_t_5);
-	  __pyx_t_4 = 0;
-	  __pyx_t_5 = 0;
-	  __pyx_r = ((PyObject *)__pyx_t_6);
-	  __pyx_t_6 = 0;
-	  goto __pyx_L0;
-	  goto __pyx_L8;
-	}
-	__pyx_L8:;
-	goto __pyx_L7;
+      __Pyx_XDECREF(__pyx_r);
+      __pyx_t_4 = PyInt_FromLong(__pyx_v_rc); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[4]; __pyx_lineno = 22; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_4);
+      __pyx_t_5 = PyLong_FromUnsignedLong(__pyx_v_bytes); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[4]; __pyx_lineno = 22; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_5);
+      __pyx_t_6 = PyTuple_New(2); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[4]; __pyx_lineno = 22; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(((PyObject *)__pyx_t_6));
+      PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_4);
+      __Pyx_GIVEREF(__pyx_t_4);
+      PyTuple_SET_ITEM(__pyx_t_6, 1, __pyx_t_5);
+      __Pyx_GIVEREF(__pyx_t_5);
+      __pyx_t_4 = 0;
+      __pyx_t_5 = 0;
+      __pyx_r = ((PyObject *)__pyx_t_6);
+      __pyx_t_6 = 0;
+      goto __pyx_L0;
+      goto __pyx_L8;
+    }
+    __pyx_L8:;
+    goto __pyx_L7;
   }
   __pyx_L7:;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsasend.pxi":24
- *			 return rc, bytes
+ *             return rc, bytes
  * 
- *	 Py_XINCREF(obj)			 # <<<<<<<<<<<<<<
- *	 return rc, bytes
+ *     Py_XINCREF(obj)             # <<<<<<<<<<<<<<
+ *     return rc, bytes
  * 
  */
   Py_XINCREF(__pyx_v_obj);
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsasend.pxi":25
  * 
- *	 Py_XINCREF(obj)
- *	 return rc, bytes			 # <<<<<<<<<<<<<<
+ *     Py_XINCREF(obj)
+ *     return rc, bytes             # <<<<<<<<<<<<<<
  * 
  * 
  */
@@ -3654,15 +3654,15 @@ static void __pyx_init_filenames(void); /*proto*/
 
 #if PY_MAJOR_VERSION >= 3
 static struct PyModuleDef __pyx_moduledef = {
-	PyModuleDef_HEAD_INIT,
-	__Pyx_NAMESTR("iocpsupport"),
-	0, /* m_doc */
-	-1, /* m_size */
-	__pyx_methods /* m_methods */,
-	NULL, /* m_reload */
-	NULL, /* m_traverse */
-	NULL, /* m_clear */
-	NULL /* m_free */
+    PyModuleDef_HEAD_INIT,
+    __Pyx_NAMESTR("iocpsupport"),
+    0, /* m_doc */
+    -1, /* m_size */
+    __pyx_methods /* m_methods */,
+    NULL, /* m_reload */
+    NULL, /* m_traverse */
+    NULL, /* m_clear */
+    NULL /* m_free */
 };
 #endif
 
@@ -3745,10 +3745,10 @@ PyMODINIT_FUNC PyInit_iocpsupport(void)
   void* __pyx_refchk = NULL;
   __Pyx_Refnanny = __Pyx_ImportRefcountAPI("refnanny");
   if (!__Pyx_Refnanny) {
-	  PyErr_Clear();
-	  __Pyx_Refnanny = __Pyx_ImportRefcountAPI("Cython.Runtime.refnanny");
-	  if (!__Pyx_Refnanny)
-		  Py_FatalError("failed to import refnanny module");
+      PyErr_Clear();
+      __Pyx_Refnanny = __Pyx_ImportRefcountAPI("Cython.Runtime.refnanny");
+      if (!__Pyx_Refnanny)
+          Py_FatalError("failed to import refnanny module");
   }
   __pyx_refchk = __Pyx_Refnanny->NewContext("PyMODINIT_FUNC PyInit_iocpsupport(void)", __LINE__, __FILE__);
   #endif
@@ -3777,7 +3777,7 @@ PyMODINIT_FUNC PyInit_iocpsupport(void)
   if (!__pyx_b) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
   if (__Pyx_SetAttrString(__pyx_m, "__builtins__", __pyx_b) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
   if (__pyx_module_is_main_iocpsupport) {
-	if (__Pyx_SetAttrString(__pyx_m, "__name__", __pyx_kp___main__) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+    if (__Pyx_SetAttrString(__pyx_m, "__name__", __pyx_kp___main__) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
   }
   /*--- Builtin init code ---*/
   if (unlikely(__Pyx_InitCachedBuiltins() < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -3793,11 +3793,11 @@ PyMODINIT_FUNC PyInit_iocpsupport(void)
   /*--- Execution code ---*/
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":121
- *	 raise WindowsError(message, err)
+ *     raise WindowsError(message, err)
  * 
- * class Event:			 # <<<<<<<<<<<<<<
- *	 def __init__(self, callback, owner, **kw):
- *		 self.callback = callback
+ * class Event:             # <<<<<<<<<<<<<<
+ *     def __init__(self, callback, owner, **kw):
+ *         self.callback = callback
  */
   __pyx_1 = PyDict_New(); if (unlikely(!__pyx_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 121; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(((PyObject *)__pyx_1));
@@ -3807,9 +3807,9 @@ PyMODINIT_FUNC PyInit_iocpsupport(void)
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":122
  * 
  * class Event:
- *	 def __init__(self, callback, owner, **kw):			 # <<<<<<<<<<<<<<
- *		 self.callback = callback
- *		 self.owner = owner
+ *     def __init__(self, callback, owner, **kw):             # <<<<<<<<<<<<<<
+ *         self.callback = callback
+ *         self.owner = owner
  */
   __pyx_t_1 = PyCFunction_New(&__pyx_mdef_11iocpsupport_5Event___init__, 0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 122; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -3823,11 +3823,11 @@ PyMODINIT_FUNC PyInit_iocpsupport(void)
   __Pyx_DECREF(((PyObject *)__pyx_1)); __pyx_1 = 0;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":240
- *	 return wsa_pi.iAddressFamily
+ *     return wsa_pi.iAddressFamily
  * 
- * import socket # for WSAStartup			 # <<<<<<<<<<<<<<
+ * import socket # for WSAStartup             # <<<<<<<<<<<<<<
  * if not initWinsockPointers():
- *	 raise ValueError, 'Failed to initialize Winsock function vectors'
+ *     raise ValueError, 'Failed to initialize Winsock function vectors'
  */
   __pyx_3 = __Pyx_Import(__pyx_kp_socket, 0); if (unlikely(!__pyx_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 240; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_3);
@@ -3837,30 +3837,30 @@ PyMODINIT_FUNC PyInit_iocpsupport(void)
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":241
  * 
  * import socket # for WSAStartup
- * if not initWinsockPointers():			 # <<<<<<<<<<<<<<
- *	 raise ValueError, 'Failed to initialize Winsock function vectors'
+ * if not initWinsockPointers():             # <<<<<<<<<<<<<<
+ *     raise ValueError, 'Failed to initialize Winsock function vectors'
  * 
  */
   __pyx_t_2 = (!initWinsockPointers());
   if (__pyx_t_2) {
 
-	/* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":242
+    /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":242
  * import socket # for WSAStartup
  * if not initWinsockPointers():
- *	 raise ValueError, 'Failed to initialize Winsock function vectors'			 # <<<<<<<<<<<<<<
+ *     raise ValueError, 'Failed to initialize Winsock function vectors'             # <<<<<<<<<<<<<<
  * 
  * have_connectex = (lpConnectEx != NULL)
  */
-	__Pyx_Raise(__pyx_builtin_ValueError, __pyx_kp_1, 0);
-	{__pyx_filename = __pyx_f[0]; __pyx_lineno = 242; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-	goto __pyx_L2;
+    __Pyx_Raise(__pyx_builtin_ValueError, __pyx_kp_1, 0);
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 242; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    goto __pyx_L2;
   }
   __pyx_L2:;
 
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport/iocpsupport.pyx":244
- *	 raise ValueError, 'Failed to initialize Winsock function vectors'
+ *     raise ValueError, 'Failed to initialize Winsock function vectors'
  * 
- * have_connectex = (lpConnectEx != NULL)			 # <<<<<<<<<<<<<<
+ * have_connectex = (lpConnectEx != NULL)             # <<<<<<<<<<<<<<
  * 
  * include 'acceptex.pxi'
  */
@@ -3872,9 +3872,9 @@ PyMODINIT_FUNC PyInit_iocpsupport(void)
   /* "E:\Twisted\twisted\internet\iocpreactor\iocpsupport\wsasend.pxi":5
  * 
  * 
- * def send(long s, object buff, object obj, unsigned long flags = 0):			 # <<<<<<<<<<<<<<
- *	 cdef int rc
- *	 cdef myOVERLAPPED *ov
+ * def send(long s, object buff, object obj, unsigned long flags = 0):             # <<<<<<<<<<<<<<
+ *     cdef int rc
+ *     cdef myOVERLAPPED *ov
  */
   goto __pyx_L0;
   __pyx_L1_error:;
@@ -3908,659 +3908,659 @@ static void __pyx_init_filenames(void) {
 }
 
 static void __Pyx_RaiseDoubleKeywordsError(
-	const char* func_name,
-	PyObject* kw_name)
+    const char* func_name,
+    PyObject* kw_name)
 {
-	PyErr_Format(PyExc_TypeError,
-		#if PY_MAJOR_VERSION >= 3
-		"%s() got multiple values for keyword argument '%U'", func_name, kw_name);
-		#else
-		"%s() got multiple values for keyword argument '%s'", func_name,
-		PyString_AS_STRING(kw_name));
-		#endif
+    PyErr_Format(PyExc_TypeError,
+        #if PY_MAJOR_VERSION >= 3
+        "%s() got multiple values for keyword argument '%U'", func_name, kw_name);
+        #else
+        "%s() got multiple values for keyword argument '%s'", func_name,
+        PyString_AS_STRING(kw_name));
+        #endif
 }
 
 static void __Pyx_RaiseArgtupleInvalid(
-	const char* func_name,
-	int exact,
-	Py_ssize_t num_min,
-	Py_ssize_t num_max,
-	Py_ssize_t num_found)
+    const char* func_name,
+    int exact,
+    Py_ssize_t num_min,
+    Py_ssize_t num_max,
+    Py_ssize_t num_found)
 {
-	Py_ssize_t num_expected;
-	const char *number, *more_or_less;
+    Py_ssize_t num_expected;
+    const char *number, *more_or_less;
 
-	if (num_found < num_min) {
-		num_expected = num_min;
-		more_or_less = "at least";
-	} else {
-		num_expected = num_max;
-		more_or_less = "at most";
-	}
-	if (exact) {
-		more_or_less = "exactly";
-	}
-	number = (num_expected == 1) ? "" : "s";
-	PyErr_Format(PyExc_TypeError,
-		#if PY_VERSION_HEX < 0x02050000
-			"%s() takes %s %d positional argument%s (%d given)",
-		#else
-			"%s() takes %s %zd positional argument%s (%zd given)",
-		#endif
-		func_name, more_or_less, num_expected, number, num_found);
+    if (num_found < num_min) {
+        num_expected = num_min;
+        more_or_less = "at least";
+    } else {
+        num_expected = num_max;
+        more_or_less = "at most";
+    }
+    if (exact) {
+        more_or_less = "exactly";
+    }
+    number = (num_expected == 1) ? "" : "s";
+    PyErr_Format(PyExc_TypeError,
+        #if PY_VERSION_HEX < 0x02050000
+            "%s() takes %s %d positional argument%s (%d given)",
+        #else
+            "%s() takes %s %zd positional argument%s (%zd given)",
+        #endif
+        func_name, more_or_less, num_expected, number, num_found);
 }
 
 static int __Pyx_ParseOptionalKeywords(
-	PyObject *kwds,
-	PyObject **argnames[],
-	PyObject *kwds2,
-	PyObject *values[],
-	Py_ssize_t num_pos_args,
-	const char* function_name)
+    PyObject *kwds,
+    PyObject **argnames[],
+    PyObject *kwds2,
+    PyObject *values[],
+    Py_ssize_t num_pos_args,
+    const char* function_name)
 {
-	PyObject *key = 0, *value = 0;
-	Py_ssize_t pos = 0;
-	PyObject*** name;
-	PyObject*** first_kw_arg = argnames + num_pos_args;
+    PyObject *key = 0, *value = 0;
+    Py_ssize_t pos = 0;
+    PyObject*** name;
+    PyObject*** first_kw_arg = argnames + num_pos_args;
 
-	while (PyDict_Next(kwds, &pos, &key, &value)) {
-		name = first_kw_arg;
-		while (*name && (**name != key)) name++;
-		if (*name) {
-			values[name-argnames] = value;
-		} else {
-			#if PY_MAJOR_VERSION < 3
-			if (unlikely(!PyString_CheckExact(key)) && unlikely(!PyString_Check(key))) {
-			#else
-			if (unlikely(!PyUnicode_CheckExact(key)) && unlikely(!PyUnicode_Check(key))) {
-			#endif
-				goto invalid_keyword_type;
-			} else {
-				for (name = first_kw_arg; *name; name++) {
-					#if PY_MAJOR_VERSION >= 3
-					if (PyUnicode_GET_SIZE(**name) == PyUnicode_GET_SIZE(key) &&
-						PyUnicode_Compare(**name, key) == 0) break;
-					#else
-					if (PyString_GET_SIZE(**name) == PyString_GET_SIZE(key) &&
-						_PyString_Eq(**name, key)) break;
-					#endif
-				}
-				if (*name) {
-					values[name-argnames] = value;
-				} else {
-					/* unexpected keyword found */
-					for (name=argnames; name != first_kw_arg; name++) {
-						if (**name == key) goto arg_passed_twice;
-						#if PY_MAJOR_VERSION >= 3
-						if (PyUnicode_GET_SIZE(**name) == PyUnicode_GET_SIZE(key) &&
-							PyUnicode_Compare(**name, key) == 0) goto arg_passed_twice;
-						#else
-						if (PyString_GET_SIZE(**name) == PyString_GET_SIZE(key) &&
-							_PyString_Eq(**name, key)) goto arg_passed_twice;
-						#endif
-					}
-					if (kwds2) {
-						if (unlikely(PyDict_SetItem(kwds2, key, value))) goto bad;
-					} else {
-						goto invalid_keyword;
-					}
-				}
-			}
-		}
-	}
-	return 0;
+    while (PyDict_Next(kwds, &pos, &key, &value)) {
+        name = first_kw_arg;
+        while (*name && (**name != key)) name++;
+        if (*name) {
+            values[name-argnames] = value;
+        } else {
+            #if PY_MAJOR_VERSION < 3
+            if (unlikely(!PyString_CheckExact(key)) && unlikely(!PyString_Check(key))) {
+            #else
+            if (unlikely(!PyUnicode_CheckExact(key)) && unlikely(!PyUnicode_Check(key))) {
+            #endif
+                goto invalid_keyword_type;
+            } else {
+                for (name = first_kw_arg; *name; name++) {
+                    #if PY_MAJOR_VERSION >= 3
+                    if (PyUnicode_GET_SIZE(**name) == PyUnicode_GET_SIZE(key) &&
+                        PyUnicode_Compare(**name, key) == 0) break;
+                    #else
+                    if (PyString_GET_SIZE(**name) == PyString_GET_SIZE(key) &&
+                        _PyString_Eq(**name, key)) break;
+                    #endif
+                }
+                if (*name) {
+                    values[name-argnames] = value;
+                } else {
+                    /* unexpected keyword found */
+                    for (name=argnames; name != first_kw_arg; name++) {
+                        if (**name == key) goto arg_passed_twice;
+                        #if PY_MAJOR_VERSION >= 3
+                        if (PyUnicode_GET_SIZE(**name) == PyUnicode_GET_SIZE(key) &&
+                            PyUnicode_Compare(**name, key) == 0) goto arg_passed_twice;
+                        #else
+                        if (PyString_GET_SIZE(**name) == PyString_GET_SIZE(key) &&
+                            _PyString_Eq(**name, key)) goto arg_passed_twice;
+                        #endif
+                    }
+                    if (kwds2) {
+                        if (unlikely(PyDict_SetItem(kwds2, key, value))) goto bad;
+                    } else {
+                        goto invalid_keyword;
+                    }
+                }
+            }
+        }
+    }
+    return 0;
 arg_passed_twice:
-	__Pyx_RaiseDoubleKeywordsError(function_name, **name);
-	goto bad;
+    __Pyx_RaiseDoubleKeywordsError(function_name, **name);
+    goto bad;
 invalid_keyword_type:
-	PyErr_Format(PyExc_TypeError,
-		"%s() keywords must be strings", function_name);
-	goto bad;
+    PyErr_Format(PyExc_TypeError,
+        "%s() keywords must be strings", function_name);
+    goto bad;
 invalid_keyword:
-	PyErr_Format(PyExc_TypeError,
-	#if PY_MAJOR_VERSION < 3
-		"%s() got an unexpected keyword argument '%s'",
-		function_name, PyString_AsString(key));
-	#else
-		"%s() got an unexpected keyword argument '%U'",
-		function_name, key);
-	#endif
+    PyErr_Format(PyExc_TypeError,
+    #if PY_MAJOR_VERSION < 3
+        "%s() got an unexpected keyword argument '%s'",
+        function_name, PyString_AsString(key));
+    #else
+        "%s() got an unexpected keyword argument '%U'",
+        function_name, key);
+    #endif
 bad:
-	return -1;
+    return -1;
 }
 
 static INLINE int __Pyx_CheckKeywordStrings(
-	PyObject *kwdict,
-	const char* function_name,
-	int kw_allowed)
+    PyObject *kwdict,
+    const char* function_name,
+    int kw_allowed)
 {
-	PyObject* key = 0;
-	Py_ssize_t pos = 0;
-	while (PyDict_Next(kwdict, &pos, &key, 0)) {
-		#if PY_MAJOR_VERSION < 3
-		if (unlikely(!PyString_CheckExact(key)) && unlikely(!PyString_Check(key)))
-		#else
-		if (unlikely(!PyUnicode_CheckExact(key)) && unlikely(!PyUnicode_Check(key)))
-		#endif
-			goto invalid_keyword_type;
-	}
-	if ((!kw_allowed) && unlikely(key))
-		goto invalid_keyword;
-	return 1;
+    PyObject* key = 0;
+    Py_ssize_t pos = 0;
+    while (PyDict_Next(kwdict, &pos, &key, 0)) {
+        #if PY_MAJOR_VERSION < 3
+        if (unlikely(!PyString_CheckExact(key)) && unlikely(!PyString_Check(key)))
+        #else
+        if (unlikely(!PyUnicode_CheckExact(key)) && unlikely(!PyUnicode_Check(key)))
+        #endif
+            goto invalid_keyword_type;
+    }
+    if ((!kw_allowed) && unlikely(key))
+        goto invalid_keyword;
+    return 1;
 invalid_keyword_type:
-	PyErr_Format(PyExc_TypeError,
-		"%s() keywords must be strings", function_name);
-	return 0;
+    PyErr_Format(PyExc_TypeError,
+        "%s() keywords must be strings", function_name);
+    return 0;
 invalid_keyword:
-	PyErr_Format(PyExc_TypeError,
-	#if PY_MAJOR_VERSION < 3
-		"%s() got an unexpected keyword argument '%s'",
-		function_name, PyString_AsString(key));
-	#else
-		"%s() got an unexpected keyword argument '%U'",
-		function_name, key);
-	#endif
-	return 0;
+    PyErr_Format(PyExc_TypeError,
+    #if PY_MAJOR_VERSION < 3
+        "%s() got an unexpected keyword argument '%s'",
+        function_name, PyString_AsString(key));
+    #else
+        "%s() got an unexpected keyword argument '%U'",
+        function_name, key);
+    #endif
+    return 0;
 }
 
 static INLINE void __Pyx_ErrRestore(PyObject *type, PyObject *value, PyObject *tb) {
-	PyObject *tmp_type, *tmp_value, *tmp_tb;
-	PyThreadState *tstate = PyThreadState_GET();
+    PyObject *tmp_type, *tmp_value, *tmp_tb;
+    PyThreadState *tstate = PyThreadState_GET();
 
 #if PY_MAJOR_VERSION >= 3
-	/* Note: this is a temporary work-around to prevent crashes in Python 3.0 */
-	if ((tstate->exc_type != NULL) & (tstate->exc_type != Py_None)) {
-		tmp_type = tstate->exc_type;
-		tmp_value = tstate->exc_value;
-		tmp_tb = tstate->exc_traceback;
-		PyErr_NormalizeException(&type, &value, &tb);
-		PyErr_NormalizeException(&tmp_type, &tmp_value, &tmp_tb);
-		tstate->exc_type = 0;
-		tstate->exc_value = 0;
-		tstate->exc_traceback = 0;
-		PyException_SetContext(value, tmp_value);
-		Py_DECREF(tmp_type);
-		Py_XDECREF(tmp_tb);
-	}
+    /* Note: this is a temporary work-around to prevent crashes in Python 3.0 */
+    if ((tstate->exc_type != NULL) & (tstate->exc_type != Py_None)) {
+        tmp_type = tstate->exc_type;
+        tmp_value = tstate->exc_value;
+        tmp_tb = tstate->exc_traceback;
+        PyErr_NormalizeException(&type, &value, &tb);
+        PyErr_NormalizeException(&tmp_type, &tmp_value, &tmp_tb);
+        tstate->exc_type = 0;
+        tstate->exc_value = 0;
+        tstate->exc_traceback = 0;
+        PyException_SetContext(value, tmp_value);
+        Py_DECREF(tmp_type);
+        Py_XDECREF(tmp_tb);
+    }
 #endif
 
-	tmp_type = tstate->curexc_type;
-	tmp_value = tstate->curexc_value;
-	tmp_tb = tstate->curexc_traceback;
-	tstate->curexc_type = type;
-	tstate->curexc_value = value;
-	tstate->curexc_traceback = tb;
-	Py_XDECREF(tmp_type);
-	Py_XDECREF(tmp_value);
-	Py_XDECREF(tmp_tb);
+    tmp_type = tstate->curexc_type;
+    tmp_value = tstate->curexc_value;
+    tmp_tb = tstate->curexc_traceback;
+    tstate->curexc_type = type;
+    tstate->curexc_value = value;
+    tstate->curexc_traceback = tb;
+    Py_XDECREF(tmp_type);
+    Py_XDECREF(tmp_value);
+    Py_XDECREF(tmp_tb);
 }
 
 static INLINE void __Pyx_ErrFetch(PyObject **type, PyObject **value, PyObject **tb) {
-	PyThreadState *tstate = PyThreadState_GET();
-	*type = tstate->curexc_type;
-	*value = tstate->curexc_value;
-	*tb = tstate->curexc_traceback;
+    PyThreadState *tstate = PyThreadState_GET();
+    *type = tstate->curexc_type;
+    *value = tstate->curexc_value;
+    *tb = tstate->curexc_traceback;
 
-	tstate->curexc_type = 0;
-	tstate->curexc_value = 0;
-	tstate->curexc_traceback = 0;
+    tstate->curexc_type = 0;
+    tstate->curexc_value = 0;
+    tstate->curexc_traceback = 0;
 }
 
 
 static PyObject *__Pyx_CreateClass(
-	PyObject *bases, PyObject *dict, PyObject *name, const char *modname)
+    PyObject *bases, PyObject *dict, PyObject *name, const char *modname)
 {
-	PyObject *py_modname;
-	PyObject *result = 0;
+    PyObject *py_modname;
+    PyObject *result = 0;
 
-	#if PY_MAJOR_VERSION < 3
-	py_modname = PyString_FromString(modname);
-	#else
-	py_modname = PyUnicode_FromString(modname);
-	#endif
-	if (!py_modname)
-		goto bad;
-	if (PyDict_SetItemString(dict, "__module__", py_modname) < 0)
-		goto bad;
-	#if PY_MAJOR_VERSION < 3
-	result = PyClass_New(bases, dict, name);
-	#else
-	result = PyObject_CallFunctionObjArgs((PyObject *)&PyType_Type, name, bases, dict, NULL);
-	#endif
+    #if PY_MAJOR_VERSION < 3
+    py_modname = PyString_FromString(modname);
+    #else
+    py_modname = PyUnicode_FromString(modname);
+    #endif
+    if (!py_modname)
+        goto bad;
+    if (PyDict_SetItemString(dict, "__module__", py_modname) < 0)
+        goto bad;
+    #if PY_MAJOR_VERSION < 3
+    result = PyClass_New(bases, dict, name);
+    #else
+    result = PyObject_CallFunctionObjArgs((PyObject *)&PyType_Type, name, bases, dict, NULL);
+    #endif
 bad:
-	Py_XDECREF(py_modname);
-	return result;
+    Py_XDECREF(py_modname);
+    return result;
 }
 
 static PyObject *__Pyx_Import(PyObject *name, PyObject *from_list) {
-	PyObject *__import__ = 0;
-	PyObject *empty_list = 0;
-	PyObject *module = 0;
-	PyObject *global_dict = 0;
-	PyObject *empty_dict = 0;
-	PyObject *list;
-	__import__ = __Pyx_GetAttrString(__pyx_b, "__import__");
-	if (!__import__)
-		goto bad;
-	if (from_list)
-		list = from_list;
-	else {
-		empty_list = PyList_New(0);
-		if (!empty_list)
-			goto bad;
-		list = empty_list;
-	}
-	global_dict = PyModule_GetDict(__pyx_m);
-	if (!global_dict)
-		goto bad;
-	empty_dict = PyDict_New();
-	if (!empty_dict)
-		goto bad;
-	module = PyObject_CallFunctionObjArgs(__import__,
-		name, global_dict, empty_dict, list, NULL);
+    PyObject *__import__ = 0;
+    PyObject *empty_list = 0;
+    PyObject *module = 0;
+    PyObject *global_dict = 0;
+    PyObject *empty_dict = 0;
+    PyObject *list;
+    __import__ = __Pyx_GetAttrString(__pyx_b, "__import__");
+    if (!__import__)
+        goto bad;
+    if (from_list)
+        list = from_list;
+    else {
+        empty_list = PyList_New(0);
+        if (!empty_list)
+            goto bad;
+        list = empty_list;
+    }
+    global_dict = PyModule_GetDict(__pyx_m);
+    if (!global_dict)
+        goto bad;
+    empty_dict = PyDict_New();
+    if (!empty_dict)
+        goto bad;
+    module = PyObject_CallFunctionObjArgs(__import__,
+        name, global_dict, empty_dict, list, NULL);
 bad:
-	Py_XDECREF(empty_list);
-	Py_XDECREF(__import__);
-	Py_XDECREF(empty_dict);
-	return module;
+    Py_XDECREF(empty_list);
+    Py_XDECREF(__import__);
+    Py_XDECREF(empty_dict);
+    return module;
 }
 
 static PyObject *__Pyx_GetName(PyObject *dict, PyObject *name) {
-	PyObject *result;
-	result = PyObject_GetAttr(dict, name);
-	if (!result)
-		PyErr_SetObject(PyExc_NameError, name);
-	return result;
+    PyObject *result;
+    result = PyObject_GetAttr(dict, name);
+    if (!result)
+        PyErr_SetObject(PyExc_NameError, name);
+    return result;
 }
 
 static void __Pyx_Raise(PyObject *type, PyObject *value, PyObject *tb) {
-	Py_XINCREF(type);
-	Py_XINCREF(value);
-	Py_XINCREF(tb);
-	/* First, check the traceback argument, replacing None with NULL. */
-	if (tb == Py_None) {
-		Py_DECREF(tb);
-		tb = 0;
-	}
-	else if (tb != NULL && !PyTraceBack_Check(tb)) {
-		PyErr_SetString(PyExc_TypeError,
-			"raise: arg 3 must be a traceback or None");
-		goto raise_error;
-	}
-	/* Next, replace a missing value with None */
-	if (value == NULL) {
-		value = Py_None;
-		Py_INCREF(value);
-	}
-	#if PY_VERSION_HEX < 0x02050000
-	if (!PyClass_Check(type))
-	#else
-	if (!PyType_Check(type))
-	#endif
-	{
-		/* Raising an instance.  The value should be a dummy. */
-		if (value != Py_None) {
-			PyErr_SetString(PyExc_TypeError,
-				"instance exception may not have a separate value");
-			goto raise_error;
-		}
-		/* Normalize to raise <class>, <instance> */
-		Py_DECREF(value);
-		value = type;
-		#if PY_VERSION_HEX < 0x02050000
-			if (PyInstance_Check(type)) {
-				type = (PyObject*) ((PyInstanceObject*)type)->in_class;
-				Py_INCREF(type);
-			}
-			else {
-				type = 0;
-				PyErr_SetString(PyExc_TypeError,
-					"raise: exception must be an old-style class or instance");
-				goto raise_error;
-			}
-		#else
-			type = (PyObject*) Py_TYPE(type);
-			Py_INCREF(type);
-			if (!PyType_IsSubtype((PyTypeObject *)type, (PyTypeObject *)PyExc_BaseException)) {
-				PyErr_SetString(PyExc_TypeError,
-					"raise: exception class must be a subclass of BaseException");
-				goto raise_error;
-			}
-		#endif
-	}
-	__Pyx_ErrRestore(type, value, tb);
-	return;
+    Py_XINCREF(type);
+    Py_XINCREF(value);
+    Py_XINCREF(tb);
+    /* First, check the traceback argument, replacing None with NULL. */
+    if (tb == Py_None) {
+        Py_DECREF(tb);
+        tb = 0;
+    }
+    else if (tb != NULL && !PyTraceBack_Check(tb)) {
+        PyErr_SetString(PyExc_TypeError,
+            "raise: arg 3 must be a traceback or None");
+        goto raise_error;
+    }
+    /* Next, replace a missing value with None */
+    if (value == NULL) {
+        value = Py_None;
+        Py_INCREF(value);
+    }
+    #if PY_VERSION_HEX < 0x02050000
+    if (!PyClass_Check(type))
+    #else
+    if (!PyType_Check(type))
+    #endif
+    {
+        /* Raising an instance.  The value should be a dummy. */
+        if (value != Py_None) {
+            PyErr_SetString(PyExc_TypeError,
+                "instance exception may not have a separate value");
+            goto raise_error;
+        }
+        /* Normalize to raise <class>, <instance> */
+        Py_DECREF(value);
+        value = type;
+        #if PY_VERSION_HEX < 0x02050000
+            if (PyInstance_Check(type)) {
+                type = (PyObject*) ((PyInstanceObject*)type)->in_class;
+                Py_INCREF(type);
+            }
+            else {
+                type = 0;
+                PyErr_SetString(PyExc_TypeError,
+                    "raise: exception must be an old-style class or instance");
+                goto raise_error;
+            }
+        #else
+            type = (PyObject*) Py_TYPE(type);
+            Py_INCREF(type);
+            if (!PyType_IsSubtype((PyTypeObject *)type, (PyTypeObject *)PyExc_BaseException)) {
+                PyErr_SetString(PyExc_TypeError,
+                    "raise: exception class must be a subclass of BaseException");
+                goto raise_error;
+            }
+        #endif
+    }
+    __Pyx_ErrRestore(type, value, tb);
+    return;
 raise_error:
-	Py_XDECREF(value);
-	Py_XDECREF(type);
-	Py_XDECREF(tb);
-	return;
+    Py_XDECREF(value);
+    Py_XDECREF(type);
+    Py_XDECREF(tb);
+    return;
 }
 
 static INLINE void __Pyx_RaiseNeedMoreValuesError(Py_ssize_t index) {
-	PyErr_Format(PyExc_ValueError,
-		#if PY_VERSION_HEX < 0x02050000
-				 "need more than %d value%s to unpack", (int)index,
-		#else
-				 "need more than %zd value%s to unpack", index,
-		#endif
-				 (index == 1) ? "" : "s");
+    PyErr_Format(PyExc_ValueError,
+        #if PY_VERSION_HEX < 0x02050000
+                 "need more than %d value%s to unpack", (int)index,
+        #else
+                 "need more than %zd value%s to unpack", index,
+        #endif
+                 (index == 1) ? "" : "s");
 }
 
 static INLINE void __Pyx_RaiseTooManyValuesError(void) {
-	PyErr_SetString(PyExc_ValueError, "too many values to unpack");
+    PyErr_SetString(PyExc_ValueError, "too many values to unpack");
 }
 
 static PyObject *__Pyx_UnpackItem(PyObject *iter, Py_ssize_t index) {
-	PyObject *item;
-	if (!(item = PyIter_Next(iter))) {
-		if (!PyErr_Occurred()) {
-			__Pyx_RaiseNeedMoreValuesError(index);
-		}
-	}
-	return item;
+    PyObject *item;
+    if (!(item = PyIter_Next(iter))) {
+        if (!PyErr_Occurred()) {
+            __Pyx_RaiseNeedMoreValuesError(index);
+        }
+    }
+    return item;
 }
 
 static int __Pyx_EndUnpack(PyObject *iter) {
-	PyObject *item;
-	if ((item = PyIter_Next(iter))) {
-		Py_DECREF(item);
-		__Pyx_RaiseTooManyValuesError();
-		return -1;
-	}
-	else if (!PyErr_Occurred())
-		return 0;
-	else
-		return -1;
+    PyObject *item;
+    if ((item = PyIter_Next(iter))) {
+        Py_DECREF(item);
+        __Pyx_RaiseTooManyValuesError();
+        return -1;
+    }
+    else if (!PyErr_Occurred())
+        return 0;
+    else
+        return -1;
 }
 
 static INLINE int __Pyx_StrEq(const char *s1, const char *s2) {
-	 while (*s1 != '\0' && *s1 == *s2) { s1++; s2++; }
-	 return *s1 == *s2;
+     while (*s1 != '\0' && *s1 == *s2) { s1++; s2++; }
+     return *s1 == *s2;
 }
 
 static INLINE unsigned char __Pyx_PyInt_AsUnsignedChar(PyObject* x) {
-	if (sizeof(unsigned char) < sizeof(long)) {
-		long val = __Pyx_PyInt_AsLong(x);
-		if (unlikely(val != (long)(unsigned char)val)) {
-			if (unlikely(val == -1 && PyErr_Occurred()))
-				return (unsigned char)-1;
-			if (unlikely(val < 0)) {
-				PyErr_SetString(PyExc_OverflowError,
-								"can't convert negative value to unsigned char");
-				return (unsigned char)-1;
-			}
-			PyErr_SetString(PyExc_OverflowError,
-						   "value too large to convert to unsigned char");
-			return (unsigned char)-1;
-		}
-		return (unsigned char)val;
-	}
-	return (unsigned char)__Pyx_PyInt_AsUnsignedLong(x);
+    if (sizeof(unsigned char) < sizeof(long)) {
+        long val = __Pyx_PyInt_AsLong(x);
+        if (unlikely(val != (long)(unsigned char)val)) {
+            if (unlikely(val == -1 && PyErr_Occurred()))
+                return (unsigned char)-1;
+            if (unlikely(val < 0)) {
+                PyErr_SetString(PyExc_OverflowError,
+                                "can't convert negative value to unsigned char");
+                return (unsigned char)-1;
+            }
+            PyErr_SetString(PyExc_OverflowError,
+                           "value too large to convert to unsigned char");
+            return (unsigned char)-1;
+        }
+        return (unsigned char)val;
+    }
+    return (unsigned char)__Pyx_PyInt_AsUnsignedLong(x);
 }
 
 static INLINE unsigned short __Pyx_PyInt_AsUnsignedShort(PyObject* x) {
-	if (sizeof(unsigned short) < sizeof(long)) {
-		long val = __Pyx_PyInt_AsLong(x);
-		if (unlikely(val != (long)(unsigned short)val)) {
-			if (unlikely(val == -1 && PyErr_Occurred()))
-				return (unsigned short)-1;
-			if (unlikely(val < 0)) {
-				PyErr_SetString(PyExc_OverflowError,
-								"can't convert negative value to unsigned short");
-				return (unsigned short)-1;
-			}
-			PyErr_SetString(PyExc_OverflowError,
-						   "value too large to convert to unsigned short");
-			return (unsigned short)-1;
-		}
-		return (unsigned short)val;
-	}
-	return (unsigned short)__Pyx_PyInt_AsUnsignedLong(x);
+    if (sizeof(unsigned short) < sizeof(long)) {
+        long val = __Pyx_PyInt_AsLong(x);
+        if (unlikely(val != (long)(unsigned short)val)) {
+            if (unlikely(val == -1 && PyErr_Occurred()))
+                return (unsigned short)-1;
+            if (unlikely(val < 0)) {
+                PyErr_SetString(PyExc_OverflowError,
+                                "can't convert negative value to unsigned short");
+                return (unsigned short)-1;
+            }
+            PyErr_SetString(PyExc_OverflowError,
+                           "value too large to convert to unsigned short");
+            return (unsigned short)-1;
+        }
+        return (unsigned short)val;
+    }
+    return (unsigned short)__Pyx_PyInt_AsUnsignedLong(x);
 }
 
 static INLINE unsigned int __Pyx_PyInt_AsUnsignedInt(PyObject* x) {
-	if (sizeof(unsigned int) < sizeof(long)) {
-		long val = __Pyx_PyInt_AsLong(x);
-		if (unlikely(val != (long)(unsigned int)val)) {
-			if (unlikely(val == -1 && PyErr_Occurred()))
-				return (unsigned int)-1;
-			if (unlikely(val < 0)) {
-				PyErr_SetString(PyExc_OverflowError,
-								"can't convert negative value to unsigned int");
-				return (unsigned int)-1;
-			}
-			PyErr_SetString(PyExc_OverflowError,
-						   "value too large to convert to unsigned int");
-			return (unsigned int)-1;
-		}
-		return (unsigned int)val;
-	}
-	return (unsigned int)__Pyx_PyInt_AsUnsignedLong(x);
+    if (sizeof(unsigned int) < sizeof(long)) {
+        long val = __Pyx_PyInt_AsLong(x);
+        if (unlikely(val != (long)(unsigned int)val)) {
+            if (unlikely(val == -1 && PyErr_Occurred()))
+                return (unsigned int)-1;
+            if (unlikely(val < 0)) {
+                PyErr_SetString(PyExc_OverflowError,
+                                "can't convert negative value to unsigned int");
+                return (unsigned int)-1;
+            }
+            PyErr_SetString(PyExc_OverflowError,
+                           "value too large to convert to unsigned int");
+            return (unsigned int)-1;
+        }
+        return (unsigned int)val;
+    }
+    return (unsigned int)__Pyx_PyInt_AsUnsignedLong(x);
 }
 
 static INLINE char __Pyx_PyInt_AsChar(PyObject* x) {
-	if (sizeof(char) < sizeof(long)) {
-		long val = __Pyx_PyInt_AsLong(x);
-		if (unlikely(val != (long)(char)val)) {
-			if (unlikely(val == -1 && PyErr_Occurred()))
-				return (char)-1;
-			PyErr_SetString(PyExc_OverflowError,
-						   "value too large to convert to char");
-			return (char)-1;
-		}
-		return (char)val;
-	}
-	return (char)__Pyx_PyInt_AsLong(x);
+    if (sizeof(char) < sizeof(long)) {
+        long val = __Pyx_PyInt_AsLong(x);
+        if (unlikely(val != (long)(char)val)) {
+            if (unlikely(val == -1 && PyErr_Occurred()))
+                return (char)-1;
+            PyErr_SetString(PyExc_OverflowError,
+                           "value too large to convert to char");
+            return (char)-1;
+        }
+        return (char)val;
+    }
+    return (char)__Pyx_PyInt_AsLong(x);
 }
 
 static INLINE short __Pyx_PyInt_AsShort(PyObject* x) {
-	if (sizeof(short) < sizeof(long)) {
-		long val = __Pyx_PyInt_AsLong(x);
-		if (unlikely(val != (long)(short)val)) {
-			if (unlikely(val == -1 && PyErr_Occurred()))
-				return (short)-1;
-			PyErr_SetString(PyExc_OverflowError,
-						   "value too large to convert to short");
-			return (short)-1;
-		}
-		return (short)val;
-	}
-	return (short)__Pyx_PyInt_AsLong(x);
+    if (sizeof(short) < sizeof(long)) {
+        long val = __Pyx_PyInt_AsLong(x);
+        if (unlikely(val != (long)(short)val)) {
+            if (unlikely(val == -1 && PyErr_Occurred()))
+                return (short)-1;
+            PyErr_SetString(PyExc_OverflowError,
+                           "value too large to convert to short");
+            return (short)-1;
+        }
+        return (short)val;
+    }
+    return (short)__Pyx_PyInt_AsLong(x);
 }
 
 static INLINE int __Pyx_PyInt_AsInt(PyObject* x) {
-	if (sizeof(int) < sizeof(long)) {
-		long val = __Pyx_PyInt_AsLong(x);
-		if (unlikely(val != (long)(int)val)) {
-			if (unlikely(val == -1 && PyErr_Occurred()))
-				return (int)-1;
-			PyErr_SetString(PyExc_OverflowError,
-						   "value too large to convert to int");
-			return (int)-1;
-		}
-		return (int)val;
-	}
-	return (int)__Pyx_PyInt_AsLong(x);
+    if (sizeof(int) < sizeof(long)) {
+        long val = __Pyx_PyInt_AsLong(x);
+        if (unlikely(val != (long)(int)val)) {
+            if (unlikely(val == -1 && PyErr_Occurred()))
+                return (int)-1;
+            PyErr_SetString(PyExc_OverflowError,
+                           "value too large to convert to int");
+            return (int)-1;
+        }
+        return (int)val;
+    }
+    return (int)__Pyx_PyInt_AsLong(x);
 }
 
 static INLINE signed char __Pyx_PyInt_AsSignedChar(PyObject* x) {
-	if (sizeof(signed char) < sizeof(long)) {
-		long val = __Pyx_PyInt_AsLong(x);
-		if (unlikely(val != (long)(signed char)val)) {
-			if (unlikely(val == -1 && PyErr_Occurred()))
-				return (signed char)-1;
-			PyErr_SetString(PyExc_OverflowError,
-						   "value too large to convert to signed char");
-			return (signed char)-1;
-		}
-		return (signed char)val;
-	}
-	return (signed char)__Pyx_PyInt_AsSignedLong(x);
+    if (sizeof(signed char) < sizeof(long)) {
+        long val = __Pyx_PyInt_AsLong(x);
+        if (unlikely(val != (long)(signed char)val)) {
+            if (unlikely(val == -1 && PyErr_Occurred()))
+                return (signed char)-1;
+            PyErr_SetString(PyExc_OverflowError,
+                           "value too large to convert to signed char");
+            return (signed char)-1;
+        }
+        return (signed char)val;
+    }
+    return (signed char)__Pyx_PyInt_AsSignedLong(x);
 }
 
 static INLINE signed short __Pyx_PyInt_AsSignedShort(PyObject* x) {
-	if (sizeof(signed short) < sizeof(long)) {
-		long val = __Pyx_PyInt_AsLong(x);
-		if (unlikely(val != (long)(signed short)val)) {
-			if (unlikely(val == -1 && PyErr_Occurred()))
-				return (signed short)-1;
-			PyErr_SetString(PyExc_OverflowError,
-						   "value too large to convert to signed short");
-			return (signed short)-1;
-		}
-		return (signed short)val;
-	}
-	return (signed short)__Pyx_PyInt_AsSignedLong(x);
+    if (sizeof(signed short) < sizeof(long)) {
+        long val = __Pyx_PyInt_AsLong(x);
+        if (unlikely(val != (long)(signed short)val)) {
+            if (unlikely(val == -1 && PyErr_Occurred()))
+                return (signed short)-1;
+            PyErr_SetString(PyExc_OverflowError,
+                           "value too large to convert to signed short");
+            return (signed short)-1;
+        }
+        return (signed short)val;
+    }
+    return (signed short)__Pyx_PyInt_AsSignedLong(x);
 }
 
 static INLINE signed int __Pyx_PyInt_AsSignedInt(PyObject* x) {
-	if (sizeof(signed int) < sizeof(long)) {
-		long val = __Pyx_PyInt_AsLong(x);
-		if (unlikely(val != (long)(signed int)val)) {
-			if (unlikely(val == -1 && PyErr_Occurred()))
-				return (signed int)-1;
-			PyErr_SetString(PyExc_OverflowError,
-						   "value too large to convert to signed int");
-			return (signed int)-1;
-		}
-		return (signed int)val;
-	}
-	return (signed int)__Pyx_PyInt_AsSignedLong(x);
+    if (sizeof(signed int) < sizeof(long)) {
+        long val = __Pyx_PyInt_AsLong(x);
+        if (unlikely(val != (long)(signed int)val)) {
+            if (unlikely(val == -1 && PyErr_Occurred()))
+                return (signed int)-1;
+            PyErr_SetString(PyExc_OverflowError,
+                           "value too large to convert to signed int");
+            return (signed int)-1;
+        }
+        return (signed int)val;
+    }
+    return (signed int)__Pyx_PyInt_AsSignedLong(x);
 }
 
 static INLINE unsigned long __Pyx_PyInt_AsUnsignedLong(PyObject* x) {
 #if PY_VERSION_HEX < 0x03000000
-	if (likely(PyInt_CheckExact(x) || PyInt_Check(x))) {
-		long val = PyInt_AS_LONG(x);
-		if (unlikely(val < 0)) {
-			PyErr_SetString(PyExc_OverflowError,
-							"can't convert negative value to unsigned long");
-			return (unsigned long)-1;
-		}
-		return (unsigned long)val;
-	} else
+    if (likely(PyInt_CheckExact(x) || PyInt_Check(x))) {
+        long val = PyInt_AS_LONG(x);
+        if (unlikely(val < 0)) {
+            PyErr_SetString(PyExc_OverflowError,
+                            "can't convert negative value to unsigned long");
+            return (unsigned long)-1;
+        }
+        return (unsigned long)val;
+    } else
 #endif
-	if (likely(PyLong_CheckExact(x) || PyLong_Check(x))) {
-		if (unlikely(Py_SIZE(x) < 0)) {
-			PyErr_SetString(PyExc_OverflowError,
-							"can't convert negative value to unsigned long");
-			return (unsigned long)-1;
-		}
-		return PyLong_AsUnsignedLong(x);
-	} else {
-		unsigned long val;
-		PyObject *tmp = __Pyx_PyNumber_Int(x);
-		if (!tmp) return (unsigned long)-1;
-		val = __Pyx_PyInt_AsUnsignedLong(tmp);
-		Py_DECREF(tmp);
-		return val;
-	}
+    if (likely(PyLong_CheckExact(x) || PyLong_Check(x))) {
+        if (unlikely(Py_SIZE(x) < 0)) {
+            PyErr_SetString(PyExc_OverflowError,
+                            "can't convert negative value to unsigned long");
+            return (unsigned long)-1;
+        }
+        return PyLong_AsUnsignedLong(x);
+    } else {
+        unsigned long val;
+        PyObject *tmp = __Pyx_PyNumber_Int(x);
+        if (!tmp) return (unsigned long)-1;
+        val = __Pyx_PyInt_AsUnsignedLong(tmp);
+        Py_DECREF(tmp);
+        return val;
+    }
 }
 
 static INLINE unsigned PY_LONG_LONG __Pyx_PyInt_AsUnsignedLongLong(PyObject* x) {
 #if PY_VERSION_HEX < 0x03000000
-	if (likely(PyInt_CheckExact(x) || PyInt_Check(x))) {
-		long val = PyInt_AS_LONG(x);
-		if (unlikely(val < 0)) {
-			PyErr_SetString(PyExc_OverflowError,
-							"can't convert negative value to unsigned PY_LONG_LONG");
-			return (unsigned PY_LONG_LONG)-1;
-		}
-		return (unsigned PY_LONG_LONG)val;
-	} else
+    if (likely(PyInt_CheckExact(x) || PyInt_Check(x))) {
+        long val = PyInt_AS_LONG(x);
+        if (unlikely(val < 0)) {
+            PyErr_SetString(PyExc_OverflowError,
+                            "can't convert negative value to unsigned PY_LONG_LONG");
+            return (unsigned PY_LONG_LONG)-1;
+        }
+        return (unsigned PY_LONG_LONG)val;
+    } else
 #endif
-	if (likely(PyLong_CheckExact(x) || PyLong_Check(x))) {
-		if (unlikely(Py_SIZE(x) < 0)) {
-			PyErr_SetString(PyExc_OverflowError,
-							"can't convert negative value to unsigned PY_LONG_LONG");
-			return (unsigned PY_LONG_LONG)-1;
-		}
-		return PyLong_AsUnsignedLongLong(x);
-	} else {
-		unsigned PY_LONG_LONG val;
-		PyObject *tmp = __Pyx_PyNumber_Int(x);
-		if (!tmp) return (unsigned PY_LONG_LONG)-1;
-		val = __Pyx_PyInt_AsUnsignedLongLong(tmp);
-		Py_DECREF(tmp);
-		return val;
-	}
+    if (likely(PyLong_CheckExact(x) || PyLong_Check(x))) {
+        if (unlikely(Py_SIZE(x) < 0)) {
+            PyErr_SetString(PyExc_OverflowError,
+                            "can't convert negative value to unsigned PY_LONG_LONG");
+            return (unsigned PY_LONG_LONG)-1;
+        }
+        return PyLong_AsUnsignedLongLong(x);
+    } else {
+        unsigned PY_LONG_LONG val;
+        PyObject *tmp = __Pyx_PyNumber_Int(x);
+        if (!tmp) return (unsigned PY_LONG_LONG)-1;
+        val = __Pyx_PyInt_AsUnsignedLongLong(tmp);
+        Py_DECREF(tmp);
+        return val;
+    }
 }
 
 static INLINE long __Pyx_PyInt_AsLong(PyObject* x) {
 #if PY_VERSION_HEX < 0x03000000
-	if (likely(PyInt_CheckExact(x) || PyInt_Check(x))) {
-		long val = PyInt_AS_LONG(x);
-		return (long)val;
-	} else
+    if (likely(PyInt_CheckExact(x) || PyInt_Check(x))) {
+        long val = PyInt_AS_LONG(x);
+        return (long)val;
+    } else
 #endif
-	if (likely(PyLong_CheckExact(x) || PyLong_Check(x))) {
-		return PyLong_AsLong(x);
-	} else {
-		long val;
-		PyObject *tmp = __Pyx_PyNumber_Int(x);
-		if (!tmp) return (long)-1;
-		val = __Pyx_PyInt_AsLong(tmp);
-		Py_DECREF(tmp);
-		return val;
-	}
+    if (likely(PyLong_CheckExact(x) || PyLong_Check(x))) {
+        return PyLong_AsLong(x);
+    } else {
+        long val;
+        PyObject *tmp = __Pyx_PyNumber_Int(x);
+        if (!tmp) return (long)-1;
+        val = __Pyx_PyInt_AsLong(tmp);
+        Py_DECREF(tmp);
+        return val;
+    }
 }
 
 static INLINE PY_LONG_LONG __Pyx_PyInt_AsLongLong(PyObject* x) {
 #if PY_VERSION_HEX < 0x03000000
-	if (likely(PyInt_CheckExact(x) || PyInt_Check(x))) {
-		long val = PyInt_AS_LONG(x);
-		return (PY_LONG_LONG)val;
-	} else
+    if (likely(PyInt_CheckExact(x) || PyInt_Check(x))) {
+        long val = PyInt_AS_LONG(x);
+        return (PY_LONG_LONG)val;
+    } else
 #endif
-	if (likely(PyLong_CheckExact(x) || PyLong_Check(x))) {
-		return PyLong_AsLongLong(x);
-	} else {
-		PY_LONG_LONG val;
-		PyObject *tmp = __Pyx_PyNumber_Int(x);
-		if (!tmp) return (PY_LONG_LONG)-1;
-		val = __Pyx_PyInt_AsLongLong(tmp);
-		Py_DECREF(tmp);
-		return val;
-	}
+    if (likely(PyLong_CheckExact(x) || PyLong_Check(x))) {
+        return PyLong_AsLongLong(x);
+    } else {
+        PY_LONG_LONG val;
+        PyObject *tmp = __Pyx_PyNumber_Int(x);
+        if (!tmp) return (PY_LONG_LONG)-1;
+        val = __Pyx_PyInt_AsLongLong(tmp);
+        Py_DECREF(tmp);
+        return val;
+    }
 }
 
 static INLINE signed long __Pyx_PyInt_AsSignedLong(PyObject* x) {
 #if PY_VERSION_HEX < 0x03000000
-	if (likely(PyInt_CheckExact(x) || PyInt_Check(x))) {
-		long val = PyInt_AS_LONG(x);
-		return (signed long)val;
-	} else
+    if (likely(PyInt_CheckExact(x) || PyInt_Check(x))) {
+        long val = PyInt_AS_LONG(x);
+        return (signed long)val;
+    } else
 #endif
-	if (likely(PyLong_CheckExact(x) || PyLong_Check(x))) {
-		return PyLong_AsLong(x);
-	} else {
-		signed long val;
-		PyObject *tmp = __Pyx_PyNumber_Int(x);
-		if (!tmp) return (signed long)-1;
-		val = __Pyx_PyInt_AsSignedLong(tmp);
-		Py_DECREF(tmp);
-		return val;
-	}
+    if (likely(PyLong_CheckExact(x) || PyLong_Check(x))) {
+        return PyLong_AsLong(x);
+    } else {
+        signed long val;
+        PyObject *tmp = __Pyx_PyNumber_Int(x);
+        if (!tmp) return (signed long)-1;
+        val = __Pyx_PyInt_AsSignedLong(tmp);
+        Py_DECREF(tmp);
+        return val;
+    }
 }
 
 static INLINE signed PY_LONG_LONG __Pyx_PyInt_AsSignedLongLong(PyObject* x) {
 #if PY_VERSION_HEX < 0x03000000
-	if (likely(PyInt_CheckExact(x) || PyInt_Check(x))) {
-		long val = PyInt_AS_LONG(x);
-		return (signed PY_LONG_LONG)val;
-	} else
+    if (likely(PyInt_CheckExact(x) || PyInt_Check(x))) {
+        long val = PyInt_AS_LONG(x);
+        return (signed PY_LONG_LONG)val;
+    } else
 #endif
-	if (likely(PyLong_CheckExact(x) || PyLong_Check(x))) {
-		return PyLong_AsLongLong(x);
-	} else {
-		signed PY_LONG_LONG val;
-		PyObject *tmp = __Pyx_PyNumber_Int(x);
-		if (!tmp) return (signed PY_LONG_LONG)-1;
-		val = __Pyx_PyInt_AsSignedLongLong(tmp);
-		Py_DECREF(tmp);
-		return val;
-	}
+    if (likely(PyLong_CheckExact(x) || PyLong_Check(x))) {
+        return PyLong_AsLongLong(x);
+    } else {
+        signed PY_LONG_LONG val;
+        PyObject *tmp = __Pyx_PyNumber_Int(x);
+        if (!tmp) return (signed PY_LONG_LONG)-1;
+        val = __Pyx_PyInt_AsSignedLongLong(tmp);
+        Py_DECREF(tmp);
+        return val;
+    }
 }
 
 #include "compile.h"
@@ -4568,103 +4568,103 @@ static INLINE signed PY_LONG_LONG __Pyx_PyInt_AsSignedLongLong(PyObject* x) {
 #include "traceback.h"
 
 static void __Pyx_AddTraceback(const char *funcname) {
-	PyObject *py_srcfile = 0;
-	PyObject *py_funcname = 0;
-	PyObject *py_globals = 0;
-	PyObject *empty_string = 0;
-	PyCodeObject *py_code = 0;
-	PyFrameObject *py_frame = 0;
+    PyObject *py_srcfile = 0;
+    PyObject *py_funcname = 0;
+    PyObject *py_globals = 0;
+    PyObject *empty_string = 0;
+    PyCodeObject *py_code = 0;
+    PyFrameObject *py_frame = 0;
 
-	#if PY_MAJOR_VERSION < 3
-	py_srcfile = PyString_FromString(__pyx_filename);
-	#else
-	py_srcfile = PyUnicode_FromString(__pyx_filename);
-	#endif
-	if (!py_srcfile) goto bad;
-	if (__pyx_clineno) {
-		#if PY_MAJOR_VERSION < 3
-		py_funcname = PyString_FromFormat( "%s (%s:%d)", funcname, __pyx_cfilenm, __pyx_clineno);
-		#else
-		py_funcname = PyUnicode_FromFormat( "%s (%s:%d)", funcname, __pyx_cfilenm, __pyx_clineno);
-		#endif
-	}
-	else {
-		#if PY_MAJOR_VERSION < 3
-		py_funcname = PyString_FromString(funcname);
-		#else
-		py_funcname = PyUnicode_FromString(funcname);
-		#endif
-	}
-	if (!py_funcname) goto bad;
-	py_globals = PyModule_GetDict(__pyx_m);
-	if (!py_globals) goto bad;
-	#if PY_MAJOR_VERSION < 3
-	empty_string = PyString_FromStringAndSize("", 0);
-	#else
-	empty_string = PyBytes_FromStringAndSize("", 0);
-	#endif
-	if (!empty_string) goto bad;
-	py_code = PyCode_New(
-		0,			/*int argcount,*/
-		#if PY_MAJOR_VERSION >= 3
-		0,			/*int kwonlyargcount,*/
-		#endif
-		0,			/*int nlocals,*/
-		0,			/*int stacksize,*/
-		0,			/*int flags,*/
-		empty_string, /*PyObject *code,*/
-		__pyx_empty_tuple,  /*PyObject *consts,*/
-		__pyx_empty_tuple,  /*PyObject *names,*/
-		__pyx_empty_tuple,  /*PyObject *varnames,*/
-		__pyx_empty_tuple,  /*PyObject *freevars,*/
-		__pyx_empty_tuple,  /*PyObject *cellvars,*/
-		py_srcfile,   /*PyObject *filename,*/
-		py_funcname,  /*PyObject *name,*/
-		__pyx_lineno,   /*int firstlineno,*/
-		empty_string  /*PyObject *lnotab*/
-	);
-	if (!py_code) goto bad;
-	py_frame = PyFrame_New(
-		PyThreadState_GET(), /*PyThreadState *tstate,*/
-		py_code,			 /*PyCodeObject *code,*/
-		py_globals,		  /*PyObject *globals,*/
-		0					/*PyObject *locals*/
-	);
-	if (!py_frame) goto bad;
-	py_frame->f_lineno = __pyx_lineno;
-	PyTraceBack_Here(py_frame);
+    #if PY_MAJOR_VERSION < 3
+    py_srcfile = PyString_FromString(__pyx_filename);
+    #else
+    py_srcfile = PyUnicode_FromString(__pyx_filename);
+    #endif
+    if (!py_srcfile) goto bad;
+    if (__pyx_clineno) {
+        #if PY_MAJOR_VERSION < 3
+        py_funcname = PyString_FromFormat( "%s (%s:%d)", funcname, __pyx_cfilenm, __pyx_clineno);
+        #else
+        py_funcname = PyUnicode_FromFormat( "%s (%s:%d)", funcname, __pyx_cfilenm, __pyx_clineno);
+        #endif
+    }
+    else {
+        #if PY_MAJOR_VERSION < 3
+        py_funcname = PyString_FromString(funcname);
+        #else
+        py_funcname = PyUnicode_FromString(funcname);
+        #endif
+    }
+    if (!py_funcname) goto bad;
+    py_globals = PyModule_GetDict(__pyx_m);
+    if (!py_globals) goto bad;
+    #if PY_MAJOR_VERSION < 3
+    empty_string = PyString_FromStringAndSize("", 0);
+    #else
+    empty_string = PyBytes_FromStringAndSize("", 0);
+    #endif
+    if (!empty_string) goto bad;
+    py_code = PyCode_New(
+        0,            /*int argcount,*/
+        #if PY_MAJOR_VERSION >= 3
+        0,            /*int kwonlyargcount,*/
+        #endif
+        0,            /*int nlocals,*/
+        0,            /*int stacksize,*/
+        0,            /*int flags,*/
+        empty_string, /*PyObject *code,*/
+        __pyx_empty_tuple,  /*PyObject *consts,*/
+        __pyx_empty_tuple,  /*PyObject *names,*/
+        __pyx_empty_tuple,  /*PyObject *varnames,*/
+        __pyx_empty_tuple,  /*PyObject *freevars,*/
+        __pyx_empty_tuple,  /*PyObject *cellvars,*/
+        py_srcfile,   /*PyObject *filename,*/
+        py_funcname,  /*PyObject *name,*/
+        __pyx_lineno,   /*int firstlineno,*/
+        empty_string  /*PyObject *lnotab*/
+    );
+    if (!py_code) goto bad;
+    py_frame = PyFrame_New(
+        PyThreadState_GET(), /*PyThreadState *tstate,*/
+        py_code,             /*PyCodeObject *code,*/
+        py_globals,          /*PyObject *globals,*/
+        0                    /*PyObject *locals*/
+    );
+    if (!py_frame) goto bad;
+    py_frame->f_lineno = __pyx_lineno;
+    PyTraceBack_Here(py_frame);
 bad:
-	Py_XDECREF(py_srcfile);
-	Py_XDECREF(py_funcname);
-	Py_XDECREF(empty_string);
-	Py_XDECREF(py_code);
-	Py_XDECREF(py_frame);
+    Py_XDECREF(py_srcfile);
+    Py_XDECREF(py_funcname);
+    Py_XDECREF(empty_string);
+    Py_XDECREF(py_code);
+    Py_XDECREF(py_frame);
 }
 
 static int __Pyx_InitStrings(__Pyx_StringTabEntry *t) {
-	while (t->p) {
-		#if PY_MAJOR_VERSION < 3
-		if (t->is_unicode && (!t->is_identifier)) {
-			*t->p = PyUnicode_DecodeUTF8(t->s, t->n - 1, NULL);
-		} else if (t->intern) {
-			*t->p = PyString_InternFromString(t->s);
-		} else {
-			*t->p = PyString_FromStringAndSize(t->s, t->n - 1);
-		}
-		#else  /* Python 3+ has unicode identifiers */
-		if (t->is_identifier || (t->is_unicode && t->intern)) {
-			*t->p = PyUnicode_InternFromString(t->s);
-		} else if (t->is_unicode) {
-			*t->p = PyUnicode_FromStringAndSize(t->s, t->n - 1);
-		} else {
-			*t->p = PyBytes_FromStringAndSize(t->s, t->n - 1);
-		}
-		#endif
-		if (!*t->p)
-			return -1;
-		++t;
-	}
-	return 0;
+    while (t->p) {
+        #if PY_MAJOR_VERSION < 3
+        if (t->is_unicode && (!t->is_identifier)) {
+            *t->p = PyUnicode_DecodeUTF8(t->s, t->n - 1, NULL);
+        } else if (t->intern) {
+            *t->p = PyString_InternFromString(t->s);
+        } else {
+            *t->p = PyString_FromStringAndSize(t->s, t->n - 1);
+        }
+        #else  /* Python 3+ has unicode identifiers */
+        if (t->is_identifier || (t->is_unicode && t->intern)) {
+            *t->p = PyUnicode_InternFromString(t->s);
+        } else if (t->is_unicode) {
+            *t->p = PyUnicode_FromStringAndSize(t->s, t->n - 1);
+        } else {
+            *t->p = PyBytes_FromStringAndSize(t->s, t->n - 1);
+        }
+        #endif
+        if (!*t->p)
+            return -1;
+        ++t;
+    }
+    return 0;
 }
 
 /* Type Conversion Functions */
@@ -4684,39 +4684,39 @@ static INLINE PyObject* __Pyx_PyNumber_Int(PyObject* x) {
 #else
   if (PyLong_Check(x))
 #endif
-	return Py_INCREF(x), x;
+    return Py_INCREF(x), x;
   m = Py_TYPE(x)->tp_as_number;
 #if PY_VERSION_HEX < 0x03000000
   if (m && m->nb_int) {
-	name = "int";
-	res = PyNumber_Int(x);
+    name = "int";
+    res = PyNumber_Int(x);
   }
   else if (m && m->nb_long) {
-	name = "long";
-	res = PyNumber_Long(x);
+    name = "long";
+    res = PyNumber_Long(x);
   }
 #else
   if (m && m->nb_int) {
-	name = "int";
-	res = PyNumber_Long(x);
+    name = "int";
+    res = PyNumber_Long(x);
   }
 #endif
   if (res) {
 #if PY_VERSION_HEX < 0x03000000
-	if (!PyInt_Check(res) && !PyLong_Check(res)) {
+    if (!PyInt_Check(res) && !PyLong_Check(res)) {
 #else
-	if (!PyLong_Check(res)) {
+    if (!PyLong_Check(res)) {
 #endif
-	  PyErr_Format(PyExc_TypeError,
-				   "__%s__ returned non-%s (type %.200s)",
-				   name, name, Py_TYPE(res)->tp_name);
-	  Py_DECREF(res);
-	  return NULL;
-	}
+      PyErr_Format(PyExc_TypeError,
+                   "__%s__ returned non-%s (type %.200s)",
+                   name, name, Py_TYPE(res)->tp_name);
+      Py_DECREF(res);
+      return NULL;
+    }
   }
   else if (!PyErr_Occurred()) {
-	PyErr_SetString(PyExc_TypeError,
-					"an integer is required");
+    PyErr_SetString(PyExc_TypeError,
+                    "an integer is required");
   }
   return res;
 }
@@ -4733,11 +4733,11 @@ static INLINE Py_ssize_t __Pyx_PyIndex_AsSsize_t(PyObject* b) {
 static INLINE PyObject * __Pyx_PyInt_FromSize_t(size_t ival) {
 #if PY_VERSION_HEX < 0x02050000
    if (ival <= LONG_MAX)
-	   return PyInt_FromLong((long)ival);
+       return PyInt_FromLong((long)ival);
    else {
-	   unsigned char *bytes = (unsigned char *) &ival;
-	   int one = 1; int little = (int)*(unsigned char*)&one;
-	   return _PyLong_FromByteArray(bytes, sizeof(size_t), little, 0);
+       unsigned char *bytes = (unsigned char *) &ival;
+       int one = 1; int little = (int)*(unsigned char*)&one;
+       return _PyLong_FromByteArray(bytes, sizeof(size_t), little, 0);
    }
 #else
    return PyInt_FromSize_t(ival);
@@ -4747,11 +4747,11 @@ static INLINE PyObject * __Pyx_PyInt_FromSize_t(size_t ival) {
 static INLINE size_t __Pyx_PyInt_AsSize_t(PyObject* x) {
    unsigned PY_LONG_LONG val = __Pyx_PyInt_AsUnsignedLongLong(x);
    if (unlikely(val == (unsigned PY_LONG_LONG)-1 && PyErr_Occurred())) {
-	   return (size_t)-1;
+       return (size_t)-1;
    } else if (unlikely(val != (unsigned PY_LONG_LONG)(size_t)val)) {
-	   PyErr_SetString(PyExc_OverflowError,
-					   "value too large to convert to size_t");
-	   return (size_t)-1;
+       PyErr_SetString(PyExc_OverflowError,
+                       "value too large to convert to size_t");
+       return (size_t)-1;
    }
    return (size_t)val;
 }

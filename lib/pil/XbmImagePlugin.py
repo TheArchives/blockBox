@@ -26,64 +26,64 @@ from lib.pil import Image, ImageFile
 
 # XBM header
 xbm_head = re.compile(
-	"\s*#define[ \t]+[^_]*_width[ \t]+(?P<width>[0-9]+)[\r\n]+"
-	"#define[ \t]+[^_]*_height[ \t]+(?P<height>[0-9]+)[\r\n]+"
-	"(?P<hotspot>"
-	"#define[ \t]+[^_]*_x_hot[ \t]+(?P<xhot>[0-9]+)[\r\n]+"
-	"#define[ \t]+[^_]*_y_hot[ \t]+(?P<yhot>[0-9]+)[\r\n]+"
-	")?"
-	"[\\000-\\377]*_bits\\[\\]"
+    "\s*#define[ \t]+[^_]*_width[ \t]+(?P<width>[0-9]+)[\r\n]+"
+    "#define[ \t]+[^_]*_height[ \t]+(?P<height>[0-9]+)[\r\n]+"
+    "(?P<hotspot>"
+    "#define[ \t]+[^_]*_x_hot[ \t]+(?P<xhot>[0-9]+)[\r\n]+"
+    "#define[ \t]+[^_]*_y_hot[ \t]+(?P<yhot>[0-9]+)[\r\n]+"
+    ")?"
+    "[\\000-\\377]*_bits\\[\\]"
 )
 
 def _accept(prefix):
-	return string.lstrip(prefix)[:7] == "#define"
+    return string.lstrip(prefix)[:7] == "#define"
 
 ##
 # Image plugin for X11 bitmaps.
 
 class XbmImageFile(ImageFile.ImageFile):
 
-	format = "XBM"
-	format_description = "X11 Bitmap"
+    format = "XBM"
+    format_description = "X11 Bitmap"
 
-	def _open(self):
+    def _open(self):
 
-		m = xbm_head.match(self.fp.read(512))
+        m = xbm_head.match(self.fp.read(512))
 
-		if m:
+        if m:
 
-			xsize = int(m.group("width"))
-			ysize = int(m.group("height"))
+            xsize = int(m.group("width"))
+            ysize = int(m.group("height"))
 
-			if m.group("hotspot"):
-				self.info["hotspot"] = (
-					int(m.group("xhot")), int(m.group("yhot"))
-					)
+            if m.group("hotspot"):
+                self.info["hotspot"] = (
+                    int(m.group("xhot")), int(m.group("yhot"))
+                    )
 
-			self.mode = "1"
-			self.size = xsize, ysize
+            self.mode = "1"
+            self.size = xsize, ysize
 
-			self.tile = [("xbm", (0, 0)+self.size, m.end(), None)]
+            self.tile = [("xbm", (0, 0)+self.size, m.end(), None)]
 
 
 def _save(im, fp, filename):
 
-	if im.mode != "1":
-		raise IOError, "cannot write mode %s as XBM" % im.mode
+    if im.mode != "1":
+        raise IOError, "cannot write mode %s as XBM" % im.mode
 
-	fp.write("#define im_width %d\n" % im.size[0])
-	fp.write("#define im_height %d\n" % im.size[1])
+    fp.write("#define im_width %d\n" % im.size[0])
+    fp.write("#define im_height %d\n" % im.size[1])
 
-	hotspot = im.encoderinfo.get("hotspot")
-	if hotspot:
-		fp.write("#define im_x_hot %d\n" % hotspot[0])
-		fp.write("#define im_y_hot %d\n" % hotspot[1])
+    hotspot = im.encoderinfo.get("hotspot")
+    if hotspot:
+        fp.write("#define im_x_hot %d\n" % hotspot[0])
+        fp.write("#define im_y_hot %d\n" % hotspot[1])
 
-	fp.write("static char im_bits[] = {\n")
+    fp.write("static char im_bits[] = {\n")
 
-	ImageFile._save(im, fp, [("xbm", (0,0)+im.size, 0, None)])
+    ImageFile._save(im, fp, [("xbm", (0,0)+im.size, 0, None)])
 
-	fp.write("};\n")
+    fp.write("};\n")
 
 
 Image.register_open("XBM", XbmImageFile, _accept)

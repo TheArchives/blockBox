@@ -17,53 +17,53 @@ $Id: exceptions.py 110536 2010-04-06 02:59:44Z tseaver $
 """
 
 class Invalid(Exception):
-	"""A specification is violated
-	"""
+    """A specification is violated
+    """
 
 class DoesNotImplement(Invalid):
-	""" This object does not implement """
-	def __init__(self, interface):
-		self.interface = interface
+    """ This object does not implement """
+    def __init__(self, interface):
+        self.interface = interface
 
-	def __str__(self):
-		return """An object does not implement interface %(interface)s
+    def __str__(self):
+        return """An object does not implement interface %(interface)s
 
-		""" % self.__dict__
+        """ % self.__dict__
 
 class BrokenImplementation(Invalid):
-	"""An attribute is not completely implemented.
-	"""
+    """An attribute is not completely implemented.
+    """
 
-	def __init__(self, interface, name):
-		self.interface=interface
-		self.name=name
+    def __init__(self, interface, name):
+        self.interface=interface
+        self.name=name
 
-	def __str__(self):
-		return """An object has failed to implement interface %(interface)s
+    def __str__(self):
+        return """An object has failed to implement interface %(interface)s
 
-		The %(name)s attribute was not provided.
-		""" % self.__dict__
+        The %(name)s attribute was not provided.
+        """ % self.__dict__
 
 class BrokenMethodImplementation(Invalid):
-	"""An method is not completely implemented.
-	"""
+    """An method is not completely implemented.
+    """
 
-	def __init__(self, method, mess):
-		self.method=method
-		self.mess=mess
+    def __init__(self, method, mess):
+        self.method=method
+        self.mess=mess
 
-	def __str__(self):
-		return """The implementation of %(method)s violates its contract
-		because %(mess)s.
-		""" % self.__dict__
+    def __str__(self):
+        return """The implementation of %(method)s violates its contract
+        because %(mess)s.
+        """ % self.__dict__
 
 class InvalidInterface(Exception):
-	"""The interface has invalid contents
-	"""
+    """The interface has invalid contents
+    """
 
 class BadImplements(TypeError):
-	"""An implementation assertion is invalid
+    """An implementation assertion is invalid
 
-	because it doesn't contain an interface or a sequence of valid
-	implementation assertions.
-	"""
+    because it doesn't contain an interface or a sequence of valid
+    implementation assertions.
+    """

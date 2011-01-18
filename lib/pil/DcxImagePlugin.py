@@ -30,47 +30,47 @@ from PcxImagePlugin import PcxImageFile
 MAGIC = 0x3ADE68B1 # QUIZ: what's this value, then?
 
 def i32(c):
-	return ord(c[0]) + (ord(c[1])<<8) + (ord(c[2])<<16) + (ord(c[3])<<24)
+    return ord(c[0]) + (ord(c[1])<<8) + (ord(c[2])<<16) + (ord(c[3])<<24)
 
 def _accept(prefix):
-	return i32(prefix) == MAGIC
+    return i32(prefix) == MAGIC
 
 ##
 # Image plugin for the Intel DCX format.
 
 class DcxImageFile(PcxImageFile):
 
-	format = "DCX"
-	format_description = "Intel DCX"
+    format = "DCX"
+    format_description = "Intel DCX"
 
-	def _open(self):
+    def _open(self):
 
-		# Header
-		s = self.fp.read(4)
-		if i32(s) != MAGIC:
-			raise SyntaxError, "not a DCX file"
+        # Header
+        s = self.fp.read(4)
+        if i32(s) != MAGIC:
+            raise SyntaxError, "not a DCX file"
 
-		# Component directory
-		self._offset = []
-		for i in range(1024):
-			offset = i32(self.fp.read(4))
-			if not offset:
-				break
-			self._offset.append(offset)
+        # Component directory
+        self._offset = []
+        for i in range(1024):
+            offset = i32(self.fp.read(4))
+            if not offset:
+                break
+            self._offset.append(offset)
 
-		self.__fp = self.fp
-		self.seek(0)
+        self.__fp = self.fp
+        self.seek(0)
 
-	def seek(self, frame):
-		if frame >= len(self._offset):
-			raise EOFError("attempt to seek outside DCX directory")
-		self.frame = frame
-		self.fp = self.__fp
-		self.fp.seek(self._offset[frame])
-		PcxImageFile._open(self)
+    def seek(self, frame):
+        if frame >= len(self._offset):
+            raise EOFError("attempt to seek outside DCX directory")
+        self.frame = frame
+        self.fp = self.__fp
+        self.fp.seek(self._offset[frame])
+        PcxImageFile._open(self)
 
-	def tell(self):
-		return self.frame
+    def tell(self):
+        return self.frame
 
 
 Image.register_open("DCX", DcxImageFile, _accept)

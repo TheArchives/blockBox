@@ -78,9 +78,9 @@ classImplements(NotImplementedError, INotImplementedError)
 classImplements(OSError, IOSError)
 classImplements(OverflowError, IOverflowError)
 try:
-	classImplements(OverflowWarning, IOverflowWarning)
+    classImplements(OverflowWarning, IOverflowWarning)
 except NameError:
-	pass # OverflowWarning was removed in Python 2.5
+    pass # OverflowWarning was removed in Python 2.5
 classImplements(ReferenceError, IReferenceError)
 classImplements(RuntimeError, IRuntimeError)
 classImplements(RuntimeWarning, IRuntimeWarning)

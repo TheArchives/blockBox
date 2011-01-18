@@ -2,7 +2,7 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-import datetime, logging, sys, threading, time, traceback
+import datetime, gc, logging, sys, threading, time, traceback
 
 from lib.twisted.internet import reactor
 
@@ -118,7 +118,7 @@ class StdinPlugin(threading.Thread):
 									print ("Please specify a username.")
 								else:
 									try:
-										print Rank(message, 'console', True, self.server)
+										print Rank(self, message, 'console', True, self.server)
 									except:
 										print ("You must specify a rank and username.")
 							elif message[0] == "derank":
@@ -126,7 +126,7 @@ class StdinPlugin(threading.Thread):
 									print ("Please specify a username.")
 								else:
 									try:
-										print DeRank(message, 'console', True, self.server)
+										print DeRank(self, message, 'console', True, self.server)
 									except:
 										print ("You must specify a rank and username.")
 							elif message[0] == "spec":
@@ -134,7 +134,7 @@ class StdinPlugin(threading.Thread):
 									print ("Please specify a username.")
 								else:
 									try:
-										print Spec(message[1], 'console', True, self.server)
+										print Spec(self, message[1], 'console', True, self.server)
 									except:
 										print ("Please specify a username.")
 							elif message[0] == ("boot"):
@@ -217,7 +217,8 @@ class StdinPlugin(threading.Thread):
 									self.server.queue.put((self, TASK_SERVERMESSAGE, ("[MSG] "+(" ".join(message[1:])))))
 							elif message[0] == ("gc"):
 								#ManualGarbageMe
-								self.server.cleanGarbage()
+								count = gc.collect()
+								self.logger.info("%i garbage objects collected, %i could not be collected." % (count, len(gc.garbage)))
 							elif message[0] == ("u"):
 								if len(message) == 1:
 									print ("Please type a message.")

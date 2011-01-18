@@ -27,12 +27,12 @@ from lib.pil import Image
 ##
 
 try:
-	# built-in driver (1.1.3 and later)
-	grabber = Image.core.grabscreen
+    # built-in driver (1.1.3 and later)
+    grabber = Image.core.grabscreen
 except AttributeError:
-	# stand-alone driver (pil plus)
-	import _grabscreen
-	grabber = _grabscreen.grab
+    # stand-alone driver (pil plus)
+    import _grabscreen
+    grabber = _grabscreen.grab
 
 ##
 # (New in 1.1.3) Take a snapshot of the screen.  The pixels inside the
@@ -44,28 +44,28 @@ except AttributeError:
 # @since 1.1.3
 
 def grab(bbox=None):
-	size, data = grabber()
-	im = Image.fromstring(
-		"RGB", size, data,
-		# RGB, 32-bit line padding, origo in lower left corner
-		"raw", "BGR", (size[0]*3 + 3) & -4, -1
-		)
-	if bbox:
-		im = im.crop(bbox)
-	return im
+    size, data = grabber()
+    im = Image.fromstring(
+        "RGB", size, data,
+        # RGB, 32-bit line padding, origo in lower left corner
+        "raw", "BGR", (size[0]*3 + 3) & -4, -1
+        )
+    if bbox:
+        im = im.crop(bbox)
+    return im
 
 ##
 # (New in 1.1.4) Take a snapshot of the clipboard image, if any.
 #
 # @return An image, a list of filenames, or None if the clipboard does
-#	 not contain image data or filenames.  Note that if a list is
-#	 returned, the filenames may not represent image files.
+#     not contain image data or filenames.  Note that if a list is
+#     returned, the filenames may not represent image files.
 # @since 1.1.4
 
 def grabclipboard():
-	debug = 0 # temporary interface
-	data = Image.core.grabclipboard(debug)
-	if Image.isStringType(data):
-		import BmpImagePlugin, StringIO
-		return BmpImagePlugin.DibImageFile(StringIO.StringIO(data))
-	return data
+    debug = 0 # temporary interface
+    data = Image.core.grabclipboard(debug)
+    if Image.isStringType(data):
+        import BmpImagePlugin, StringIO
+        return BmpImagePlugin.DibImageFile(StringIO.StringIO(data))
+    return data

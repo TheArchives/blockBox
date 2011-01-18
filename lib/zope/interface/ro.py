@@ -19,53 +19,53 @@ __docformat__ = 'restructuredtext'
 
 
 def ro(object):
-	"""Compute a "resolution order" for an object
-	"""
-	return mergeOrderings([_flatten(object)])
+    """Compute a "resolution order" for an object
+    """
+    return mergeOrderings([_flatten(object)])
 
 def mergeOrderings(orderings, seen=None):
-	"""Merge multiple orderings so that within-ordering order is preserved
+    """Merge multiple orderings so that within-ordering order is preserved
 
-	Orderings are constrained in such a way that if an object appears
-	in two or more orderings, then the suffix that begins with the
-	object must be in both orderings.
+    Orderings are constrained in such a way that if an object appears
+    in two or more orderings, then the suffix that begins with the
+    object must be in both orderings.
 
-	For example:
+    For example:
 
-	>>> _mergeOrderings([
-	... ['x', 'y', 'z'],
-	... ['q', 'z'],
-	... [1, 3, 5],
-	... ['z']
-	... ])
-	['x', 'y', 'q', 1, 3, 5, 'z']
+    >>> _mergeOrderings([
+    ... ['x', 'y', 'z'],
+    ... ['q', 'z'],
+    ... [1, 3, 5],
+    ... ['z']
+    ... ])
+    ['x', 'y', 'q', 1, 3, 5, 'z']
 
-	"""
+    """
 
-	if seen is None:
-		seen = {}
-	result = []
-	orderings.reverse()
-	for ordering in orderings:
-		ordering = list(ordering)
-		ordering.reverse()
-		for o in ordering:
-			if o not in seen:
-				seen[o] = 1
-				result.append(o)
+    if seen is None:
+        seen = {}
+    result = []
+    orderings.reverse()
+    for ordering in orderings:
+        ordering = list(ordering)
+        ordering.reverse()
+        for o in ordering:
+            if o not in seen:
+                seen[o] = 1
+                result.append(o)
 
-	result.reverse()
-	return result
+    result.reverse()
+    return result
 
 def _flatten(ob):
-	result = [ob]
-	i = 0
-	for ob in iter(result):
-		i += 1
-		# The recursive calls can be avoided by inserting the base classes
-		# into the dynamically growing list directly after the currently
-		# considered object;  the iterator makes sure this will keep working
-		# in the future, since it cannot rely on the length of the list
-		# by definition.
-		result[i:i] = ob.__bases__
-	return result
+    result = [ob]
+    i = 0
+    for ob in iter(result):
+        i += 1
+        # The recursive calls can be avoided by inserting the base classes
+        # into the dynamically growing list directly after the currently
+        # considered object;  the iterator makes sure this will keep working
+        # in the future, since it cannot rely on the length of the list
+        # by definition.
+        result[i:i] = ob.__bases__
+    return result

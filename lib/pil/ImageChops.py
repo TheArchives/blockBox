@@ -41,9 +41,9 @@ from lib.pil import Image
 # @return An image object.
 
 def constant(image, value):
-	"Fill a channel with a given grey level"
+    "Fill a channel with a given grey level"
 
-	return Image.new("L", image.size, value)
+    return Image.new("L", image.size, value)
 
 ##
 # Copy image.
@@ -52,9 +52,9 @@ def constant(image, value):
 # @return A copy of the source image.
 
 def duplicate(image):
-	"Create a copy of a channel"
+    "Create a copy of a channel"
 
-	return image.copy()
+    return image.copy()
 
 ##
 # Inverts an image
@@ -64,10 +64,10 @@ def duplicate(image):
 # @return An image object.
 
 def invert(image):
-	"Invert a channel"
+    "Invert a channel"
 
-	image.load()
-	return image._new(image.im.chop_invert())
+    image.load()
+    return image._new(image.im.chop_invert())
 
 ##
 # Compare images, and return lighter pixel value
@@ -81,11 +81,11 @@ def invert(image):
 # @return An image object.
 
 def lighter(image1, image2):
-	"Select the lighter pixels from each image"
+    "Select the lighter pixels from each image"
 
-	image1.load()
-	image2.load()
-	return image1._new(image1.im.chop_lighter(image2.im))
+    image1.load()
+    image2.load()
+    return image1._new(image1.im.chop_lighter(image2.im))
 
 ##
 # Compare images, and return darker pixel value
@@ -99,11 +99,11 @@ def lighter(image1, image2):
 # @return An image object.
 
 def darker(image1, image2):
-	"Select the darker pixels from each image"
+    "Select the darker pixels from each image"
 
-	image1.load()
-	image2.load()
-	return image1._new(image1.im.chop_darker(image2.im))
+    image1.load()
+    image2.load()
+    return image1._new(image1.im.chop_darker(image2.im))
 
 ##
 # Calculate absolute difference
@@ -116,11 +116,11 @@ def darker(image1, image2):
 # @return An image object.
 
 def difference(image1, image2):
-	"Subtract one image from another"
+    "Subtract one image from another"
 
-	image1.load()
-	image2.load()
-	return image1._new(image1.im.chop_difference(image2.im))
+    image1.load()
+    image2.load()
+    return image1._new(image1.im.chop_difference(image2.im))
 
 ##
 # Superimpose positive images
@@ -135,11 +135,11 @@ def difference(image1, image2):
 # @return An image object.
 
 def multiply(image1, image2):
-	"Superimpose two positive images"
+    "Superimpose two positive images"
 
-	image1.load()
-	image2.load()
-	return image1._new(image1.im.chop_multiply(image2.im))
+    image1.load()
+    image2.load()
+    return image1._new(image1.im.chop_multiply(image2.im))
 
 ##
 # Superimpose negative images
@@ -152,11 +152,11 @@ def multiply(image1, image2):
 # @return An image object.
 
 def screen(image1, image2):
-	"Superimpose two negative images"
+    "Superimpose two negative images"
 
-	image1.load()
-	image2.load()
-	return image1._new(image1.im.chop_screen(image2.im))
+    image1.load()
+    image2.load()
+    return image1._new(image1.im.chop_screen(image2.im))
 
 ##
 # Add images
@@ -170,11 +170,11 @@ def screen(image1, image2):
 # @return An image object.
 
 def add(image1, image2, scale=1.0, offset=0):
-	"Add two images"
+    "Add two images"
 
-	image1.load()
-	image2.load()
-	return image1._new(image1.im.chop_add(image2.im, scale, offset))
+    image1.load()
+    image2.load()
+    return image1._new(image1.im.chop_add(image2.im, scale, offset))
 
 ##
 # Subtract images
@@ -188,11 +188,11 @@ def add(image1, image2, scale=1.0, offset=0):
 # @return An image object.
 
 def subtract(image1, image2, scale=1.0, offset=0):
-	"Subtract two images"
+    "Subtract two images"
 
-	image1.load()
-	image2.load()
-	return image1._new(image1.im.chop_subtract(image2.im, scale, offset))
+    image1.load()
+    image2.load()
+    return image1._new(image1.im.chop_subtract(image2.im, scale, offset))
 
 ##
 # Add images without clipping
@@ -205,11 +205,11 @@ def subtract(image1, image2, scale=1.0, offset=0):
 # @return An image object.
 
 def add_modulo(image1, image2):
-	"Add two images without clipping"
+    "Add two images without clipping"
 
-	image1.load()
-	image2.load()
-	return image1._new(image1.im.chop_add_modulo(image2.im))
+    image1.load()
+    image2.load()
+    return image1._new(image1.im.chop_add_modulo(image2.im))
 
 ##
 # Subtract images without clipping
@@ -222,44 +222,44 @@ def add_modulo(image1, image2):
 # @return An image object.
 
 def subtract_modulo(image1, image2):
-	"Subtract two images without clipping"
+    "Subtract two images without clipping"
 
-	image1.load()
-	image2.load()
-	return image1._new(image1.im.chop_subtract_modulo(image2.im))
+    image1.load()
+    image2.load()
+    return image1._new(image1.im.chop_subtract_modulo(image2.im))
 
 ##
 # Logical AND
 # (image1 and image2).
 
 def logical_and(image1, image2):
-	"Logical and between two images"
+    "Logical and between two images"
 
-	image1.load()
-	image2.load()
-	return image1._new(image1.im.chop_and(image2.im))
+    image1.load()
+    image2.load()
+    return image1._new(image1.im.chop_and(image2.im))
 
 ##
 # Logical OR
 # (image1 or image2).
 
 def logical_or(image1, image2):
-	"Logical or between two images"
+    "Logical or between two images"
 
-	image1.load()
-	image2.load()
-	return image1._new(image1.im.chop_or(image2.im))
+    image1.load()
+    image2.load()
+    return image1._new(image1.im.chop_or(image2.im))
 
 ##
 # Logical XOR
 # (image1 xor image2).
 
 def logical_xor(image1, image2):
-	"Logical xor between two images"
+    "Logical xor between two images"
 
-	image1.load()
-	image2.load()
-	return image1._new(image1.im.chop_xor(image2.im))
+    image1.load()
+    image2.load()
+    return image1._new(image1.im.chop_xor(image2.im))
 
 ##
 # Blend images using constant transparency weight.
@@ -267,9 +267,9 @@ def logical_xor(image1, image2):
 # Same as the <b>blend</b> function in the <b>Image</b> module.
 
 def blend(image1, image2, alpha):
-	"Blend two images using a constant transparency weight"
+    "Blend two images using a constant transparency weight"
 
-	return Image.blend(image1, image2, alpha)
+    return Image.blend(image1, image2, alpha)
 
 ##
 # Create composite using transparency mask.
@@ -277,9 +277,9 @@ def blend(image1, image2, alpha):
 # Same as the <b>composite</b> function in the <b>Image</b> module.
 
 def composite(image1, image2, mask):
-	"Create composite image by blending images using a transparency mask"
+    "Create composite image by blending images using a transparency mask"
 
-	return Image.composite(image1, image2, mask)
+    return Image.composite(image1, image2, mask)
 
 ##
 # Offset image data.
@@ -291,12 +291,12 @@ def composite(image1, image2, mask):
 # @param image Source image.
 # @param xoffset The horizontal distance.
 # @param yoffset The vertical distance.  If omitted, both
-#	distances are set to the same value.
+#    distances are set to the same value.
 # @return An Image object.
 
 def offset(image, xoffset, yoffset=None):
-	"Offset image in horizontal and/or vertical direction"
-	if yoffset is None:
-		yoffset = xoffset
-	image.load()
-	return image._new(image.im.offset(xoffset, yoffset))
+    "Offset image in horizontal and/or vertical direction"
+    if yoffset is None:
+        yoffset = xoffset
+    image.load()
+    return image._new(image.im.offset(xoffset, yoffset))

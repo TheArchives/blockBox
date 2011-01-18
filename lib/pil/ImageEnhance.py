@@ -22,18 +22,18 @@ from lib.pil import Image, ImageFilter, ImageStat
 
 class _Enhance:
 
-	##
-	# Returns an enhanced image. The enhancement factor is a floating
-	# point value controlling the enhancement. Factor 1.0 always
-	# returns a copy of the original image, lower factors mean less
-	# colour (brightness, contrast, etc), and higher values more.
-	# There are no restrictions on this value.
-	#
-	# @param factor Enhancement factor.
-	# @return An enhanced image.
+    ##
+    # Returns an enhanced image. The enhancement factor is a floating
+    # point value controlling the enhancement. Factor 1.0 always
+    # returns a copy of the original image, lower factors mean less
+    # colour (brightness, contrast, etc), and higher values more.
+    # There are no restrictions on this value.
+    #
+    # @param factor Enhancement factor.
+    # @return An enhanced image.
 
-	def enhance(self, factor):
-		return Image.blend(self.degenerate, self.image, factor)
+    def enhance(self, factor):
+        return Image.blend(self.degenerate, self.image, factor)
 
 ##
 # Color enhancement object.
@@ -44,10 +44,10 @@ class _Enhance:
 # the original image.
 
 class Color(_Enhance):
-	"Adjust image colour balance"
-	def __init__(self, image):
-		self.image = image
-		self.degenerate = image.convert("L").convert(image.mode)
+    "Adjust image colour balance"
+    def __init__(self, image):
+        self.image = image
+        self.degenerate = image.convert("L").convert(image.mode)
 
 ##
 # Contrast enhancement object.
@@ -57,11 +57,11 @@ class Color(_Enhance):
 # gives a solid grey image, factor 1.0 gives the original image.
 
 class Contrast(_Enhance):
-	"Adjust image contrast"
-	def __init__(self, image):
-		self.image = image
-		mean = int(ImageStat.Stat(image.convert("L")).mean[0] + 0.5)
-		self.degenerate = Image.new("L", image.size, mean).convert(image.mode)
+    "Adjust image contrast"
+    def __init__(self, image):
+        self.image = image
+        mean = int(ImageStat.Stat(image.convert("L")).mean[0] + 0.5)
+        self.degenerate = Image.new("L", image.size, mean).convert(image.mode)
 
 ##
 # Brightness enhancement object.
@@ -71,10 +71,10 @@ class Contrast(_Enhance):
 # original image.
 
 class Brightness(_Enhance):
-	"Adjust image brightness"
-	def __init__(self, image):
-		self.image = image
-		self.degenerate = Image.new(image.mode, image.size, 0)
+    "Adjust image brightness"
+    def __init__(self, image):
+        self.image = image
+        self.degenerate = Image.new(image.mode, image.size, 0)
 
 ##
 # Sharpness enhancement object.
@@ -84,7 +84,7 @@ class Brightness(_Enhance):
 # image, and a factor of 2.0 gives a sharpened image.
 
 class Sharpness(_Enhance):
-	"Adjust image sharpness"
-	def __init__(self, image):
-		self.image = image
-		self.degenerate = image.filter(ImageFilter.SMOOTH)
+    "Adjust image sharpness"
+    def __init__(self, image):
+        self.image = image
+        self.degenerate = image.filter(ImageFilter.SMOOTH)

@@ -3,24 +3,24 @@
 
 
 class Enum:
-	group = None
+    group = None
 
-	def __init__(self, label):
-		self.label = label
+    def __init__(self, label):
+        self.label = label
 
-	def __repr__(self):
-		return '<%s: %s>' % (self.group, self.label)
+    def __repr__(self):
+        return '<%s: %s>' % (self.group, self.label)
 
-	def __str__(self):
-		return self.label
+    def __str__(self):
+        return self.label
 
 
 class StatusEnum(Enum):
-	group = 'Status'
+    group = 'Status'
 
 OFFLINE = Enum('Offline')
 ONLINE = Enum('Online')
 AWAY = Enum('Away')
 
 class OfflineError(Exception):
-	"""The requested action can't happen while offline."""
+    """The requested action can't happen while offline."""

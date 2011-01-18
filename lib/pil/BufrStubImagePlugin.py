@@ -19,44 +19,44 @@ _handler = None
 # @param handler Handler object.
 
 def register_handler(handler):
-	global _handler
-	_handler = handler
+    global _handler
+    _handler = handler
 
 # --------------------------------------------------------------------
 # Image adapter
 
 def _accept(prefix):
-	return prefix[:4] == "BUFR" or prefix[:4] == "ZCZC"
+    return prefix[:4] == "BUFR" or prefix[:4] == "ZCZC"
 
 class BufrStubImageFile(ImageFile.StubImageFile):
 
-	format = "BUFR"
-	format_description = "BUFR"
+    format = "BUFR"
+    format_description = "BUFR"
 
-	def _open(self):
+    def _open(self):
 
-		offset = self.fp.tell()
+        offset = self.fp.tell()
 
-		if not _accept(self.fp.read(8)):
-			raise SyntaxError("Not a BUFR file")
+        if not _accept(self.fp.read(8)):
+            raise SyntaxError("Not a BUFR file")
 
-		self.fp.seek(offset)
+        self.fp.seek(offset)
 
-		# make something up
-		self.mode = "F"
-		self.size = 1, 1
+        # make something up
+        self.mode = "F"
+        self.size = 1, 1
 
-		loader = self._load()
-		if loader:
-			loader.open(self)
+        loader = self._load()
+        if loader:
+            loader.open(self)
 
-	def _load(self):
-		return _handler
+    def _load(self):
+        return _handler
 
 def _save(im, fp, filename):
-	if _handler is None or not hasattr("_handler", "save"):
-		raise IOError("BUFR save handler not installed")
-	_handler.save(im, fp, filename)
+    if _handler is None or not hasattr("_handler", "save"):
+        raise IOError("BUFR save handler not installed")
+    _handler.save(im, fp, filename)
 
 
 # --------------------------------------------------------------------

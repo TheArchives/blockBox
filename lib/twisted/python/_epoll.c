@@ -110,22 +110,22 @@ static int __pyx_f_6_epoll_5epoll___init__(PyObject *__pyx_v_self, PyObject *__p
   __pyx_1 = (((struct __pyx_obj_6_epoll_epoll *)__pyx_v_self)->fd == (-1));
   if (__pyx_1) {
 
-	/* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":79 */
-	__pyx_2 = __Pyx_GetName(__pyx_b, __pyx_n_IOError); if (!__pyx_2) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 79; goto __pyx_L1;}
-	__pyx_3 = PyInt_FromLong(errno); if (!__pyx_3) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 79; goto __pyx_L1;}
-	__pyx_4 = PyString_FromString(strerror(errno)); if (!__pyx_4) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 79; goto __pyx_L1;}
-	__pyx_5 = PyTuple_New(2); if (!__pyx_5) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 79; goto __pyx_L1;}
-	PyTuple_SET_ITEM(__pyx_5, 0, __pyx_3);
-	PyTuple_SET_ITEM(__pyx_5, 1, __pyx_4);
-	__pyx_3 = 0;
-	__pyx_4 = 0;
-	__pyx_3 = PyObject_Call(__pyx_2, __pyx_5, 0); if (!__pyx_3) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 79; goto __pyx_L1;}
-	Py_DECREF(__pyx_2); __pyx_2 = 0;
-	Py_DECREF(__pyx_5); __pyx_5 = 0;
-	__Pyx_Raise(__pyx_3, 0, 0);
-	Py_DECREF(__pyx_3); __pyx_3 = 0;
-	{__pyx_filename = __pyx_f[0]; __pyx_lineno = 79; goto __pyx_L1;}
-	goto __pyx_L2;
+    /* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":79 */
+    __pyx_2 = __Pyx_GetName(__pyx_b, __pyx_n_IOError); if (!__pyx_2) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 79; goto __pyx_L1;}
+    __pyx_3 = PyInt_FromLong(errno); if (!__pyx_3) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 79; goto __pyx_L1;}
+    __pyx_4 = PyString_FromString(strerror(errno)); if (!__pyx_4) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 79; goto __pyx_L1;}
+    __pyx_5 = PyTuple_New(2); if (!__pyx_5) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 79; goto __pyx_L1;}
+    PyTuple_SET_ITEM(__pyx_5, 0, __pyx_3);
+    PyTuple_SET_ITEM(__pyx_5, 1, __pyx_4);
+    __pyx_3 = 0;
+    __pyx_4 = 0;
+    __pyx_3 = PyObject_Call(__pyx_2, __pyx_5, 0); if (!__pyx_3) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 79; goto __pyx_L1;}
+    Py_DECREF(__pyx_2); __pyx_2 = 0;
+    Py_DECREF(__pyx_5); __pyx_5 = 0;
+    __Pyx_Raise(__pyx_3, 0, 0);
+    Py_DECREF(__pyx_3); __pyx_3 = 0;
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 79; goto __pyx_L1;}
+    goto __pyx_L2;
   }
   __pyx_L2:;
 
@@ -155,12 +155,12 @@ static void __pyx_f_6_epoll_5epoll___dealloc__(PyObject *__pyx_v_self) {
   __pyx_1 = ((struct __pyx_obj_6_epoll_epoll *)__pyx_v_self)->initialized;
   if (__pyx_1) {
 
-	/* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":84 */
-	close(((struct __pyx_obj_6_epoll_epoll *)__pyx_v_self)->fd);
+    /* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":84 */
+    close(((struct __pyx_obj_6_epoll_epoll *)__pyx_v_self)->fd);
 
-	/* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":85 */
-	((struct __pyx_obj_6_epoll_epoll *)__pyx_v_self)->initialized = 0;
-	goto __pyx_L2;
+    /* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":85 */
+    ((struct __pyx_obj_6_epoll_epoll *)__pyx_v_self)->initialized = 0;
+    goto __pyx_L2;
   }
   __pyx_L2:;
 
@@ -172,7 +172,7 @@ static void __pyx_f_6_epoll_5epoll___dealloc__(PyObject *__pyx_v_self) {
 }
 
 static PyObject *__pyx_f_6_epoll_5epoll_close(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_6_epoll_5epoll_close[] = "\n		Close the epoll file descriptor.\n		";
+static char __pyx_doc_6_epoll_5epoll_close[] = "\n        Close the epoll file descriptor.\n        ";
 static PyObject *__pyx_f_6_epoll_5epoll_close(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_r;
   int __pyx_1;
@@ -188,32 +188,32 @@ static PyObject *__pyx_f_6_epoll_5epoll_close(PyObject *__pyx_v_self, PyObject *
   __pyx_1 = ((struct __pyx_obj_6_epoll_epoll *)__pyx_v_self)->initialized;
   if (__pyx_1) {
 
-	/* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":92 */
-	__pyx_1 = (close(((struct __pyx_obj_6_epoll_epoll *)__pyx_v_self)->fd) == (-1));
-	if (__pyx_1) {
+    /* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":92 */
+    __pyx_1 = (close(((struct __pyx_obj_6_epoll_epoll *)__pyx_v_self)->fd) == (-1));
+    if (__pyx_1) {
 
-	  /* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":93 */
-	  __pyx_2 = __Pyx_GetName(__pyx_b, __pyx_n_IOError); if (!__pyx_2) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; goto __pyx_L1;}
-	  __pyx_3 = PyInt_FromLong(errno); if (!__pyx_3) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; goto __pyx_L1;}
-	  __pyx_4 = PyString_FromString(strerror(errno)); if (!__pyx_4) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; goto __pyx_L1;}
-	  __pyx_5 = PyTuple_New(2); if (!__pyx_5) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; goto __pyx_L1;}
-	  PyTuple_SET_ITEM(__pyx_5, 0, __pyx_3);
-	  PyTuple_SET_ITEM(__pyx_5, 1, __pyx_4);
-	  __pyx_3 = 0;
-	  __pyx_4 = 0;
-	  __pyx_3 = PyObject_Call(__pyx_2, __pyx_5, 0); if (!__pyx_3) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; goto __pyx_L1;}
-	  Py_DECREF(__pyx_2); __pyx_2 = 0;
-	  Py_DECREF(__pyx_5); __pyx_5 = 0;
-	  __Pyx_Raise(__pyx_3, 0, 0);
-	  Py_DECREF(__pyx_3); __pyx_3 = 0;
-	  {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; goto __pyx_L1;}
-	  goto __pyx_L3;
-	}
-	__pyx_L3:;
+      /* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":93 */
+      __pyx_2 = __Pyx_GetName(__pyx_b, __pyx_n_IOError); if (!__pyx_2) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; goto __pyx_L1;}
+      __pyx_3 = PyInt_FromLong(errno); if (!__pyx_3) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; goto __pyx_L1;}
+      __pyx_4 = PyString_FromString(strerror(errno)); if (!__pyx_4) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; goto __pyx_L1;}
+      __pyx_5 = PyTuple_New(2); if (!__pyx_5) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; goto __pyx_L1;}
+      PyTuple_SET_ITEM(__pyx_5, 0, __pyx_3);
+      PyTuple_SET_ITEM(__pyx_5, 1, __pyx_4);
+      __pyx_3 = 0;
+      __pyx_4 = 0;
+      __pyx_3 = PyObject_Call(__pyx_2, __pyx_5, 0); if (!__pyx_3) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; goto __pyx_L1;}
+      Py_DECREF(__pyx_2); __pyx_2 = 0;
+      Py_DECREF(__pyx_5); __pyx_5 = 0;
+      __Pyx_Raise(__pyx_3, 0, 0);
+      Py_DECREF(__pyx_3); __pyx_3 = 0;
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; goto __pyx_L1;}
+      goto __pyx_L3;
+    }
+    __pyx_L3:;
 
-	/* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":94 */
-	((struct __pyx_obj_6_epoll_epoll *)__pyx_v_self)->initialized = 0;
-	goto __pyx_L2;
+    /* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":94 */
+    ((struct __pyx_obj_6_epoll_epoll *)__pyx_v_self)->initialized = 0;
+    goto __pyx_L2;
   }
   __pyx_L2:;
 
@@ -232,7 +232,7 @@ static PyObject *__pyx_f_6_epoll_5epoll_close(PyObject *__pyx_v_self, PyObject *
 }
 
 static PyObject *__pyx_f_6_epoll_5epoll_fileno(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_6_epoll_5epoll_fileno[] = "\n		Return the epoll file descriptor number.\n		";
+static char __pyx_doc_6_epoll_5epoll_fileno[] = "\n        Return the epoll file descriptor number.\n        ";
 static PyObject *__pyx_f_6_epoll_5epoll_fileno(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_r;
   PyObject *__pyx_1 = 0;
@@ -258,7 +258,7 @@ static PyObject *__pyx_f_6_epoll_5epoll_fileno(PyObject *__pyx_v_self, PyObject 
 }
 
 static PyObject *__pyx_f_6_epoll_5epoll__control(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_6_epoll_5epoll__control[] = "\n		Modify the monitored state of a particular file descriptor.\n		\n		Wrap epoll_ctl(2).\n\n		@type op: C{int}\n		@param op: One of CTL_ADD, CTL_DEL, or CTL_MOD\n\n		@type fd: C{int}\n		@param fd: File descriptor to modify\n\n		@type events: C{int}\n		@param events: A bit set of IN, OUT, PRI, ERR, HUP, and ET.\n\n		@raise IOError: Raised if the underlying epoll_ctl() call fails.\n		";
+static char __pyx_doc_6_epoll_5epoll__control[] = "\n        Modify the monitored state of a particular file descriptor.\n        \n        Wrap epoll_ctl(2).\n\n        @type op: C{int}\n        @param op: One of CTL_ADD, CTL_DEL, or CTL_MOD\n\n        @type fd: C{int}\n        @param fd: File descriptor to modify\n\n        @type events: C{int}\n        @param events: A bit set of IN, OUT, PRI, ERR, HUP, and ET.\n\n        @raise IOError: Raised if the underlying epoll_ctl() call fails.\n        ";
 static PyObject *__pyx_f_6_epoll_5epoll__control(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   int __pyx_v_op;
   int __pyx_v_fd;
@@ -288,22 +288,22 @@ static PyObject *__pyx_f_6_epoll_5epoll__control(PyObject *__pyx_v_self, PyObjec
   __pyx_1 = (__pyx_v_result == (-1));
   if (__pyx_1) {
 
-	/* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":125 */
-	__pyx_2 = __Pyx_GetName(__pyx_b, __pyx_n_IOError); if (!__pyx_2) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; goto __pyx_L1;}
-	__pyx_3 = PyInt_FromLong(errno); if (!__pyx_3) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; goto __pyx_L1;}
-	__pyx_4 = PyString_FromString(strerror(errno)); if (!__pyx_4) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; goto __pyx_L1;}
-	__pyx_5 = PyTuple_New(2); if (!__pyx_5) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; goto __pyx_L1;}
-	PyTuple_SET_ITEM(__pyx_5, 0, __pyx_3);
-	PyTuple_SET_ITEM(__pyx_5, 1, __pyx_4);
-	__pyx_3 = 0;
-	__pyx_4 = 0;
-	__pyx_3 = PyObject_Call(__pyx_2, __pyx_5, 0); if (!__pyx_3) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; goto __pyx_L1;}
-	Py_DECREF(__pyx_2); __pyx_2 = 0;
-	Py_DECREF(__pyx_5); __pyx_5 = 0;
-	__Pyx_Raise(__pyx_3, 0, 0);
-	Py_DECREF(__pyx_3); __pyx_3 = 0;
-	{__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; goto __pyx_L1;}
-	goto __pyx_L2;
+    /* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":125 */
+    __pyx_2 = __Pyx_GetName(__pyx_b, __pyx_n_IOError); if (!__pyx_2) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; goto __pyx_L1;}
+    __pyx_3 = PyInt_FromLong(errno); if (!__pyx_3) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; goto __pyx_L1;}
+    __pyx_4 = PyString_FromString(strerror(errno)); if (!__pyx_4) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; goto __pyx_L1;}
+    __pyx_5 = PyTuple_New(2); if (!__pyx_5) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; goto __pyx_L1;}
+    PyTuple_SET_ITEM(__pyx_5, 0, __pyx_3);
+    PyTuple_SET_ITEM(__pyx_5, 1, __pyx_4);
+    __pyx_3 = 0;
+    __pyx_4 = 0;
+    __pyx_3 = PyObject_Call(__pyx_2, __pyx_5, 0); if (!__pyx_3) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; goto __pyx_L1;}
+    Py_DECREF(__pyx_2); __pyx_2 = 0;
+    Py_DECREF(__pyx_5); __pyx_5 = 0;
+    __Pyx_Raise(__pyx_3, 0, 0);
+    Py_DECREF(__pyx_3); __pyx_3 = 0;
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; goto __pyx_L1;}
+    goto __pyx_L2;
   }
   __pyx_L2:;
 
@@ -324,7 +324,7 @@ static PyObject *__pyx_f_6_epoll_5epoll__control(PyObject *__pyx_v_self, PyObjec
 static PyObject *__pyx_n_append;
 
 static PyObject *__pyx_f_6_epoll_5epoll_wait(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_6_epoll_5epoll_wait[] = "\n		Wait for an I/O event, wrap epoll_wait(2).\n\n		@type maxevents: C{int}\n		@param maxevents: Maximum number of events returned.\n\n		@type timeout: C{int}\n		@param timeout: Maximum time waiting for events. 0 makes it return\n			immediately whereas -1 makes it wait indefinitely.\n		\n		@raise IOError: Raised if the underlying epoll_wait() call fails.\n		";
+static char __pyx_doc_6_epoll_5epoll_wait[] = "\n        Wait for an I/O event, wrap epoll_wait(2).\n\n        @type maxevents: C{int}\n        @param maxevents: Maximum number of events returned.\n\n        @type timeout: C{int}\n        @param timeout: Maximum time waiting for events. 0 makes it return\n            immediately whereas -1 makes it wait indefinitely.\n        \n        @raise IOError: Raised if the underlying epoll_wait() call fails.\n        ";
 static PyObject *__pyx_f_6_epoll_5epoll_wait(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   unsigned int __pyx_v_maxevents;
   int __pyx_v_timeout;
@@ -361,110 +361,110 @@ static PyObject *__pyx_f_6_epoll_5epoll_wait(PyObject *__pyx_v_self, PyObject *_
   /* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":149 */
   /*try:*/ {
 
-	/* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":150 */
-	__pyx_v_fd = ((struct __pyx_obj_6_epoll_epoll *)__pyx_v_self)->fd;
+    /* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":150 */
+    __pyx_v_fd = ((struct __pyx_obj_6_epoll_epoll *)__pyx_v_self)->fd;
 
-	/* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":152 */
-	__pyx_v__save = PyEval_SaveThread();
+    /* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":152 */
+    __pyx_v__save = PyEval_SaveThread();
 
-	/* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":153 */
-	__pyx_v_result = epoll_wait(__pyx_v_fd,__pyx_v_events,__pyx_v_maxevents,__pyx_v_timeout);
+    /* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":153 */
+    __pyx_v_result = epoll_wait(__pyx_v_fd,__pyx_v_events,__pyx_v_maxevents,__pyx_v_timeout);
 
-	/* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":154 */
-	PyEval_RestoreThread(__pyx_v__save);
+    /* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":154 */
+    PyEval_RestoreThread(__pyx_v__save);
 
-	/* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":156 */
-	__pyx_1 = (__pyx_v_result == (-1));
-	if (__pyx_1) {
+    /* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":156 */
+    __pyx_1 = (__pyx_v_result == (-1));
+    if (__pyx_1) {
 
-	  /* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":157 */
-	  __pyx_2 = __Pyx_GetName(__pyx_b, __pyx_n_IOError); if (!__pyx_2) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 157; goto __pyx_L3;}
-	  __pyx_3 = PyInt_FromLong(errno); if (!__pyx_3) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 157; goto __pyx_L3;}
-	  __pyx_4 = PyString_FromString(strerror(errno)); if (!__pyx_4) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 157; goto __pyx_L3;}
-	  __pyx_5 = PyTuple_New(2); if (!__pyx_5) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 157; goto __pyx_L3;}
-	  PyTuple_SET_ITEM(__pyx_5, 0, __pyx_3);
-	  PyTuple_SET_ITEM(__pyx_5, 1, __pyx_4);
-	  __pyx_3 = 0;
-	  __pyx_4 = 0;
-	  __pyx_3 = PyObject_Call(__pyx_2, __pyx_5, 0); if (!__pyx_3) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 157; goto __pyx_L3;}
-	  Py_DECREF(__pyx_2); __pyx_2 = 0;
-	  Py_DECREF(__pyx_5); __pyx_5 = 0;
-	  __Pyx_Raise(__pyx_3, 0, 0);
-	  Py_DECREF(__pyx_3); __pyx_3 = 0;
-	  {__pyx_filename = __pyx_f[0]; __pyx_lineno = 157; goto __pyx_L3;}
-	  goto __pyx_L5;
-	}
-	__pyx_L5:;
+      /* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":157 */
+      __pyx_2 = __Pyx_GetName(__pyx_b, __pyx_n_IOError); if (!__pyx_2) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 157; goto __pyx_L3;}
+      __pyx_3 = PyInt_FromLong(errno); if (!__pyx_3) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 157; goto __pyx_L3;}
+      __pyx_4 = PyString_FromString(strerror(errno)); if (!__pyx_4) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 157; goto __pyx_L3;}
+      __pyx_5 = PyTuple_New(2); if (!__pyx_5) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 157; goto __pyx_L3;}
+      PyTuple_SET_ITEM(__pyx_5, 0, __pyx_3);
+      PyTuple_SET_ITEM(__pyx_5, 1, __pyx_4);
+      __pyx_3 = 0;
+      __pyx_4 = 0;
+      __pyx_3 = PyObject_Call(__pyx_2, __pyx_5, 0); if (!__pyx_3) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 157; goto __pyx_L3;}
+      Py_DECREF(__pyx_2); __pyx_2 = 0;
+      Py_DECREF(__pyx_5); __pyx_5 = 0;
+      __Pyx_Raise(__pyx_3, 0, 0);
+      Py_DECREF(__pyx_3); __pyx_3 = 0;
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 157; goto __pyx_L3;}
+      goto __pyx_L5;
+    }
+    __pyx_L5:;
 
-	/* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":158 */
-	__pyx_4 = PyList_New(0); if (!__pyx_4) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 158; goto __pyx_L3;}
-	Py_DECREF(__pyx_v_results);
-	__pyx_v_results = __pyx_4;
-	__pyx_4 = 0;
+    /* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":158 */
+    __pyx_4 = PyList_New(0); if (!__pyx_4) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 158; goto __pyx_L3;}
+    Py_DECREF(__pyx_v_results);
+    __pyx_v_results = __pyx_4;
+    __pyx_4 = 0;
 
-	/* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":159 */
-	for (__pyx_6 = 0; __pyx_6 < __pyx_v_result; ++__pyx_6) {
-	  __pyx_2 = PyInt_FromLong(__pyx_6); if (!__pyx_2) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 159; goto __pyx_L3;}
-	  Py_DECREF(__pyx_v_i);
-	  __pyx_v_i = __pyx_2;
-	  __pyx_2 = 0;
+    /* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":159 */
+    for (__pyx_6 = 0; __pyx_6 < __pyx_v_result; ++__pyx_6) {
+      __pyx_2 = PyInt_FromLong(__pyx_6); if (!__pyx_2) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 159; goto __pyx_L3;}
+      Py_DECREF(__pyx_v_i);
+      __pyx_v_i = __pyx_2;
+      __pyx_2 = 0;
 
-	  /* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":160 */
-	  __pyx_5 = PyObject_GetAttr(__pyx_v_results, __pyx_n_append); if (!__pyx_5) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 160; goto __pyx_L3;}
-	  __pyx_7 = PyInt_AsSsize_t(__pyx_v_i); if (PyErr_Occurred()) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 160; goto __pyx_L3;}
-	  __pyx_3 = PyInt_FromLong((__pyx_v_events[__pyx_7]).data.fd); if (!__pyx_3) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 160; goto __pyx_L3;}
-	  __pyx_7 = PyInt_AsSsize_t(__pyx_v_i); if (PyErr_Occurred()) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 160; goto __pyx_L3;}
-	  __pyx_4 = PyInt_FromLong(((int )(__pyx_v_events[__pyx_7]).events)); if (!__pyx_4) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 160; goto __pyx_L3;}
-	  __pyx_2 = PyTuple_New(2); if (!__pyx_2) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 160; goto __pyx_L3;}
-	  PyTuple_SET_ITEM(__pyx_2, 0, __pyx_3);
-	  PyTuple_SET_ITEM(__pyx_2, 1, __pyx_4);
-	  __pyx_3 = 0;
-	  __pyx_4 = 0;
-	  __pyx_3 = PyTuple_New(1); if (!__pyx_3) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 160; goto __pyx_L3;}
-	  PyTuple_SET_ITEM(__pyx_3, 0, __pyx_2);
-	  __pyx_2 = 0;
-	  __pyx_4 = PyObject_Call(__pyx_5, __pyx_3, 0); if (!__pyx_4) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 160; goto __pyx_L3;}
-	  Py_DECREF(__pyx_5); __pyx_5 = 0;
-	  Py_DECREF(__pyx_3); __pyx_3 = 0;
-	  Py_DECREF(__pyx_4); __pyx_4 = 0;
-	  __pyx_L6:;
-	}
-	__pyx_L7:;
+      /* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":160 */
+      __pyx_5 = PyObject_GetAttr(__pyx_v_results, __pyx_n_append); if (!__pyx_5) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 160; goto __pyx_L3;}
+      __pyx_7 = PyInt_AsSsize_t(__pyx_v_i); if (PyErr_Occurred()) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 160; goto __pyx_L3;}
+      __pyx_3 = PyInt_FromLong((__pyx_v_events[__pyx_7]).data.fd); if (!__pyx_3) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 160; goto __pyx_L3;}
+      __pyx_7 = PyInt_AsSsize_t(__pyx_v_i); if (PyErr_Occurred()) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 160; goto __pyx_L3;}
+      __pyx_4 = PyInt_FromLong(((int )(__pyx_v_events[__pyx_7]).events)); if (!__pyx_4) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 160; goto __pyx_L3;}
+      __pyx_2 = PyTuple_New(2); if (!__pyx_2) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 160; goto __pyx_L3;}
+      PyTuple_SET_ITEM(__pyx_2, 0, __pyx_3);
+      PyTuple_SET_ITEM(__pyx_2, 1, __pyx_4);
+      __pyx_3 = 0;
+      __pyx_4 = 0;
+      __pyx_3 = PyTuple_New(1); if (!__pyx_3) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 160; goto __pyx_L3;}
+      PyTuple_SET_ITEM(__pyx_3, 0, __pyx_2);
+      __pyx_2 = 0;
+      __pyx_4 = PyObject_Call(__pyx_5, __pyx_3, 0); if (!__pyx_4) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 160; goto __pyx_L3;}
+      Py_DECREF(__pyx_5); __pyx_5 = 0;
+      Py_DECREF(__pyx_3); __pyx_3 = 0;
+      Py_DECREF(__pyx_4); __pyx_4 = 0;
+      __pyx_L6:;
+    }
+    __pyx_L7:;
 
-	/* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":161 */
-	Py_INCREF(__pyx_v_results);
-	__pyx_r = __pyx_v_results;
-	goto __pyx_L2;
+    /* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":161 */
+    Py_INCREF(__pyx_v_results);
+    __pyx_r = __pyx_v_results;
+    goto __pyx_L2;
   }
   /*finally:*/ {
-	int __pyx_why;
-	__pyx_why = 0; goto __pyx_L4;
-	__pyx_L2: __pyx_why = 3; goto __pyx_L4;
-	__pyx_L3: {
-	  __pyx_why = 4;
-	  Py_XDECREF(__pyx_2); __pyx_2 = 0;
-	  Py_XDECREF(__pyx_5); __pyx_5 = 0;
-	  Py_XDECREF(__pyx_3); __pyx_3 = 0;
-	  Py_XDECREF(__pyx_4); __pyx_4 = 0;
-	  PyErr_Fetch(&__pyx_2, &__pyx_5, &__pyx_3);
-	  __pyx_1 = __pyx_lineno;
-	  goto __pyx_L4;
-	}
-	__pyx_L4:;
+    int __pyx_why;
+    __pyx_why = 0; goto __pyx_L4;
+    __pyx_L2: __pyx_why = 3; goto __pyx_L4;
+    __pyx_L3: {
+      __pyx_why = 4;
+      Py_XDECREF(__pyx_2); __pyx_2 = 0;
+      Py_XDECREF(__pyx_5); __pyx_5 = 0;
+      Py_XDECREF(__pyx_3); __pyx_3 = 0;
+      Py_XDECREF(__pyx_4); __pyx_4 = 0;
+      PyErr_Fetch(&__pyx_2, &__pyx_5, &__pyx_3);
+      __pyx_1 = __pyx_lineno;
+      goto __pyx_L4;
+    }
+    __pyx_L4:;
 
-	/* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":163 */
-	free(__pyx_v_events);
-	switch (__pyx_why) {
-	  case 3: goto __pyx_L0;
-	  case 4: {
-		PyErr_Restore(__pyx_2, __pyx_5, __pyx_3);
-		__pyx_lineno = __pyx_1;
-		__pyx_2 = 0;
-		__pyx_5 = 0;
-		__pyx_3 = 0;
-		goto __pyx_L1;
-	  }
-	}
+    /* "/home/exarkun/Projects/Twisted/branches/epollreactor-1953-2/twisted/python/_epoll.pyx":163 */
+    free(__pyx_v_events);
+    switch (__pyx_why) {
+      case 3: goto __pyx_L0;
+      case 4: {
+        PyErr_Restore(__pyx_2, __pyx_5, __pyx_3);
+        __pyx_lineno = __pyx_1;
+        __pyx_2 = 0;
+        __pyx_5 = 0;
+        __pyx_3 = 0;
+        goto __pyx_L1;
+      }
+    }
   }
 
   __pyx_r = Py_None; Py_INCREF(Py_None);
@@ -512,13 +512,13 @@ static PyObject *__pyx_tp_new_6_epoll_epoll(PyTypeObject *t, PyObject *a, PyObje
 static void __pyx_tp_dealloc_6_epoll_epoll(PyObject *o) {
   struct __pyx_obj_6_epoll_epoll *p = (struct __pyx_obj_6_epoll_epoll *)o;
   {
-	PyObject *etype, *eval, *etb;
-	PyErr_Fetch(&etype, &eval, &etb);
-	++o->ob_refcnt;
-	__pyx_f_6_epoll_5epoll___dealloc__(o);
-	if (PyErr_Occurred()) PyErr_WriteUnraisable(o);
-	--o->ob_refcnt;
-	PyErr_Restore(etype, eval, etb);
+    PyObject *etype, *eval, *etb;
+    PyErr_Fetch(&etype, &eval, &etb);
+    ++o->ob_refcnt;
+    __pyx_f_6_epoll_5epoll___dealloc__(o);
+    if (PyErr_Occurred()) PyErr_WriteUnraisable(o);
+    --o->ob_refcnt;
+    PyErr_Restore(etype, eval, etb);
   }
   (*o->ob_type->tp_free)(o);
 }
@@ -631,7 +631,7 @@ PyTypeObject __pyx_type_6_epoll_epoll = {
   0, /*tp_setattro*/
   &__pyx_tp_as_buffer_epoll, /*tp_as_buffer*/
   Py_TPFLAGS_DEFAULT|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_HAVE_GC, /*tp_flags*/
-  "\n	Represent a set of file descriptors being monitored for events.\n	", /*tp_doc*/
+  "\n    Represent a set of file descriptors being monitored for events.\n    ", /*tp_doc*/
   __pyx_tp_traverse_6_epoll_epoll, /*tp_traverse*/
   __pyx_tp_clear_6_epoll_epoll, /*tp_clear*/
   0, /*tp_richcompare*/
@@ -764,106 +764,106 @@ static void __pyx_init_filenames(void) {
 }
 
 static PyObject *__Pyx_GetName(PyObject *dict, PyObject *name) {
-	PyObject *result;
-	result = PyObject_GetAttr(dict, name);
-	if (!result)
-		PyErr_SetObject(PyExc_NameError, name);
-	return result;
+    PyObject *result;
+    result = PyObject_GetAttr(dict, name);
+    if (!result)
+        PyErr_SetObject(PyExc_NameError, name);
+    return result;
 }
 
 static void __Pyx_Raise(PyObject *type, PyObject *value, PyObject *tb) {
-	Py_XINCREF(type);
-	Py_XINCREF(value);
-	Py_XINCREF(tb);
-	/* First, check the traceback argument, replacing None with NULL. */
-	if (tb == Py_None) {
-		Py_DECREF(tb);
-		tb = 0;
-	}
-	else if (tb != NULL && !PyTraceBack_Check(tb)) {
-		PyErr_SetString(PyExc_TypeError,
-			"raise: arg 3 must be a traceback or None");
-		goto raise_error;
-	}
-	/* Next, replace a missing value with None */
-	if (value == NULL) {
-		value = Py_None;
-		Py_INCREF(value);
-	}
-	/* Next, repeatedly, replace a tuple exception with its first item */
-	while (PyTuple_Check(type) && PyTuple_Size(type) > 0) {
-		PyObject *tmp = type;
-		type = PyTuple_GET_ITEM(type, 0);
-		Py_INCREF(type);
-		Py_DECREF(tmp);
-	}
-	if (PyString_CheckExact(type)) {
-		/* Raising builtin string is deprecated but still allowed --
-		 * do nothing.  Raising an instance of a new-style str
-		 * subclass is right out. */
-		if (PyErr_Warn(PyExc_DeprecationWarning,
-				   "raising a string exception is deprecated"))
-				goto raise_error;
-	}
-	else if (PyType_Check(type) || PyClass_Check(type))
-		; /* PyErr_NormalizeException(&type, &value, &tb); */
-	else if (PyInstance_Check(type)) {
-		/* Raising an instance.  The value should be a dummy. */
-		if (value != Py_None) {
-			PyErr_SetString(PyExc_TypeError,
-			  "instance exception may not have a separate value");
-			goto raise_error;
-		}
-		else {
-			/* Normalize to raise <class>, <instance> */
-			Py_DECREF(value);
-			value = type;
-			type = (PyObject*) ((PyInstanceObject*)type)->in_class;
-			Py_INCREF(type);
-		}
-	}
-	else if (PyType_IsSubtype(type->ob_type, (PyTypeObject*)PyExc_Exception)) {
-		/* Raising a new-style object (in Py2.5).
-		   The value should be a dummy. */
-		if (value != Py_None) {
-				PyErr_SetString(PyExc_TypeError,
-				  "instance exception may not have a separate value");
-				goto raise_error;
-		}
-		else {
-				/* Normalize to raise <class>, <instance> */
-				Py_DECREF(value);
-				value = type;
-				type = (PyObject*) type->ob_type;
-				Py_INCREF(type);
-		}
-	}
-	else {
-		/* Not something you can raise.  You get an exception
-		   anyway, just not what you specified :-) */
-		PyErr_Format(PyExc_TypeError,
-					 "exceptions must be classes, instances, or "
-					 "strings (deprecated), not %s",
-					 type->ob_type->tp_name);
-		goto raise_error;
-	}
-	PyErr_Restore(type, value, tb);
-	return;
+    Py_XINCREF(type);
+    Py_XINCREF(value);
+    Py_XINCREF(tb);
+    /* First, check the traceback argument, replacing None with NULL. */
+    if (tb == Py_None) {
+        Py_DECREF(tb);
+        tb = 0;
+    }
+    else if (tb != NULL && !PyTraceBack_Check(tb)) {
+        PyErr_SetString(PyExc_TypeError,
+            "raise: arg 3 must be a traceback or None");
+        goto raise_error;
+    }
+    /* Next, replace a missing value with None */
+    if (value == NULL) {
+        value = Py_None;
+        Py_INCREF(value);
+    }
+    /* Next, repeatedly, replace a tuple exception with its first item */
+    while (PyTuple_Check(type) && PyTuple_Size(type) > 0) {
+        PyObject *tmp = type;
+        type = PyTuple_GET_ITEM(type, 0);
+        Py_INCREF(type);
+        Py_DECREF(tmp);
+    }
+    if (PyString_CheckExact(type)) {
+        /* Raising builtin string is deprecated but still allowed --
+         * do nothing.  Raising an instance of a new-style str
+         * subclass is right out. */
+        if (PyErr_Warn(PyExc_DeprecationWarning,
+                   "raising a string exception is deprecated"))
+                goto raise_error;
+    }
+    else if (PyType_Check(type) || PyClass_Check(type))
+        ; /* PyErr_NormalizeException(&type, &value, &tb); */
+    else if (PyInstance_Check(type)) {
+        /* Raising an instance.  The value should be a dummy. */
+        if (value != Py_None) {
+            PyErr_SetString(PyExc_TypeError,
+              "instance exception may not have a separate value");
+            goto raise_error;
+        }
+        else {
+            /* Normalize to raise <class>, <instance> */
+            Py_DECREF(value);
+            value = type;
+            type = (PyObject*) ((PyInstanceObject*)type)->in_class;
+            Py_INCREF(type);
+        }
+    }
+    else if (PyType_IsSubtype(type->ob_type, (PyTypeObject*)PyExc_Exception)) {
+        /* Raising a new-style object (in Py2.5).
+           The value should be a dummy. */
+        if (value != Py_None) {
+                PyErr_SetString(PyExc_TypeError,
+                  "instance exception may not have a separate value");
+                goto raise_error;
+        }
+        else {
+                /* Normalize to raise <class>, <instance> */
+                Py_DECREF(value);
+                value = type;
+                type = (PyObject*) type->ob_type;
+                Py_INCREF(type);
+        }
+    }
+    else {
+        /* Not something you can raise.  You get an exception
+           anyway, just not what you specified :-) */
+        PyErr_Format(PyExc_TypeError,
+                     "exceptions must be classes, instances, or "
+                     "strings (deprecated), not %s",
+                     type->ob_type->tp_name);
+        goto raise_error;
+    }
+    PyErr_Restore(type, value, tb);
+    return;
 raise_error:
-	Py_XDECREF(value);
-	Py_XDECREF(type);
-	Py_XDECREF(tb);
-	return;
+    Py_XDECREF(value);
+    Py_XDECREF(type);
+    Py_XDECREF(tb);
+    return;
 }
 
 static int __Pyx_InternStrings(__Pyx_InternTabEntry *t) {
-	while (t->p) {
-		*t->p = PyString_InternFromString(t->s);
-		if (!*t->p)
-			return -1;
-		++t;
-	}
-	return 0;
+    while (t->p) {
+        *t->p = PyString_InternFromString(t->s);
+        if (!*t->p)
+            return -1;
+        ++t;
+    }
+    return 0;
 }
 
 #include "compile.h"
@@ -871,55 +871,55 @@ static int __Pyx_InternStrings(__Pyx_InternTabEntry *t) {
 #include "traceback.h"
 
 static void __Pyx_AddTraceback(char *funcname) {
-	PyObject *py_srcfile = 0;
-	PyObject *py_funcname = 0;
-	PyObject *py_globals = 0;
-	PyObject *empty_tuple = 0;
-	PyObject *empty_string = 0;
-	PyCodeObject *py_code = 0;
-	PyFrameObject *py_frame = 0;
-	
-	py_srcfile = PyString_FromString(__pyx_filename);
-	if (!py_srcfile) goto bad;
-	py_funcname = PyString_FromString(funcname);
-	if (!py_funcname) goto bad;
-	py_globals = PyModule_GetDict(__pyx_m);
-	if (!py_globals) goto bad;
-	empty_tuple = PyTuple_New(0);
-	if (!empty_tuple) goto bad;
-	empty_string = PyString_FromString("");
-	if (!empty_string) goto bad;
-	py_code = PyCode_New(
-		0,			/*int argcount,*/
-		0,			/*int nlocals,*/
-		0,			/*int stacksize,*/
-		0,			/*int flags,*/
-		empty_string, /*PyObject *code,*/
-		empty_tuple,  /*PyObject *consts,*/
-		empty_tuple,  /*PyObject *names,*/
-		empty_tuple,  /*PyObject *varnames,*/
-		empty_tuple,  /*PyObject *freevars,*/
-		empty_tuple,  /*PyObject *cellvars,*/
-		py_srcfile,   /*PyObject *filename,*/
-		py_funcname,  /*PyObject *name,*/
-		__pyx_lineno,   /*int firstlineno,*/
-		empty_string  /*PyObject *lnotab*/
-	);
-	if (!py_code) goto bad;
-	py_frame = PyFrame_New(
-		PyThreadState_Get(), /*PyThreadState *tstate,*/
-		py_code,			 /*PyCodeObject *code,*/
-		py_globals,		  /*PyObject *globals,*/
-		0					/*PyObject *locals*/
-	);
-	if (!py_frame) goto bad;
-	py_frame->f_lineno = __pyx_lineno;
-	PyTraceBack_Here(py_frame);
+    PyObject *py_srcfile = 0;
+    PyObject *py_funcname = 0;
+    PyObject *py_globals = 0;
+    PyObject *empty_tuple = 0;
+    PyObject *empty_string = 0;
+    PyCodeObject *py_code = 0;
+    PyFrameObject *py_frame = 0;
+    
+    py_srcfile = PyString_FromString(__pyx_filename);
+    if (!py_srcfile) goto bad;
+    py_funcname = PyString_FromString(funcname);
+    if (!py_funcname) goto bad;
+    py_globals = PyModule_GetDict(__pyx_m);
+    if (!py_globals) goto bad;
+    empty_tuple = PyTuple_New(0);
+    if (!empty_tuple) goto bad;
+    empty_string = PyString_FromString("");
+    if (!empty_string) goto bad;
+    py_code = PyCode_New(
+        0,            /*int argcount,*/
+        0,            /*int nlocals,*/
+        0,            /*int stacksize,*/
+        0,            /*int flags,*/
+        empty_string, /*PyObject *code,*/
+        empty_tuple,  /*PyObject *consts,*/
+        empty_tuple,  /*PyObject *names,*/
+        empty_tuple,  /*PyObject *varnames,*/
+        empty_tuple,  /*PyObject *freevars,*/
+        empty_tuple,  /*PyObject *cellvars,*/
+        py_srcfile,   /*PyObject *filename,*/
+        py_funcname,  /*PyObject *name,*/
+        __pyx_lineno,   /*int firstlineno,*/
+        empty_string  /*PyObject *lnotab*/
+    );
+    if (!py_code) goto bad;
+    py_frame = PyFrame_New(
+        PyThreadState_Get(), /*PyThreadState *tstate,*/
+        py_code,             /*PyCodeObject *code,*/
+        py_globals,          /*PyObject *globals,*/
+        0                    /*PyObject *locals*/
+    );
+    if (!py_frame) goto bad;
+    py_frame->f_lineno = __pyx_lineno;
+    PyTraceBack_Here(py_frame);
 bad:
-	Py_XDECREF(py_srcfile);
-	Py_XDECREF(py_funcname);
-	Py_XDECREF(empty_tuple);
-	Py_XDECREF(empty_string);
-	Py_XDECREF(py_code);
-	Py_XDECREF(py_frame);
+    Py_XDECREF(py_srcfile);
+    Py_XDECREF(py_funcname);
+    Py_XDECREF(empty_tuple);
+    Py_XDECREF(empty_string);
+    Py_XDECREF(py_code);
+    Py_XDECREF(py_frame);
 }

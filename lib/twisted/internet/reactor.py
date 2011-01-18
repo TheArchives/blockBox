@@ -3,7 +3,7 @@
 
 """
 The reactor is the Twisted event loop within Twisted, the loop which drives
-applications using lib.twisted. The reactor provides APIs for networking,
+applications using Twisted. The reactor provides APIs for networking,
 threading, dispatching events, and more.
 
 The default reactor is based on C{select(2)} and will be installed if this
@@ -17,19 +17,19 @@ module to get a reference.  This simplifies unit testing and may make it easier
 to one day support multiple reactors (as a performance enhancement), though
 this is not currently possible.
 
-@see: L{IReactorCore<lib.twisted.internet.interfaces.IReactorCore>}
-@see: L{IReactorTime<lib.twisted.internet.interfaces.IReactorTime>}
-@see: L{IReactorProcess<lib.twisted.internet.interfaces.IReactorProcess>}
-@see: L{IReactorTCP<lib.twisted.internet.interfaces.IReactorTCP>}
-@see: L{IReactorSSL<lib.twisted.internet.interfaces.IReactorSSL>}
-@see: L{IReactorUDP<lib.twisted.internet.interfaces.IReactorUDP>}
-@see: L{IReactorMulticast<lib.twisted.internet.interfaces.IReactorMulticast>}
-@see: L{IReactorUNIX<lib.twisted.internet.interfaces.IReactorUNIX>}
-@see: L{IReactorUNIXDatagram<lib.twisted.internet.interfaces.IReactorUNIXDatagram>}
-@see: L{IReactorFDSet<lib.twisted.internet.interfaces.IReactorFDSet>}
-@see: L{IReactorThreads<lib.twisted.internet.interfaces.IReactorThreads>}
-@see: L{IReactorArbitrary<lib.twisted.internet.interfaces.IReactorArbitrary>}
-@see: L{IReactorPluggableResolver<lib.twisted.internet.interfaces.IReactorPluggableResolver>}
+@see: L{IReactorCore<twisted.internet.interfaces.IReactorCore>}
+@see: L{IReactorTime<twisted.internet.interfaces.IReactorTime>}
+@see: L{IReactorProcess<twisted.internet.interfaces.IReactorProcess>}
+@see: L{IReactorTCP<twisted.internet.interfaces.IReactorTCP>}
+@see: L{IReactorSSL<twisted.internet.interfaces.IReactorSSL>}
+@see: L{IReactorUDP<twisted.internet.interfaces.IReactorUDP>}
+@see: L{IReactorMulticast<twisted.internet.interfaces.IReactorMulticast>}
+@see: L{IReactorUNIX<twisted.internet.interfaces.IReactorUNIX>}
+@see: L{IReactorUNIXDatagram<twisted.internet.interfaces.IReactorUNIXDatagram>}
+@see: L{IReactorFDSet<twisted.internet.interfaces.IReactorFDSet>}
+@see: L{IReactorThreads<twisted.internet.interfaces.IReactorThreads>}
+@see: L{IReactorArbitrary<twisted.internet.interfaces.IReactorArbitrary>}
+@see: L{IReactorPluggableResolver<twisted.internet.interfaces.IReactorPluggableResolver>}
 """
 
 import sys

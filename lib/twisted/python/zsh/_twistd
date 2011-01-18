@@ -77,7 +77,7 @@ _arguments -s -A "-*" \
 "--allow-ignore-ext[Specify whether or not a request for 'foo' should return 'foo.ext']" \
 "(--certificate)-c[SSL certificate to use for HTTPS.]:certificate:_files -g '*.pem'" \
 "(-c)--certificate=[SSL certificate to use for HTTPS.]:certificate:_files -g '*.pem'" \
-'--class=[A class that will be used to serve the root resource.  Must implement lib.twisted.web2.iweb.IResource and take no arguments.]:class:_files' \
+'--class=[A class that will be used to serve the root resource.  Must implement twisted.web2.iweb.IResource and take no arguments.]:class:_files' \
 '--dav=[A path that will be used to serve the root resource as a DAV Collection.]:dav:_files' \
 '--help[Display this help and exit.]' \
 '--https=[Port to listen on for Secure HTTP.]:https:_files' \

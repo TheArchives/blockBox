@@ -5,4 +5,4 @@
 """Instance Messenger, Pan-protocol chat client."""
 
 import warnings
-warnings.warn("lib.twisted.im will be undergoing a rewrite at some point in the future.")
+warnings.warn("twisted.im will be undergoing a rewrite at some point in the future.")

@@ -1,4 +1,4 @@
-# -*- test-case-name: lib.twisted.python.test.test_otp -*-
+# -*- test-case-name: twisted.python.test.test_otp -*-
 # Copyright (c) 2001-2008 Twisted Matrix Laboratories.
 # See LICENSE for details.
 
@@ -29,36 +29,36 @@ import string
 import random
 
 warnings.warn(
-	"lib.twisted.python.otp is deprecated since Twisted 8.3.",
-	category=DeprecationWarning,
-	stacklevel=2)
+    "twisted.python.otp is deprecated since Twisted 8.3.",
+    category=DeprecationWarning,
+    stacklevel=2)
 
 
 def stringToLong(s):
-	""" Convert digest to long """
-	result = 0L
-	for byte in s:
-		result = (256 * result) + ord(byte)
-	return result
+    """ Convert digest to long """
+    result = 0L
+    for byte in s:
+        result = (256 * result) + ord(byte)
+    return result
 
 def stringToDWords(s):
-	""" Convert digest to a list of four 32-bits words """
-	result = []
-	for a in xrange(len(s) / 4):
-		tmp = 0L
-		for byte in s[-4:]:
-			tmp = (256 * tmp) + ord(byte)
-		result.append(tmp)
-		s = s[:-4]
-	return result
+    """ Convert digest to a list of four 32-bits words """
+    result = []
+    for a in xrange(len(s) / 4):
+        tmp = 0L
+        for byte in s[-4:]:
+            tmp = (256 * tmp) + ord(byte)
+        result.append(tmp)
+        s = s[:-4]
+    return result
 
 def longToString(l):
-	""" Convert long to digest """
-	result = ""
-	while l > 0L:
-		result = chr(l % 256) + result
-		l = l / 256L
-	return result
+    """ Convert long to digest """
+    result = ""
+    while l > 0L:
+        result = chr(l % 256) + result
+        l = l / 256L
+    return result
 
 from lib.twisted.python.hashlib import md5, sha1
 hashid = {md5: 'md5', sha1: 'sha1'}
@@ -67,183 +67,183 @@ INITIALSEQUENCE = 1000
 MINIMUMSEQUENCE = 50
 
 class Unauthorized(Exception):
-	"""the Unauthorized exception
+    """the Unauthorized exception
 
-	This exception is raised when an action is not allowed, or a user is not
-	authenticated properly.
-	"""
+    This exception is raised when an action is not allowed, or a user is not
+    authenticated properly.
+    """
 
 class OTPAuthenticator:
-	"""
-	A One Time Password System
+    """
+    A One Time Password System
 
-	Based on RFC 2289, which is based on a the S/KEY Authentication-scheme.
-	It uses the MD5- and SHA-algorithms for hashing
+    Based on RFC 2289, which is based on a the S/KEY Authentication-scheme.
+    It uses the MD5- and SHA-algorithms for hashing
 
-	The variable OTP is at all times a 64bit string.
+    The variable OTP is at all times a 64bit string.
 
-	@ivar hash: An object which can be used to compute hashes.  This is either
-		L{md5} or L{sha1}.
-	"""
-	def __init__(self, hash = md5):
-		"Set the hash to either md5 or sha1"
-		self.hash = hash
+    @ivar hash: An object which can be used to compute hashes.  This is either
+        L{md5} or L{sha1}.
+    """
+    def __init__(self, hash = md5):
+        "Set the hash to either md5 or sha1"
+        self.hash = hash
 
 
-	def generateSeed(self):
-		"Return a 10 char random seed, with 6 lowercase chars and 4 digits"
-		seed = ''
-		for x in range(6):
-			seed = seed + chr(random.randrange(97,122))
-		for x in range(4):
-			seed = seed + chr(random.randrange(48,57))
-		return seed
+    def generateSeed(self):
+        "Return a 10 char random seed, with 6 lowercase chars and 4 digits"
+        seed = ''
+        for x in range(6):
+            seed = seed + chr(random.randrange(97,122))
+        for x in range(4):
+            seed = seed + chr(random.randrange(48,57))
+        return seed
 
-	def foldDigest(self, otp):
-		if self.hash == md5:
-			return self.foldDigest128(otp)
-		if self.hash == sha1:
-			return self.foldDigest160(otp)
+    def foldDigest(self, otp):
+        if self.hash == md5:
+            return self.foldDigest128(otp)
+        if self.hash == sha1:
+            return self.foldDigest160(otp)
 
-	def foldDigest128(self, otp128):
-		"Fold a 128 bit digest to 64 bit"
-		regs = stringToDWords(otp128)
-		p0 = regs[0] ^ regs[2]
-		p1 = regs[1] ^ regs[3]
-		S = ''
-		for a in xrange(4):
-			S = chr(p0 & 0xFF) + S
-			p0 = p0 >> 8
-		for a in xrange(4):
-			S = chr(p1 & 0xFF) + S
-			p1 = p1 >> 8
-		return S
+    def foldDigest128(self, otp128):
+        "Fold a 128 bit digest to 64 bit"
+        regs = stringToDWords(otp128)
+        p0 = regs[0] ^ regs[2]
+        p1 = regs[1] ^ regs[3]
+        S = ''
+        for a in xrange(4):
+            S = chr(p0 & 0xFF) + S
+            p0 = p0 >> 8
+        for a in xrange(4):
+            S = chr(p1 & 0xFF) + S
+            p1 = p1 >> 8
+        return S
 
-	def foldDigest160(self, otp160):
-		"Fold a 160 bit digest to 64 bit"
-		regs = stringToDWords(otp160)
-		p0 = regs[0] ^ regs[2]
-		p1 = regs[1] ^ regs[3]
-		p0 = regs[0] ^ regs[4]
-		S = ''
-		for a in xrange(4):
-			S = chr(p0 & 0xFF) + S
-			p0 = p0 >> 8
-		for a in xrange(4):
-			S = chr(p1 & 0xFF) + S
-			p1 = p1 >> 8
-		return S
+    def foldDigest160(self, otp160):
+        "Fold a 160 bit digest to 64 bit"
+        regs = stringToDWords(otp160)
+        p0 = regs[0] ^ regs[2]
+        p1 = regs[1] ^ regs[3]
+        p0 = regs[0] ^ regs[4]
+        S = ''
+        for a in xrange(4):
+            S = chr(p0 & 0xFF) + S
+            p0 = p0 >> 8
+        for a in xrange(4):
+            S = chr(p1 & 0xFF) + S
+            p1 = p1 >> 8
+        return S
 
-	def hashUpdate(self, digest):
-		"Run through the hash and fold to 64 bit"
-		h = self.hash(digest)
-		return self.foldDigest(h.digest())
+    def hashUpdate(self, digest):
+        "Run through the hash and fold to 64 bit"
+        h = self.hash(digest)
+        return self.foldDigest(h.digest())
 
-	def generateOTP(self, seed, passwd, sequence):
-		"""Return a 64 bit OTP based on inputs
-		Run through makeReadable to get a 6 word pass-phrase"""
-		seed = string.lower(seed)
-		otp = self.hashUpdate(seed + passwd)
-		for a in xrange(sequence):
-			otp = self.hashUpdate(otp)
-		return otp
+    def generateOTP(self, seed, passwd, sequence):
+        """Return a 64 bit OTP based on inputs
+        Run through makeReadable to get a 6 word pass-phrase"""
+        seed = string.lower(seed)
+        otp = self.hashUpdate(seed + passwd)
+        for a in xrange(sequence):
+            otp = self.hashUpdate(otp)
+        return otp
 
-	def calculateParity(self, otp):
-		"Calculate the parity from a 64bit OTP"
-		parity = 0
-		for i in xrange(0, 64, 2):
-			parity = parity + otp & 0x3
-			otp = otp >> 2
-		return parity
+    def calculateParity(self, otp):
+        "Calculate the parity from a 64bit OTP"
+        parity = 0
+        for i in xrange(0, 64, 2):
+            parity = parity + otp & 0x3
+            otp = otp >> 2
+        return parity
 
-	def makeReadable(self, otp):
-		"Returns a 6 word pass-phrase from a 64bit OTP"
-		digest = stringToLong(otp)
-		list = []
-		parity = self.calculateParity(digest)
-		for i in xrange(4,-1, -1):
-			list.append(dict[(digest >> (i * 11 + 9)) & 0x7FF])
-		list.append(dict[(digest << 2) & 0x7FC | (parity & 0x03)])
-		return string.join(list)
+    def makeReadable(self, otp):
+        "Returns a 6 word pass-phrase from a 64bit OTP"
+        digest = stringToLong(otp)
+        list = []
+        parity = self.calculateParity(digest)
+        for i in xrange(4,-1, -1):
+            list.append(dict[(digest >> (i * 11 + 9)) & 0x7FF])
+        list.append(dict[(digest << 2) & 0x7FC | (parity & 0x03)])
+        return string.join(list)
 
-	def challenge(self, seed, sequence):
-		"""Return a challenge in the format otp-<hash> <sequence> <seed>"""
-		return "otp-%s %i %s" % (hashid[self.hash], sequence, seed)
+    def challenge(self, seed, sequence):
+        """Return a challenge in the format otp-<hash> <sequence> <seed>"""
+        return "otp-%s %i %s" % (hashid[self.hash], sequence, seed)
 
-	def parsePhrase(self, phrase):
-		"""Decode the phrase, and return a 64bit OTP
-		I will raise Unauthorized if the parity is wrong
-		TODO: Add support for hex (MUST) and the '2nd scheme'(SHOULD)"""
-		words = string.split(phrase)
-		for i in xrange(len(words)):
-			words[i] = string.upper(words[i])
-		b = 0L
-		for i in xrange(0,5):
-			b = b | ((long(dict.index(words[i])) << ((4-i)*11L+9L)))
-		tmp = dict.index(words[5])
-		b = b | (tmp & 0x7FC ) >> 2
-		if (tmp & 3) <> self.calculateParity(b):
-			raise Unauthorized("Parity error")
-		digest = longToString(b)
-		return digest
+    def parsePhrase(self, phrase):
+        """Decode the phrase, and return a 64bit OTP
+        I will raise Unauthorized if the parity is wrong
+        TODO: Add support for hex (MUST) and the '2nd scheme'(SHOULD)"""
+        words = string.split(phrase)
+        for i in xrange(len(words)):
+            words[i] = string.upper(words[i])
+        b = 0L
+        for i in xrange(0,5):
+            b = b | ((long(dict.index(words[i])) << ((4-i)*11L+9L)))
+        tmp = dict.index(words[5])
+        b = b | (tmp & 0x7FC ) >> 2
+        if (tmp & 3) <> self.calculateParity(b):
+            raise Unauthorized("Parity error")
+        digest = longToString(b)
+        return digest
 
 class OTP(OTPAuthenticator):
-	"""An automatic version of the OTP-Authenticator
+    """An automatic version of the OTP-Authenticator
 
-	Updates the sequence and the keeps last approved password on success
-	On the next authentication, the stored password is hashed and checked
-	up against the one given by the user. If they match, the sequencecounter
-	is decreased and the circle is closed.
+    Updates the sequence and the keeps last approved password on success
+    On the next authentication, the stored password is hashed and checked
+    up against the one given by the user. If they match, the sequencecounter
+    is decreased and the circle is closed.
 
-	This object should be glued to each user
+    This object should be glued to each user
 
-	Note:
-	It does NOT reset the sequence when the combinations left approach zero,
-	This has to be done manuelly by instancing a new object
-	"""
-	seed = None
-	sequence = 0
-	lastotp = None
+    Note:
+    It does NOT reset the sequence when the combinations left approach zero,
+    This has to be done manuelly by instancing a new object
+    """
+    seed = None
+    sequence = 0
+    lastotp = None
 
-	def __init__(self, passwd, sequence = INITIALSEQUENCE, hash=md5):
-		"""Initialize the OTP-Sequence, and discard the password"""
-		OTPAuthenticator.__init__(self, hash)
-		seed = self.generateSeed()
-		# Generate the 'last' password
-		self.lastotp = OTPAuthenticator.generateOTP(self, seed, passwd, sequence+1)
-		self.seed = seed
-		self.sequence = sequence
+    def __init__(self, passwd, sequence = INITIALSEQUENCE, hash=md5):
+        """Initialize the OTP-Sequence, and discard the password"""
+        OTPAuthenticator.__init__(self, hash)
+        seed = self.generateSeed()
+        # Generate the 'last' password
+        self.lastotp = OTPAuthenticator.generateOTP(self, seed, passwd, sequence+1)
+        self.seed = seed
+        self.sequence = sequence
 
-	def challenge(self):
-		"""Return a challenge string"""
-		result = OTPAuthenticator.challenge(self, self.seed, self.sequence)
-		return result
+    def challenge(self):
+        """Return a challenge string"""
+        result = OTPAuthenticator.challenge(self, self.seed, self.sequence)
+        return result
 
-	def authenticate(self, phrase):
-		"""Test the phrase against the last challenge issued"""
-		try:
-			digest = self.parsePhrase(phrase)
-			hasheddigest = self.hashUpdate(digest)
-			if (self.lastotp == hasheddigest):
-				self.lastotp = digest
-				if self.sequence > MINIMUMSEQUENCE:
-					self.sequence = self.sequence - 1
-				return "ok"
-			else:
-				raise Unauthorized("Failed")
-		except Unauthorized, msg:
-			raise Unauthorized(msg)
+    def authenticate(self, phrase):
+        """Test the phrase against the last challenge issued"""
+        try:
+            digest = self.parsePhrase(phrase)
+            hasheddigest = self.hashUpdate(digest)
+            if (self.lastotp == hasheddigest):
+                self.lastotp = digest
+                if self.sequence > MINIMUMSEQUENCE:
+                    self.sequence = self.sequence - 1
+                return "ok"
+            else:
+                raise Unauthorized("Failed")
+        except Unauthorized, msg:
+            raise Unauthorized(msg)
 
 #
 # The 2048 word standard dictionary from RFC 1760
 #
-dict =  ["A",	 "ABE",   "ACE",   "ACT",   "AD",	"ADA",   "ADD",
-"AGO",   "AID",   "AIM",   "AIR",   "ALL",   "ALP",   "AM",	"AMY",
-"AN",	"ANA",   "AND",   "ANN",   "ANT",   "ANY",   "APE",   "APS",
-"APT",   "ARC",   "ARE",   "ARK",   "ARM",   "ART",   "AS",	"ASH",
-"ASK",   "AT",	"ATE",   "AUG",   "AUK",   "AVE",   "AWE",   "AWK",
-"AWL",   "AWN",   "AX",	"AYE",   "BAD",   "BAG",   "BAH",   "BAM",
-"BAN",   "BAR",   "BAT",   "BAY",   "BE",	"BED",   "BEE",   "BEG",
+dict =  ["A",     "ABE",   "ACE",   "ACT",   "AD",    "ADA",   "ADD",
+"AGO",   "AID",   "AIM",   "AIR",   "ALL",   "ALP",   "AM",    "AMY",
+"AN",    "ANA",   "AND",   "ANN",   "ANT",   "ANY",   "APE",   "APS",
+"APT",   "ARC",   "ARE",   "ARK",   "ARM",   "ART",   "AS",    "ASH",
+"ASK",   "AT",    "ATE",   "AUG",   "AUK",   "AVE",   "AWE",   "AWK",
+"AWL",   "AWN",   "AX",    "AYE",   "BAD",   "BAG",   "BAH",   "BAM",
+"BAN",   "BAR",   "BAT",   "BAY",   "BE",    "BED",   "BEE",   "BEG",
 "BEN",   "BET",   "BEY",   "BIB",   "BID",   "BIG",   "BIN",   "BIT",
 "BOB",   "BOG",   "BON",   "BOO",   "BOP",   "BOW",   "BOY",   "BUB",
 "BUD",   "BUG",   "BUM",   "BUN",   "BUS",   "BUT",   "BUY",   "BY",
@@ -252,44 +252,44 @@ dict =  ["A",	 "ABE",   "ACE",   "ACT",   "AD",	"ADA",   "ADD",
 "COW",   "COY",   "CRY",   "CUB",   "CUE",   "CUP",   "CUR",   "CUT",
 "DAB",   "DAD",   "DAM",   "DAN",   "DAR",   "DAY",   "DEE",   "DEL",
 "DEN",   "DES",   "DEW",   "DID",   "DIE",   "DIG",   "DIN",   "DIP",
-"DO",	"DOE",   "DOG",   "DON",   "DOT",   "DOW",   "DRY",   "DUB",
-"DUD",   "DUE",   "DUG",   "DUN",   "EAR",   "EAT",   "ED",	"EEL",
-"EGG",   "EGO",   "ELI",   "ELK",   "ELM",   "ELY",   "EM",	"END",
+"DO",    "DOE",   "DOG",   "DON",   "DOT",   "DOW",   "DRY",   "DUB",
+"DUD",   "DUE",   "DUG",   "DUN",   "EAR",   "EAT",   "ED",    "EEL",
+"EGG",   "EGO",   "ELI",   "ELK",   "ELM",   "ELY",   "EM",    "END",
 "EST",   "ETC",   "EVA",   "EVE",   "EWE",   "EYE",   "FAD",   "FAN",
 "FAR",   "FAT",   "FAY",   "FED",   "FEE",   "FEW",   "FIB",   "FIG",
 "FIN",   "FIR",   "FIT",   "FLO",   "FLY",   "FOE",   "FOG",   "FOR",
 "FRY",   "FUM",   "FUN",   "FUR",   "GAB",   "GAD",   "GAG",   "GAL",
 "GAM",   "GAP",   "GAS",   "GAY",   "GEE",   "GEL",   "GEM",   "GET",
-"GIG",   "GIL",   "GIN",   "GO",	"GOT",   "GUM",   "GUN",   "GUS",
-"GUT",   "GUY",   "GYM",   "GYP",   "HA",	"HAD",   "HAL",   "HAM",
-"HAN",   "HAP",   "HAS",   "HAT",   "HAW",   "HAY",   "HE",	"HEM",
-"HEN",   "HER",   "HEW",   "HEY",   "HI",	"HID",   "HIM",   "HIP",
-"HIS",   "HIT",   "HO",	"HOB",   "HOC",   "HOE",   "HOG",   "HOP",
+"GIG",   "GIL",   "GIN",   "GO",    "GOT",   "GUM",   "GUN",   "GUS",
+"GUT",   "GUY",   "GYM",   "GYP",   "HA",    "HAD",   "HAL",   "HAM",
+"HAN",   "HAP",   "HAS",   "HAT",   "HAW",   "HAY",   "HE",    "HEM",
+"HEN",   "HER",   "HEW",   "HEY",   "HI",    "HID",   "HIM",   "HIP",
+"HIS",   "HIT",   "HO",    "HOB",   "HOC",   "HOE",   "HOG",   "HOP",
 "HOT",   "HOW",   "HUB",   "HUE",   "HUG",   "HUH",   "HUM",   "HUT",
-"I",	 "ICY",   "IDA",   "IF",	"IKE",   "ILL",   "INK",   "INN",
-"IO",	"ION",   "IQ",	"IRA",   "IRE",   "IRK",   "IS",	"IT",
+"I",     "ICY",   "IDA",   "IF",    "IKE",   "ILL",   "INK",   "INN",
+"IO",    "ION",   "IQ",    "IRA",   "IRE",   "IRK",   "IS",    "IT",
 "ITS",   "IVY",   "JAB",   "JAG",   "JAM",   "JAN",   "JAR",   "JAW",
-"JAY",   "JET",   "JIG",   "JIM",   "JO",	"JOB",   "JOE",   "JOG",
+"JAY",   "JET",   "JIG",   "JIM",   "JO",    "JOB",   "JOE",   "JOG",
 "JOT",   "JOY",   "JUG",   "JUT",   "KAY",   "KEG",   "KEN",   "KEY",
-"KID",   "KIM",   "KIN",   "KIT",   "LA",	"LAB",   "LAC",   "LAD",
+"KID",   "KIM",   "KIN",   "KIT",   "LA",    "LAB",   "LAC",   "LAD",
 "LAG",   "LAM",   "LAP",   "LAW",   "LAY",   "LEA",   "LED",   "LEE",
 "LEG",   "LEN",   "LEO",   "LET",   "LEW",   "LID",   "LIE",   "LIN",
-"LIP",   "LIT",   "LO",	"LOB",   "LOG",   "LOP",   "LOS",   "LOT",
-"LOU",   "LOW",   "LOY",   "LUG",   "LYE",   "MA",	"MAC",   "MAD",
+"LIP",   "LIT",   "LO",    "LOB",   "LOG",   "LOP",   "LOS",   "LOT",
+"LOU",   "LOW",   "LOY",   "LUG",   "LYE",   "MA",    "MAC",   "MAD",
 "MAE",   "MAN",   "MAO",   "MAP",   "MAT",   "MAW",   "MAY",   "ME",
 "MEG",   "MEL",   "MEN",   "MET",   "MEW",   "MID",   "MIN",   "MIT",
 "MOB",   "MOD",   "MOE",   "MOO",   "MOP",   "MOS",   "MOT",   "MOW",
-"MUD",   "MUG",   "MUM",   "MY",	"NAB",   "NAG",   "NAN",   "NAP",
-"NAT",   "NAY",   "NE",	"NED",   "NEE",   "NET",   "NEW",   "NIB",
-"NIL",   "NIP",   "NIT",   "NO",	"NOB",   "NOD",   "NON",   "NOR",
-"NOT",   "NOV",   "NOW",   "NU",	"NUN",   "NUT",   "O",	 "OAF",
-"OAK",   "OAR",   "OAT",   "ODD",   "ODE",   "OF",	"OFF",   "OFT",
-"OH",	"OIL",   "OK",	"OLD",   "ON",	"ONE",   "OR",	"ORB",
-"ORE",   "ORR",   "OS",	"OTT",   "OUR",   "OUT",   "OVA",   "OW",
-"OWE",   "OWL",   "OWN",   "OX",	"PA",	"PAD",   "PAL",   "PAM",
+"MUD",   "MUG",   "MUM",   "MY",    "NAB",   "NAG",   "NAN",   "NAP",
+"NAT",   "NAY",   "NE",    "NED",   "NEE",   "NET",   "NEW",   "NIB",
+"NIL",   "NIP",   "NIT",   "NO",    "NOB",   "NOD",   "NON",   "NOR",
+"NOT",   "NOV",   "NOW",   "NU",    "NUN",   "NUT",   "O",     "OAF",
+"OAK",   "OAR",   "OAT",   "ODD",   "ODE",   "OF",    "OFF",   "OFT",
+"OH",    "OIL",   "OK",    "OLD",   "ON",    "ONE",   "OR",    "ORB",
+"ORE",   "ORR",   "OS",    "OTT",   "OUR",   "OUT",   "OVA",   "OW",
+"OWE",   "OWL",   "OWN",   "OX",    "PA",    "PAD",   "PAL",   "PAM",
 "PAN",   "PAP",   "PAR",   "PAT",   "PAW",   "PAY",   "PEA",   "PEG",
-"PEN",   "PEP",   "PER",   "PET",   "PEW",   "PHI",   "PI",	"PIE",
-"PIN",   "PIT",   "PLY",   "PO",	"POD",   "POE",   "POP",   "POT",
+"PEN",   "PEP",   "PER",   "PET",   "PEW",   "PHI",   "PI",    "PIE",
+"PIN",   "PIT",   "PLY",   "PO",    "POD",   "POE",   "POP",   "POT",
 "POW",   "PRO",   "PRY",   "PUB",   "PUG",   "PUN",   "PUP",   "PUT",
 "QUO",   "RAG",   "RAM",   "RAN",   "RAP",   "RAT",   "RAW",   "RAY",
 "REB",   "RED",   "REP",   "RET",   "RIB",   "RID",   "RIG",   "RIM",
@@ -298,16 +298,16 @@ dict =  ["A",	 "ABE",   "ACE",   "ACT",   "AD",	"ADA",   "ADD",
 "SAD",   "SAG",   "SAL",   "SAM",   "SAN",   "SAP",   "SAT",   "SAW",
 "SAY",   "SEA",   "SEC",   "SEE",   "SEN",   "SET",   "SEW",   "SHE",
 "SHY",   "SIN",   "SIP",   "SIR",   "SIS",   "SIT",   "SKI",   "SKY",
-"SLY",   "SO",	"SOB",   "SOD",   "SON",   "SOP",   "SOW",   "SOY",
+"SLY",   "SO",    "SOB",   "SOD",   "SON",   "SOP",   "SOW",   "SOY",
 "SPA",   "SPY",   "SUB",   "SUD",   "SUE",   "SUM",   "SUN",   "SUP",
 "TAB",   "TAD",   "TAG",   "TAN",   "TAP",   "TAR",   "TEA",   "TED",
 "TEE",   "TEN",   "THE",   "THY",   "TIC",   "TIE",   "TIM",   "TIN",
-"TIP",   "TO",	"TOE",   "TOG",   "TOM",   "TON",   "TOO",   "TOP",
+"TIP",   "TO",    "TOE",   "TOG",   "TOM",   "TON",   "TOO",   "TOP",
 "TOW",   "TOY",   "TRY",   "TUB",   "TUG",   "TUM",   "TUN",   "TWO",
-"UN",	"UP",	"US",	"USE",   "VAN",   "VAT",   "VET",   "VIE",
-"WAD",   "WAG",   "WAR",   "WAS",   "WAY",   "WE",	"WEB",   "WED",
+"UN",    "UP",    "US",    "USE",   "VAN",   "VAT",   "VET",   "VIE",
+"WAD",   "WAG",   "WAR",   "WAS",   "WAY",   "WE",    "WEB",   "WED",
 "WEE",   "WET",   "WHO",   "WHY",   "WIN",   "WIT",   "WOK",   "WON",
-"WOO",   "WOW",   "WRY",   "WU",	"YAM",   "YAP",   "YAW",   "YE",
+"WOO",   "WOW",   "WRY",   "WU",    "YAM",   "YAP",   "YAW",   "YE",
 "YEA",   "YES",   "YET",   "YOU",   "ABED",  "ABEL",  "ABET",  "ABLE",
 "ABUT",  "ACHE",  "ACID",  "ACME",  "ACRE",  "ACTA",  "ACTS",  "ADAM",
 "ADDS",  "ADEN",  "AFAR",  "AFRO",  "AGEE",  "AHEM",  "AHOY",  "AIDA",

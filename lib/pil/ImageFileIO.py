@@ -25,15 +25,15 @@ from StringIO import StringIO
 
 class ImageFileIO(StringIO):
 
-	##
-	# Adds buffering to a stream file object, in order to
-	# provide <b>seek</b> and <b>tell</b> methods required
-	# by the <b>Image.open</b> method. The stream object must
-	# implement <b>read</b> and <b>close</b> methods.
-	#
-	# @param fp Stream file handle.
-	# @see Image#open
+    ##
+    # Adds buffering to a stream file object, in order to
+    # provide <b>seek</b> and <b>tell</b> methods required
+    # by the <b>Image.open</b> method. The stream object must
+    # implement <b>read</b> and <b>close</b> methods.
+    #
+    # @param fp Stream file handle.
+    # @see Image#open
 
-	def __init__(self, fp):
-		data = fp.read()
-		StringIO.__init__(self, data)
+    def __init__(self, fp):
+        data = fp.read()
+        StringIO.__init__(self, data)

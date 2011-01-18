@@ -12,9 +12,9 @@ from lib.twisted.python import usage
 from lib.twisted.application import strports
 
 class Options(usage.Options):
-	synopsis = "[-p <port>]"
-	optParameters = [["port", "p", "5190"]]
-	longdesc = "Makes a TOC server."
+    synopsis = "[-p <port>]"
+    optParameters = [["port", "p", "5190"]]
+    longdesc = "Makes a TOC server."
 
 def makeService(config):
-	return strports.service(config['port'], toc.TOCFactory())
+    return strports.service(config['port'], toc.TOCFactory())
