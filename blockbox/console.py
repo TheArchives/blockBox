@@ -137,6 +137,14 @@ class StdinPlugin(threading.Thread):
 										print Spec(self, message[1], 'console', True, self.server)
 									except:
 										print ("Please specify a username.")
+							elif message[0] == "spec":
+								if len(message) == 1:
+									print ("Please specify a username.")
+								else:
+									try:
+										print DeSpec(self, message[1], 'console', True, self.server)
+									except:
+										print ("Please specify a username.")
 							elif message[0] == ("boot"):
 								try:
 									world = str(message[1]).lower()
@@ -201,7 +209,7 @@ class StdinPlugin(threading.Thread):
 								print ("StaffChat: #message")
 								print ("Commands: /cmdlist")
 							elif message[0] == ("cmdlist"):
-								print ("about boot ban cmdlist cpr derank irc_cpr help kick me new pll plr plu rank say shutdown spec srb srs u")
+								print ("about boot ban cmdlist cpr derank despec irc_cpr help kick me new pll plr plu rank say shutdown spec srb srs u")
 							elif message[0] == ("about"):
 								print ("About The Server")
 								print ("Powered by blockBox %s - http://blockbox.hk-diy.net/"% VERSION )
@@ -299,8 +307,8 @@ class StdinPlugin(threading.Thread):
 								print ("Please include a message to send.")
 							else:
 								try:
-								   world, out = message[1:len(message)-1].split(" ")
-								   text = COLOUR_YELLOW+"!"+COLOUR_DARKGREEN+"Console:"+COLOUR_WHITE+" "+out
+									world, out = message[1:len(message)-1].split(" ")
+									text = COLOUR_YELLOW+"!"+COLOUR_DARKGREEN+"Console:"+COLOUR_WHITE+" "+out
 								except ValueError:
 									print ("Please include a message to send.")
 								else:

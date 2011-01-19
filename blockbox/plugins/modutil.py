@@ -114,11 +114,11 @@ class ModUtilPlugin(ProtocolPlugin):
 			user.sendError("Kicked by %s: %s" % (self.client.username , " ".join(params)))
 		else:
 			user.sendError("You got kicked by %s." % self.client.username)
-			self.client.sendServerMessage("User %s kicked." % user)
+		self.client.sendServerMessage("User %s kicked." % user)
 
 	@player_list
 	@admin_only
-	def commandBanBoth(self, parts, fromloc, overriderank, params=[]):
+	def commandBanBoth(self, parts, fromloc, overriderank):
 		"/banb username reason - Admin\nName and IP ban a Player from this server."
 		username = parts[1]
 		if len(parts) <= 1:
@@ -172,6 +172,9 @@ class ModUtilPlugin(ProtocolPlugin):
 	@admin_only
 	def commandUnban(self, parts, fromloc, overriderank):
 		"/unban username - Admin\nRemoves the Ban on the Player."
+		if len(parts) < 1:
+			self.client.sendServerMessage("Please specify a username.")
+			return
 		username = parts[1]
 		if not self.client.factory.isBanned(username):
 			self.client.sendServerMessage("%s is not banned." % username)

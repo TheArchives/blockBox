@@ -80,5 +80,5 @@ class ServerUtilPlugin(ProtocolPlugin):
 	@owner_only
 	def commandSendHeartbeat(self, parts, fromloc, overriderank):
 		"/sendhb - Owner\nSends a heartbeat to the official Minecraft server."
-		self.client.factory.Heartbeat.get_url(True)
+		self.client.factory.Heartbeat.get_url(onetime=True)
 		self.client.sendServerMessage("Heartbeat sent.")
