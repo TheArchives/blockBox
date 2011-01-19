@@ -2,7 +2,7 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-import logging, os, traceback
+import logging, os, shutil, traceback
 
 from Queue import Empty
 from ConfigParser import RawConfigParser as ConfigParser
@@ -52,12 +52,12 @@ class World(object):
 		self.zoned = False
 		self.userzones = {}
 		self.rankzones = {}
-		self.entitylist = []
+		#self.entitylist = []
 		#Unsaved variables
-		self.entities_worldblockchangesdict = {}
-		self.entities_childerenlist = []
-		self.entities_childerenlist_index = 0
-		self.entities_epicentity = []
+		#self.entities_worldblockchangesdict = {}
+		#self.entities_childerenlist = []
+		#self.entities_childerenlist_index = 0
+		#self.entities_epicentity = []
 		# Dict of deferreds to call when a block is gotten.
 		self.blockgets = {}
 		self.ASD = None
@@ -65,6 +65,7 @@ class World(object):
 		self.flush_deferred = None
 		if load:
 			assert os.path.isfile(self.blocks_path), "No blocks file: %s" % self.blocks_path
+			assert os.path.isfile(self.meta_path), "No meta file: %s" % self.meta_path
 			self.load_meta()
 
 	def start(self):

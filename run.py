@@ -9,7 +9,7 @@ if "--run" not in sys.argv and sys.platform == "win32":
 	# They did not use the start.bat. Boot them out
 	print ("Please use the start.bat that comes with the blockBox package to run blockBox.")
 	time.sleep(5)
-	exit(1);
+	exit(1)
 
 try:
 	if sys.version_info[0] == (2): # Python 2.x?
@@ -27,7 +27,7 @@ try:
 				finally:
 					print ("blockBox will exit in 10 seconds.")
 					time.sleep(10)
-					exit(1);
+					exit(1)
 	else: # Python 3.x or better
 		print ("ATTENTION: Do you need help with blockBox? http://blockbox.bradness.info/forum or #blockBox@irc.esper.net")
 		print ("NOTICE: Sorry, but blockBox does not support Python 3.x or better. Please use Python 2.6.x instead; http://www.python.org/download/releases/2.6.6/")
@@ -40,7 +40,7 @@ except: # Python 1.x doesn't have the version_info method
 	print ("NOTICE: Sorry, but blockBox does not support Python 3.x. Please use Python 2.6.x instead; http://www.python.org/download/releases/2.6.6/")
 	print ("blockBox will exit in 10 seconds.")
 	time.sleep(10)
-	exit(1);
+	exit(1)
 
 import logging
 from logging.handlers import SMTPHandler
@@ -57,7 +57,7 @@ except ImportError:
 
 from blockbox.api import APIFactory
 from blockbox.constants import *
-from blockbox.logger import ColoredLogger
+from blockbox.globals import *
 from blockbox.server import BlockBoxFactory
 
 logging.basicConfig(
@@ -66,6 +66,8 @@ logging.basicConfig(
 	datefmt="%m/%d/%Y %H:%M:%S",
 )
 
+create_if_not("logs/console/console.log")
+
 logger = logging.getLogger("blockBox")
 logger.info("Starting up blockBox %s..." % VERSION)
 
@@ -73,8 +75,6 @@ factory = BlockBoxFactory()
 api = APIFactory(factory)
 reactor.listenTCP(factory.config.getint("network", "port"), factory)
 reactor.listenTCP(factory.config.getint("network", "api_port"), api)
-
-factory.create_if_not("logs/console/console.log")
 
 rotate = logging.handlers.TimedRotatingFileHandler(
 	filename="logs/console/console.log", when="H",

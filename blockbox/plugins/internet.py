@@ -14,6 +14,7 @@ from twisted.internet import reactor
 
 from blockbox.constants import *
 from blockbox.decorators import *
+from blockbox.globals import create_if_not
 from blockbox.plugins import ProtocolPlugin
 
 class InternetPlugin(ProtocolPlugin):
@@ -29,6 +30,7 @@ class InternetPlugin(ProtocolPlugin):
 
 	tuser = ""
 	tpass = ""
+	create_if_not("logs/twitter.log")
 	twlog = open("logs/twitter.log", "a")
 
 	@info_list
