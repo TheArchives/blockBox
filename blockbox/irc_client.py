@@ -326,27 +326,6 @@ class ChatBot(irc.IRCClient):
 			self.logger.error(traceback.format_exc())
 			self.msg(self.factory.irc_channel,"ERROR " + traceback.format_exc())
 
-	def userColour(self, user):
-		if user is self.factory.owner:
-			color = COLOUR_DARKGREEN
-		if user in self.factory.spectators:
-			color = COLOUR_BLACK
-		elif user in self.factory.directors:
-			color = COLOUR_GREEN
-		elif user in self.factory.admins:
-			color = COLOUR_RED
-		elif user in self.factory.mods:
-			color = COLOUR_BLUE
-		elif user in VIPS:
-			color = COLOUR_YELLOW
-		elif user in self.factory.worldowners:
-			color = COLOUR_DARKYELLOW
-		elif user in self.factory.advbuilders:
-			color = COLOUR_GREY
-		else:
-			color = COLOUR_YELLOW
-		return color
-
 	def action(self, user, channel, msg):
 		msg = msg.replace("./", " /")
 		msg = msg.replace(".!", " !")

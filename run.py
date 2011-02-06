@@ -50,13 +50,13 @@ from blockbox.constants import *
 from blockbox.globals import *
 from blockbox.server import BlockBoxFactory
 
+create_if_not("logs/console/console.log")
+
 logging.basicConfig(
 	format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 	level=("--debug" in sys.argv) and logging.DEBUG or logging.INFO,
 	datefmt="%m/%d/%Y %H:%M:%S",
 )
-
-create_if_not("logs/console/console.log")
 
 logger = logging.getLogger("blockBox")
 logger.info("Starting up blockBox %s..." % VERSION)
@@ -115,7 +115,7 @@ finally:
 	factory.saveMeta()
 	logger.info("Flushing worlds to disk...")
 	for world in factory.worlds.values():
-		logger.info("Saving: %s" % world.basename);
+		logger.info("Saving: %s" % world.basename)
 		world.stop()
 		world.save_meta()
 	logger.info("Done flushing...")

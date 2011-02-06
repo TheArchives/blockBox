@@ -31,11 +31,11 @@ class BlockInfoPlugin(ProtocolPlugin):
 			check_offset = self.client.world.blockstore.get_offset(x, y, z)
 			block2 = ord(self.client.world.blockstore.raw_blocks[check_offset])
 			if block2 == 0:
-				self.client.sendServerMessage("Block Info: %s (%s)" % (self.BlockList[block], block))
+				self.client.sendServerMessage("Block Info: %s (%s)" % (BlockList[block], block))
 				self.client.sendServerMessage("x: %s y: %s z: %s" % (x, y, z))
 				return block2
 			else:
-				self.client.sendServerMessage("Block Info: %s (%s)" % (self.BlockList[block2], block2))
+				self.client.sendServerMessage("Block Info: %s (%s)" % (BlockList[block2], block2))
 				self.client.sendServerMessage("x: %s y: %s z: %s" % (x, y, z))
 				return block2
 

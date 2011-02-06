@@ -4,7 +4,7 @@
 
 from __future__ import with_statement
 
-import datetime, gc, hashlib, logging, os, random, re, shutil, sys, time, threading, traceback, urllib
+import datetime, gc, hashlib, logging, os, random, re, shutil, sys, time, traceback
 
 from collections import defaultdict
 from ConfigParser import RawConfigParser as ConfigParser
@@ -16,108 +16,13 @@ from lib.twisted.internet.protocol import Factory
 from blockbox.console import StdinPlugin
 from blockbox.constants import *
 from blockbox.globals import *
+from blockbox.heartbeat import Heartbeat
 from blockbox.irc_client import ChatBotFactory
 from blockbox.persistence import PersistenceEngine as Persist
 from blockbox.plugins import *
 from blockbox.protocol import BlockBoxServerProtocol
 from blockbox.timer import ResettableTimer
 from blockbox.world import World
-
-class Heartbeat(object):
-	"""
-Deals with registering with the Minecraft main server every so often.
-The Salt is also used to help verify users' identities.
-	"""
-
-	def __init__(self, factory):
-		self.factory = factory
-		self.logger = logging.getLogger("Heartbeat")
-		if self.factory.conf_options.getboolean("heartbeat", "send_heartbeat"):
-			self.turl()
-#		if self.factory.conf_options.getboolean("heartbeat", "use_blockbeat"):
-#			self.bb_turl()
-
-	def bb_turl(self):
-		try:
-			threading.Thread(target=self.bb_get_url).start()
-		except:
-			self.logger.error(traceback.format_exc())
-			reactor.callLater(1, self.bb_turl)
-
-	def turl(self):
-		try:
-			threading.Thread(target=self.get_url).start()
-		except:
-			self.logger.error(traceback.format_exc())
-			reactor.callLater(1, self.turl)
-
-	def get_url(self, onetime=False):
-		try:
-			try:
-				self.factory.last_heartbeat = time.time()
-				fh = urllib.urlopen("http://www.minecraft.net/heartbeat.jsp", urllib.urlencode({
-				"port": self.factory.config.getint("network", "port"),
-				"users": len(self.factory.clients),
-				"max": self.factory.max_clients,
-				"name": self.factory.server_name,
-				"public": self.factory.public,
-				"version": 7,
-				"salt": self.factory.salt,
-				}))
-				self.url = fh.read().strip()
-				self.hash = self.url.partition("server=")[2]
-				if self.factory.console_delay == self.factory.delay_count:
-					self.logger.debug("%s" % self.url)
-					#self.logger.info("Saved URL to url.txt.")
-				open('data/url.txt', 'w').write(self.url)
-				if not self.factory.console.is_alive():
-					self.factory.console.run()
-			except IOError, SystemExit:
-				pass
-			except:
-				self.logger.error("Minecraft.net seems to be offline.")
-		except IOError, SystemExit:
-			pass
-		except:
-			self.logger.error(traceback.format_exc())
-		finally:
-			if not onetime:
-				reactor.callLater(60, self.turl)
-
-	def bb_get_url(self, onetime=False):
-		if self.factory.config.getboolean("options", "use_blockbeat"):
-			try:
-				try:
-					self.factory.last_heartbeat = time.time()
-					fh = urllib.urlopen("http://blockbeat.bradness.info/announce.php", urllib.urlencode({
-						"users": len(self.factory.clients),
-						"hash": self.hash,
-						"max": self.factory.max_clients,
-						"port": self.factory.config.getint("network", "port"),
-						"name": self.factory.server_name,
-						"software": 'blockbox',
-						"public": self.factory.public,
-						"motd": self.factory.config.get("server", "description"),
-						"website": self.factory.config.get("info", "info_url"),
-						"owner": self.factory.config.get("info", "owner"),
-						"irc": self.factory.config.get("irc", "channel")+"@"+self.factory.config.get("irc", "server"),
-					}))
-					self.response = fh.read().strip()
-					#TODO: Response handling, more info coming soon
-					#if self.response == 'ERROR_'
-					if not self.factory.console.is_alive():
-						self.factory.console.run()
-				except IOError,SystemExit:
-					pass
-				except:
-					self.logger.error(traceback.format_exc())
-			except IOError,SystemExit:
-				pass
-			except:
-				self.logger.error(traceback.format_exc())
-			finally:
-				if not onetime:
-					reactor.callLater(60, self.bb_turl)
 
 class BlockBoxFactory(Factory):
 	"""
@@ -223,6 +128,12 @@ class BlockBoxFactory(Factory):
 			reactor.connectTCP(self.conf_irc.get("irc", "server"), self.conf_irc.getint("irc", "port"), self.irc_relay)
 		else:
 			self.irc_relay = None
+		# Parse heartbeat related section
+		self.send_heartbeat = self.conf_options.getboolean("heartbeat", "send_heartbeat")
+		self.use_blockbeat = self.conf_options.getboolean("heartbeat", "use_blockbeat")
+		if self.use_blockbeat:
+			self.blockbeat_authkey = self.conf_options.get("heartbeat", "blockbeat_authkey")
+			self.blockbeat_passphrase = self.conf_options.get("heartbeat", "blockbeat_passphrase")
 		self.main_loaded = False
 		# Word Filter
 		self.wordfilter.read("conf/wordfilter.ini")
@@ -264,7 +175,6 @@ class BlockBoxFactory(Factory):
 		self.usernames = {}
 		self.console = StdinPlugin(self)
 		self.console.start()
-		self.heartbeat = Heartbeat(self)
 		# Boot worlds that got loaded
 		for world in self.worlds:
 			self.loadWorld("mapdata/worlds/%s" % world, world)
@@ -274,6 +184,8 @@ class BlockBoxFactory(Factory):
 		reactor.callLater(0.1, self.sendMessages)
 		self.loops["printinfo"] = task.LoopingCall(self.printInfo)
 		self.loops["printinfo"].start(60)
+		if self.use_blockbeat or self.send_heartbeat:
+			self.heartbeat = Heartbeat(self)
 		# Initial startup is instant, but it updates every 10 minutes.
 		self.world_save_stack = []
 		reactor.callLater(60, self.saveWorlds)
@@ -284,8 +196,8 @@ class BlockBoxFactory(Factory):
 			#self.loops["loadarchives"].start(60)
 			reactor.callLater(60, self.loadArchives)
 		gc.disable()
-		#self.loops["gc"] = task.LoopingCall(self.cleanGarbage)
-		#self.loops["gc"].start(900)
+		self.loops["gc"] = task.LoopingCall(self.cleanGarbage)
+		self.loops["gc"].start(900)
 #		if self.backup_auto:
 #			self.loops["autobackup"] = task.LoopingCall(self.AutoBackup)
 #			self.loops["autobackup"].start(float(self.backup_freq * 60))

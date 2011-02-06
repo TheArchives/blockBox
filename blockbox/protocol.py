@@ -1157,9 +1157,12 @@ class BlockBoxServerProtocol(Protocol):
 			messages = cPickle.load(file)
 			file.close()
 			for client in self.factory.clients.values():
-				if client.username.lower() in messages:
-					client.sendServerMessage("You have an message waiting in your Inbox.")
-					client.sendServerMessage("Use /inbox to check and see.")
+				try:
+					if client.username.lower() in messages:
+						client.sendServerMessage("You have an message waiting in your Inbox.")
+						client.sendServerMessage("Use /inbox to check and see.")
+				except AttributeError:
+					continue
 
 	def setPersist(self):
 		"Load persisted variables, and store some important stuff."
