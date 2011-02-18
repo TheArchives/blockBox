@@ -50,6 +50,7 @@ from blockbox.constants import *
 from blockbox.globals import *
 from blockbox.server import BlockBoxFactory
 
+create_if_not("logs/")
 create_if_not("logs/console/console.log")
 
 logging.basicConfig(
