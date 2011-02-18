@@ -71,20 +71,17 @@ class InteractionPlugin(ProtocolPlugin):
 	@player_list
 	def commandBack(self, parts, fromloc, overriderank):
 		"/back - Guest\nPrints out message of you coming back."
-		if len(parts) != 1:
-			self.client.sendServerMessage("This command doesn't need arguments")
-		else:
-			self.client.factory.queue.put((self.client, TASK_AWAYMESSAGE, self.client.username + " is now: "+COLOUR_DARKGREEN+"Back."))
-			self.client.gone = 0
+		self.client.factory.queue.put(self.client, TASK_AWAYMESSAGE, "%s is now %sback." % (self.client.username, COLOUR_DARKGREEN))
+		self.client.gone = 0
 
 	@player_list
 	def commandAway(self, parts, fromloc, overriderank):
 		 "/away reason - Guest\nAliases: afk, brb\nPrints out message of you going away."
 		 if len(parts) == 1:
-			self.client.factory.queue.put((self.client, TASK_AWAYMESSAGE, self.client.username + " has gone: Away."))
+			self.client.factory.queue.put(self.client, TASK_AWAYMESSAGE, "%s has gone AFK" % self.client.username)
 			self.client.gone = 1
 		 else:
-			self.client.factory.queue.put((self.client, TASK_AWAYMESSAGE, self.client.username + " has gone: Away"+COLOUR_WHITE+" "+(" ".join(parts[1:]))))
+			self.client.factory.queue.put(self.client, TASK_AWAYMESSAGE, "%s has gone AFK (%s)" % (self.client.username, " ".join(parts[1:])))
 			self.client.gone = 1
 
 	@player_list
@@ -96,7 +93,7 @@ class InteractionPlugin(ProtocolPlugin):
 			if self.client.isSilenced():
 				self.client.sendServerMessage("You are Silenced and lost your tongue.")
 			else:
-				self.client.factory.queue.put((self.client, TASK_ACTION, (self.client.id, self.client.userColour(), self.client.username, " ".join(parts[1:]))))
+				self.client.factory.queue.put(self.client, TASK_ACTION, (self.client.id, self.client.userColour(), self.client.username, " ".join(parts[1:])))
 
 	@mod_only
 	def commandSay(self, parts, fromloc, overriderank):
@@ -104,13 +101,13 @@ class InteractionPlugin(ProtocolPlugin):
 		if len(parts) == 1:
 			self.client.sendServerMessage("Please type a message.")
 		else:
-			self.client.factory.queue.put((self.client, TASK_SERVERMESSAGE, ("[MSG] "+(" ".join(parts[1:])))))
+			self.client.factory.queue.put(self.client, TASK_SERVERMESSAGE, ("[MSG] %s" % " ".join(parts[1:])))
 
 	@player_list
 	def commandSlap(self, parts, fromloc, overriderank):
 		"/slap username [with object] - Guest\nSlap username [with object]."
 		if len(parts) == 1:
-			self.client.sendServerMessage("Enter the name for the slappee")
+			self.client.sendServerMessage("Please enter the name for the slappee.")
 		else:
 			stage = 0
 			name = ''
@@ -119,26 +116,28 @@ class InteractionPlugin(ProtocolPlugin):
 				if parts[i] == "with":
 					stage = 1
 					continue
-					if stage == 0 : 
+					if stage == 0 :
 						name += parts[i]
-						if (i+1 != len(parts) ) : 
-							if ( parts[i+1] != "with" ) : name += " "
+						if (i+1 != len(parts) ) :
+							if (parts[i+1] != "with"):
+								name += " "
 					else:
 						object += parts[i]
-						if ( i != len(parts) - 1 ) : object += " "
+						if (i != len(parts)-1):
+							object += " "
 				else:
 					if stage == 1:
-						self.client.sendWorldMessage("* "+COLOUR_PURPLE+"%s slaps %s with %s!" % (self.client.username,name,object))
-						self.client.factory.irc_relay.sendServerMessage("%s slaps %s with %s!" % (self.client.username,name,object))
+						self.client.sendWorldMessage("* %s%s slaps %s with %s!" % (COLOUR_PURPLE, self.client.username, name, object))
+						self.client.factory.irc_relay.sendServerMessage("%s slaps %s with %s!" % (self.client.username, name, object))
 					else:
-						self.client.sendWorldMessage("* "+COLOUR_PURPLE+"%s slaps %s with a giant smelly trout!" % (self.client.username,name))
-						self.client.factory.irc_relay.sendServerMessage("* %s slaps %s with a giant smelly trout!" % (self.client.username,name))
+						self.client.sendWorldMessage("* %s%s slaps %s with a giant smelly trout!" % (COLOUR_PURPLE, self.client.username, name))
+						self.client.factory.irc_relay.sendServerMessage("* %s slaps %s with a giant smelly trout!" % (self.client.username, name))
 
 	@player_list
 	def commandPunch(self, parts, fromloc, overriderank):
-		"/punch username [by bodypart] - Punch username [by bodypart]."
+		"/punch username [bodypart to punch] - Punch username [in a bodypart]."
 		if len(parts) == 1:
-			self.client.sendServerMessage("Enter the name for the punchee")
+			self.client.sendServerMessage("Please enter the name for the punchee.")
 		else:
 			stage = 0
 			name = ''
@@ -147,20 +146,22 @@ class InteractionPlugin(ProtocolPlugin):
 				if parts[i] == "by":
 					stage = 1
 					continue
-					if stage == 0 : 
+					if stage == 0 :
 						name += parts[i]
-						if (i+1 != len(parts) ) : 
-							if ( parts[i+1] != "by" ) : name += " "
+						if (i+1 != len(parts)):
+							if (parts[i+1] != "by"):
+								name += " "
 					else:
 						object += parts[i]
-						if ( i != len(parts) - 1 ) : object += " "
+						if (i != len(parts)-1):
+							object += " "
 				else:
 					if stage == 1:
-						self.client.sendWorldMessage("* "+COLOUR_PURPLE+"%s punches %s in the %s!" % (self.client.username,name,object))
-						self.client.factory.irc_relay.sendServerMessage("%s punches %s in the %s!" % (self.client.username,name,object))
-					else: 
-						self.client.sendWorldMessage("* "+COLOUR_PURPLE+"%s punches %s in the face!" % (self.client.username,name))
-						self.client.factory.irc_relay.sendServerMessage("* %s punches %s in the face!" % (self.client.username,name))
+						self.client.sendWorldMessage("* %s%s punches %s in the %s!" % (COLOUR_PURPLE, self.client.username, name, object))
+						self.client.factory.irc_relay.sendServerMessage("%s punches %s in the %s!" % (self.client.username, name, object))
+					else:
+						self.client.sendWorldMessage("* %s%s punches %s in the face!" % (COLOUR_PURPLE, self.client.username, name))
+						self.client.factory.irc_relay.sendServerMessage("* %s punches %s in the face!" % (self.client.username, name))
 
 	def commandRoll(self, parts, fromloc, overriderank):
 		"/roll max - Guest\nRolls a random number from 1 to max. Announces to world."
@@ -168,7 +169,7 @@ class InteractionPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("Please enter a number as the maximum roll.")
 		else:
 			try:
-				roll = roll = int(math.floor((random.random()*(int(parts[1])-1)+1)))
+				roll = roll = int(math.floor((random.random() * (int(parts[1])-1)+1)))
 			except ValueError:
 				self.client.sendServerMessage("Please enter an integer as the maximum roll.")
 			else:
@@ -177,13 +178,13 @@ class InteractionPlugin(ProtocolPlugin):
 	def commandBalance(self, parts, fromloc, overriderank):
 		"/bank - Guest\nAliases: balance\nFirst time: Creates you a account.\nOtherwise: Checks your balance."
 		if self.client.persist.int("bank", "balance", -1) is not -1:
-			self.client.sendServerMessage("Welcome to the Bank!")
+			self.client.sendServerMessage("Welcome to the bank!")
 			self.client.sendServerMessage("Your current balance is %d %s." % (self.client.persist.int("bank", "balance", -1), self.client.factory.credit_name))
 		else:
 			self.client.persist.set("bank", "balance", self.client.factory.initial_amount)
 			self.client.factory.balancesqllog.write("INSERT INTO " + self.client.factory.table_prefix + "players (username, balance) VALUES ('" + self.client.username + "', " + self.client.factory.initial_amount + ");")
 			self.client.factory.balancesqllog.flush()
-			self.client.sendServerMessage("Welcome to the Bank!")
+			self.client.sendServerMessage("Welcome to the bank!")
 			self.client.sendServerMessage("We have created your account.")
 			self.client.sendServerMessage("Your current balance is %d %s." % (self.client.persist.int("bank", "balance", -1), self.client.factory.credit_name))
 			self.client.sendServerMessage("NOTE: We CAN detect cheating. Do NOT try it.")
@@ -193,7 +194,7 @@ class InteractionPlugin(ProtocolPlugin):
 	def commandSetAccount(self, parts, fromloc, overriderank):
 		"/setbank username amount - Director\nEdits Bank Account"
 		if len(parts) != 3:
-			self.client.sendServerMessage("Syntax: /set <target> <amount>")	
+			self.client.sendServerMessage("Syntax: /set <target> <amount>")
 			return False
 		target = parts[1]
 		with Persist(target) as p:
@@ -257,7 +258,7 @@ class InteractionPlugin(ProtocolPlugin):
 	def commandRemoveAccount(self, parts, fromloc, overriderank):
 		"/removebank username - Director\nRemoves Bank Account"
 		if len(parts) != 2:
-			self.client.sendServerMessage("Syntax: /removebank <target>")	
+			self.client.sendServerMessage("Syntax: /removebank <target>")
 			return False
 		target = parts[1]
 		with Persist(target) as p:

@@ -464,16 +464,10 @@ class BlockBoxServerProtocol(Protocol):
 					self.sendError("Provide an authentication before chatting.")
 					return
 				if message.startswith("/"):
-					# It's a command
+					# It's a command.
 					#message = message.lower()
 					parts = [x.strip() for x in message.split() if x.strip()]
 					command = parts[0].strip("/")
-					if not message.startswith("/tlog "):
-						self.logger.info("%s just used: %s" % (self.username," ".join(parts)))
-						#for command logging to IRC
-						if self.factory.irc_relay:
-							if self.factory.irc_cmdlogs:
-								self.factory.irc_relay.sendServerMessage("%s just used: %s" % (self.username," ".join(parts)))
 					# See if we can handle it internally
 					try:
 						func = getattr(self, "command%s" % command.title())
@@ -489,6 +483,9 @@ class BlockBoxServerProtocol(Protocol):
 							self.logger.error("Cannot find plugin %s, please report to blockBox team." % func)
 							self.sendSplitServerMessage("Command code not found, please report to server staff or blockBox team.")
 							return
+					if getattr(func, "disabled", True):
+						self.sendServerMessage("Command %s has been disabled." % command)
+						return
 					if (self.isSpectator() and (getattr(func, "admin_only", False) or getattr(func, "mod_only", False) or getattr(func, "op_only", False) or getattr(func, "advbuilder_only", False) or getattr(func, "worldowner_only", False) or getattr(func, "writer_only", False))):
 						self.sendServerMessage("'%s' is not available to specs." % command)
 						return
@@ -516,8 +513,19 @@ class BlockBoxServerProtocol(Protocol):
 					if getattr(func, "writer_only", False) and not (self.isWriter() or self.isOp() or self.isMod()):
 						self.sendServerMessage("'%s' is a Builder-only command!" % command)
 						return
+					if func.config["custom_cmdlog_msg"]:
+						self.logger.info("%s %s" % (self.username, func.config["custom_cmdlog_msg"]))
+					else:
+						self.logger.info("%s just used: %s" % (self.username, " ".join(parts)))
+					# Log it in IRC, if enabled.
+					if self.factory.irc_relay:
+						if self.factory.irc_cmdlogs:
+							if func.config["custom_cmdlog_msg"]:
+								self.factory.irc_relay.sendServerMessage("%s %s" % (self.username, func.config["custom_cmdlog_msg"]))
+							else:
+								self.factory.irc_relay.sendServerMessage("%s just used: %s" % (self.username, " ".join(parts)))
 					try:
-						func(parts, 'user', False) #fromloc is user, overriderank is false
+						func(parts, 'user', False) # fromloc is user, overriderank is false
 					except Exception, e:
 						self.sendSplitServerMessage(traceback.format_exc().replace("Traceback (most recent call last):", ""))
 						self.sendSplitServerMessage("Internal Server Error - Traceback (Please report this to the Server Staff or the blockBox Team, see /about for contact info)")
@@ -603,7 +611,7 @@ class BlockBoxServerProtocol(Protocol):
 					)
 					self.transport.loseConnection()
 				else:
-					self.log("Unhandleable type %s" % type, logging.WARN)
+					self.logger.warning("Unhandleable type %s" % type)
 
 	def userColour(self):
 		if self.isSpectator():
@@ -648,7 +656,7 @@ class BlockBoxServerProtocol(Protocol):
 		elif self.isOp():
 			name = "Op"
 		elif self.isAdvBuilder():
-			name = "AdvBuilder"
+			name = "Advanced Builder"
 		elif self.isWriter():
 			name = "Writer"
 		else:
@@ -677,14 +685,14 @@ class BlockBoxServerProtocol(Protocol):
 		self.last_block_changes = []
 		self.initial_position = position
 		if self.world.is_archive:
-			self.sendSplitServerMessage("This world is an Archive, and will cease to exist once the last person leaves.")
+			self.sendSplitServerMessage("This world is an archive, and will cease to exist once the last person leaves.")
 			self.sendServerMessage(COLOUR_RED+"Staff: Please do not reboot this world.")
 		breakable_admins = self.runHook("canbreakadmin")
 		self.sendPacked(TYPE_INITIAL, 7, "Loading...", "Entering world '%s'" % world_id, 100 if breakable_admins else 0)
 		self.sendLevel()
 
 	def sendOpUpdate(self):
-		"Sends the admincrete-breaker update and a message."
+		"Sends the op update and a message."
 		if self.isOp():
 			self.sendServerMessage("You are now an Op here.")
 		else:
@@ -693,7 +701,7 @@ class BlockBoxServerProtocol(Protocol):
 		self.respawn()
 
 	def sendWorldOwnerUpdate(self):
-		"Sends the admincrete-breaker update and a message."
+		"Sends the worldowner update and a message."
 		if self.isWorldOwner():
 			self.sendServerMessage("You are now a World Owner here.")
 		else:
@@ -702,7 +710,7 @@ class BlockBoxServerProtocol(Protocol):
 		self.respawn()
 
 	def sendDirectorUpdate(self):
-		"Sends the admincrete-breaker update and a message."
+		"Sends the director update and a message."
 		if self.isDirector():
 			self.sendServerMessage("You are now a Director.")
 		else:
@@ -711,7 +719,7 @@ class BlockBoxServerProtocol(Protocol):
 		self.respawn()
 
 	def sendAdminUpdate(self):
-		"Sends the admincrete-breaker update and a message."
+		"Sends the admin update and a message."
 		if self.isAdmin():
 			self.sendServerMessage("You are now an Admin.")
 		else:
@@ -720,7 +728,7 @@ class BlockBoxServerProtocol(Protocol):
 		self.respawn()
 
 	def sendModUpdate(self):
-		"Sends the mod message"
+		"Sends the moderator message."
 		if self.isMod():
 			self.sendServerMessage("You are now a Mod.")
 		else:
@@ -729,7 +737,7 @@ class BlockBoxServerProtocol(Protocol):
 		self.respawn()
 
 	def sendAdvBuilderUpdate(self):
-		"Sends the adv builder message"
+		"Sends the advanced builder message."
 		if self.isAdvBuilder():
 			self.sendServerMessage("You are now an Advanced Builder.")
 		else:
@@ -738,7 +746,7 @@ class BlockBoxServerProtocol(Protocol):
 		self.respawn()
 
 	def sendSpectatorUpdate(self):
-		"Sends a spec demotion message"  
+		"Sends a spec demotion message."  
 		if self.isSpectator():
 			return
 		else:
@@ -1141,7 +1149,7 @@ class BlockBoxServerProtocol(Protocol):
 			except KeyError:
 				self.sendServerMessage("'%s' is not a valid block type." % value)
 				return None
-					# Check the block is valid
+		# Check the block is valid
 		if ord(block) > 49:
 			self.sendServerMessage("'%s' is not a valid block type." % value)
 			return None

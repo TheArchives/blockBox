@@ -124,6 +124,8 @@ class HelpPlugin(ProtocolPlugin):
 		self.client.sendServerMessage("%s Commands:"%list.title())
 		commands = []
 		for name, command in self.client.commands.items():
+			if getattr(command, "disabled", True):
+				continue
 			if not list == "other":
 				if not list == "all":
 					if not getattr(command, "%s_list"%list, False):

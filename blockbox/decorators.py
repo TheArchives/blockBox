@@ -6,6 +6,15 @@
 Decorators for protocol (command) methods.
 """
 
+def config(key, value):
+	def config_inner(func):
+		"Decorator that writes to the configuration of the command."
+		if getattr(func, 'config', None) is None:
+			func.config = dict()
+		func.config[key] = value
+		return func
+	return config_inner
+
 def owner_only(func):
 	"Decorator for owner-only command methods."
 	func.owner_only = True
@@ -103,7 +112,7 @@ def only_string_command(string_name):
 		"Decorator for commands that accept a single username/plugin/etc parameter, and don't need it checked"
 		def inner(self, parts, fromloc, overriderank):
 			if len(parts) == 1:
-				self.client.sendServerMessage("Please specify a %s." % string_name)
+				self.client.sendServerMessage("Please specify a/an %s." % string_name)
 			else:
 				username = parts[1].lower()
 				if len(parts) > 2:

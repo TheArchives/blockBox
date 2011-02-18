@@ -36,10 +36,11 @@ class InternetPlugin(ProtocolPlugin):
 	create_if_not("logs/twitter.log")
 	twlog = open("logs/twitter.log", "a")
 
+	@config("custom_cmdlog_msg", "just logged into Twitter.")
 	@info_list
 	def commandTlogin(self, parts, fromloc, overriderank):
 		"/tlog username password - Guest\nReplace username and password to login to Twitter."
-		if fromloc != 'user':
+		if fromloc == 'user':
 			try:
 				if len(parts[1]) < 1:
 					self.client.sendServerMessage("Please input a username and password.")
@@ -61,7 +62,7 @@ class InternetPlugin(ProtocolPlugin):
 	@info_list
 	def commandTweet(self, parts, fromloc, overriderank):
 		"/tweet tweet - Guest\nSend a tweet to Twitter after using /tlog."
-		if fromloc != 'user':
+		if fromloc == 'user':
 			if len(self.tuser) < 1:
 				self.client.sendServerMessage("Please do /tlog first.")
 			else:
@@ -77,7 +78,7 @@ class InternetPlugin(ProtocolPlugin):
 	@info_list
 	def commandTDetails(self, parts, fromloc, overriderank):
 		"/tdetails - Guest\nGives you your Twitter login details, from /tlog."
-		if fromloc != 'user':
+		if fromloc == 'user':
 			if len(self.tuser) < 1:
 				self.client.sendServerMessage("Username: "+COLOUR_RED+"Not entered!")
 			else:
@@ -125,7 +126,7 @@ class InternetPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("Imagedraw is currently disabled due to server problems.")
 		else:
 			if len(parts) < 8 and len(parts) != 2 and len(parts) != 3:
-				self.client.sendServerMessage("Please enter whether to flip? (rotation)")
+				self.client.sendServerMessage("Please enter whether to flip or not (rotation)")
 				self.client.sendServerMessage("(and possibly two coord triples)")
 			else:
 				if len(parts)==3:
@@ -133,7 +134,7 @@ class InternetPlugin(ProtocolPlugin):
 					try:
 						rotation = int(parts[2])
 					except ValueError:
-						self.client.sendServerMessage("Rotation must be a Number.")
+						self.client.sendServerMessage("Rotation must be a number.")
 						return
 				else:
 					rotation = 0
@@ -151,7 +152,7 @@ class InternetPlugin(ProtocolPlugin):
 					self.client.sendServerMessage("You have not recorded an url yet (use /rec_url).")
 					return
 				if imageurl.find('http:') == -1:
-					self.client.sendServerMessage("You cannot access server files, only external files.")
+					self.client.sendServerMessage("You cannot access server files, only files on the internet.")
 					return
 				# If they only provided the type argument, use the last two block places
 				if len(parts) == 2 or len(parts) == 3:
@@ -206,7 +207,7 @@ class InternetPlugin(ProtocolPlugin):
 				if limit != -1:
 					# Stop them doing silly things
 					if (height * width > limit) or limit == 0:
-						self.client.sendServerMessage("Sorry, that area is too big for you to imagedraw (Limit is %s)" % limit)
+						self.client.sendServerMessage("Sorry, that area is too big for you to imagedraw (limit is %s)" % limit)
 						return
 				# Draw all the blocks on, I guess
 				# We use a generator so we can slowly release the blocks

@@ -261,7 +261,7 @@ class ModUtilPlugin(ProtocolPlugin):
 			user.changeToWorld("main")
 			self.client.sendServerMessage("Player %s got WorldKicked." % user.username)
 		else:
-			self.client.sendServerMessage("Your Player is in another world!")
+			self.client.sendServerMessage("The player specified is in another world.")
 
 	@player_list
 	@op_only
@@ -313,11 +313,11 @@ class ModUtilPlugin(ProtocolPlugin):
 							originalblock = user.var_undolist[index][2]
 							block = user.var_undolist[index][1]
 							i,j,k = user.var_undolist[index][0]
-							if not self.client.AllowedToBuild(i,j,k) and overriderank==False:
+							if not self.client.AllowedToBuild(i, j, k) and not overriderank:
 								self.client.sendServerMessage("You do not have permission to build here.")
 								return
-							del var_sublist[var_sublist.index(((i,j,k),block,originalblock))]
-							user.var_redolist.insert(0,((i,j,k),originalblock,block))
+							del var_sublist[var_sublist.index(((i, j, k), block, originalblock))]
+							user.var_redolist.insert(0, ((i, j, k), originalblock, block))
 							try:
 								world[i, j, k] = originalblock
 							except AssertionError:
@@ -337,7 +337,7 @@ class ModUtilPlugin(ProtocolPlugin):
 					self.client.sendServerMessage("The numchanges must be a number or 'all'.")
 					return
 				if num > undolistlength:
-					self.client.sendServerMessage("They have not made that many changes.")
+					self.client.sendServerMessage("User have not made that many changes.")
 					return
 				def generate_changes():
 					try:
@@ -375,11 +375,11 @@ class ModUtilPlugin(ProtocolPlugin):
 							originalblock = self.client.var_undolist[index][2]
 							block = self.client.var_undolist[index][1]
 							i,j,k = self.client.var_undolist[index][0]
-							if not self.client.AllowedToBuild(i,j,k) and overriderank==False:
-								self.client.sendServerMessage("You no longer have permission to build here.")
+							if not self.client.AllowedToBuild(i,j,k) and not overriderank:
+								self.client.sendServerMessage("You do not have permission to build here.")
 								return
-							del self.client.sublist[self.client.sublist.index(((i,j,k),block,originalblock))]
-							self.client.var_redolist.insert(0,((i,j,k),originalblock,block))
+							del self.client.sublist[self.client.sublist.index(((i, j, k), block, originalblock))]
+							self.client.var_redolist.insert(0, ((i, j, k), originalblock, block))
 							try:
 								world[i, j, k] = originalblock
 							except AssertionError:
@@ -403,8 +403,8 @@ class ModUtilPlugin(ProtocolPlugin):
 							originalblock = self.client.var_undolist[index][2]
 							block = self.client.var_undolist[index][1]
 							i,j,k = self.client.var_undolist[index][0]
-							if not self.client.AllowedToBuild(i,j,k) and overriderank==False:
-								self.client.sendServerMessage("You no longer have permission to build here.")
+							if not self.client.AllowedToBuild(i,j,k) and not overriderank:
+								self.client.sendServerMessage("You do not have permission to build here.")
 								return
 							del self.client.sublist[self.client.sublist.index(((i,j,k),block,originalblock))]
 							self.client.var_redolist.insert(0,((i,j,k),originalblock,block))

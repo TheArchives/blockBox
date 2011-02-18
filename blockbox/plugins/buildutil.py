@@ -9,7 +9,7 @@ from blockbox.decorators import *
 from blockbox.plugins import ProtocolPlugin
 
 class BuildUtilPlugin(ProtocolPlugin):
-	"Commands for helping players to build."
+	"Commands for building utiltity functions."
 	commands = {
 		"ruler": "commandRuler",
 		"measure": "commandRuler",
@@ -80,13 +80,13 @@ class BuildUtilPlugin(ProtocolPlugin):
 				temp = tuple(self.block_overrides)
 				for each in temp:
 					del self.block_overrides[each]
-				self.client.sendServerMessage("All blocks are back to normal")
+				self.client.sendServerMessage("All blocks are back to normal.")
 				del temp
 				return
 			self.client.sendServerMessage("Please enter two block types.")
 		elif len(parts) == 2:
 			try:
-				old = ord(self.client.GetBlockValue(parts[1]))
+				old = self.client.GetBlockValue(parts[1])
 			except:
 				return
 			if old == None:
@@ -100,19 +100,17 @@ class BuildUtilPlugin(ProtocolPlugin):
 			old = self.client.GetBlockValue(parts[1])
 			if old == None:
 				return
-			old = ord(old)
 			new = self.client.GetBlockValue(parts[2])
 			if new == None:
 				return
-			new = ord(new)
-			if ord(old) > 49 or ord (new):
+			if ord(old) > 49 or ord(new) > 49:
 				self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
 				return
 			if ord(new) == 7:
 				try:
 					username = self.client.factory.usernames[self.client.username.lower()]
 				except:
-					self.client.sendServerMessage("ERROR: Identity could not be confirmed")
+					self.client.sendServerMessage("Unable to confirm identity, please report this to the blockBox team.")
 					return
 				if username.isDirector():
 					pass
