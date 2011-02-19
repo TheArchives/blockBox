@@ -60,26 +60,6 @@ def writer_only(func):
 	func.writer_only = True
 	return func
 
-def build_list(func):
-	"Decorator for build-list category methods."
-	func.build_list = True
-	return func
-
-def world_list(func):
-	"Decorator for world-list category methods."
-	func.world_list = True
-	return func
-
-def player_list(func):
-	"Decorator for player-list category methods."
-	func.player_list = True
-	return func
-
-def info_list(func):
-	"Decorator for info-list category methods."
-	func.info_list = True
-	return func
-
 def username_command(func):
 	"Decorator for commands that accept a single username parameter, and need a Client"
 	def inner(self, parts, fromloc, overriderank):

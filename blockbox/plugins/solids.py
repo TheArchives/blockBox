@@ -46,7 +46,7 @@ class AdminBlocksPlugin(ProtocolPlugin):
 		else:
 			return False
 
-	@build_list
+	@config("category", "build")
 	@op_only
 	def commandSolid(self, parts, fromloc, overriderank):
 		"/solid - Op\nToggles admincrete creation."

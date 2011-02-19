@@ -102,7 +102,7 @@ class DynamitePlugin(ProtocolPlugin):
 			# Explode2 in 3 seconds
 			reactor.callLater(self.delay+0.5, explode2)
 
-	@build_list
+	@config("category", "build")
 	@op_only
 	@on_off_command
 	def commandDynamite(self, onoff, fromloc, overriderank):

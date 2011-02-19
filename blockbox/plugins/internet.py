@@ -37,7 +37,7 @@ class InternetPlugin(ProtocolPlugin):
 	twlog = open("logs/twitter.log", "a")
 
 	@config("custom_cmdlog_msg", "just logged into Twitter.")
-	@info_list
+	@config("category", "info")
 	def commandTlogin(self, parts, fromloc, overriderank):
 		"/tlog username password - Guest\nReplace username and password to login to Twitter."
 		if fromloc == 'user':
@@ -59,7 +59,7 @@ class InternetPlugin(ProtocolPlugin):
 		else:
 			self.client.sendServerMessage("You can't use twitter from a cmdblock!")
 
-	@info_list
+	@config("category", "info")
 	def commandTweet(self, parts, fromloc, overriderank):
 		"/tweet tweet - Guest\nSend a tweet to Twitter after using /tlog."
 		if fromloc == 'user':
@@ -75,7 +75,7 @@ class InternetPlugin(ProtocolPlugin):
 		else:
 			self.client.sendServerMessage("You can't use twitter from a cmdblock!")
 
-	@info_list
+	@config("category", "info")
 	def commandTDetails(self, parts, fromloc, overriderank):
 		"/tdetails - Guest\nGives you your Twitter login details, from /tlog."
 		if fromloc == 'user':
@@ -92,7 +92,7 @@ class InternetPlugin(ProtocolPlugin):
 		else:
 			self.client.sendServerMessage("You can't use twitter from a cmdblock!")
 
-	@build_list
+	@config("category", "build")
 	@admin_only
 	def commandRec_url(self, parts, fromloc, overriderank):
 		"/rec_url URL - Builder\nRecords an url to later imagedraw it."
@@ -118,7 +118,7 @@ class InternetPlugin(ProtocolPlugin):
 				self.client.sendServerMessage(self.client.url[i*64:(i+1)*64])
 			self.client.sendServerMessage(self.client.url[var_divisions64*64:])
 
-	@build_list
+	@config("category", "build")
 	@admin_only
 	def commandImagedraw(self, parts, fromloc, overriderank):
 		"/imagedraw [x y z x2 y2 z2] - Builder\nSets all blocks in this area to image."

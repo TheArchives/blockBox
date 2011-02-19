@@ -33,7 +33,7 @@ class BlbPlugin(ProtocolPlugin):
 		else:
 			return False
 
-	@build_list
+	@config("category", "build")
 	def commandBlb(self, parts, fromloc, overriderank):
 		"/blb blockname [x y z x2 y2 z2] - Guest\nAliases: box, cub, cuboid, draw\nSets all blocks in this area to block."
 		if len(parts) < 8 and len(parts) != 2:
@@ -119,7 +119,7 @@ class BlbPlugin(ProtocolPlugin):
 					pass
 			do_step()
 
-	@build_list
+	@config("category", "build")
 	def commandHBlb(self, parts, fromloc, overriderank):
 		"/bhb blockname [x y z x2 y2 z2] - Guest\nAliases: hbox\nSets all blocks in this area to block, hollow."
 		if len(parts) < 8 and len(parts) != 2:
@@ -203,7 +203,7 @@ class BlbPlugin(ProtocolPlugin):
 					pass
 			do_step()
 
-	@build_list
+	@config("category", "build")
 	def commandWBlb(self, parts, fromloc, overriderank):
 		"/bwb blockname [x y z x2 y2 z2] - Guest\nBuilds four walls between the two areas.\nHollow, with no roof or floor."
 		if len(parts) < 8 and len(parts) != 2:
@@ -286,7 +286,7 @@ class BlbPlugin(ProtocolPlugin):
 					pass
 			do_step()
 
-	@build_list
+	@config("category", "build")
 	def commandBcb(self, parts, fromloc, overriderank):
 		"/bcb blockname blockname2 [x y z x2 y2 z2] - Guest\nSets all blocks in this area to block, checkered."
 		if len(parts) < 9 and len(parts) != 3:
@@ -408,7 +408,7 @@ class BlbPlugin(ProtocolPlugin):
 					pass
 			do_step()
 
-	@build_list
+	@config("category", "build")
 	def commandBhcb(self, parts, fromloc, overriderank):
 		"/bhcb blockname blockname2 [x y z x2 y2 z2] - Guest\nSets all blocks in this area to blocks, checkered hollow."
 		self.total_a = 0
@@ -537,7 +537,7 @@ class BlbPlugin(ProtocolPlugin):
 					pass
 			do_step()
 
-	@build_list
+	@config("category", "build")
 	def commandFBlb(self, parts, fromloc, overriderank):
 		"/bfb blockname [x y z x2 y2 z2] - Guest\nSets all blocks in this area to block, wireframe."
 		if len(parts) < 8 and len(parts) != 2:

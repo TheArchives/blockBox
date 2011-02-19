@@ -105,7 +105,7 @@ class ModUtilPlugin(ProtocolPlugin):
 			self.client.var_fetchdata
 			return True
 
-	@player_list
+	@config("category", "player")
 	@mod_only
 	@username_command
 	def commandKick(self, user, fromloc, overriderank, params=[]):
@@ -116,7 +116,7 @@ class ModUtilPlugin(ProtocolPlugin):
 			user.sendError("You got kicked by %s." % self.client.username)
 		self.client.sendServerMessage("User %s kicked." % user)
 
-	@player_list
+	@config("category", "player")
 	@admin_only
 	def commandBanBoth(self, parts, fromloc, overriderank):
 		"/banb username reason - Admin\nName and IP ban a Player from this server."
@@ -127,7 +127,7 @@ class ModUtilPlugin(ProtocolPlugin):
 			self.commandIpban(parts, "command", overriderank)
 			self.commandBan(parts, "command", overriderank)
 
-	@player_list
+	@config("category", "player")
 	@admin_only
 	def commandBan(self, parts, fromloc, overriderank):
 		"/ban username reason - Admin\nBans the Player from this server."
@@ -143,7 +143,7 @@ class ModUtilPlugin(ProtocolPlugin):
 				self.client.factory.usernames[username].sendError("You got banned by %s: %s" % (self.client.username, " ".join(parts[2:])))
 			self.client.sendServerMessage("%s has been banned." % username)
 
-	@player_list
+	@config("category", "player")
 	@director_only
 	def commandIpban(self, parts, fromloc, overriderank):
 		"/ipban username reason - Director\nBan a Player's IP from this server."
@@ -168,7 +168,7 @@ class ModUtilPlugin(ProtocolPlugin):
 			self.client.factory.usernames[username].sendError("You got IPBanned by %s: %s" % (self.client.username, " ".join(parts[2:])))
 		self.client.sendServerMessage("IP %s (User: %s) has been IPBanned." % (ip, username))
 
-	@player_list
+	@config("category", "player")
 	@admin_only
 	def commandUnban(self, parts, fromloc, overriderank):
 		"/unban username - Admin\nRemoves the Ban on the Player."
@@ -182,21 +182,21 @@ class ModUtilPlugin(ProtocolPlugin):
 			self.client.factory.removeBan(username)
 			self.client.sendServerMessage("%s has been unbanned." % username)
 
-	@player_list
+	@config("category", "player")
 	@mod_only
 	@username_command
 	def commandSpec(self, username, fromloc, overriderank):
 		"/spec username - Mod\nMakes the player as a spec."
 		self.client.sendServerMessage(Spec(self, username, fromloc, overriderank))
 
-	@player_list
+	@config("category", "player")
 	@mod_only
 	@username_command
 	def commandDeSpec(self, username, fromloc, overriderank):
 		"/unspec username - Mod\nRemoves the player as a spec."
 		self.client.sendServerMessage(DeSpec(self, username, fromloc, overriderank))
 
-	@player_list
+	@config("category", "player")
 	@director_only
 	@only_string_command("IP")
 	def commandUnipban(self, ip, fromloc, overriderank):
@@ -207,7 +207,7 @@ class ModUtilPlugin(ProtocolPlugin):
 			self.client.factory.removeIpBan(ip)
 			self.client.sendServerMessage("IP %s has been unbanned." % ip)
 
-	@player_list
+	@config("category", "player")
 	@admin_only
 	@only_username_command
 	def commandReason(self, username, fromloc, overriderank):
@@ -217,7 +217,7 @@ class ModUtilPlugin(ProtocolPlugin):
 		else:
 			self.client.sendServerMessage("Reason: %s" % self.client.factory.banReason(username))
 
-	@player_list
+	@config("category", "player")
 	@director_only
 	@only_string_command("IP")
 	def commandIpreason(self, ip, fromloc, overriderank):
@@ -227,7 +227,7 @@ class ModUtilPlugin(ProtocolPlugin):
 		else:
 			self.client.sendServerMessage("Reason: %s" % self.client.factory.ipBanReason(ip))
 
-	@player_list
+	@config("category", "player")
 	@mod_only
 	@username_command
 	def commandUnFreeze(self, user, fromloc, overriderank):
@@ -235,7 +235,7 @@ class ModUtilPlugin(ProtocolPlugin):
 		user.frozen = False
 		user.sendNormalMessage("&4You have been unfrozen by %s!" % self.client.username)
 
-	@player_list
+	@config("category", "player")
 	@mod_only
 	@username_command
 	def commandFreeze(self, user, fromloc, overriderank):
@@ -251,7 +251,7 @@ class ModUtilPlugin(ProtocolPlugin):
 		else:
 			self.client.factory.queue.put((self.client, TASK_SERVERMESSAGE, ("[MSG] "+(" ".join(parts[1:])))))
 
-	@player_list
+	@config("category", "player")
 	@op_only
 	@username_command
 	def commandBanish(self, user, fromloc, overriderank):
@@ -263,7 +263,7 @@ class ModUtilPlugin(ProtocolPlugin):
 		else:
 			self.client.sendServerMessage("The player specified is in another world.")
 
-	@player_list
+	@config("category", "player")
 	@op_only
 	@username_command
 	def commandWorldBan(self, username, fromloc, overriderank):
@@ -278,7 +278,7 @@ class ModUtilPlugin(ProtocolPlugin):
 					self.client.factory.usernames[username].sendServerMessage("You got WorldBanned!")
 			self.client.sendServerMessage("%s has been WorldBanned." % username)
 
-	@player_list
+	@config("category", "player")
 	@op_only
 	@username_command
 	def commandUnWorldBan(self, username, fromloc, overriderank):
@@ -289,7 +289,7 @@ class ModUtilPlugin(ProtocolPlugin):
 			self.client.world.delete_worldban(username)
 			self.client.sendServerMessage("%s was UnWorldBanned." % username)
 
-	@build_list
+	@config("category", "build")
 	def commandUndo(self, parts, fromloc, overriderank):
 		"/undo numchanges [username] - Guest\nUndoes yours or other people's changes (If Mod+)"
 		world = self.client.world
@@ -433,7 +433,7 @@ class ModUtilPlugin(ProtocolPlugin):
 				pass
 		do_step()
 
-	@build_list
+	@config("category", "build")
 	def commandRedo(self, parts, fromloc, overriderank):
 		"/redo numchanges [username] - Guest\nRedoes yours or other people's changes (If Mod+)"
 		world = self.client.world
@@ -580,7 +580,7 @@ class ModUtilPlugin(ProtocolPlugin):
 				pass
 		do_step()
 
-	@player_list
+	@config("category", "player")
 	@mod_only
 	@username_command
 	def commandSilence(self, username, fromloc, overriderank):
@@ -591,7 +591,7 @@ class ModUtilPlugin(ProtocolPlugin):
 		self.client.factory.silenced.add(username)
 		self.client.sendServerMessage("%s is now Silenced." % username)
 
-	@player_list
+	@config("category", "player")
 	@mod_only
 	@username_command
 	def commandDesilence(self, username, fromloc, overriderank):
@@ -602,7 +602,7 @@ class ModUtilPlugin(ProtocolPlugin):
 		else:
 			self.client.sendServerMessage("User specified is not silenced.")
 
-	@player_list
+	@config("category", "player")
 	@op_only
 	def commandHide(self, params, fromloc, overriderank):
 		"/hide - Op\nAliases: cloak\nHides you so no other players can see you. Toggle."
@@ -624,7 +624,7 @@ class ModUtilPlugin(ProtocolPlugin):
 		for i in range(10):
 			self.client.sendServerMessage("SPAM!")
 
-	@player_list
+	@config("category", "player")
 	@admin_only
 	@username_command
 	def commandOverload(self, client, fromloc, overriderank):
@@ -632,7 +632,7 @@ class ModUtilPlugin(ProtocolPlugin):
 		client.sendOverload()
 		self.client.sendServerMessage("Overload sent to %s" % client.username)
 
-	#@player_list
+	#@config("category", "player")
 	#@mod_only
 	#@username_command
 	#def commandSend(self, client, fromloc, overriderank):

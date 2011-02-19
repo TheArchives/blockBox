@@ -23,7 +23,7 @@ class LSystemPlugin(ProtocolPlugin):
 	def gotClient(self):
 		self.var_production = {}
 
-	@info_list
+	@config("category", "info")
 	def commandLbook(self, parts, fromloc, overriderank):
 		"/lbook pagenumber - Guest\nExplains lsystem in book form."
 		if len(parts) > 1:
@@ -68,7 +68,7 @@ class LSystemPlugin(ProtocolPlugin):
 		else:
 			self.client.sendServerMessage("You forgot to specify a page number.")
 
-	@build_list
+	@config("category", "build")
 	@op_only
 	def commandRec_Axiom(self, parts, fromloc, overriderank):
 		"/rec_axiom axiom - Op\nRecords an axiom for lsystems."
@@ -93,7 +93,7 @@ class LSystemPlugin(ProtocolPlugin):
 				self.client.sendServerMessage(self.client.var_axiom[i*64:(i+1)*64])
 			self.client.sendServerMessage(self.client.var_axiom[var_divisions64*64:])
 
-	@build_list
+	@config("category", "build")
 	@op_only
 	def commandRec_Production(self, parts, fromloc, overriderank):
 		"/rec_production item production - Op\nRecords production recipes for lsystems."
@@ -127,7 +127,7 @@ class LSystemPlugin(ProtocolPlugin):
 				item_list.append(key + " : " + str(self.var_production[key]))
 			self.client.sendServerList(item_list)
 
-	@build_list
+	@config("category", "build")
 	@op_only
 	def commandLsystem(self, parts, fromloc, overriderank):
 		"/lsystem blocktype standarddistance\nzxrotation yzrotation xyrotation level [x y z x2 y2 z2] - Op\nDraws an lsystem."

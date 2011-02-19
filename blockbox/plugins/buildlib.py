@@ -75,7 +75,7 @@ class BuildLibPlugin(ProtocolPlugin):
 					pass
 			return True
 
-	@build_list
+	@config("category", "build")
 	@op_only
 	@on_off_command
 	def commandTree(self, onoff, fromloc, overriderank):
@@ -87,7 +87,7 @@ class BuildLibPlugin(ProtocolPlugin):
 			self.build_trees = False
 			self.client.sendServerMessage("You are no longer building trees.")
 
-	@build_list
+	@config("category", "build")
 	@advbuilder_only
 	def commandDune(self, parts, fromloc, overriderank):
 		"/dune - Member\nCreates a sand dune between the two blocks you touched last."
@@ -145,7 +145,7 @@ class BuildLibPlugin(ProtocolPlugin):
 				pass
 		do_step()
 
-	@build_list
+	@config("category", "build")
 	@advbuilder_only
 	def commandHill(self, parts, fromloc, overriderank):
 		"/hill - Member\nCreates a hill between the two blocks you touched last."
@@ -203,7 +203,7 @@ class BuildLibPlugin(ProtocolPlugin):
 				pass
 		do_step()
 
-	@build_list
+	@config("category", "build")
 	@advbuilder_only
 	def commandHole(self, parts, fromloc, overriderank):
 		"/hole - Member\ncreates a hole between two blocks"
@@ -259,7 +259,7 @@ class BuildLibPlugin(ProtocolPlugin):
 				pass
 		do_step()
 
-	@build_list
+	@config("category", "build")
 	@advbuilder_only
 	def commandLake(self, parts, fromloc, overriderank):
 		"/lake - Member\ncreates a lake between two blocks"
@@ -314,7 +314,7 @@ class BuildLibPlugin(ProtocolPlugin):
 				pass
 		do_step()
 
-	@build_list
+	@config("category", "build")
 	@advbuilder_only
 	def commandMountain(self, parts, fromloc, overriderank):
 		"/mountain blockname - Member\nCreates a mountain between the two blocks you touched last."
@@ -389,7 +389,7 @@ class BuildLibPlugin(ProtocolPlugin):
 				pass
 		do_step()
 
-	@build_list
+	@config("category", "build")
 	@advbuilder_only
 	def commandPit(self, parts, fromloc, overriderank):
 		"/pit - Member\ncreates a lava pit between two blocks"
@@ -442,7 +442,7 @@ class BuildLibPlugin(ProtocolPlugin):
 					self.client.total = 0
 				pass
 		do_step()
-	@build_list
+	@config("category", "build")
 	@writer_only
 	def commandSphere(self, parts, fromloc, overriderank):
 		"/sphere blocktype [x y z] radius - Builder\nPlace/delete a block and /sphere block radius"
@@ -514,7 +514,7 @@ class BuildLibPlugin(ProtocolPlugin):
 					pass
 			do_step()
 
-	@build_list
+	@config("category", "build")
 	@writer_only
 	def commandHSphere(self, parts, fromloc, overriderank):
 		"/hsphere blocktype [x y z] radius - Builder\nPlace/delete a block, makes a hollow /sphere"
@@ -587,7 +587,7 @@ class BuildLibPlugin(ProtocolPlugin):
 					pass
 			do_step()
 
-	@build_list
+	@config("category", "build")
 	@advbuilder_only
 	def commandCurve(self, parts, fromloc, overriderank):
 		"/curve blockname [x y z x2 y2 z2 x3 y3 z3] - Advaced Builder\nSets a line of blocks along three points to block."
@@ -688,7 +688,7 @@ class BuildLibPlugin(ProtocolPlugin):
 					pass
 			do_step()
 
-	@build_list
+	@config("category", "build")
 	@advbuilder_only
 	def commandPyramid(self, parts, fromloc, overriderank):
 		"/pyramid blockname height fill(true|false) [x y z] - Advanced Builder\nSets all blocks in this area to be a pyramid."
@@ -794,7 +794,7 @@ class BuildLibPlugin(ProtocolPlugin):
 					pass
 			do_step()
 
-	@build_list
+	@config("category", "build")
 	@writer_only
 	def commandLine(self, parts, fromloc, overriderank):
 		"/line blockname [x y z x2 y2 z2] - Builder\nSets all blocks between two points to be a line."
@@ -888,7 +888,7 @@ class BuildLibPlugin(ProtocolPlugin):
 					pass
 			do_step()
 
-	@build_list
+	@config("category", "build")
 	@op_only
 	def commandCsphere(self, parts, fromloc, overriderank):
 		"/csphere blocktype blocktype x y z radius - Op\nPlace/delete a block and /csphere block radius"
@@ -1000,7 +1000,7 @@ class BuildLibPlugin(ProtocolPlugin):
 					pass
 			do_step()
 
-	@build_list
+	@config("category", "build")
 	@op_only
 	def commandCircle(self, parts, fromloc, overriderank):
 		"/circle blocktype x y z radius axis - Op\nPlace/delete a block and /circle block radius axis"
@@ -1100,7 +1100,7 @@ class BuildLibPlugin(ProtocolPlugin):
 					pass
 			do_step()
 
-	@build_list
+	@config("category", "build")
 	@op_only
 	def commandDome(self, parts, fromloc, overriderank):
 		"/dome blocktype x y z radius - Op\nPlace/delete a block and /sphere block radius"
@@ -1192,7 +1192,7 @@ class BuildLibPlugin(ProtocolPlugin):
 					pass
 			do_step()
 
-	@build_list
+	@config("category", "build")
 	@op_only
 	def commandEllipsoid(self, parts, fromloc, overriderank):
 		"/ellipsoid blocktype x y z x2 y2 z2 endradius - Op\nAliases: ell\nPlace/delete two blocks and block endradius"
@@ -1284,7 +1284,7 @@ class BuildLibPlugin(ProtocolPlugin):
 					pass
 			do_step()
 
-	@build_list
+	@config("category", "build")
 	@op_only
 	def commandPolytri(self, parts, fromloc, overriderank):
 		"/polytri blockname [x y z x2 y2 z2 x3 y3 z3] - Op\nSets all blocks between three points to block."
@@ -1421,7 +1421,7 @@ class BuildLibPlugin(ProtocolPlugin):
 						self.client.total = 0
 					pass
 			do_step()
-	@build_list
+	@config("category", "build")
 	@writer_only
 	def commandStairs(self, parts, fromloc, overriderank):
 		"/stairs blockname height (c) [x y z x2 y2 z2] - Builder\nBuilds a spiral staircase."

@@ -39,7 +39,7 @@ class BlockInfoPlugin(ProtocolPlugin):
 				self.client.sendServerMessage("x: %s y: %s z: %s" % (x, y, z))
 				return block2
 
-	@build_list
+	@config("category", "build")
 	def commandInfo(self, parts, fromloc, overriderank):
 		"/info - Guest\nAliases: bget, binfo, pget, rget\nClick on a block, returns block info."
 		if self.binfo:
@@ -50,7 +50,7 @@ class BlockInfoPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("You are now getting info about blocks.")
 			self.client.sendServerMessage("Use '/infoend' to stop.")
 
-	@build_list
+	@config("category", "build")
 	def commandBlockindex(self, parts, fromloc, overriderank):
 		"/blockindex blockname - Guest\nAliases: bindex\nGives you the index of the block."
 		if len(parts) != 2:

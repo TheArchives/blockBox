@@ -22,7 +22,7 @@ class HelpPlugin(ProtocolPlugin):
 		"greeting": "commandMOTD",
 	}
 
-	@info_list
+	@config("category", "info")
 	def commandStatus(self, parts, fromloc, overriderank):
 		"/status - Guest\nAliases: mapinfo\nReturns info about the current world"
 		self.client.sendServerMessage("World: %s" % (self.client.world.id))
@@ -48,7 +48,7 @@ class HelpPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("Builders: N/A")
 		else:
 			self.client.sendServerList(["Builders:"] + list(self.client.world.writers))
-	@info_list
+	@config("category", "info")
 	def commandHelp(self, parts, fromloc, overriderank):
 		"/help [document/command] - Guest\nHelp for this server and commands."
 		if len(parts) > 1:
@@ -64,11 +64,11 @@ class HelpPlugin(ProtocolPlugin):
 				elif parts[1].lower() == "chat":
 					self.client.sendServerMessage("The Chats")
 					if self.client.isMod():
-						self.client.sendServerMessage("Whispers: @username Whispers")	
+						self.client.sendServerMessage("Whispers: @username Whispers")
 						self.client.sendServerMessage("WorldChat: !message")
 						self.client.sendServerMessage("StaffChat: #message")
 					else:
-						self.client.sendServerMessage("Whispers: @username Whispers")	
+						self.client.sendServerMessage("Whispers: @username Whispers")
 						self.client.sendServerMessage("WorldChat: !message")
 				elif parts[1].lower() == "physic":
 					self.client.sendServerMessage("The Physic Engine")
@@ -98,7 +98,7 @@ class HelpPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("Commands: /cmdlist - Lookup: /help command")
 			self.client.sendServerMessage("About: /about | Credits: /credits")
 
-	@info_list
+	@config("category", "info")
 	def commandCmdlist(self, parts, fromloc, overriderank):
 		"/cmdlist category - Guest\nThe command list of your rank, categories."
 		if len(parts) > 1:
@@ -120,15 +120,15 @@ class HelpPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("The Command List - Use: /cmdlist category")
 			self.client.sendServerMessage("Categories: all build world player info other")
 
-	def ListCommands(self,list):
-		self.client.sendServerMessage("%s Commands:"%list.title())
+	def ListCommands(self, list):
+		self.client.sendServerMessage("%s Commands:" % list.title())
 		commands = []
 		for name, command in self.client.commands.items():
-			if getattr(command, "disabled", True):
+			if command.config["disabled"] == True:
 				continue
 			if not list == "other":
 				if not list == "all":
-					if not getattr(command, "%s_list"%list, False):
+					if not command.config["category"]:
 						continue
 				if getattr(command, "owner_only", False) and not self.client.isOwner():
 					continue
@@ -147,15 +147,7 @@ class HelpPlugin(ProtocolPlugin):
 				if getattr(command, "writer_only", False) and not self.client.isWriter():
 					continue
 			else:
-				if getattr(command, "plugin_list", False):
-					continue
-				if getattr(command, "info_list", False):
-					continue
-				if getattr(command, "build_list", False):
-					continue
-				if getattr(command, "player_list", False):
-					continue
-				if getattr(command, "world_list", False):
+				if command.config["category"]:
 					continue
 				if getattr(command, "owner_only", False) and not self.client.isOwner():
 					continue
@@ -177,7 +169,7 @@ class HelpPlugin(ProtocolPlugin):
 		if commands:
 			self.client.sendServerList(sorted(commands))
 
-	@info_list
+	@config("category", "info")
 	def commandAbout(self, parts, fromloc, overriderank):
 		self.client.sendServerMessage("About The Server - blockBox %s" % VERSION)
 		self.client.sendServerMessage("Name: "+self.client.factory.server_name)
@@ -186,7 +178,7 @@ class HelpPlugin(ProtocolPlugin):
 		if self.client.factory.use_irc:
 			self.client.sendServerMessage("IRC: "+self.client.factory.conf_irc.get("irc", "server")+" "+self.client.factory.irc_channel)
 
-	@info_list
+	@config("category", "info")
 	def commandCredits(self, parts, fromloc, overriderank):
 		"/credits - Guest\nCredits for the creators, devs and testers."
 		self.client.sendServerMessage("The Credits")
@@ -194,7 +186,7 @@ class HelpPlugin(ProtocolPlugin):
 		for each in list:
 			self.client.sendSplitServerMessage(each)
 
-	@info_list
+	@config("category", "info")
 	def commandMOTD(self, parts, fromloc, overriderank):
 		"/motd - Guest\nAliases: greeting\nShows the greeting."
 		self.client.sendServerMessage("MOTD for "+self.client.factory.server_name+":")

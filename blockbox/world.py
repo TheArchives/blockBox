@@ -84,7 +84,7 @@ class World(object):
 		self.save_meta()
 
 	def unload(self):
-		self.factory.unloadWorld(self.id,True)
+		self.factory.unloadWorld(self.id, True)
 
 	def read_queue(self):
 		"Reads messages from the BlockStore and acts on them."

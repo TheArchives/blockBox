@@ -264,7 +264,7 @@ class CommandPlugin(ProtocolPlugin):
 			pass
 		self.last_block_position = (rx, ry, rz)
 
-	@info_list
+	@config("category", "info")
 	@writer_only
 	def commandCmdHelp(self, parts, fromloc, overriderank):
 		"/cmdhelp category [subcategory] - Builder\ncmdblocks help, learn what you can do in them."

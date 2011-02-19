@@ -68,13 +68,13 @@ class InteractionPlugin(ProtocolPlugin):
 			except AttributeError:
 				pass
 
-	@player_list
+	@config("category", "player")
 	def commandBack(self, parts, fromloc, overriderank):
 		"/back - Guest\nPrints out message of you coming back."
 		self.client.factory.queue.put(self.client, TASK_AWAYMESSAGE, "%s is now %sback." % (self.client.username, COLOUR_DARKGREEN))
 		self.client.gone = 0
 
-	@player_list
+	@config("category", "player")
 	def commandAway(self, parts, fromloc, overriderank):
 		 "/away reason - Guest\nAliases: afk, brb\nPrints out message of you going away."
 		 if len(parts) == 1:
@@ -84,7 +84,7 @@ class InteractionPlugin(ProtocolPlugin):
 			self.client.factory.queue.put(self.client, TASK_AWAYMESSAGE, "%s has gone AFK (%s)" % (self.client.username, " ".join(parts[1:])))
 			self.client.gone = 1
 
-	@player_list
+	@config("category", "player")
 	def commandMe(self, parts, fromloc, overriderank):
 		"/me action - Guest\nPrints 'username action'"
 		if len(parts) == 1:
@@ -103,7 +103,7 @@ class InteractionPlugin(ProtocolPlugin):
 		else:
 			self.client.factory.queue.put(self.client, TASK_SERVERMESSAGE, ("[MSG] %s" % " ".join(parts[1:])))
 
-	@player_list
+	@config("category", "player")
 	def commandSlap(self, parts, fromloc, overriderank):
 		"/slap username [with object] - Guest\nSlap username [with object]."
 		if len(parts) == 1:
@@ -133,7 +133,7 @@ class InteractionPlugin(ProtocolPlugin):
 						self.client.sendWorldMessage("* %s%s slaps %s with a giant smelly trout!" % (COLOUR_PURPLE, self.client.username, name))
 						self.client.factory.irc_relay.sendServerMessage("* %s slaps %s with a giant smelly trout!" % (self.client.username, name))
 
-	@player_list
+	@config("category", "player")
 	def commandPunch(self, parts, fromloc, overriderank):
 		"/punch username [bodypart to punch] - Punch username [in a bodypart]."
 		if len(parts) == 1:
@@ -352,7 +352,7 @@ class InteractionPlugin(ProtocolPlugin):
 		file.close()
 		self.client.sendServerMessage("All your messages have been deleted.")
 
-	@player_list
+	@config("category", "player")
 	@op_only
 	@only_username_command
 	def commandSpectate(self, user, fromloc, overriderank):

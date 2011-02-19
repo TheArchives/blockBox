@@ -490,7 +490,7 @@ class ZonesPlugin(ProtocolPlugin):	"Commands for zone handlings."
 			del self.client.world.rankzones[id]
 		self.client.sendServerMessage("All Rank Zones have been deleted.")
 
-	@info_list
+	@config("category", "info")
 	@op_only
 	def commandZoneWho(self, parts, fromloc, overriderank):
 		"/zwho - Op\nTells you whose zone you're currently in, if any."

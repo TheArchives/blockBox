@@ -107,7 +107,7 @@ class MinePlugin(ProtocolPlugin):
 			#oob
 			pass
 
-	@build_list
+	@config("category", "build")
 	@op_only
 	def commandMine(self, parts, fromloc, rankoverride):
 		"/mine - Op\nMakes the next black block you place a mine."
@@ -115,7 +115,7 @@ class MinePlugin(ProtocolPlugin):
 		self.client.sendServerMessage("You are now placing mine blocks.")
 		self.client.sendServerMessage("Place a black block.")
 
-	@build_list
+	@config("category", "build")
 	@admin_only
 	def commandClear(self, parts, fromloc, rankoverride):
 		self.client.world.clear_mines()

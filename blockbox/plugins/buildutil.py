@@ -46,7 +46,7 @@ class BuildUtilPlugin(ProtocolPlugin):
 		else:
 			return False
 
-	@world_list
+	@config("category", "world")
 	def commandRuler(self, parts, fromloc, overriderank):
 		"/ruler - Guest\nAliases: measure\nCounts the amount of blocks between two clicks."
 		# Use the last two block places
@@ -56,10 +56,10 @@ class BuildUtilPlugin(ProtocolPlugin):
 		except IndexError:
 			self.client.sendServerMessage("You have not clicked two blocks yet.")
 			return
-		xRange, yRange, zRange = abs(x - x2) + 1 , abs(y-y2) + 1, abs(z-z2) + 1
-		self.client.sendServerMessage("X = %d, Y = %d, Z = %d" % (xRange, yRange, zRange) )
+		xRange, yRange, zRange = abs(x - x2) + 1, abs(y-y2) + 1, abs(z-z2) + 1
+		self.client.sendServerMessage("X = %d, Y = %d, Z = %d" % (xRange, yRange, zRange))
 
-	@build_list
+	@config("category", "build")
 	def commandPaint(self, parts, fromloc, overriderank):
 		"/paint - Guest\nLets you break-and-build in one move. Toggle."
 		if self.painting:
@@ -68,11 +68,11 @@ class BuildUtilPlugin(ProtocolPlugin):
 		else:
 			self.painting = True
 			self.client.sendServerMessage("Painting mode is now on.")
-	@build_list
+	@config("category", "build")
 	def commandAir(self, params, fromloc, overriderank):
 		"/air - Guest\nAliases: place, stand\nPuts a block under you for easier building in the air."
 		self.client.sendPacked(TYPE_BLOCKSET, self.client.x>>5, (self.client.y>>5)-3, (self.client.z>>5), BLOCK_WHITE)
-	@build_list
+	@config("category", "build")
 	def commandBind(self, parts, fromloc, overriderank):
 		"/bind blockA blockB - Guest\nAliases: build, material\nBinds blockB to blockA."
 		if len(parts) == 1:
@@ -172,7 +172,7 @@ class BuildUtilPlugin(ProtocolPlugin):
 					self.block_overrides[old] = new
 					self.client.sendServerMessage("%s will turn into %s." % (old_name, name))
 
-	@build_list
+	@config("category", "build")
 	@writer_only
 	def commandLoad(self, parts, fromloc, overriderank):
 		"/paste [x y z] - Builder\nRestore blocks saved earlier using /copy"
@@ -235,7 +235,7 @@ class BuildUtilPlugin(ProtocolPlugin):
 					pass
 			do_step()
 
-	@build_list
+	@config("category", "build")
 	@writer_only
 	def commandSave(self, parts, fromloc, overriderank):
 		"/copy [x y z x2 y2 z2] - Builder\nCopy blocks using specified offsets."
@@ -306,7 +306,7 @@ class BuildUtilPlugin(ProtocolPlugin):
 					pass
 			do_step()
 
-	@build_list
+	@config("category", "build")
 	@writer_only
 	def commandRotate(self, parts, fromloc, overriderank):
 		"/rotate angle - Builder\nAllows you to rotate what you copied."
@@ -345,7 +345,7 @@ class BuildUtilPlugin(ProtocolPlugin):
 			self.client.bsaved_blocks = tempblocks
 		if fromloc == 'user':
 			self.client.finalizeMassCMD('rotate', self.client.total)
-			self.client.total = 0	@build_list
+			self.client.total = 0	@config("category", "build")
 	@writer_only
 	def commandReplace(self, parts, fromloc, overriderank):
 		"/replace blockA blockB [x y z x2 y2 z2] - Builder\nAliases: brep\nReplaces all blocks of blockA in this area to blockB."
@@ -428,7 +428,7 @@ class BuildUtilPlugin(ProtocolPlugin):
 					pass
 			do_step()
 
-	@build_list
+	@config("category", "build")
 	@op_only
 	def commandCreplace(self, parts, fromloc, overriderank):
 		"/creplace typeA typeB typeC [x y z x2 y2 z2] - Op\nAliases: crep\nReplaces all blocks of typeA in this cuboid to typeB and typeC."
@@ -547,7 +547,7 @@ class BuildUtilPlugin(ProtocolPlugin):
 					pass
 			do_step()
 
-	@build_list
+	@config("category", "build")
 	@op_only
 	def commandFill(self, parts, fromloc, overriderank):
 		"/fill blockname repblock [x y z x2 y2 z2] - Op\nFills the area with the block."
