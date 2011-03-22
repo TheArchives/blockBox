@@ -2,7 +2,7 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-import datetime, logging, sys, threading, time, traceback
+import datetime, gc, logging, sys, threading, time, traceback
 
 from lib.twisted.internet import reactor
 
@@ -118,7 +118,7 @@ class StdinPlugin(threading.Thread):
 									print ("Please specify a username.")
 								else:
 									try:
-										print Rank(message, 'console', True, self.server)
+										print Rank(self, message, 'console', True, self.server)
 									except:
 										print ("You must specify a rank and username.")
 							elif message[0] == "derank":
@@ -126,7 +126,7 @@ class StdinPlugin(threading.Thread):
 									print ("Please specify a username.")
 								else:
 									try:
-										print DeRank(message, 'console', True, self.server)
+										print DeRank(self, message, 'console', True, self.server)
 									except:
 										print ("You must specify a rank and username.")
 							elif message[0] == "spec":
@@ -134,7 +134,15 @@ class StdinPlugin(threading.Thread):
 									print ("Please specify a username.")
 								else:
 									try:
-										print Spec(message[1], 'console', True, self.server)
+										print Spec(self, message[1], 'console', True, self.server)
+									except:
+										print ("Please specify a username.")
+							elif message[0] == "spec":
+								if len(message) == 1:
+									print ("Please specify a username.")
+								else:
+									try:
+										print DeSpec(self, message[1], 'console', True, self.server)
 									except:
 										print ("Please specify a username.")
 							elif message[0] == ("boot"):
@@ -201,7 +209,7 @@ class StdinPlugin(threading.Thread):
 								print ("StaffChat: #message")
 								print ("Commands: /cmdlist")
 							elif message[0] == ("cmdlist"):
-								print ("about boot ban cmdlist cpr derank irc_cpr help kick me new pll plr plu rank say shutdown spec srb srs u")
+								print ("about boot ban cmdlist cpr derank despec irc_cpr help kick me new pll plr plu rank say shutdown spec srb srs u")
 							elif message[0] == ("about"):
 								print ("About The Server")
 								print ("Powered by blockBox %s - http://blockbox.hk-diy.net/"% VERSION )
@@ -217,7 +225,8 @@ class StdinPlugin(threading.Thread):
 									self.server.queue.put((self, TASK_SERVERMESSAGE, ("[MSG] "+(" ".join(message[1:])))))
 							elif message[0] == ("gc"):
 								#ManualGarbageMe
-								self.server.cleanGarbage()
+								count = gc.collect()
+								self.logger.info("%i garbage objects collected, %i could not be collected." % (count, len(gc.garbage)))
 							elif message[0] == ("u"):
 								if len(message) == 1:
 									print ("Please type a message.")
@@ -230,7 +239,7 @@ class StdinPlugin(threading.Thread):
 									try:
 										self.server.unloadPlugin(message[1])
 										self.server.loadPlugin(message[1])
-									except IOError:
+									except ImportError:
 										print ("No such plugin '%s'." % message[1])
 									else:
 										print ("Plugin '%s' reloaded." % message[1])
@@ -240,7 +249,7 @@ class StdinPlugin(threading.Thread):
 								else:
 									try:
 										self.server.unloadPlugin(message[1])
-									except IOError:
+									except KeyError:
 										print ("No such plugin '%s'." % message[1])
 									else:
 										print ("Plugin '%s' unloaded." % message[1])
@@ -250,7 +259,7 @@ class StdinPlugin(threading.Thread):
 								else:
 									try:
 										self.server.loadPlugin(message[1])
-									except IOError:
+									except ImportError:
 										print ("No such plugin '%s'." % message[1])
 									else:
 										print ("Plugin '%s' loaded." % message[1])
@@ -298,8 +307,8 @@ class StdinPlugin(threading.Thread):
 								print ("Please include a message to send.")
 							else:
 								try:
-								   world, out = message[1:len(message)-1].split(" ")
-								   text = COLOUR_YELLOW+"!"+COLOUR_DARKGREEN+"Console:"+COLOUR_WHITE+" "+out
+									world, out = message[1:len(message)-1].split(" ")
+									text = COLOUR_YELLOW+"!"+COLOUR_DARKGREEN+"Console:"+COLOUR_WHITE+" "+out
 								except ValueError:
 									print ("Please include a message to send.")
 								else:

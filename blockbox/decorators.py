@@ -71,8 +71,8 @@ def info_list(func):
 	func.info_list = True
 	return func
 
-def only_username_command(func):
-	"Decorator for commands that accept a single username parameter, and need a client"
+def username_command(func):
+	"Decorator for commands that accept a single username parameter, and need a Client"
 	def inner(self, parts, fromloc, overriderank):
 		if len(parts) == 1:
 			self.client.sendServerMessage("Please specify a username.")

@@ -240,7 +240,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 			self.client.sendServerList(["WorldBanned: No one."])
 
 	@player_list
-	@only_username_command
+	@username_command
 	def commandRespawn(self, username, fromloc, overriderank):
 		"/respawn [username] - Guest\n Respawns player, specify username if you would like to respawn another player (Mod+ only)"
 		if len(username) == 1 and self.client.isMod():
@@ -256,7 +256,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 
 	@player_list
 	@op_only
-	@only_username_command
+	@username_command
 	def commandFetch(self, user, fromloc, overriderank):
 		"/fetch username - Op\nAliases: bring\nTeleports a player to be where you are."
 		# Shift the locations right to make them into block coords
@@ -276,7 +276,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 		user.sendServerMessage("You have been fetched by %s" % self.client.username)
 
 	@player_list
-	@only_username_command
+	@username_command
 	def commandInvite(self, user, fromloc, overriderank):
 		"/invite username - Guest\nInvites a player to teleport to you."
 		rx = self.client.x >> 5
@@ -456,7 +456,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 
 	@player_list
 	def commandQuit(self, parts, fromloc, overriderank):
-		"/quit - Guest\nExits the server."
+		"/quit [message] - Guest\nExits the server."
 		if not len(parts) > 1:
 			self.client.sendError("Quit: %s" % self.client.quitmsg)
 		else:
@@ -476,7 +476,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 			desc = "%id, %ih, %im" % (days, hours, mins)
 			self.client.sendServerMessage("%s was last seen %s ago." % (username, desc))
 
-	@only_username_command
+	@username_command
 	def commandLocate(self, user, fromloc, overriderank):
 		"/locate username - Guest\nAliases: find\nTells you what world a user is in."
 		self.client.sendServerMessage("%s is in %s" % (user.username, user.world.id))
@@ -561,7 +561,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 		if len(parts) < 3:
 			self.client.sendServerMessage("You must specify a rank and username.")
 		else:
-			self.client.sendServerMessage(DeRank(self, parts, fromloc, overriderank, self.client.factory))
+			self.client.sendServerMessage(DeRank(self, parts, fromloc, overriderank))
 
 	@player_list
 	@op_only
@@ -635,7 +635,8 @@ class PlayerUtilPlugin(ProtocolPlugin):
 			self.flying = False
 			self.client.sendServerMessage("You are no longer flying.")
 
-	@only_username_command
+	@player_list
+	@username_command
 	def commandTeleport(self, user, fromloc, overriderank):
 		"/tp username - Guest\nAliases: teleport\nTeleports you to the players location."
 		x = user.x >> 5

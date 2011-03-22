@@ -36,11 +36,11 @@ what mobs are available
 
 --- Other notes /quirks ---
 Note that all blockcheck code must be run within a try/except statement.  Note that because all
-mobs are run in each loop, any delays, such as sleep(), reactor.callater, or any loops will stop the enitre mob code until
+mobs are run in each loop, any delays, such as sleep(), reactor.callLater, or any loops will stop the enitre mob code until
 done. Note, Entityblocklist and other similar lists are needed for the mobclear code. They place air at the mobs locations.
 Each mobs list in this code represents the blocks, and the numbers are the offsets of its x, y and z
 """
-
+print ("MOBS PLUGIN CURRENTLY DOES NOT WORK, THE BLOCKBOX TEAM IS WORKING ON A BETTER ENTITY PLUGIN. DO NOT USE.")
 explosionblocklist = [[-3, -1, 0], [-3, 0, -1], [-3, 0, 0], [-3, 0, 1], [-3, 1, 0], [-2, -2, -1], [-2, -2, 0], [-2, -2, 1], [-2, -1, -2], [-2, -1, -1], [-2, -1, 0], [-2, -1, 1], [-2, -1, 2], [-2, 0, -2], [-2, 0, -1], [-2, 0, 0], [-2, 0, 1], [-2, 0, 2], [-2, 1, -2], [-2, 1, -1], [-2, 1, 0], [-2, 1, 1], [-2, 1, 2], [-2, 2, -1], [-2, 2, 0], [-2, 2, 1], [-1, -3, 0], [-1, -2, -2], [-1, -2, -1], [-1, -2, 0], [-1, -2, 1], [-1, -2, 2], [-1, -1, -2], [-1, -1, -1], [-1, -1, 0], [-1, -1, 1], [-1, -1, 2], [-1, 0, -3], [-1, 0, -2], [-1, 0, -1], [-1, 0, 0], [-1, 0, 1], [-1, 0, 2], [-1, 0, 3], [-1, 1, -2], [-1, 1, -1], [-1, 1, 0], [-1, 1, 1], [-1, 1, 2], [-1, 2, -2], [-1, 2, -1], [-1, 2, 0], [-1, 2, 1], [-1, 2, 2], [-1, 3, 0], [0, -3, -1], [0, -3, 0], [0, -3, 1], [0, -2, -2], [0, -2, -1], [0, -2, 0], [0, -2, 1], [0, -2, 2], [0, -1, -3], [0, -1, -2], [0, -1, -1], [0, -1, 0], [0, -1, 1], [0, -1, 2], [0, -1, 3], [0, 0, -3], [0, 0, -2], [0, 0, -1], [0, 0, 1], [0, 0, 2], [0, 0, 3], [0, 1, -3], [0, 1, -2], [0, 1, -1], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 2, -2], [0, 2, -1], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 3, -1], [0, 3, 0], [0, 3, 1], [1, -3, 0], [1, -2, -2], [1, -2, -1], [1, -2, 0], [1, -2, 1], [1, -2, 2], [1, -1, -2], [1, -1, -1], [1, -1, 0], [1, -1, 1], [1, -1, 2], [1, 0, -3], [1, 0, -2], [1, 0, -1], [1, 0, 0], [1, 0, 1], [1, 0, 2], [1, 0, 3], [1, 1, -2], [1, 1, -1], [1, 1, 0], [1, 1, 1], [1, 1, 2], [1, 2, -2], [1, 2, -1], [1, 2, 0], [1, 2, 1], [1, 2, 2], [1, 3, 0], [2, -2, -1], [2, -2, 0], [2, -2, 1], [2, -1, -2], [2, -1, -1], [2, -1, 0], [2, -1, 1], [2, -1, 2], [2, 0, -2], [2, 0, -1], [2, 0, 0], [2, 0, 1], [2, 0, 2], [2, 1, -2], [2, 1, -1], [2, 1, 0], [2, 1, 1], [2, 1, 2], [2, 2, -1], [2, 2, 0], [2, 2, 1], [3, -1, 0], [3, 0, -1], [3, 0, 0], [3, 0, 1], [3, 1, 0]]
 maxentitiystepsatonetime = 20
 twoblockhighentities = ["creeper","zombie","noob","person","aquabie"]
@@ -53,7 +53,9 @@ var_unbreakables = ['\x07', '*', ')', '.', '1']
 var_childrenentities = ["testarrow","paintball","cannonball"]
 runonce = True
 
-class EntityPlugin(ProtocolPlugin):	"Class for mobs handling."
+class EntityPlugin(ProtocolPlugin):
+	"Class for mobs handling."
+
 	commands = {
 		"entity": "commandEntity",
 		"entityclear": "commandEntityclear",
@@ -80,13 +82,13 @@ class EntityPlugin(ProtocolPlugin):	"Class for mobs handling."
 		self.var_entityselected = "None"
 
 	def blockChanged(self, x, y, z, block, selected_block, fromloc):
+		"Hook trigger for block changes."
 		if fromloc != 'user':
 			#People shouldn't be blbing mobs :P
 			return
-		"Hook trigger for block changes."
 		world = self.client.world
-		px,py,pz,ph,pp = self.client.x>>5,self.client.y>>5,self.client.z>>5,self.client.h,self.client.p
-		world.entities_worldblockchangesdict[self.client] = ((x,y,z,time(),selected_block,block),(px,py,pz,ph,pp))
+		px, py, pz, ph, pp = self.client.x>>5, self.client.y>>5, self.client.z>>5, self.client.h, self.client.p
+		world.entities_worldblockchangesdict[self.client] = ((x, y, z, time(), selected_block, block), (px, py, pz, ph, pp))
 		entitylist = world.entitylist
 		dellist = []
 		for index in range(len(entitylist)):
@@ -2453,7 +2455,7 @@ class EntityPlugin(ProtocolPlugin):	"Class for mobs handling."
 	def commandEntity(self, parts, fromloc, overriderank):
 		"/entity entityname- Op\nAliases: mob\nCreates the specified entity."
 		if len(parts) < 2:
-			if self.var_entityselected == "None":
+			if self.var_entityselected is None:
 				self.client.sendServerMessage("Please enter an entity name (type /entities for a list)")
 			else:
 				self.var_entityselected = "None"

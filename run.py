@@ -5,42 +5,39 @@
 
 import time, sys
 
+def doExit(exitTime=10):
+	print ("blockBox will now exit in %s seconds." % exitTime)
+	time.sleep(exitTime)
+	exit(1)
+
 if "--run" not in sys.argv and sys.platform == "win32":
 	# They did not use the start.bat. Boot them out
 	print ("Please use the start.bat that comes with the blockBox package to run blockBox.")
-	time.sleep(5)
-	exit(1);
+	doExit()
 
 try:
+	print ("ATTENTION: Do you need help with blockBox? http://blockbox.hk-diy.net or #blockBox@irc.esper.net")
 	if sys.version_info[0] == (2): # Python 2.x?
 		if not sys.version_info[:2] == (2, 6): # 2.6
-			print ("ATTENTION: Do you need help with blockBox? http://blockbox.bradness.info/forum or #blockBox@irc.esper.net")
 			if sys.version_info[:2] == (2, 5): # 2.5
-				print ("WARNING: The blockBox team do not guantee that blockBox will work without bugs in Python 2.5, but if you have found any bugs please still report to the blockBox team. \nThank you for the effort.")
+				print ("WARNING: The blockBox team do not guarantee that blockBox will work without bugs in Python 2.5, but if you have found any bugs please still report to the blockBox team. \nThank you for the effort.")
 			elif sys.version_info[:2] == (2, 7): # 2.7
-				print ("WARNING: The blockBox team do not guantee that blockBox will work without bugs in Python 2.7, but if you have found any bugs please still report to the blockBox team. \nThank you for the effort.")
+				print ("WARNING: The blockBox team do not guarantee that blockBox will work without bugs in Python 2.7, but if you have found any bugs please still report to the blockBox team. \nThank you for the effort.")
 			else: # 2.0-2.4
 				try:
 					print ("NOTICE: Sorry, but you need Python 2.6.x (Zope, Twisted and SimpleJSON) to run blockBox; http://www.python.org/download/releases/2.6.6/")
 				except:
 					print ("NOTICE: Sorry, but you need Python 2.6.x (Zope, Twisted and SimpleJSON) to run blockBox; http://www.python.org/download/releases/2.6.6/")
 				finally:
-					print ("blockBox will exit in 10 seconds.")
-					time.sleep(10)
-					exit(1);
+					doExit(10)
 	else: # Python 3.x or better
-		print ("ATTENTION: Do you need help with blockBox? http://blockbox.bradness.info/forum or #blockBox@irc.esper.net")
 		print ("NOTICE: Sorry, but blockBox does not support Python 3.x or better. Please use Python 2.6.x instead; http://www.python.org/download/releases/2.6.6/")
-		print ("blockBox will exit in 10 seconds.")
-		time.sleep(10)
-		exit(1);
+		doExit()
 except: # Python 1.x doesn't have the version_info method
 	# Oh dear they are still using Python 1.x
-	print ("ATTENTION: Do you need help with blockBox? http://blockbox.bradness.info/forum or #blockBox@irc.esper.net")
+	print ("ATTENTION: Do you need help with blockBox? http://blockbox.hk-diy.net or #blockBox@irc.esper.net")
 	print ("NOTICE: Sorry, but blockBox does not support Python 3.x. Please use Python 2.6.x instead; http://www.python.org/download/releases/2.6.6/")
-	print ("blockBox will exit in 10 seconds.")
-	time.sleep(10)
-	exit(1);
+	doExit()
 
 import logging
 from logging.handlers import SMTPHandler
@@ -50,7 +47,7 @@ from lib.twisted.internet import reactor
 
 from blockbox.api import APIFactory
 from blockbox.constants import *
-from blockbox.logger import ColoredLogger
+from blockbox.globals import *
 from blockbox.server import BlockBoxFactory
 
 logging.basicConfig(
@@ -59,15 +56,24 @@ logging.basicConfig(
 	datefmt="%m/%d/%Y %H:%M:%S",
 )
 
+create_if_not("logs/console/console.log")
+
 logger = logging.getLogger("blockBox")
 logger.info("Starting up blockBox %s..." % VERSION)
 
 factory = BlockBoxFactory()
-api = APIFactory(factory)
-reactor.listenTCP(factory.config.getint("network", "port"), factory)
-reactor.listenTCP(factory.config.getint("network", "api_port"), api)
-
-factory.create_if_not("logs/console/console.log")
+try:
+	reactor.listenTCP(factory.config.getint("network", "port"), factory)
+except CannotListenError:
+	logger.critical("blockBox cannot listen on port %s. Is there another program using it?" % factory.config.getint("network", "port"))
+	doExit()
+if factory.config.getboolean("network", "use_api"):
+	api = APIFactory(factory)
+	try:
+		reactor.listenTCP(factory.config.getint("network", "api_port"), api)
+	except CannotListenError:
+		logger.warning("blockBox API cannot listen on port %s. Disabled." % factory.config.getint("network", "port"))
+		del api
 
 rotate = logging.handlers.TimedRotatingFileHandler(
 	filename="logs/console/console.log", when="H",

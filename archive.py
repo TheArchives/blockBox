@@ -134,10 +134,10 @@ def rip(key, username, password):
 def main():
 	config = ConfigParser()
 		try:
-			config.read(os.path.join(os.path.dirname(__file__), "client.conf"))
+			config.read(os.path.join(os.path.dirname(__file__), "client.ini"))
 		except:
-			logger.error("You need to rename client.example.conf to client.conf")
-			exit(1);
+			logger.error("You need to rename client.dist.ini to client.ini")
+			exit(1)
 	rip(sys.argv[1], config.get("client", "username"), config.get("client", "password"))
 
 # this only runs if the module was *not* imported
