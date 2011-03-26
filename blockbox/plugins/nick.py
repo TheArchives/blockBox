@@ -12,7 +12,7 @@ class NickPlugin(ProtocolPlugin):	"Commands for nickname changes."
 	}
 
 	@config("category", "player")
-	@director_only
+	@config("rank", "director")
 	def commandNick(self, params, fromloc, overriderank):
 		"/nick - Changes your username and skin. Use with great care."
 		if len(params) < 1:

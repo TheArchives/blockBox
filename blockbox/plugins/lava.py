@@ -9,7 +9,7 @@ from blockbox.decorators import *
 from blockbox.plugins import ProtocolPlugin
 
 class LavaPlugin(ProtocolPlugin):
-	"Class for player handling when touched lava."
+	"""Lava class that handles dying when touched lava."""
 	hooks = {
 		"poschange": "posChanged",
 	}
@@ -18,7 +18,7 @@ class LavaPlugin(ProtocolPlugin):
 		self.died = False
 
 	def posChanged(self, x, y, z, h, p):
-		"Hook trigger for when the player moves"
+		"Hook trigger for when the player moves."
 		rx = x >> 5
 		ry = y >> 5
 		rz = z >> 5
@@ -40,7 +40,7 @@ class LavaPlugin(ProtocolPlugin):
 					if self.died is False:
 						self.died = True
 						self.client.teleportTo(self.client.world.spawn[0], self.client.world.spawn[1], self.client.world.spawn[2], self.client.world.spawn[3])
-						self.client.factory.queue.put ((self.client.world,TASK_WORLDMESSAGE, (255, self.client.world, COLOUR_DARKRED+self.client.username+" has died from lava.")))
+						self.client.factory.queue.put((self.client.world,TASK_WORLDMESSAGE, (255, self.client.world, COLOUR_DARKRED+self.client.username+" has died from lava.")))
 						reactor.callLater(1, self.unDie)
 
 	def unDie(self):

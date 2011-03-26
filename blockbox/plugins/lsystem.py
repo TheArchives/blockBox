@@ -12,7 +12,8 @@ from blockbox.decorators import *
 from blockbox.plugins import ProtocolPlugin
 
 class LSystemPlugin(ProtocolPlugin):
-	"Interface of Lsystem."
+	"Interface of Lsystem."
+
 	commands = {
 		"lbook": "commandLbook",
 		"rec_axiom": "commandRec_Axiom",
@@ -69,7 +70,7 @@ class LSystemPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("You forgot to specify a page number.")
 
 	@config("category", "build")
-	@op_only
+	@config("rank", "op")
 	def commandRec_Axiom(self, parts, fromloc, overriderank):
 		"/rec_axiom axiom - Op\nRecords an axiom for lsystems."
 		if len(parts) != 2:
@@ -94,7 +95,7 @@ class LSystemPlugin(ProtocolPlugin):
 			self.client.sendServerMessage(self.client.var_axiom[var_divisions64*64:])
 
 	@config("category", "build")
-	@op_only
+	@config("rank", "op")
 	def commandRec_Production(self, parts, fromloc, overriderank):
 		"/rec_production item production - Op\nRecords production recipes for lsystems."
 		if len(parts) != 3:
@@ -128,7 +129,7 @@ class LSystemPlugin(ProtocolPlugin):
 			self.client.sendServerList(item_list)
 
 	@config("category", "build")
-	@op_only
+	@config("rank", "op")
 	def commandLsystem(self, parts, fromloc, overriderank):
 		"/lsystem blocktype standarddistance\nzxrotation yzrotation xyrotation level [x y z x2 y2 z2] - Op\nDraws an lsystem."
 		try:
@@ -209,7 +210,7 @@ class LSystemPlugin(ProtocolPlugin):
 					y = int(parts[11])
 					z = int(parts[12])
 				except ValueError:
-					self.client.sendServerMessage("All parameters must be integers")
+					self.client.sendServerMessage("All coordinate parameters must be integers.")
 					return
 
 			finalsequence = axiom
@@ -228,7 +229,7 @@ class LSystemPlugin(ProtocolPlugin):
 			for item in finalsequence:
 				if item == "F" or item == "B":
 					num_movements += 1
-			limit = self.client.getBlbLimit(self.client.username)
+			limit = self.client.getBlbLimit()
 			if limit != -1:
 				# Stop them doing silly things
 				if (num_movements*standarddistance > limit) or limit == 0:
@@ -236,19 +237,11 @@ class LSystemPlugin(ProtocolPlugin):
 					return
 			world = self.client.world
 			def generate_changes():
-				# Try getting the block as a direct integer type.
-				try:
-					block = chr(int(parts[1]))
-				except ValueError:
-					# OK, try a symbolic type.
-					try:
-						block = chr(globals()['BLOCK_%s' % parts[1].upper()])
-					except KeyError:
-						self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
-						return
-				# Check the block is valid
-				if ord(block) > 49:
-					self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
+				block = self.client.GetBlockValue(parts[1])
+				if block == None:
+					return
+				if not self.client.canUseRestrictedBlocks(block):
+					self.client.sendServerMessage("Sorry, but you are not allowed to use that block.")
 					return
 				pointsseparation = math.sqrt(math.pow((x2-x),2)+math.pow((y2-y),2)+math.pow((z2-z),2))
 				drawer_orientationvector = ((x2-x)/pointsseparation,(y2-y)/pointsseparation,(z2-z)/pointsseparation)
@@ -268,12 +261,12 @@ class LSystemPlugin(ProtocolPlugin):
 						var_y2 = int(round(var_y2))
 						var_z2 = int(round(var_z2))
 						try:
-							steps = int(((var_x2-var_x)**2+(var_y2-var_y)**2+(var_z2-var_z)**2)**0.5)
-							mx = float(var_x2-var_x)/steps
-							my = float(var_y2-var_y)/steps
-							mz = float(var_z2-var_z)/steps
+							steps = int(((var_x2 - var_x) ** 2 + (var_y2 - var_y) ** 2 + (var_z2 - var_z) ** 2) ** 0.5)
+							mx = float(var_x2 - var_x) / steps
+							my = float(var_y2 - var_y) / steps
+							mz = float(var_z2 - var_z) / steps
 							coordinatelist1 = []
-							for t in range(steps+1):
+							for t in range(steps + 1):
 								coordinatelist1.append((int(round(mx*t+var_x)),int(round(my*t+var_y)),int(round(mz*t+var_z))))
 							coordinatelist2 = []
 							for coordtuple in coordinatelist1:
@@ -343,7 +336,8 @@ class LSystemPlugin(ProtocolPlugin):
 							if not var_override:
 								self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 								self.client.sendBlock(i, j, k, block)
-							yield
+							yield
+
 					elif item == "B":
 						targetlocation = (drawer_location[0]-drawer_orientationvector[0]*standarddistance,drawer_location[1]-drawer_orientationvector[1]*standarddistance,drawer_location[2]-drawer_orientationvector[2]*standarddistance)
 						var_x,var_y,var_z = drawer_location
@@ -388,7 +382,8 @@ class LSystemPlugin(ProtocolPlugin):
 							if not var_override:
 								self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 								self.client.sendBlock(i, j, k, block)
-							yield
+							yield
+
 					elif item == "G":
 						drawer_location = (drawer_location[0]+drawer_orientationvector[0]*standarddistance,drawer_location[1]+drawer_orientationvector[1]*standarddistance,drawer_location[2]+drawer_orientationvector[2]*standarddistance)
 

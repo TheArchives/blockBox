@@ -75,10 +75,10 @@ class ModUtilPlugin(ProtocolPlugin):
 		originalblock = world.blockstore.raw_blocks[world.blockstore.get_offset(x, y, z)]
 		block = chr(block)
 		if len(self.client.var_undolist) < maxundos:
-			self.client.var_undolist.insert(0,((x,y,z),block,originalblock))
+			self.client.var_undolist.insert(0, ((x, y, z), block, originalblock))
 		else:
 			del self.client.var_undolist[-1]
-			self.client.var_undolist.insert(0,((x,y,z),block,originalblock))
+			self.client.var_undolist.insert(0, ((x, y, z), block, originalblock))
 
 	def newWorld(self, world):
 		"Hook to reset undolist in new worlds."
@@ -92,7 +92,7 @@ class ModUtilPlugin(ProtocolPlugin):
 	def chatmsg(self, message):
 		if self.client.var_fetchrequest:
 			self.client.var_fetchrequest = False
-			if message in ["y"]:
+			if message in ["y", "yes"]:
 				sender,world,rx,ry,rz = self.client.var_fetchdata
 				if self.client.world == world:
 					self.client.teleportTo(rx, ry, rz)
@@ -105,11 +105,23 @@ class ModUtilPlugin(ProtocolPlugin):
 			self.client.var_fetchdata
 			return True
 
+	def sendOverload(self):
+		"Sends an overload - a fake map designed to use as much memory as it can."
+		self.client.factory.usernames[username].sendPacked(TYPE_INITIAL, 7, "Loading...", "Entering world main", 0)
+		self.client.factory.usernames[username].sendPacked(TYPE_PRECHUNK)
+		reactor.callLater(0.001, self.sendOverloadChunk)
+
+	def sendOverloadChunk(self):
+		"Sends a level chunk full of 1s."
+		if self.client.factory.usernames[username].connected:
+			self.client.factory.usernames[username].sendPacked(TYPE_CHUNK, 1024, "\1"*1024, 50)
+			reactor.callLater(0.001, self.sendOverloadChunk)
+
 	@config("category", "player")
-	@mod_only
+	@config("rank", "mod")
 	@username_command
 	def commandKick(self, user, fromloc, overriderank, params=[]):
-		"/kick username [reason] - Mod\nKicks the Player off the server."
+		"/kick username [reason] - Mod\nKicks the player off the server."
 		if params:
 			user.sendError("Kicked by %s: %s" % (self.client.username , " ".join(params)))
 		else:
@@ -117,7 +129,7 @@ class ModUtilPlugin(ProtocolPlugin):
 		self.client.sendServerMessage("User %s kicked." % user)
 
 	@config("category", "player")
-	@admin_only
+	@config("rank", "admin")
 	def commandBanBoth(self, parts, fromloc, overriderank):
 		"/banb username reason - Admin\nName and IP ban a Player from this server."
 		username = parts[1]
@@ -128,7 +140,7 @@ class ModUtilPlugin(ProtocolPlugin):
 			self.commandBan(parts, "command", overriderank)
 
 	@config("category", "player")
-	@admin_only
+	@config("rank", "admin")
 	def commandBan(self, parts, fromloc, overriderank):
 		"/ban username reason - Admin\nBans the Player from this server."
 		username = parts[1]
@@ -144,7 +156,7 @@ class ModUtilPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("%s has been banned." % username)
 
 	@config("category", "player")
-	@director_only
+	@config("rank", "director")
 	def commandIpban(self, parts, fromloc, overriderank):
 		"/ipban username reason - Director\nBan a Player's IP from this server."
 		username = parts[1]
@@ -155,7 +167,7 @@ class ModUtilPlugin(ProtocolPlugin):
 			ip = self.client.factory.usernames[username].transport.getPeer().host
 		else:
 			with Persist(username) as p:
-				ip = p.string("misc", "ip")
+				ip = p.string("main", "ip")
 				if ip == "":
 					self.client.sendServerMessage("%s has never come on the server, therefore no IP record of that user." % username)
 					return
@@ -169,7 +181,7 @@ class ModUtilPlugin(ProtocolPlugin):
 		self.client.sendServerMessage("IP %s (User: %s) has been IPBanned." % (ip, username))
 
 	@config("category", "player")
-	@admin_only
+	@config("rank", "admin")
 	def commandUnban(self, parts, fromloc, overriderank):
 		"/unban username - Admin\nRemoves the Ban on the Player."
 		if len(parts) < 1:
@@ -183,21 +195,21 @@ class ModUtilPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("%s has been unbanned." % username)
 
 	@config("category", "player")
-	@mod_only
-	@username_command
+	@config("rank", "mod")
+	@only_username_command
 	def commandSpec(self, username, fromloc, overriderank):
 		"/spec username - Mod\nMakes the player as a spec."
 		self.client.sendServerMessage(Spec(self, username, fromloc, overriderank))
 
 	@config("category", "player")
-	@mod_only
-	@username_command
+	@config("rank", "mod")
+	@only_username_command
 	def commandDeSpec(self, username, fromloc, overriderank):
 		"/unspec username - Mod\nRemoves the player as a spec."
 		self.client.sendServerMessage(DeSpec(self, username, fromloc, overriderank))
 
 	@config("category", "player")
-	@director_only
+	@config("rank", "director")
 	@only_string_command("IP")
 	def commandUnipban(self, ip, fromloc, overriderank):
 		"/unipban ip - Director\nRemoves the Ban on the IP."
@@ -208,7 +220,7 @@ class ModUtilPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("IP %s has been unbanned." % ip)
 
 	@config("category", "player")
-	@admin_only
+	@config("rank", "admin")
 	@only_username_command
 	def commandReason(self, username, fromloc, overriderank):
 		"/banreason username - Admin\nGives the reason a Player was Banned."
@@ -218,7 +230,7 @@ class ModUtilPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("Reason: %s" % self.client.factory.banReason(username))
 
 	@config("category", "player")
-	@director_only
+	@config("rank", "director")
 	@only_string_command("IP")
 	def commandIpreason(self, ip, fromloc, overriderank):
 		"/ipreason username - Director\nGives the reason an IP was Banned."
@@ -228,7 +240,7 @@ class ModUtilPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("Reason: %s" % self.client.factory.ipBanReason(ip))
 
 	@config("category", "player")
-	@mod_only
+	@config("rank", "mod")
 	@username_command
 	def commandUnFreeze(self, user, fromloc, overriderank):
 		"/unfreeze username - Mod\nAliases: defreeze, unstop\nUnfreezes the player, allowing them to move again."
@@ -236,14 +248,14 @@ class ModUtilPlugin(ProtocolPlugin):
 		user.sendNormalMessage("&4You have been unfrozen by %s!" % self.client.username)
 
 	@config("category", "player")
-	@mod_only
+	@config("rank", "mod")
 	@username_command
 	def commandFreeze(self, user, fromloc, overriderank):
 		"/freeze username - Mod\nAliases: stop\nFreezes the player, preventing them from moving."
 		user.frozen = True
 		user.sendNormalMessage("&4You have been frozen by %s!" % self.client.username)
 
-	@mod_only
+	@config("rank", "mod")
 	def commandSay(self, parts, byuser, overriderank):
 		"/say message - Mod\nAliases: msg\nPrints out message in the server color."
 		if len(parts) == 1:
@@ -252,7 +264,7 @@ class ModUtilPlugin(ProtocolPlugin):
 			self.client.factory.queue.put((self.client, TASK_SERVERMESSAGE, ("[MSG] "+(" ".join(parts[1:])))))
 
 	@config("category", "player")
-	@op_only
+	@config("rank", "op")
 	@username_command
 	def commandBanish(self, user, fromloc, overriderank):
 		"/worldkick username - Op\nAliases: banish\nBanishes the Player to the default world."
@@ -264,7 +276,7 @@ class ModUtilPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("The player specified is in another world.")
 
 	@config("category", "player")
-	@op_only
+	@config("rank", "op")
 	@username_command
 	def commandWorldBan(self, username, fromloc, overriderank):
 		"/worldban username - Op\nWorldBan a Player from this Map."
@@ -279,7 +291,7 @@ class ModUtilPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("%s has been WorldBanned." % username)
 
 	@config("category", "player")
-	@op_only
+	@config("rank", "op")
 	@username_command
 	def commandUnWorldBan(self, username, fromloc, overriderank):
 		"/unworldban username - Op\nAliases: deworldban\nRemoves the WorldBan on the Player."
@@ -295,7 +307,7 @@ class ModUtilPlugin(ProtocolPlugin):
 		world = self.client.world
 		if len(parts) == 3:
 			if not self.client.isMod():
-				self.client.sendServerMessage("You are not a Mod+")
+				self.client.sendServerMessage("You are not a Mod+.")
 				return
 			try:
 				username = parts[2].lower()
@@ -308,25 +320,28 @@ class ModUtilPlugin(ProtocolPlugin):
 			if parts[1] == "all":
 				def generate_changes():
 					try:
-						user = self.client.factory.usernames[username]
-						for index in range(undolistlength):
-							originalblock = user.var_undolist[index][2]
-							block = user.var_undolist[index][1]
-							i,j,k = user.var_undolist[index][0]
-							if not self.client.AllowedToBuild(i, j, k) and not overriderank:
-								self.client.sendServerMessage("You do not have permission to build here.")
-								return
-							del var_sublist[var_sublist.index(((i, j, k), block, originalblock))]
-							user.var_redolist.insert(0, ((i, j, k), originalblock, block))
-							try:
+						try:
+							user = self.client.factory.usernames[username]
+							for index in range(undolistlength):
+								originalblock = user.var_undolist[index][2]
+								block = user.var_undolist[index][1]
+								i, j, k = user.var_undolist[index][0]
+								if not self.client.AllowedToBuild(i, j, k) and not overriderank:
+									self.client.sendServerMessage("You do not have permission to build here.")
+									return
+								del var_sublist[var_sublist.index(((i, j, k), block, originalblock))]
+								user.var_redolist.insert(0, ((i, j, k), originalblock, block))
 								world[i, j, k] = originalblock
-							except AssertionError:
-								self.client.sendServerMessage("Out of bounds undo error.")
-								return
-							user.queueTask(TASK_BLOCKSET, (i, j, k, originalblock), world=world)
-							user.sendBlock(i, j, k, originalblock)
-							yield
-						user.var_undolist = var_sublist
+								user.queueTask(TASK_BLOCKSET, (i, j, k, originalblock), world=world)
+								user.sendBlock(i, j, k, originalblock)
+								yield
+							user.var_undolist = var_sublist
+						except AssertionError:
+							self.client.sendServerMessage("Out of bounds undo error.")
+							return
+						except AssertionError:
+							self.client.sendServerMessage("Out of bounds undo error.")
+							return
 					except:
 						self.client.sendSplitServerMessage("The user seems to have logged off before the undo could finish.")
 						return
@@ -341,24 +356,24 @@ class ModUtilPlugin(ProtocolPlugin):
 					return
 				def generate_changes():
 					try:
-						for index in range(num):
-							originalblock = user.var_undolist[index][2]
-							block = user.var_undolist[index][1]
-							i,j,k = user.var_undolist[index][0]
-							if not self.client.AllowedToBuild(i,j,k) and overriderank==False:
-								self.client.sendServerMessage("You do not have permission to build here.")
-								return
-							del var_sublist[var_sublist.index(((i,j,k),block,originalblock))]
-							user.var_redolist.insert(0,((i,j,k),originalblock,block))
-							try:
+						try:
+							for index in range(num):
+								originalblock = user.var_undolist[index][2]
+								block = user.var_undolist[index][1]
+								i, j, k = user.var_undolist[index][0]
+								if not self.client.AllowedToBuild(i,j,k) and overriderank==False:
+									self.client.sendServerMessage("You do not have permission to build here.")
+									return
+								del var_sublist[var_sublist.index(((i,j,k),block,originalblock))]
+								user.var_redolist.insert(0,((i,j,k),originalblock,block))
 								world[i, j, k] = originalblock
-							except AssertionError:
-								self.client.sendServerMessage("Out of bounds undo error.")
-								return
-							user.queueTask(TASK_BLOCKSET, (i, j, k, originalblock), world=world)
-							user.sendBlock(i, j, k, originalblock)
-							yield
-						user.var_undolist = var_sublist
+								user.queueTask(TASK_BLOCKSET, (i, j, k, originalblock), world=world)
+								user.sendBlock(i, j, k, originalblock)
+								yield
+							user.var_undolist = var_sublist
+						except AssertionError:
+							self.client.sendServerMessage("Out of bounds undo error.")
+							return
 					except:
 						self.client.sendSplitServerMessage("The user seems to have logged off before the undo could finish.")
 						return
@@ -371,24 +386,24 @@ class ModUtilPlugin(ProtocolPlugin):
 			else:
 				if parts[1] == "all":
 					def generate_changes():
-						for index in range(undolistlength):
-							originalblock = self.client.var_undolist[index][2]
-							block = self.client.var_undolist[index][1]
-							i,j,k = self.client.var_undolist[index][0]
-							if not self.client.AllowedToBuild(i,j,k) and not overriderank:
-								self.client.sendServerMessage("You do not have permission to build here.")
-								return
-							del self.client.sublist[self.client.sublist.index(((i, j, k), block, originalblock))]
-							self.client.var_redolist.insert(0, ((i, j, k), originalblock, block))
-							try:
+						try:
+							for index in range(undolistlength):
+								originalblock = self.client.var_undolist[index][2]
+								block = self.client.var_undolist[index][1]
+								i, j, k = self.client.var_undolist[index][0]
+								if not self.client.AllowedToBuild(i, j, k) and not overriderank:
+									self.client.sendServerMessage("You do not have permission to build here.")
+									return
+								del self.client.sublist[self.client.sublist.index(((i, j, k), block, originalblock))]
+								self.client.var_redolist.insert(0, ((i, j, k), originalblock, block))
 								world[i, j, k] = originalblock
-							except AssertionError:
-								self.client.sendServerMessage("Out of bounds undo error.")
-								return
-							self.client.queueTask(TASK_BLOCKSET, (i, j, k, originalblock), world=world)
-							self.client.sendBlock(i, j, k, originalblock)
-							yield
-						self.client.var_undolist = self.client.sublist
+								self.client.queueTask(TASK_BLOCKSET, (i, j, k, originalblock), world=world)
+								self.client.sendBlock(i, j, k, originalblock)
+								yield
+							self.client.var_undolist = self.client.sublist
+						except AssertionError:
+							self.client.sendServerMessage("Out of bounds undo error.")
+							return
 				else:
 					try:
 						num = int(parts[1])
@@ -399,25 +414,25 @@ class ModUtilPlugin(ProtocolPlugin):
 						self.client.sendServerMessage("You have not made that many changes.")
 						return
 					def generate_changes():
-						for index in range(num):
-							originalblock = self.client.var_undolist[index][2]
-							block = self.client.var_undolist[index][1]
-							i,j,k = self.client.var_undolist[index][0]
-							if not self.client.AllowedToBuild(i,j,k) and not overriderank:
-								self.client.sendServerMessage("You do not have permission to build here.")
-								return
-							del self.client.sublist[self.client.sublist.index(((i,j,k),block,originalblock))]
-							self.client.var_redolist.insert(0,((i,j,k),originalblock,block))
-							try:
+						try:
+							for index in range(num):
+								originalblock = self.client.var_undolist[index][2]
+								block = self.client.var_undolist[index][1]
+								i, j, k = self.client.var_undolist[index][0]
+								if not self.client.AllowedToBuild(i, j, k) and not overriderank:
+									self.client.sendServerMessage("You do not have permission to build here.")
+									return
+								del self.client.sublist[self.client.sublist.index(((i, j, k), block, originalblock))]
+								self.client.var_redolist.insert(0, ((i, j, k), originalblock, block))
 								world[i, j, k] = originalblock
-							except AssertionError:
-								self.client.sendServerMessage("Out of bounds undo error.")
-								return
-							self.client.queueTask(TASK_BLOCKSET, (i, j, k, originalblock), world=world)
-							self.client.sendBlock(i, j, k, originalblock)
-							self.client.total += 1
-							yield
-						self.client.var_undolist = self.client.sublist
+								self.client.queueTask(TASK_BLOCKSET, (i, j, k, originalblock), world=world)
+								self.client.sendBlock(i, j, k, originalblock)
+								self.client.total += 1
+								yield
+							self.client.var_undolist = self.client.sublist
+						except AssertionError:
+							self.client.sendServerMessage("Out of bounds undo error.")
+							return
 		# Now, set up a loop delayed by the reactor
 		block_iter = iter(generate_changes())
 		def do_step():
@@ -439,7 +454,7 @@ class ModUtilPlugin(ProtocolPlugin):
 		world = self.client.world
 		if len(parts) == 3:
 			if not self.client.isMod():
-				self.client.sendServerMessage("You are not a Mod+")
+				self.client.sendServerMessage("You are not a Mod+.")
 				return
 			try:
 				username = parts[2].lower()
@@ -486,24 +501,24 @@ class ModUtilPlugin(ProtocolPlugin):
 					return
 				def generate_changes():
 					try:
-						for index in range(num):
-							originalblock = user.var_redolist[index][2]
-							block = user.var_redolist[index][1]
-							i,j,k = user.var_redolist[index][0]
-							if not self.client.AllowedToBuild(i,j,k) and overriderank==False:
-								self.client.sendServerMessage("You do not have permission to build here.")
-								return
-							del var_sublist[var_sublist.index(((i,j,k),block,originalblock))]
-							user.var_undolist.insert(0,((i,j,k),originalblock,block))
-							try:
+						try:
+							for index in range(num):
+								originalblock = user.var_redolist[index][2]
+								block = user.var_redolist[index][1]
+								i, j, k = user.var_redolist[index][0]
+								if not self.client.AllowedToBuild(i, j, k) and not overriderank:
+									self.client.sendServerMessage("You do not have permission to build here.")
+									return
+								del var_sublist[var_sublist.index(((i, j, k),block, originalblock))]
+								user.var_undolist.insert(0, ((i, j, k), originalblock, block))
 								world[i, j, k] = originalblock
-							except AssertionError:
+								user.queueTask(TASK_BLOCKSET, (i, j, k, originalblock), world=world)
+								user.sendBlock(i, j, k, originalblock)
+								self.client.total += 1
+								yield
+						except AssertionError:
 								self.client.sendServerMessage("Out of bounds redo error.")
 								return
-							user.queueTask(TASK_BLOCKSET, (i, j, k, originalblock), world=world)
-							user.sendBlock(i, j, k, originalblock)
-							self.client.total += 1 # This is how you increase a number in python.... - Stacy
-							yield
 						user.var_redolist = var_sublist
 					except:
 						self.client.sendSplitServerMessage("The user seems to have logged off before the redo could finish.")
@@ -517,25 +532,25 @@ class ModUtilPlugin(ProtocolPlugin):
 			else:
 				if parts[1] == "all":
 					def generate_changes():
-						for index in range(redolistlength):
-							originalblock = self.client.var_redolist[index][2]
-							block = self.client.var_redolist[index][1]
-							i,j,k = self.client.var_redolist[index][0]
-							if not self.client.AllowedToBuild(i,j,k) and overriderank==False:
-								self.client.sendServerMessage("You no longer have permission to build here.")
-								return
-							del self.client.sublist[self.client.sublist.index(((i,j,k),block,originalblock))]
-							self.client.var_undolist.insert(0,((i,j,k),originalblock,block))
-							try:
+						try:
+							for index in range(redolistlength):
+								originalblock = self.client.var_redolist[index][2]
+								block = self.client.var_redolist[index][1]
+								i,j,k = self.client.var_redolist[index][0]
+								if not self.client.AllowedToBuild(i, j, k) and not overriderank:
+									self.client.sendServerMessage("You no longer have permission to build here.")
+									return
+								del self.client.sublist[self.client.sublist.index(((i, j, k), block, originalblock))]
+								self.client.var_undolist.insert(0, ((i, j, k), originalblock, block))
 								world[i, j, k] = originalblock
-							except AssertionError:
-								self.client.sendServerMessage("Out of bounds redo error.")
-								return
-							self.client.queueTask(TASK_BLOCKSET, (i, j, k, originalblock), world=world)
-							self.client.sendBlock(i, j, k, originalblock)
-							self.client.total += 1 # This is how you increase a number in python.... - Stacy
-							yield
-						self.client.var_redolist = self.client.sublist
+								self.client.queueTask(TASK_BLOCKSET, (i, j, k, originalblock), world=world)
+								self.client.sendBlock(i, j, k, originalblock)
+								self.client.total += 1
+								yield
+							self.client.var_redolist = self.client.sublist
+						except AssertionError:
+							self.client.sendServerMessage("Out of bounds redo error.")
+							return
 				else:
 					try:
 						num = int(parts[1])
@@ -546,33 +561,33 @@ class ModUtilPlugin(ProtocolPlugin):
 						self.client.sendServerMessage("You have not made that many undos.")
 						return
 					def generate_changes():
-						for index in range(num):
-							originalblock = self.client.var_redolist[index][2]
-							block = self.client.var_redolist[index][1]
-							i,j,k = self.client.var_redolist[index][0]
-							if not self.client.AllowedToBuild(i,j,k) and overriderank==False:
-								self.client.sendServerMessage("You no longer have permission to build here.")
-								return
-							del self.client.sublist[self.client.sublist.index(((i,j,k),block,originalblock))]
-							self.client.var_undolist.insert(0,((i,j,k),originalblock,block))
-							try:
+						try:
+							for index in range(num):
+								originalblock = self.client.var_redolist[index][2]
+								block = self.client.var_redolist[index][1]
+								i, j, k = self.client.var_redolist[index][0]
+								if not self.client.AllowedToBuild(i, j, k) and not overriderank:
+									self.client.sendServerMessage("You do not have permission to build here.")
+									return
+								del self.client.sublist[self.client.sublist.index(((i, j, k), block, originalblock))]
+								self.client.var_undolist.insert(0, ((i, j, k), originalblock, block))
 								world[i, j, k] = originalblock
-							except AssertionError:
-								self.client.sendServerMessage("Out of bounds redo error.")
-								return
-							self.client.queueTask(TASK_BLOCKSET, (i, j, k, originalblock), world=world)
-							self.client.sendBlock(i, j, k, originalblock)
-							self.client.total += 1 # This is how you increase a number in python.... - Stacy
-							yield
-						self.client.var_redolist = self.client.sublist
+								self.client.queueTask(TASK_BLOCKSET, (i, j, k, originalblock), world=world)
+								self.client.sendBlock(i, j, k, originalblock)
+								self.client.total += 1 # This is how you increase a number in python.... - Stacy
+								yield
+							self.client.var_redolist = self.client.sublist
+						except AssertionError:
+							self.client.sendServerMessage("Out of bounds redo error.")
+							return
 		# Now, set up a loop delayed by the reactor
 		block_iter = iter(generate_changes())
 		def do_step():
 			# Do 10 blocks
 			try:
-				for x in range(10):#10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
+				for x in range(10): # 10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
 					block_iter.next()
-				reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
+				reactor.callLater(0.01, do_step) # This is how long(in seconds) it waits to run another 10 blocks
 			except StopIteration:
 				if fromloc == 'user':
 					self.client.finalizeMassCMD('redo', self.client.total)
@@ -581,7 +596,7 @@ class ModUtilPlugin(ProtocolPlugin):
 		do_step()
 
 	@config("category", "player")
-	@mod_only
+	@config("rank", "mod")
 	@username_command
 	def commandSilence(self, username, fromloc, overriderank):
 		"/silence username - Mod\nDisallows the Player to talk."
@@ -592,7 +607,7 @@ class ModUtilPlugin(ProtocolPlugin):
 		self.client.sendServerMessage("%s is now Silenced." % username)
 
 	@config("category", "player")
-	@mod_only
+	@config("rank", "mod")
 	@username_command
 	def commandDesilence(self, username, fromloc, overriderank):
 		"/desilence username - Mod\nAliases: unsilence\nAllows the Player to talk."
@@ -603,7 +618,7 @@ class ModUtilPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("User specified is not silenced.")
 
 	@config("category", "player")
-	@op_only
+	@config("rank", "op")
 	def commandHide(self, params, fromloc, overriderank):
 		"/hide - Op\nAliases: cloak\nHides you so no other players can see you. Toggle."
 		if not self.hidden:
@@ -614,26 +629,26 @@ class ModUtilPlugin(ProtocolPlugin):
 		else:
 			self.client.sendServerMessage("That was Magic!")
 			self.hidden = False
-			#Imagine that! They've mysteriously appeared.
+			# Imagine that! They've mysteriously appeared.
 			self.client.queueTask(TASK_NEWPLAYER, [self.client.id, self.client.username, self.client.x, self.client.y, self.client.z, self.client.h, self.client.p])
 			#self.client.queueTask(TASK_PLAYERCONNECT, [self.client.id, self.client.username, self.client.x, self.client.y, self.client.z, self.client.h, self.client.p])
 
-	@mod_only
+	@config("rank", "mod")
 	def commandBlazer(self, parts, fromloc, overriderank):
 		"/blazer - Mod\nBlazer!"
 		for i in range(10):
 			self.client.sendServerMessage("SPAM!")
 
 	@config("category", "player")
-	@admin_only
+	@config("rank", "admin")
 	@username_command
 	def commandOverload(self, client, fromloc, overriderank):
 		"/overload username - Admin\nSends the players client a massive fake map."
-		client.sendOverload()
+		client.plugins["modutil"].sendOverload()
 		self.client.sendServerMessage("Overload sent to %s" % client.username)
 
 	#@config("category", "player")
-	#@mod_only
+	#@config("rank", "mod")
 	#@username_command
 	#def commandSend(self, client, fromloc, overriderank):
 		#"/send username [world] - Mod\nSends the players client another world."

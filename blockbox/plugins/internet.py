@@ -93,7 +93,7 @@ class InternetPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("You can't use twitter from a cmdblock!")
 
 	@config("category", "build")
-	@admin_only
+	@config("rank", "admin")
 	def commandRec_url(self, parts, fromloc, overriderank):
 		"/rec_url URL - Builder\nRecords an url to later imagedraw it."
 		if noimagedraw == True:
@@ -119,7 +119,7 @@ class InternetPlugin(ProtocolPlugin):
 			self.client.sendServerMessage(self.client.url[var_divisions64*64:])
 
 	@config("category", "build")
-	@admin_only
+	@config("rank", "admin")
 	def commandImagedraw(self, parts, fromloc, overriderank):
 		"/imagedraw [x y z x2 y2 z2] - Builder\nSets all blocks in this area to image."
 		if noimagedraw == True:
@@ -140,7 +140,7 @@ class InternetPlugin(ProtocolPlugin):
 					rotation = 0
 				#try to get flip?
 				flip = parts[1]
-				if flip=='true' or flip=='false':
+				if flip == 'true' or flip == 'false':
 					pass
 				else:
 					self.client.sendServerMessage("Flip must be true or false.")
@@ -152,7 +152,7 @@ class InternetPlugin(ProtocolPlugin):
 					self.client.sendServerMessage("You have not recorded an url yet (use /rec_url).")
 					return
 				if imageurl.find('http:') == -1:
-					self.client.sendServerMessage("You cannot access server files, only files on the internet.")
+					self.client.sendServerMessage("Only the http protocol is supported.")
 					return
 				# If they only provided the type argument, use the last two block places
 				if len(parts) == 2 or len(parts) == 3:
@@ -171,20 +171,20 @@ class InternetPlugin(ProtocolPlugin):
 						y2 = int(parts[7])
 						z2 = int(parts[8])
 					except ValueError:
-						self.client.sendServerMessage("All parameters must be integers.")
+						self.client.sendServerMessage("All coordinate parameters must be integers..")
 						return
 				if y == y2:
-					height = abs(x2-x)+1
-					width = abs(z2-z)+1
+					height = abs(x2 - x) + 1
+					width = abs(z2 - z) + 1
 					orientation = 0
 				elif z == z2:
-					height = abs(x2-x)+1
-					width = abs(y2-y)+1
+					height = abs(x2 - x) + 1
+					width = abs(y2 - y) + 1
 					orientation = 1
 				else:
 					x2 = x
-					height = abs(y2-y)+1
-					width = abs(z2-z)+1
+					height = abs(y2 - y) + 1
+					width = abs(z2 - z) + 1
 					orientation = 2
 				try:
 					u = urllib.urlopen(imageurl)
@@ -203,7 +203,7 @@ class InternetPlugin(ProtocolPlugin):
 					y, y2 = y2, y
 				if z > z2:
 					z, z2 = z2, z
-				limit = self.client.getBlbLimit(self.client.username)
+				limit = self.client.getBlbLimit()
 				if limit != -1:
 					# Stop them doing silly things
 					if (height * width > limit) or limit == 0:
@@ -214,136 +214,136 @@ class InternetPlugin(ProtocolPlugin):
 				# We also keep world as a local so they can't change worlds and affect the new one
 				world = self.client.world
 				def generate_changes():
-					for i in range(x, x2+1):
-						for j in range(y, y2+1):
-							for k in range(z, z2+1):
-								if not self.client.AllowedToBuild(i, j, k) and overriderank==False:
-									return
-								if flip=='true':
-									if orientation == 0:
-										r,g,b,a = image.getpixel((abs(k-z),abs(i-x)))
-									elif orientation == 1:
-										r,g,b,a = image.getpixel((abs(j-y),abs(i-x)))
+					try:
+						for i in range(x, x2+1):
+							for j in range(y, y2+1):
+								for k in range(z, z2+1):
+									if not self.client.AllowedToBuild(i, j, k) and not overriderank:
+										return
+									if flip == 'true':
+										if orientation == 0:
+											r,g,b,a = image.getpixel((abs(k - z),abs(i-x)))
+										elif orientation == 1:
+											r,g,b,a = image.getpixel((abs(j - y),abs(i - x)))
+										else:
+											r,g,b,a = image.getpixel((abs(k - z),abs(j - y)))
 									else:
-										r,g,b,a = image.getpixel((abs(k-z),abs(j-y)))
-								else:
-									if orientation == 0:
-										r,g,b,a = image.getpixel((width - (abs(k-z)+1),abs(i-x)))
-									elif orientation == 1:
-										r,g,b,a = image.getpixel((width - (abs(j-y)+1),abs(i-x)))
+										if orientation == 0:
+											r,g,b,a = image.getpixel((width - (abs(k - z) + 1), abs(i - x)))
+										elif orientation == 1:
+											r,g,b,a = image.getpixel((width - (abs(j - y) + 1), abs(i - x)))
+										else:
+											r,g,b,a = image.getpixel((width - (abs(k - z) + 1), abs(j - y)))
+									if a < 25:
+										block = BLOCK_AIR
 									else:
-										r,g,b,a = image.getpixel((width - (abs(k-z)+1),abs(j-y)))
-								if a < 25:
-									block = BLOCK_AIR
-								else:
-									r = int(round(float(r)/50))*50
-									if r == 0:
-										r = 50
-									if r == 250:
-										r = 200
-									g = int(round(float(g)/50))*50
-									if g == 0:
-										g = 50
-									if g == 250:
-										g = 200
-									b = int(round(float(b)/50))*50
-									if b == 0:
-										b = 50
-									if b == 250:
-										b = 200
-									if r == 50:
-										if g == 100:
+										r = int(round(float(r) / 50)) * 50
+										if r == 0:
+											r = 50
+										if r == 250:
+											r = 200
+										g = int(round(float(g) / 50)) * 50
+										if g == 0:
 											g = 50
-										if g == 150:
+										if g == 250:
 											g = 200
-									if r == 100:
-										if g == 50:
-											g = 100
-										if g == 200:
-											g = 150
-									if r == 150:
-										if g == 100:
-											g = 150
-									if r==50 and g==50:
-										b = 50
-									if r==50 and g==200:
-										if b == 100:
-											b = 150
-									if r==100 and g==100:
-										b = 100
-									if r==100 and g==150:
-										b = 200
-									if r==150 and g==50:
-										b = 200
-									if r==150 and g==150:
-										if b == 50 or b == 100:
-											b = 150
-									if r==150 and g==200:
-										b = 50
-									if r==200 and g==50:
-										if b == 100:
-											b = 150
-									if r==200 and g==100:
-										b = 200
-									if r==200 and g==150:
-										b = 50
-									if r==200 and g==200:
-										if b == 100:
+										b = int(round(float(b) / 50)) * 50
+										if b == 0:
 											b = 50
-										if b == 150:
+										if b == 250:
 											b = 200
-									if (r,g,b) == (200,50,50):
-										block = BLOCK_RED
-									if (r,g,b) == (200,150,50):
-										block = BLOCK_ORANGE
-									if (r,g,b) == (200,200,50):
-										block = BLOCK_YELLOW
-									if (r,g,b) == (150,200,50):
-										block = BLOCK_LIME
-									if (r,g,b) == (50,200,50):
-										block = BLOCK_GREEN
-									if (r,g,b) == (50,200,150):
-										block = BLOCK_TURQUOISE
-									if (r,g,b) == (50,200,200):
-										block = BLOCK_CYAN
-									if (r,g,b) == (100,150,200):
-										block = BLOCK_BLUE
-									if (r,g,b) == (150,150,200):
-										block = BLOCK_INDIGO
-									if (r,g,b) == (150,50,200):
-										block = BLOCK_VIOLET
-									if (r,g,b) == (200,100,200):
-										block = BLOCK_PURPLE
-									if (r,g,b) == (200,50,200):
-										block = BLOCK_MAGENTA
-									if (r,g,b) == (200,50,150):
-										block = BLOCK_PINK
-									if (r,g,b) == (100,100,100):
-										block = BLOCK_BLACK
-									if (r,g,b) == (150,150,150):
-										block = BLOCK_GRAY
-									if (r,g,b) == (200,200,200):
-										block = BLOCK_WHITE
-									if (r,g,b) == (50,50,50):
-										block = BLOCK_OBSIDIAN
-								block = chr(block)
-								try:
+										if r == 50:
+											if g == 100:
+												g = 50
+											if g == 150:
+												g = 200
+										if r == 100:
+											if g == 50:
+												g = 100
+											if g == 200:
+												g = 150
+										if r == 150:
+											if g == 100:
+												g = 150
+										if r == 50 and g == 50:
+											b = 50
+										if r == 50 and g == 200:
+											if b == 100:
+												b = 150
+										if r == 100 and g == 100:
+											b = 100
+										if r == 100 and g == 150:
+											b = 200
+										if r == 150 and g == 50:
+											b = 200
+										if r == 150 and g == 150:
+											if b == 50 or b == 100:
+												b = 150
+										if r == 150 and g == 200:
+											b = 50
+										if r == 200 and g == 50:
+											if b == 100:
+												b = 150
+										if r == 200 and g == 100:
+											b = 200
+										if r == 200 and g == 150:
+											b = 50
+										if r == 200 and g == 200:
+											if b == 100:
+												b = 50
+											if b == 150:
+												b = 200
+										if (r, g, b) == (200, 50, 50):
+											block = BLOCK_RED
+										if (r, g, b) == (200, 150, 50):
+											block = BLOCK_ORANGE
+										if (r, g, b) == (200,200,50):
+											block = BLOCK_YELLOW
+										if (r, g, b) == (150, 200, 50):
+											block = BLOCK_LIME
+										if (r, g, b) == (50, 200, 50):
+											block = BLOCK_GREEN
+										if (r, g, b) == (50, 200, 150):
+											block = BLOCK_TURQUOISE
+										if (r, g, b) == (50, 200, 200):
+											block = BLOCK_CYAN
+										if (r, g, b) == (100, 150, 200):
+											block = BLOCK_BLUE
+										if (r, g, b) == (150, 150, 200):
+											block = BLOCK_INDIGO
+										if (r, g, b) == (150, 50, 200):
+											block = BLOCK_VIOLET
+										if (r, g, b) == (200, 100, 200):
+											block = BLOCK_PURPLE
+										if (r, g, b) == (200, 50, 200):
+											block = BLOCK_MAGENTA
+										if (r, g, b) == (200, 50, 150):
+											block = BLOCK_PINK
+										if (r, g, b) == (100, 100, 100):
+											block = BLOCK_BLACK
+										if (r, g, b) == (150, 150, 150):
+											block = BLOCK_GRAY
+										if (r, g, b) == (200, 200, 200):
+											block = BLOCK_WHITE
+										if (r, g, b) == (50, 50, 50):
+											block = BLOCK_OBSIDIAN
+									block = chr(block)
 									world[i, j, k] = block
-								except AssertionError:
-									self.client.sendServerMessage("Out of bounds imagedraw error.")
-									return
-								self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
-								self.client.sendBlock(i, j, k, block)
-								self.client.total += 1
-								yield
+									self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
+									self.client.sendBlock(i, j, k, block)
+									self.client.total += 1
+									yield
+					except AssertionError:
+						self.client.sendServerMessage("Out of bounds imagedraw error.")
+						return
 				# Now, set up a loop delayed by the reactor
 				block_iter = iter(generate_changes())
 				def do_step():
 					# Do 10 blocks
 					try:
-						for x in range(10): #10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
+						for x in range(10): # 10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
 							block_iter.next()
-						reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
+						reactor.callLater(0.01, do_step)  # This is how long(in seconds) it waits to run another 10 blocks
 					except StopIteration:
 						if fromloc == 'user':
 							self.client.finalizeMassCMD('imagedraw', self.client.total)

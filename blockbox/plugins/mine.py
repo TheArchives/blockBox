@@ -9,7 +9,8 @@ from blockbox.decorators import *
 from blockbox.plugins import ProtocolPlugin
 
 class MinePlugin(ProtocolPlugin):
-	"Commands for Mine handling."
+	"Commands for Mine handling."
+
 	commands = {
 		"mine": "commandMine",
 		"clearmines": "commandClear",
@@ -19,6 +20,11 @@ class MinePlugin(ProtocolPlugin):
 		"blockchange": "blockChanged",
 		"poschange": "posChanged",
 	}
+
+	def gotClient(self):
+		self.explosion_radius = 3
+		self.delay = .5
+		self.placingmines = False
 
 	def blockChanged(self, x, y, z, block, selected_block, fromloc):
 		if fromloc != 'user':
@@ -59,7 +65,7 @@ class MinePlugin(ProtocolPlugin):
 					for i in range(-fanout, fanout+1):
 						for j in range(-fanout, fanout+1):
 							for k in range(-fanout, fanout+1):
-								if (i**2+j**2+k**2)**0.5 + 0.691 < fanout:
+								if (i ** 2 + j ** 2 + k ** 2) ** 0.5 + 0.691 < fanout:
 									if not self.client.AllowedToBuild(mx+i, my+j, mz+k):
 										return
 									check_offset = self.client.world.blockstore.get_offset(mx+i, my+j, mz+k)
@@ -108,7 +114,7 @@ class MinePlugin(ProtocolPlugin):
 			pass
 
 	@config("category", "build")
-	@op_only
+	@config("rank", "op")
 	def commandMine(self, parts, fromloc, rankoverride):
 		"/mine - Op\nMakes the next black block you place a mine."
 		self.placingmines = True
@@ -116,12 +122,7 @@ class MinePlugin(ProtocolPlugin):
 		self.client.sendServerMessage("Place a black block.")
 
 	@config("category", "build")
-	@admin_only
+	@config("rank", "admin")
 	def commandClear(self, parts, fromloc, rankoverride):
 		self.client.world.clear_mines()
 		self.client.sendServerMessage("You cleared all mines")
-
-	def gotClient(self):
-		self.explosion_radius = 3
-		self.delay = .5
-		self.placingmines = False

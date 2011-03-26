@@ -2,8 +2,6 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-from __future__ import with_statement
-
 import math, random
 
 from blockbox.constants import *
@@ -26,12 +24,6 @@ class InteractionPlugin(ProtocolPlugin):
 		"slap": "commandSlap",
 		"punch": "commandPunch",
 		"roll": "commandRoll",
-
-		"bank": "commandBalance",
-		"balance": "commandBalance",
-		"pay": "commandPay",
-		"setbank": "commandSetAccount",
-		"removebank": "commandRemoveAccount",
 
 		"count": "commandCount",
 		"countdown": "commandCount",
@@ -68,20 +60,28 @@ class InteractionPlugin(ProtocolPlugin):
 			except AttributeError:
 				pass
 
+	def sendgo(self):
+		self.client.sendPlainWorldMessage("&2[COUNTDOWN] GO!")
+		self.num = 0
+
+	def sendcount(self, count):
+		if not int(self.num) - int(count) == 0:
+			self.client.sendPlainWorldMessage("&2[COUNTDOWN] %s" % (int(self.num) - int(count)))
+
 	@config("category", "player")
 	def commandBack(self, parts, fromloc, overriderank):
 		"/back - Guest\nPrints out message of you coming back."
-		self.client.factory.queue.put(self.client, TASK_AWAYMESSAGE, "%s is now %sback." % (self.client.username, COLOUR_DARKGREEN))
+		self.client.factory.queue.put((self.client, TASK_AWAYMESSAGE, "%s is now %sback." % (self.client.username, COLOUR_DARKGREEN)))
 		self.client.gone = 0
 
 	@config("category", "player")
 	def commandAway(self, parts, fromloc, overriderank):
 		 "/away reason - Guest\nAliases: afk, brb\nPrints out message of you going away."
 		 if len(parts) == 1:
-			self.client.factory.queue.put(self.client, TASK_AWAYMESSAGE, "%s has gone AFK" % self.client.username)
+			self.client.factory.queue.put((self.client, TASK_AWAYMESSAGE, "%s has gone AFK" % self.client.username))
 			self.client.gone = 1
 		 else:
-			self.client.factory.queue.put(self.client, TASK_AWAYMESSAGE, "%s has gone AFK (%s)" % (self.client.username, " ".join(parts[1:])))
+			self.client.factory.queue.put((self.client, TASK_AWAYMESSAGE, "%s has gone AFK (%s)" % (self.client.username, " ".join(parts[1:]))))
 			self.client.gone = 1
 
 	@config("category", "player")
@@ -93,15 +93,15 @@ class InteractionPlugin(ProtocolPlugin):
 			if self.client.isSilenced():
 				self.client.sendServerMessage("You are Silenced and lost your tongue.")
 			else:
-				self.client.factory.queue.put(self.client, TASK_ACTION, (self.client.id, self.client.userColour(), self.client.username, " ".join(parts[1:])))
+				self.client.factory.queue.put((self.client, TASK_ACTION, (self.client.id, self.client.userColour(), self.client.username, " ".join(parts[1:]))))
 
-	@mod_only
+	@config("rank", "mod")
 	def commandSay(self, parts, fromloc, overriderank):
 		"/say message - Mod\nAliases: msg\nPrints out message in the server color."
 		if len(parts) == 1:
 			self.client.sendServerMessage("Please type a message.")
 		else:
-			self.client.factory.queue.put(self.client, TASK_SERVERMESSAGE, ("[MSG] %s" % " ".join(parts[1:])))
+			self.client.factory.queue.put((self.client, TASK_SERVERMESSAGE, ("[MSG] %s" % " ".join(parts[1:]))))
 
 	@config("category", "player")
 	def commandSlap(self, parts, fromloc, overriderank):
@@ -175,102 +175,7 @@ class InteractionPlugin(ProtocolPlugin):
 			else:
 				self.client.sendWorldMessage("%s rolled a %s" % (self.client.username, roll))
 
-	def commandBalance(self, parts, fromloc, overriderank):
-		"/bank - Guest\nAliases: balance\nFirst time: Creates you a account.\nOtherwise: Checks your balance."
-		if self.client.persist.int("bank", "balance", -1) is not -1:
-			self.client.sendServerMessage("Welcome to the bank!")
-			self.client.sendServerMessage("Your current balance is %d %s." % (self.client.persist.int("bank", "balance", -1), self.client.factory.credit_name))
-		else:
-			self.client.persist.set("bank", "balance", self.client.factory.initial_amount)
-			self.client.factory.balancesqllog.write("INSERT INTO " + self.client.factory.table_prefix + "players (username, balance) VALUES ('" + self.client.username + "', " + self.client.factory.initial_amount + ");")
-			self.client.factory.balancesqllog.flush()
-			self.client.sendServerMessage("Welcome to the bank!")
-			self.client.sendServerMessage("We have created your account.")
-			self.client.sendServerMessage("Your current balance is %d %s." % (self.client.persist.int("bank", "balance", -1), self.client.factory.credit_name))
-			self.client.sendServerMessage("NOTE: We CAN detect cheating. Do NOT try it.")
-			self.money_logger.info("%s has created an account." % self.client.username)
-
-	@director_only
-	def commandSetAccount(self, parts, fromloc, overriderank):
-		"/setbank username amount - Director\nEdits Bank Account"
-		if len(parts) != 3:
-			self.client.sendServerMessage("Syntax: /set <target> <amount>")
-			return False
-		target = parts[1]
-		with Persist(target) as p:
-			tbalance = p.int("bank", "balance", -1)
-		if tbalance is -1:
-			self.client.sendServerMessage("Invalid target.")
-			return False
-		try:
-			amount = int(parts[2])
-		except ValueError:
-			self.client.sendServerMessage("Invalid amount.")
-			return False
-		with Persist(target) as p:
-			p.set("bank", "balance", amount)
-		self.client.factory.balancesqllog.write("UPDATE " + self.client.factory.table_prefix + "players SET balance=" + amount + " WHERE username='" + target + "';")
-		self.client.factory.balancesqllog.flush()
-		self.client.sendServerMessage("Set player balance to %d %s." % (amount, self.client.factory.credit_name))
-
-	def commandPay(self, parts, fromloc, overriderank):
-		"/pay username amount - Guest\nThis lets you send money to other people."
-		if len(parts) != 3:
-			self.client.sendServerMessage("/pay <target> <amount>")
-			return False
-		user = self.client.username.lower()
-		ubalance = self.client.persist.int("bank", "balance", -1)
-		target = parts[1].lower()
-		with Persist(target) as p:
-			tbalance = p.int("bank", "balance", -1)
-		if tbalance is -1:
-			self.client.sendServerMessage("Error: Invalid target.")
-			return False
-		try:
-			amount = int(parts[2])
-		except ValueError:
-			self.client.sendServerMessage("Error: Invalid amount.")
-			return False
-		if ubalance is -1:
-			self.client.sendServerMessage("Error: You don't have an account.")
-			self.client.sendServerMessage("Notice: Do /bank to create one.")
-			return False
-		elif amount < 0 and not self.client.isDirector():
-			self.client.sendServerMessage("Error: Amount must be positive.")
-			return False
-		elif amount > ubalance or amount < -(tbalance):
-			self.client.sendServerMessage("Error: Not enough %s." % self.client.factory.credit_name)
-			return False
-		else:
-			with Persist(target) as p:
-				p.set("bank", "balance", tbalance + amount)
-			self.client.persist.set("bank", "balance", ubalance - amount)
-			self.client.factory.balancesqllog.write("UPDATE " + self.client.factory.table_prefix + "players SET balance=(balance-" + amount + ") WHERE username='" + self.client.username + "';")
-			self.client.factory.balancesqllog.flush()
-			self.client.sendServerMessage("You sent %d ." % amount)
-			if target in self.client.factory.usernames:
-				self.client.factory.usernames[target].sendServerMessage("You received %(amount)d %(creditname)s from %(user)s." % {'amount': amount, 'creditname': self.client.factory.credit_name, 'user': user})
-				self.client.factory.balancesqllog.write("UPDATE " + self.client.factory.table_prefix + "players SET balance=(balance+" + amount + ") WHERE username='" + target + "';")
-				self.client.factory.balancesqllog.flush()
-			self.money_logger.info("%(user)s sent %(amount)d to %(target)s" % {'user': user, 'amount': amount, 'target': target})
-
-	@director_only
-	def commandRemoveAccount(self, parts, fromloc, overriderank):
-		"/removebank username - Director\nRemoves Bank Account"
-		if len(parts) != 2:
-			self.client.sendServerMessage("Syntax: /removebank <target>")
-			return False
-		target = parts[1]
-		with Persist(target) as p:
-			if p.int("bank", "balance", -1) is -1:
-				self.client.sendServerMessage("Invalid target.")
-				return False
-			p.set("bank", "balance", -1)
-			self.client.factory.balancesqllog.write("UPDATE " + self.client.factory.table_prefix + "players SET balance=-1 WHERE username='" + target + "';")
-			self.client.factory.balancesqllog.flush()
-		self.client.sendServerMessage("Account deleted.")
-
-	@writer_only
+	@config("rank", "builder")
 	def commandCount(self, parts, fromloc, overriderank):
 		"/count [number] - Builder\nAliases: countdown\nCounts down from 3 or from number given (up to 15)"
 		if self.num != 0:
@@ -291,14 +196,6 @@ class InteractionPlugin(ProtocolPlugin):
 		counttimer = ResettableTimer(self.num, 1, self.sendgo, self.sendcount)
 		self.client.sendPlainWorldMessage("&2[COUNTDOWN] %s" %self.num)
 		counttimer.start()
-
-	def sendgo(self):
-		self.client.sendPlainWorldMessage("&2[COUNTDOWN] GO!")
-		self.num = 0
-
-	def sendcount(self, count):
-		if not int(self.num)-int(count) == 0:
-			self.client.sendPlainWorldMessage("&2[COUNTDOWN] %s" %(int(self.num)-int(count)))
 
 	def commandSendMessage(self,parts, fromloc, overriderank):
 		"/s username message - Guest\nSends an message to the player's Inbox."
@@ -353,7 +250,7 @@ class InteractionPlugin(ProtocolPlugin):
 		self.client.sendServerMessage("All your messages have been deleted.")
 
 	@config("category", "player")
-	@op_only
+	@config("rank", "op")
 	@only_username_command
 	def commandSpectate(self, user, fromloc, overriderank):
 		"/spectate username - Guest\nAliases: follow, watch\nFollows specified player around"

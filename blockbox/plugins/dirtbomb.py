@@ -50,7 +50,7 @@ class DirtBombPlugin(ProtocolPlugin):
 			reactor.callLater(self.delay, explode)
 
 	@config("category", "build")
-	@op_only
+	@config("rank", "op")
 	@on_off_command
 	def commanddirtbomb(self, onoff, fromloc, overriderank):
 		"/dirtbomb on|off - Builder\nThis is some kind of bomb involving dirt."

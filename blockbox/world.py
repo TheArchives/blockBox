@@ -29,7 +29,7 @@ class World(object):
 		# Other settings
 		self.owner = "N/A"
 		self.ops = set()
-		self.writers = set()
+		self.builders = set()
 		self.all_write = True
 		self.admin_blocks = True
 		self.private = False
@@ -170,7 +170,9 @@ class World(object):
 			self.ops = set(x.lower() for x in config.options("ops"))
 		else:
 			self.ops = set()
-		if config.has_section("writers"):
+		if config.has_section("builders"):
+			self.writers = set(x.lower() for x in config.options("builders"))
+		elif config.has_section("writers"):
 			self.writers = set(x.lower() for x in config.options("writers"))
 		else:
 			self.writers = set()
@@ -248,26 +250,26 @@ class World(object):
 				destination = [x.strip() for x in config.get("userzones", option).split(",")]
 				coords = map(int, destination[1:7])
 				users = map(str, destination[7:])
-				i=1
+				i = 1
 				while True:
 					if not i in self.userzones:
 						self.userzones[i] = destination[:1] + coords + users
 						break
 					else:
-						i+=1
+						i += 1
 		self.rankzones = {}
 		if config.has_section("rankzones"):
 			for option in config.options("rankzones"):
 				user = option
 				destination = [x.strip() for x in config.get("rankzones", option).split(",")]
 				coords = map(int, destination[1:7])
-				i=1
+				i = 1
 				while True:
 					if not i in self.rankzones:
 						self.rankzones[i] = destination[:1] + coords + destination[7:]
 						break
 					else:
-						i+=1
+						i += 1
 		#self.entitylist = []
 		#if config.has_section("entitylist"):
 		#	for option in config.options("entitylist"):
@@ -280,7 +282,7 @@ class World(object):
 		#					destination[i] = False
 		#				elif destination[i] == "True":
 		#					destination[i] = True
-		#		self.entitylist.append([destination[0],(destination[1],destination[2],destination[3])] + destination[4:])
+		#		self.entitylist.append([destination[0], (destination[1], destination[2], destination[3])] + destination[4:])
 
 	@property
 	def store_raw_blocks(self):
@@ -290,11 +292,10 @@ class World(object):
 		self.factory.saving = False
 
 	def flush(self):
-		self.blockstore.in_queue.put([TASK_FLUSH,self.saved])
+		self.blockstore.in_queue.put([TASK_FLUSH, self.saved])
 
 	def save_meta(self):
 		config = ConfigParser()
-		config.add_section("plus")
 		config.add_section("size")
 		config.add_section("spawn")
 		config.add_section("owner")
@@ -326,9 +327,9 @@ class World(object):
 		# Store ops
 		for op in self.ops:
 			config.set("ops", op, "true")
-		# Store writers
-		for writer in self.writers:
-			config.set("writers", writer, "true")
+		# Store builders
+		for writer in self.builders:
+			config.set("builders", writer, "true")
 		# Store permissions
 		config.set("permissions", "all_write", str(self.all_write))
 		config.set("permissions", "admin_blocks", str(self.admin_blocks))
@@ -500,7 +501,7 @@ class World(object):
 		assert 0 <= x < self.x
 		assert 0 <= y < self.y
 		assert 0 <= z < self.z
-		return y*(self.x*self.z) + z*(self.x) + x
+		return y * (self.x * self.z) + z * (self.x) + x
 
 	def get_coords(self, offset):
 		"Turns a data offset into coordinates"
@@ -515,7 +516,7 @@ class World(object):
 		gzip blocks file (gzipped, not the contents).
 		"""
 		# First, queue it
-		self.blockstore.in_queue.put([TASK_FLUSH,self.saved])
+		self.blockstore.in_queue.put([TASK_FLUSH, self.saved])
 		# Now, make the flush deferred if we haven't.
 		if not self.flush_deferred:
 			self.flush_deferred = Deferred()

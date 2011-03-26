@@ -9,7 +9,7 @@ from blockbox.decorators import *
 from blockbox.plugins import ProtocolPlugin
 
 class BlbPlugin(ProtocolPlugin):
-	"Commands for Massive block buildings."
+	"Commands for massive block buildings."
 
 	commands = {
 		"blb": "commandBlb",
@@ -26,13 +26,6 @@ class BlbPlugin(ProtocolPlugin):
 		#"useblblimit": "commandToggleUseBlb",
 	}
 
-	def canBreakAdminBlocks(self):
-		"Shortcut for checking permissions."
-		if hasattr(self.client, "world"):
-			return (not self.client.world.admin_blocks) or self.client.isOp()
-		else:
-			return False
-
 	@config("category", "build")
 	def commandBlb(self, parts, fromloc, overriderank):
 		"/blb blockname [x y z x2 y2 z2] - Guest\nAliases: box, cub, cuboid, draw\nSets all blocks in this area to block."
@@ -42,13 +35,8 @@ class BlbPlugin(ProtocolPlugin):
 			block = self.client.GetBlockValue(parts[1])
 			if block == None:
 				return
-			# Check the block is valid
-			if ord(block) > 49:
-				self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
-				return
-			op_blocks = [BLOCK_SOLID, BLOCK_WATER, BLOCK_LAVA]
-			if ord(block) in op_blocks and not self.client.isOp():
-				self.client.sendServerMessage("Sorry, but you can't use that block.")
+			if not self.client.canUseRestrictedBlocks(block):
+				self.client.sendServerMessage("Sorry, but you are not allowed to use that block.")
 				return
 			# If they only provided the type argument, use the last two block places
 			if len(parts) == 2:
@@ -67,9 +55,9 @@ class BlbPlugin(ProtocolPlugin):
 					y2 = int(parts[6])
 					z2 = int(parts[7])
 				except ValueError:
-					self.client.sendServerMessage("All parameters must be integers")
+					self.client.sendServerMessage("All coordinate parameters must be integers.")
 					return
-
+			# Reverse the coordinate, if necessary.
 			if x > x2:
 				x, x2 = x2, x
 			if y > y2:
@@ -77,7 +65,7 @@ class BlbPlugin(ProtocolPlugin):
 			if z > z2:
 				z, z2 = z2, z
 
-			limit = self.client.getBlbLimit(self.client.username)
+			limit = self.client.getBlbLimit()
 			if limit != -1:
 				# Stop them doing silly things
 				if ((x2 - x) * (y2 - y) * (z2 - z) > limit) or limit == 0:
@@ -111,7 +99,7 @@ class BlbPlugin(ProtocolPlugin):
 				try:
 					for x in range(10): # 10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
 						block_iter.next()
-					reactor.callLater(0.01, do_step) #This is how long(in seconds) it waits to run another 10 blocks
+					reactor.callLater(0.01, do_step) # This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if fromloc == 'user':
 						self.client.finalizeMassCMD('blb', self.client.total)
@@ -123,15 +111,14 @@ class BlbPlugin(ProtocolPlugin):
 	def commandHBlb(self, parts, fromloc, overriderank):
 		"/bhb blockname [x y z x2 y2 z2] - Guest\nAliases: hbox\nSets all blocks in this area to block, hollow."
 		if len(parts) < 8 and len(parts) != 2:
-			self.client.sendServerMessage("Please enter a block type")
+			self.client.sendServerMessage("Please enter a block type.")
 		else:
 			block = self.client.GetBlockValue(parts[1])
 			if block == None:
 				return
-			if ord(block) == 7:
-				if not self.canBreakAdminBlocks():
-					self.client.sendServerMessage("Solid is op-only.")
-					return
+			if not self.client.canUseRestrictedBlocks(block):
+				self.client.sendServerMessage("Sorry, but you are not allowed to use that block.")
+				return
 			# If they only provided the type argument, use the last two block places
 			if len(parts) == 2:
 				try:
@@ -149,9 +136,9 @@ class BlbPlugin(ProtocolPlugin):
 					y2 = int(parts[6])
 					z2 = int(parts[7])
 				except ValueError:
-					self.client.sendServerMessage("All parameters must be integers")
+					self.client.sendServerMessage("All coordinate parameters must be integers.")
 					return
-
+			# Reverse the coordinates, if necessary.
 			if x > x2:
 				x, x2 = x2, x
 			if y > y2:
@@ -159,7 +146,7 @@ class BlbPlugin(ProtocolPlugin):
 			if z > z2:
 				z, z2 = z2, z
 
-			limit = self.client.getBlbLimit(self.client.username)
+			limit = self.client.getBlbLimit()
 			if limit != -1:
 				# Stop them doing silly things
 				if (x2 - x) * (y2 - y) * (z2 - z) > limit or limit == 0:
@@ -175,9 +162,9 @@ class BlbPlugin(ProtocolPlugin):
 					for i in range(x, x2+1):
 						for j in range(y, y2+1):
 							for k in range(z, z2+1):
-								if not self.client.AllowedToBuild(i, j, k) and overriderank==False:
+								if not self.client.AllowedToBuild(i, j, k) and not overriderank:
 									return
-								if i==x or i==x2 or j==y or j==y2 or k==z or k==z2:
+								if i == x or i == x2 or j == y or j == y2 or k == z or k == z2:
 									world[i, j, k] = block
 									self.client.runHook("blockchange", x, y, z, ord(block), ord(block), fromloc)
 								   	self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
@@ -193,9 +180,9 @@ class BlbPlugin(ProtocolPlugin):
 			def do_step():
 				# Do 10 blocks
 				try:
-					for x in range(10): #10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
+					for x in range(10): # 10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
 						block_iter.next()
-					reactor.callLater(0.01, do_step) #This is how long(in seconds) it waits to run another 10 blocks
+					reactor.callLater(0.01, do_step) # This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if fromloc == 'user':
 						self.client.finalizeMassCMD('bhb', self.client.total)
@@ -212,10 +199,9 @@ class BlbPlugin(ProtocolPlugin):
 			block = self.client.GetBlockValue(parts[1])
 			if block == None:
 				return
-			if ord(block) == 7:
-				if not self.canBreakAdminBlocks():
-					self.client.sendServerMessage("Solid is op-only.")
-					return
+			if not self.client.canUseRestrictedBlocks(block):
+				self.client.sendServerMessage("Sorry, but you are not allowed to use that block.")
+				return
 			# If they only provided the type argument, use the last two block places
 			if len(parts) == 2:
 				try:
@@ -233,9 +219,9 @@ class BlbPlugin(ProtocolPlugin):
 					y2 = int(parts[6])
 					z2 = int(parts[7])
 				except ValueError:
-					self.client.sendServerMessage("All parameters must be integers")
+					self.client.sendServerMessage("All coordinate parameters must be integers.")
 					return
-
+			# Reverse the coordinates, if necessary.
 			if x > x2:
 				x, x2 = x2, x
 			if y > y2:
@@ -243,7 +229,7 @@ class BlbPlugin(ProtocolPlugin):
 			if z > z2:
 				z, z2 = z2, z
 
-			limit = self.client.getBlbLimit(self.client.username)
+			limit = self.client.getBlbLimit()
 			if limit != -1:
 				# Stop them doing silly things
 				if ((x2 - x) * (y2 - y) * (z2 - z) > limit) or limit == 0:
@@ -255,22 +241,22 @@ class BlbPlugin(ProtocolPlugin):
 			# We also keep world as a local so they can't change worlds and affect the new one
 			world = self.client.world
 			def generate_changes():
-				for i in range(x, x2+1):
-					for j in range(y, y2+1):
-						for k in range(z, z2+1):
-							if not self.client.AllowedToBuild(i, j, k) and overriderank==False:
-								return
-							if i==x or i==x2 or k==z or k==z2:
-								try:
+				try:
+					for i in range(x, x2+1):
+						for j in range(y, y2+1):
+							for k in range(z, z2+1):
+								if not self.client.AllowedToBuild(i, j, k) and not overriderank:
+									return
+								if i == x or i == x2 or k == z or k == z2:
 									world[i, j, k] = block
 									self.client.runHook("blockchange", x, y, z, ord(block), ord(block), fromloc)
-								except AssertionError:
-									self.client.sendServerMessage("Out of bounds bwb error.")
-									return
-								self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
-								self.client.sendBlock(i, j, k, block)
-								self.client.total += 1
-								yield
+									self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
+									self.client.sendBlock(i, j, k, block)
+									self.client.total += 1
+									yield
+				except AssertionError:
+					self.client.sendServerMessage("Out of bounds bwb error.")
+					return
 
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
@@ -292,40 +278,12 @@ class BlbPlugin(ProtocolPlugin):
 		if len(parts) < 9 and len(parts) != 3:
 			self.client.sendServerMessage("Please enter two types (and possibly two coord triples)")
 		else:
-			# Try getting block2 as a direct integer type.
-			try:
-				block2 = chr(int(parts[2]))
-			except ValueError:
-				# OK, try a symbolic type.
-				try:
-					block2 = chr(globals()['BLOCK_%s' % parts[2].upper()])
-				except KeyError:
-					self.client.sendServerMessage("'%s' is not a valid block type." % parts[2])
-					return
-			# Try getting the block as a direct integer type.
-			try:
-				block = chr(int(parts[1]))
-			except ValueError:
-				# OK, try a symbolic type.
-				try:
-					block = chr(globals()['BLOCK_%s' % parts[1].upper()])
-				except KeyError:
-					self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
-					return
-			# Check the block is valid
-			if ord(block) > 49:
-				self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
+			block = self.client.GetBlockValue(parts[1])
+			block2 = self.client.GetBlockValue(parts[2])
+			if block == None or block2 == None:
 				return
-			op_blocks = [BLOCK_SOLID, BLOCK_WATER, BLOCK_LAVA]
-			if ord(block) in op_blocks and not self.client.isOp():
-				self.client.sendServerMessage("Sorry, but you can't use that block.")
-				return
-			# Check that block2 is valid
-			if ord(block2) > 49:
-				self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
-				return
-			if ord(block2) in op_blocks and not self.client.isOp():
-				self.client.sendServerMessage("Sorry, but you can't use that block.")
+			if not self.client.canUseRestrictedBlocks(block) or not self.client.canUseRestrictedBlocks(block2):
+				self.client.sendServerMessage("Sorry, but you are not allowed to use that block.")
 				return
 			# If they only provided the type argument, use the last two block places
 			if len(parts) == 3:
@@ -344,9 +302,9 @@ class BlbPlugin(ProtocolPlugin):
 					y2 = int(parts[7])
 					z2 = int(parts[8])
 				except ValueError:
-					self.client.sendServerMessage("All parameters must be integers")
+					self.client.sendServerMessage("All coordinate parameters must be integers.")
 					return
-
+			# Reverse the coordinates, if necessary.
 			if x > x2:
 				x, x2 = x2, x
 			if y > y2:
@@ -354,7 +312,7 @@ class BlbPlugin(ProtocolPlugin):
 			if z > z2:
 				z, z2 = z2, z
 
-			limit = self.client.getBlbLimit(self.client.username)
+			limit = self.client.getBlbLimit()
 			if limit != -1:
 				# Stop them doing silly things
 				if ((x2 - x) * (y2 - y) * (z2 - z) > limit) or limit == 0:
@@ -367,32 +325,31 @@ class BlbPlugin(ProtocolPlugin):
 			world = self.client.world
 			def generate_changes():
 				ticker = 0
-				for i in range(x, x2+1):
-					for j in range(y, y2+1):
-						for k in range(z, z2+1):
-							if not self.client.AllowedToBuild(i, j, k):
-								return
-							try:
-								if (i+j+k)%2 == 0:
-									ticker = 1
-								else:
-									ticker = 0
+				try:
+					for i in range(x, x2+1):
+						for j in range(y, y2+1):
+							for k in range(z, z2+1):
+								if not self.client.AllowedToBuild(i, j, k):
+									return
+									if (i + j + k) % 2 == 0:
+										ticker = 1
+									else:
+										ticker = 0
+									if ticker == 0:
+										world[i, j, k] = block
+									else:
+										world[i, j, k] = block2
 								if ticker == 0:
-									world[i, j, k] = block
+									self.client.queueTask(TASK_BLOCKSET, (i, j, k, block2), world=world)
+									self.client.sendBlock(i, j, k, block2)
 								else:
-									world[i, j, k] = block2
-							except AssertionError:
-								self.client.sendServerMessage("Out of bounds bcb error.")
-								return
-							if ticker == 0:
-								self.client.queueTask(TASK_BLOCKSET, (i, j, k, block2), world=world)
-								self.client.sendBlock(i, j, k, block2)
-							else:
-								self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
-								self.client.sendBlock(i, j, k, block)
-							self.client.total += 1 # This is how you increase a number in python.... - Stacy
-							yield
-
+									self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
+									self.client.sendBlock(i, j, k, block)
+								self.client.total += 1
+								yield
+				except AssertionError:
+					self.client.sendServerMessage("Out of bounds bcb error.")
+					return
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
 			def do_step():
@@ -411,45 +368,15 @@ class BlbPlugin(ProtocolPlugin):
 	@config("category", "build")
 	def commandBhcb(self, parts, fromloc, overriderank):
 		"/bhcb blockname blockname2 [x y z x2 y2 z2] - Guest\nSets all blocks in this area to blocks, checkered hollow."
-		self.total_a = 0
-		self.total_b = 0
 		if len(parts) < 9 and len(parts) != 3:
 			self.client.sendServerMessage("Please enter two block types")
 		else:
-			# Try getting block2 as a direct integer type.
-			try:
-				block2 = chr(int(parts[2]))
-			except ValueError:
-				# OK, try a symbolic type.
-				try:
-					block2 = chr(globals()['BLOCK_%s' % parts[2].upper()])
-				except KeyError:
-					self.client.sendServerMessage("'%s' is not a valid block type." % parts[2])
-					return
-			# Try getting the block as a direct integer type.
-			try:
-				block = chr(int(parts[1]))
-			except ValueError:
-				# OK, try a symbolic type.
-				try:
-					block = chr(globals()['BLOCK_%s' % parts[1].upper()])
-				except KeyError:
-					self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
-					return
-			# Check the block is valid
-			if ord(block) > 49:
-				self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
+			block = self.client.GetBlockValue(parts[1])
+			block2 = self.client.GetBlockValue(parts[2])
+			if block == None or block2 == None:
 				return
-			op_blocks = [BLOCK_SOLID, BLOCK_WATER, BLOCK_LAVA]
-			if ord(block) in op_blocks and not self.client.isOp():
-				self.client.sendServerMessage("Sorry, but you can't use that block.")
-				return
-			# Check that block2 is valid
-			if ord(block2) > 49:
-				self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
-				return
-			if ord(block2) in op_blocks and not self.client.isOp():
-				self.client.sendServerMessage("Sorry, but you can't use that block.")
+			if not self.client.canUseRestrictedBlocks(block) or not self.client.canUseRestrictedBlocks(block2):
+				self.client.sendServerMessage("Sorry, but you are not allowed to use that block.")
 				return
 			# If they only provided the type argument, use the last two block places
 			if len(parts) == 3:
@@ -468,9 +395,9 @@ class BlbPlugin(ProtocolPlugin):
 					y2 = int(parts[6])
 					z2 = int(parts[7])
 				except ValueError:
-					self.client.sendServerMessage("All parameters must be integers")
+					self.client.sendServerMessage("All coordinate parameters must be integers.")
 					return
-
+			# Reverse the coordinate, if necessary.
 			if x > x2:
 				x, x2 = x2, x
 			if y > y2:
@@ -478,7 +405,7 @@ class BlbPlugin(ProtocolPlugin):
 			if z > z2:
 				z, z2 = z2, z
 
-			limit = self.client.getBlbLimit(self.client.username)
+			limit = self.client.getBlbLimit()
 			if limit != -1:
 				# Stop them doing silly things
 				if ((x2 - x) * (y2 - y) * (z2 - z) > limit) or limit == 0:
@@ -491,49 +418,44 @@ class BlbPlugin(ProtocolPlugin):
 			world = self.client.world
 			def generate_changes():
 				ticker = 0
-				for i in range(x, x2+1):
-					for j in range(y, y2+1):
-						for k in range(z, z2+1):
-							if not self.client.AllowedToBuild(i, j, k):
-								return
-							if i==x or i==x2 or j==y or j==y2 or k==z or k==z2:
-								try:
-									if (i+j+k)%2 == 0:
+				try:
+					for i in range(x, x2+1):
+						for j in range(y, y2+1):
+							for k in range(z, z2+1):
+								if not self.client.AllowedToBuild(i, j, k):
+									return
+								if i == x or i == x2 or j == y or j == y2 or k == z or k == z2:
+									if (i + j + k) % 2 == 0:
 										ticker = 1
 									else:
 										ticker = 0
 									if ticker == 0:
 										world[i, j, k] = block
-										self.total_a = self.total_a+1
 									else:
 										world[i, j, k] = block2
-										self.total_b = self.total_b+1
-								except AssertionError:
-									self.client.sendServerMessage("Out of bounds bhcb error.")
-									return
-								if ticker == 0:
-									self.client.queueTask(TASK_BLOCKSET, (i, j, k, block2), world=world)
-									self.client.sendBlock(i, j, k, block2)
-								else:
-									self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
-									self.client.sendBlock(i, j, k, block)
-								self.client.total += 1
-								yield
+									if ticker == 0:
+										self.client.queueTask(TASK_BLOCKSET, (i, j, k, block2), world=world)
+										self.client.sendBlock(i, j, k, block2)
+									else:
+										self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
+										self.client.sendBlock(i, j, k, block)
+									self.client.total += 1
+									yield
+				except AssertionError:
+					self.client.sendServerMessage("Out of bounds bhcb error.")
+					return
 
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
 			def do_step():
 				# Do 10 blocks
 				try:
-					for x in range(10):#10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
+					for x in range(10): # 10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
 						block_iter.next()
-					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
+					reactor.callLater(0.01, do_step) # This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if fromloc == 'user':
 						self.client.finalizeMassCMD('bhcb', self.client.total)
-						self.client.sendServerMessage("%i %s, %i %s" % (self.total_a, block, self.total_b, block2))
-						self.total_a = 0
-						self.total_b = 0
 					pass
 			do_step()
 
@@ -541,25 +463,13 @@ class BlbPlugin(ProtocolPlugin):
 	def commandFBlb(self, parts, fromloc, overriderank):
 		"/bfb blockname [x y z x2 y2 z2] - Guest\nSets all blocks in this area to block, wireframe."
 		if len(parts) < 8 and len(parts) != 2:
-			self.client.sendServerMessage("Please enter a block type")
+			self.client.sendServerMessage("Please enter a block type.")
 		else:
-			# Try getting the block as a direct integer type.
-			try:
-				block = chr(int(parts[1]))
-			except ValueError:
-				# OK, try a symbolic type.
-				try:
-					block = chr(globals()['BLOCK_%s' % parts[1].upper()])
-				except KeyError:
-					self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
-					return
-			# Check the block is valid
-			if ord(block) > 49:
-				self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
+			block = self.client.GetBlockValue(parts[1])
+			if block == None:
 				return
-			op_blocks = [BLOCK_SOLID, BLOCK_WATER, BLOCK_LAVA]
-			if ord(block) in op_blocks and not self.client.isOp():
-				self.client.sendServerMessage("Sorry, but you can't use that block.")
+			if not self.client.canUseRestrictedBlocks(block):
+				self.client.sendServerMessage("Sorry, but you are not allowed to use that block.")
 				return
 			# If they only provided the type argument, use the last two block places
 			if len(parts) == 2:
@@ -578,9 +488,9 @@ class BlbPlugin(ProtocolPlugin):
 					y2 = int(parts[6])
 					z2 = int(parts[7])
 				except ValueError:
-					self.client.sendServerMessage("All parameters must be integers")
+					self.client.sendServerMessage("All coordinate parameters must be integers.")
 					return
-
+			# Reverse the coordinate, if necessary.
 			if x > x2:
 				x, x2 = x2, x
 			if y > y2:
@@ -588,7 +498,7 @@ class BlbPlugin(ProtocolPlugin):
 			if z > z2:
 				z, z2 = z2, z
 
-			limit = self.client.getBlbLimit(self.client.username)
+			limit = self.client.getBlbLimit()
 			if limit != -1:
 				# Stop them doing silly things
 				if ((x2 - x) * (y2 - y) * (z2 - z) > limit) or limit == 0:
@@ -600,30 +510,31 @@ class BlbPlugin(ProtocolPlugin):
 			# We also keep world as a local so they can't change worlds and affect the new one
 			world = self.client.world
 			def generate_changes():
-				for i in range(x, x2+1):
-					for j in range(y, y2+1):
-						for k in range(z, z2+1):
-							if not self.client.AllowedToBuild(i, j, k):
-								return
-							if (i==x and j==y) or (i==x2 and j==y2) or (j==y2 and k==z2) or (i==x2 and k==z2) or (j==y and k==z) or (i==x and k==z) or (i==x and k==z2) or (j==y and k==z2) or (i==x2 and k==z) or (j==y2 and k==z) or (i==x and j==y2) or (i==x2 and j==y):
-								try:
-									world[i, j, k] = block
-								except AssertionError:
-									self.client.sendServerMessage("Out of bounds bfb error.")
+				try:
+					for i in range(x, x2+1):
+						for j in range(y, y2+1):
+							for k in range(z, z2+1):
+								if not self.client.AllowedToBuild(i, j, k):
 									return
-								self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
-								self.client.sendBlock(i, j, k, block)
-								self.client.total += 1
-								yield
-
+								if ((i == x and j == y) or (i == x2 and j == y2) or (j == y2 and k == z2) or (i == x2 and k == z2) or \
+									(j == y and k == z) or (i == x and k == z) or (i == x and k == z2) or (j == y and k == z2) or \
+									(i == x2 and k == z) or (j == y2 and k == z) or (i == x and j == y2) or (i == x2 and j == y)):
+									world[i, j, k] = block
+									self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
+									self.client.sendBlock(i, j, k, block)
+									self.client.total += 1
+									yield
+				except AssertionError:
+					self.client.sendServerMessage("Out of bounds bfb error.")
+					return
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
 			def do_step():
 				# Do 10 blocks
 				try:
-					for x in range(10):#10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
+					for x in range(10): # 10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
 						block_iter.next()
-					reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
+					reactor.callLater(0.01, do_step) # This is how long(in seconds) it waits to run another 10 blocks
 				except StopIteration:
 					if fromloc == 'user':
 						self.client.finalizeMassCMD('bfb', self.client.total)
@@ -631,7 +542,7 @@ class BlbPlugin(ProtocolPlugin):
 					pass
 			do_step()
 
-#	@owner_only
+#	@config("rank", "owner")
 #	@on_off_command
 #	def commandToggleUseBlb(self, onoff, fromloc, overriderank):
 #		"/useblblimit on|off - Owner\nSet if the server will use custom BLB limit or the default limit."

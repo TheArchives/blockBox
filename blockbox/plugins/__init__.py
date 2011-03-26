@@ -60,7 +60,7 @@ class ProtocolPlugin(object):
 					self.client.registerHook(name, getattr(self, fname))
 				except AttributeError:
 					# Nope, can't find that hook. Return error
-					self.client.factory.logger.error("Cannot find hook for %s, please report to blockBox team." % fname)
+					self.client.factory.logger.error("Cannot find hook code for %s, please report to blockBox team." % fname)
 					return
 		# Call clean setup method
 		self.gotClient()
@@ -82,7 +82,10 @@ class ProtocolPlugin(object):
 def load_plugins(plugins):
 	"Given a list of plugin names, imports them so they register."
 	for module_name in plugins:
-		__import__("blockbox.plugins.%s" % module_name)
+		try:
+			__import__("blockbox.plugins.%s" % module_name)
+		except ImportError:
+			logging.getLogger("Plugins").error("Cannot load plugin %s." % module_name)
 
 def unload_plugin(plugin_name):
 	"Given a plugin name, reloads and re-imports its code."

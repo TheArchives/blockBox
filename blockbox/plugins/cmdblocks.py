@@ -199,7 +199,7 @@ class CommandPlugin(ProtocolPlugin):
 
 	def blockChanged(self, x, y, z, block, fromloc):
 		"Hook trigger for block changes."
-		#avoid infinite loops by making blocks unaffected by commands
+		# Avoid infinite loops by making blocks unaffected by commands
 		#if fromloc != 'user':
 		#	return False
 		if self.client.world.has_command(x, y, z):
@@ -240,7 +240,7 @@ class CommandPlugin(ProtocolPlugin):
 
 	def newWorld(self, world):
 		"Hook to reset command abilities in new worlds if not op."
-		if not self.client.isWriter():
+		if not self.client.isBuilder():
 			self.command_cmd = None
 			self.command_remove = False
 
@@ -265,7 +265,7 @@ class CommandPlugin(ProtocolPlugin):
 		self.last_block_position = (rx, ry, rz)
 
 	@config("category", "info")
-	@writer_only
+	@config("rank", "builder")
 	def commandCmdHelp(self, parts, fromloc, overriderank):
 		"/cmdhelp category [subcategory] - Builder\ncmdblocks help, learn what you can do in them."
 		if len(parts) > 1:
@@ -363,7 +363,7 @@ class CommandPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("cmdblocks Help - Use: /cmdhelp category [subcategory]")
 			self.client.sendSplitServerMessage("Categories: types functions variables")
 
-	@writer_only
+	@config("rank", "builder")
 	def commandCommand(self, parts, fromloc, permissionoverride):
 		"/cmd command [arguments] - Builder\nStarts creating a command block, or adds a command to the command block.\nThe command can be any server command.\nAfter you have entered all commands, type /cmd again to begin placing.\nOnce placed, the blocks will run the command when clicked\nas if the one clicking had typed the commands."
 		if len(parts) < 2:
@@ -406,7 +406,7 @@ class CommandPlugin(ProtocolPlugin):
 						self.client.sendServerMessage("Use /cmd command again to add a command")
 						self.client.sendServerMessage("Type /cmd with no args to start placing the block.")
 
-	@mod_only
+	@config("rank", "mod")
 	def commandGuestCommand(self, parts, fromloc, permissionoverride):
 		"/gcmd command [arguments] - Mod\nMakes the next block you place a guest command block."
 		if len(parts) < 2:
@@ -438,26 +438,37 @@ class CommandPlugin(ProtocolPlugin):
 			command = str(parts[1])
 			cmdspecials = ["wait", "if", "exit", "getinput", "getnum", "getblock", "getyn", "self"] # Special keywords
 			if not command in cmdspecials:
-				if command.lower() in self.client.commands:
-					func = self.client.commands[command.lower()]
-				else:
-					self.client.sendServerMessage("Unknown command '%s'" % command)
+				# See if we can handle it internally
+				try:
+					func = getattr(self.client, "command%s" % command.title())
+				except AttributeError:
+					try:
+						try:
+							func = self.commands[command.lower()]
+						except KeyError:
+							self.sendServerMessage("Unknown command '%s'" % command)
+							return
+					except AttributeError:
+						self.logger.error("Cannot find command code for %s, please report to blockBox team." % func)
+						self.sendSplitServerMessage("Command code for command '%s' not found, please report to server staff or blockBox team." % command)
+						return
+				if func.config["disabled"]:
 					return
-				if (self.client.isSpectator() and (getattr(func, "admin_only", False) or getattr(func, "mod_only", False) or getattr(func, "op_only", False) or getattr(func, "advbuilder_only", False) or getattr(func, "worldowner_only", False) or getattr(func, "writer_only", False))):
+				if self.client.isSpectator() and func.config["rank"]:
 					return
-				if getattr(func, "director_only", False) and not self.client.isDirector():
+				if func.config["rank"] == "director" and not self.client.isDirector():
 					return
-				if getattr(func, "admin_only", False) and not self.client.isAdmin():
+				if func.config["rank"] == "admin" and not self.client.isAdmin():
 					return
-				if getattr(func, "mod_only", False) and not (self.client.isMod() or self.client.isAdmin()):
+				if func.config["rank"] == "mod" and not self.client.isMod():
 					return
-				if getattr(func, "op_only", False) and not (self.client.isOp() or self.isWorldOwner() or self.client.isMod()):
+				if func.config["rank"] == "worldowner" and not self.client.isWorldOwner():
 					return
-				if getattr(func, "worldowner_only", False) and not (self.client.isWorldOwner() or self.client.isMod()):
+				if func.config["rank"] == "op" and not self.client.isOp():
 					return
-				if getattr(func, "advbuilder_only", False) and not (self.client.isAdvBuilder() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
+				if func.config["rank"] == "advbuilder" and not self.client.isAdvBuilder():
 					return
-				if getattr(func, "writer_only", False) and not (self.client.isWriter() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
+				if func.config["rank"] == "builder" and not self.client.isBuilder():
 					return
 			for x in parts:
 					commandtext = commandtext + " " + str(x)
@@ -474,7 +485,7 @@ class CommandPlugin(ProtocolPlugin):
 						self.client.sendServerMessage("Use /gcmd command again to add a command")
 						self.client.sendServerMessage("Type /gcmd with no argumentss to start placing the block.")
 
-	@writer_only
+	@config("rank", "builder")
 	def commandSensorCommand(self, parts, fromloc, permissionoverride):
 		"/scmd command [arguments] - Builder\nStarts creating a command block, or adds a command to the command block.\nThe command can be any server command.\nAfter you have entered all commands, type /cmd again to begin placing.\nOnce placed, the blocks will run the command when clicked\nas if the one clicking had typed the commands."
 		if len(parts) < 2:
@@ -484,8 +495,8 @@ class CommandPlugin(ProtocolPlugin):
 				self.placing_cmd = True
 				self.client.sendServerMessage("You are now placing sensor command blocks.")
 		else:
-			twocoordcommands=["blb", "bhb", "bwb", "mountain", "hill", "dune", "pit", "lake", "hole", "copy", "replace"]
-			onecoordcommands=["sphere", "hsphere", "paste"]
+			twocoordcommands = ["blb", "bhb", "bwb", "mountain", "hill", "dune", "pit", "lake", "hole", "copy", "replace"]
+			onecoordcommands = ["sphere", "hsphere", "paste"]
 			if parts[1] in self.twocoordcommands:
 				if len(parts) < 8:
 					if len(self.client.last_block_changes) > 1:
@@ -519,7 +530,7 @@ class CommandPlugin(ProtocolPlugin):
 						self.client.sendServerMessage("Use /scmd command again to add a command")
 						self.client.sendServerMessage("Type /scmd with no args to start placing the block.")
 
-	@mod_only
+	@config("rank", "mod")
 	def commandGuestSensorCommand(self, parts, fromloc, permissionoverride):
 		"/gscmd command [arguments] - Mod\nMakes the next block you place a guest sensor command block."
 		if len(parts) < 2:
@@ -549,37 +560,52 @@ class CommandPlugin(ProtocolPlugin):
 						parts.append(z)
 			commandtext = ""
 			command = str(parts[1])
-			cmdspecials = ["wait", "if", "exit", "getinput", "getnum", "getblock", "getyn", "self"]  # Special keywordws
+			cmdspecials = ["wait", "if", "exit", "getinput", "getnum", "getblock", "getyn", "self"] # Special keywordws
 			if not command in cmdspecials:
-				if command.lower() in self.client.commands:
-					func = self.client.commands[command.lower()]
-				else:
-					self.client.sendServerMessage("Unknown command '%s'" % command)
+				# See if we can handle it internally
+				try:
+					func = getattr(self.client, "command%s" % command.title())
+				except AttributeError:
+					try:
+						try:
+							func = self.commands[command.lower()]
+						except KeyError:
+							self.sendServerMessage("Unknown command '%s'" % command)
+							return
+					except AttributeError:
+						self.logger.error("Cannot find command code for %s, please report to blockBox team." % func)
+						self.sendSplitServerMessage("Command code for command '%s' not found, please report to server staff or blockBox team." % command)
+						return
+				if func.config["disabled"]:
+					self.sendServerMessage("Command %s is disabled by the server owner." % command)
 					return
-				if (self.client.isSpectator() and (getattr(func, "admin_only", False) or getattr(func, "mod_only", False) or getattr(func, "op_only", False) or getattr(func, "advbuilder_only", False) or getattr(func, "worldowner_only", False) or getattr(func, "writer_only", False))):
-					self.client.sendServerMessage("'%s' is not available to specs." % command)
-					return
-				if getattr(func, "director_only", False) and not self.client.isDirector():
-					self.client.sendServerMessage("'%s' is a Director-only command!" % command)
-					return
-				if getattr(func, "admin_only", False) and not self.client.isAdmin():
-					self.client.sendServerMessage("'%s' is an Admin-only command!" % command)
-					return
-				if getattr(func, "mod_only", False) and not (self.client.isMod() or self.client.isAdmin()):
-					self.client.sendServerMessage("'%s' is a Mod-only command!" % command)
-					return
-				if getattr(func, "op_only", False) and not (self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
-					self.client.sendServerMessage("'%s' is an Op-only command!" % command)
-					return
-				if getattr(func, "worldowner_only", False) and not (self.client.isWorldOwner() or self.client.isMod()):
-					self.client.sendServerMessage("'%s' is an WorldOwner-only command!" % command)
-					return
-				if getattr(func, "advbuilder_only", False) and not (self.client.isAdvBuilder() or self.client.isMod()):
-					self.client.sendServerMessage("'%s' is a Advanced Builder-only command!" % command)
-					return
-				if getattr(func, "writer_only", False) and not (self.client.isWriter() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
-					self.client.sendServerMessage("'%s' is a Builder-only command!" % command)
-					return
+					if self.client.isSpectator() and func.config["rank"]:
+						self.client.sendServerMessage("'%s' is not available to spectators." % command)
+						return
+					if func.config["rank"] == "owner" and not self.client.isOwner():
+						self.client.sendServerMessage("'%s' is an Owner-only command!" % command)
+						return
+					if func.config["rank"] == "director" and not self.client.isDirector():
+						self.client.sendServerMessage("'%s' is a Director-only command!" % command)
+						return
+					if func.config["rank"] == "admin" and not self.client.isAdmin():
+						self.client.sendServerMessage("'%s' is an Admin-only command!" % command)
+						return
+					if func.config["rank"] == "mod" and not self.client.isMod():
+						self.client.sendServerMessage("'%s' is a Mod-only command!" % command)
+						return
+					if func.config["rank"] == "worldowner" and not self.client.isWorldOwner():
+						self.client.sendServerMessage("'%s' is an WorldOwner-only command!" % command)
+						return
+					if func.config["rank"] == "op" and not self.client.isOp():
+						self.client.sendServerMessage("'%s' is an Op-only command!" % command)
+						return
+					if func.config["rank"] == "advbuilder" and not self.client.isAdvBuilder():
+						self.client.sendServerMessage("'%s' is an Advanced Builder-only command!" % command)
+						return
+					if func.config["rank"] == "builder" and not self.client.isBuilder():
+						self.client.sendServerMessage("'%s' is a Builder-only command!" % command)
+						return
 			for x in parts:
 					commandtext = commandtext + " " + str(x)
 			if not self.command_cmd is None:
@@ -595,7 +621,7 @@ class CommandPlugin(ProtocolPlugin):
 						self.client.sendServerMessage("Use /gscmd command again to add a command")
 						self.client.sendServerMessage("Type /gscmd with no args to start placing the block.")
 
-	@writer_only
+	@config("rank", "builder")
 	def commandCommandend(self, parts, fromloc, permissionoverride):
 		"/cmdend - Builder\nStops placing/deleting command blocks."
 		self.command_cmd = list({})
@@ -603,19 +629,19 @@ class CommandPlugin(ProtocolPlugin):
 		self.placing_cmd = False
 		self.client.sendServerMessage("You are no longer placing command blocks.")
 
-	@writer_only
+	@config("rank", "builder")
 	def commandCommanddel(self, parts, fromloc, permissionoverride):
 		"/cmddel - Builder\nEnables Command-deleting mode"
 		self.client.sendServerMessage("You are now able to delete command blocks. /cmddelend to stop")
 		self.command_remove = True
 
-	@writer_only
+	@config("rank", "builder")
 	def commandCommanddelend(self, parts, fromloc, permissionoverride):
 		"/cmddelend - Builder\nDisables Command-deleting mode"
 		self.client.sendServerMessage("Command deletion mode ended.")
 		self.command_remove = False
 
-	@writer_only
+	@config("rank", "builder")
 	def commandShowcmdblocks(self, parts, fromloc, permissionoverride):
 		"/cmdshow - Builder\nShows all command blocks as yellow, only to you."
 		for offset in self.client.world.commands.keys():
@@ -623,7 +649,7 @@ class CommandPlugin(ProtocolPlugin):
 			self.client.sendPacked(TYPE_BLOCKSET, x, y, z, BLOCK_YELLOW)
 		self.client.sendServerMessage("All cmdblocks are appearing as a yellow block temporarily.")
 
-	@writer_only
+	@config("rank", "builder")
 	@on_off_command
 	def commandcmdinfo(self, onoff, fromloc, permissionoverride):
 		"/cmdinfo - Builder\nTells you the commands in a cmdblock"
@@ -702,7 +728,7 @@ class CommandPlugin(ProtocolPlugin):
 		elif self.client.isWorldOwner():
 			myrank = "worldowner"
 			myranknum = 5
-		elif self.client.isWriter():
+		elif self.client.isBuilder():
 			myrank = "builder"
 			myranknum = 2
 		rx = self.client.x >> 5
@@ -711,7 +737,7 @@ class CommandPlugin(ProtocolPlugin):
 		thiscmd = thiscmd.replace("$posx", str(rx))
 		thiscmd = thiscmd.replace("$posy", str(ry))
 		thiscmd = thiscmd.replace("$posz", str(rz))
-		thiscmd = thiscmd.replace("$posa", str(rx) + " " + str(ry) + " " +str(rx))
+		thiscmd = thiscmd.replace("$posa", str(rx) + " " + str(ry) + " " + str(rx))
 		thiscmd = thiscmd.replace("$rank", myrank)
 		thiscmd = thiscmd.replace("$rnum", str(myranknum))
 		for variable in self.customvars.keys():
@@ -739,11 +765,11 @@ class CommandPlugin(ProtocolPlugin):
 			if thiscmd[num:(num+5)] == "$eval":
 				try:
 					parentheses = 0
-					for num2 in range(num+6, len(thiscmd)-1):
+					for num2 in range(num + 6, len(thiscmd) - 1):
 						if thiscmd[num2] == "(":
-							parentheses = parentheses+1
+							parentheses = parentheses + 1
 						elif thiscmd[num2] == ")":
-							parentheses = parentheses-1
+							parentheses = parentheses - 1
 						if parentheses == 0:
 							# Reached the end of the expression
 							lastindex = num2
@@ -752,12 +778,11 @@ class CommandPlugin(ProtocolPlugin):
 					thiscmd = thiscmd.replace(thiscmd[num:lastindex+2], expression)
 				except:
 					self.client.sendServerMessage("$eval syntax error! Use $eval(expression)")
-		blocklist = ["air", "rock", "grass", "dirt", "cobblestone", "wood", "plant", "solid", "water", "still water", "lava", "still lava", "sand", "gravel", "gold ore", "iron ore", "coal ore", "trunk", "leaf", "sponge", "glass", "red cloth", "orange cloth", "yellow cloth", "lime green cloth", "green cloth", "turquoise cloth", "cyan cloth", "blue cloth", "dark blue cloth", "violet cloth", "purple cloth", "magenta cloth", "pink cloth", "black cloth", "gray cloth", "white cloth", "flower", "rose", "red mushroom", "brown mushroom", "gold", "iron", "double step", "step", "brick", "TNT", "bookshelf", "mossy cobblestone", "obsidian"]
 		for num in range(len(thiscmd)):
 			if thiscmd[num:(num+6)] == "$bname":
 				try:
 					blocknum = int(thiscmd[thiscmd.find("(", num)+1:thiscmd.find(")", num+5)])
-					thiscmd = thiscmd.replace(thiscmd[num:thiscmd.find(")", num)+1], blocklist[blocknum])
+					thiscmd = thiscmd.replace(thiscmd[num:thiscmd.find(")", num)+1], BlockList[blocknum])
 				except:
 					self.client.sendServerMessage("$bname syntax error! Use $bname(blockint)")
 		if thiscmd.startswith(" if"):
@@ -806,7 +831,7 @@ class CommandPlugin(ProtocolPlugin):
 			if balance is not -1:
 				if balance >= amount:
 					self.listeningforpay = True
-					self.client.sendServerMessage("%s is requesting payment of C%s. Pay? [Y/N]" %(target, amount))
+					self.client.sendServerMessage("%s is requesting payment of C%s. Pay? [Y/N]" % (target, amount))
 					return
 				else:
 					self.client.sendServerMessage("You don't have enough money to pay.")
@@ -890,43 +915,50 @@ class CommandPlugin(ProtocolPlugin):
 					self.client.sendServerMessage("This command block is requesting a yes/no input.")
 				self.runningcmdlist.remove(self.runningcmdlist[0])
 				return
+		# See if we can handle it internally
 		try:
-			if not command.lower() in self.client.commands:
-				if runcmd:
-					self.client.sendServerMessage("Unknown command '%s'" % command)
+			func = getattr(self, "command%s" % command.title())
+		except AttributeError:
+			try:
+				try:
+					func = self.commands[command.lower()]
+				except KeyError:
+					self.sendServerMessage("Unknown command '%s'" % command)
+					runcmd = False
+			except AttributeError:
+				self.logger.error("Cannot find command code for %s, please report to blockBox team." % func)
+				self.sendSplitServerMessage("Command code for command '%s' not found, please report to server staff or blockBox team." % command)
 				runcmd = False
-			func = self.client.commands[command.lower()]
-		except KeyError:
-			if runcmd:
-				self.client.sendServerMessage("Unknown command '%s'" % command)
-				runcmd = False
-		if runcmd is True:
-			if func.config["disabled"] == True:
-				self.client.sendServerMessage("Command %s is disabled by the server owner.")
+		if runcmd == True:
+			if func.config["disabled"]:
+				self.client.sendServerMessage("Command %s is disabled by the server owner." % command)
 				runcmd = False
 			if guest is False:
-				if (self.client.isSpectator() and (getattr(func, "admin_only", False) or getattr(func, "mod_only", False) or getattr(func, "op_only", False) or getattr(func, "advbuilder_only", False) or getattr(func, "worldowner_only", False) or getattr(func, "writer_only", False))):
-					self.client.sendServerMessage("'%s' is not available to specs." % command)
+				if self.client.isSpectator() and func.config["rank"]:
+					self.client.sendServerMessage("'%s' is not available to spectators." % command)
 					runcmd = False
-				if getattr(func, "director_only", False) and not self.client.isDirector():
+				if func.config["rank"] == "owner" and not self.client.isOwner():
+					self.client.sendServerMessage("'%s' is an Owner-only command!" % command)
+					runcmd = False
+				if func.config["rank"] == "director" and not self.client.isDirector():
 					self.client.sendServerMessage("'%s' is a Director-only command!" % command)
 					runcmd = False
-				if getattr(func, "admin_only", False) and not self.client.isAdmin():
+				if func.config["rank"] == "admin" and not self.client.isAdmin():
 					self.client.sendServerMessage("'%s' is an Admin-only command!" % command)
 					runcmd = False
-				if getattr(func, "mod_only", False) and not (self.client.isMod() or self.client.isAdmin()):
+				if func.config["rank"] == "mod" and not self.client.isMod():
 					self.client.sendServerMessage("'%s' is a Mod-only command!" % command)
 					runcmd = False
-				if getattr(func, "op_only", False) and not (self.client.isOp() or self.client.isMod()):
-					self.client.sendServerMessage("'%s' is an Op-only command!" % command)
-					runcmd = False
-				if getattr(func, "worldowner_only", False) and not (self.client.isWorldOwner() or self.client.isMod()):
+				if func.config["rank"] == "worldowner" and not self.client.isWorldOwner():
 					self.client.sendServerMessage("'%s' is an WorldOwner-only command!" % command)
 					runcmd = False
-				if getattr(func, "advbuilder_only", False) and not (self.client.isAdvBuilder() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
-					self.client.sendServerMessage("'%s' is a Advanced Builder-only command!" % command)
+				if func.config["rank"] == "op" and not self.client.isOp():
+					self.client.sendServerMessage("'%s' is an Op-only command!" % command)
 					runcmd = False
-				if getattr(func, "writer_only", False) and not (self.client.isWriter() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
+				if func.config["rank"] == "advbuilder" and not self.client.isAdvBuilder():
+					self.client.sendServerMessage("'%s' is an Advanced Builder-only command!" % command)
+					runcmd = False
+				if func.config["rank"] == "builder" and not self.client.isBuilder():
 					self.client.sendServerMessage("'%s' is a Builder-only command!" % command)
 					runcmd = False
 			try:

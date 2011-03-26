@@ -24,7 +24,7 @@ class ServerUtilPlugin(ProtocolPlugin):
 		"sendhb": "commandSendHeartbeat",
 	}
 
-	@director_only
+	@config("rank", "director")
 	def commandSRB(self, parts, fromloc, overriderank):
 		"/srb [reason] - Director\nPrints out a reboot message."
 		if len(parts) == 1:
@@ -32,7 +32,7 @@ class ServerUtilPlugin(ProtocolPlugin):
 		else:
 			self.client.factory.queue.put((self.client, TASK_SERVERURGENTMESSAGE, ("[Server Reboot] Be back in a few: "+(" ".join(parts[1:])))))
 
-	@director_only
+	@config("rank", "director")
 	def commandSRS(self, parts, fromloc, overriderank):
 		"/srs [reason] - Director\nPrints out a shutdown message."
 		if len(parts) == 1:
@@ -40,7 +40,7 @@ class ServerUtilPlugin(ProtocolPlugin):
 		else:
 			self.client.factory.queue.put((self.client, TASK_SERVERURGENTMESSAGE, ("[Server Shutdown] See you later: "+(" ".join(parts[1:])))))
 
-	@admin_only
+	@config("rank", "admin")
 	def commandUrgent(self, parts, fromloc, overriderank):
 		"/u message - Admin\nAliases: urgent\nPrints out message in the server color."
 		if len(parts) == 1:
@@ -48,7 +48,7 @@ class ServerUtilPlugin(ProtocolPlugin):
 		else:
 			self.client.factory.queue.put((self.client, TASK_SERVERURGENTMESSAGE, "[URGENT] "+(" ".join(parts[1:]))))
 
-	@admin_only
+	@config("rank", "admin")
 	def commandIRCReload(self, parts, fromloc, overriderank):
 		"/irc_cpr - Admin\nRehashes the IRC Bot."
 		self.client.factory.irc_relay.disconnect()
@@ -57,7 +57,7 @@ class ServerUtilPlugin(ProtocolPlugin):
 		reactor.connectTCP(self.client.factory.conf_irc.get("irc", "server"), self.client.factory.conf_irc.getint("irc", "port"), self.client.factory.irc_relay)
 		self.client.sendServerMessage("IRC Bot reloaded.")
 
-	@admin_only
+	@config("rank", "admin")
 	def commandIRCLoad(self, parts, fromloc, overriderank):
 		"/icr_load - Admin\nLoads the IRC bot."
 		if self.irc_relay:
@@ -67,7 +67,7 @@ class ServerUtilPlugin(ProtocolPlugin):
 		reactor.connectTCP(self.client.factory.conf_irc.get("irc", "server"), self.client.factory.conf_irc.getint("irc", "port"), self.client.factory.irc_relay)
 		self.client.sendServerMessage("IRC Bot loaded.")
 
-	@director_only
+	@config("rank", "director")
 	def commandIRCUnload(self, parts, fromloc, overriderank):
 		"/irc_unload - Director\nUnloads the IRC bot."
 		if not self.irc_relay:
@@ -77,7 +77,7 @@ class ServerUtilPlugin(ProtocolPlugin):
 		self.client.factory.irc_relay = None
 		self.client.sendServerMessage("IRC Bot unloaded.")
 
-	@owner_only
+	@config("rank", "owner")
 	def commandSendHeartbeat(self, parts, fromloc, overriderank):
 		"/sendhb - Owner\nSends a heartbeat to the official Minecraft server."
 		self.client.factory.Heartbeat.get_url(onetime=True)

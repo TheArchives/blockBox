@@ -103,7 +103,7 @@ class DynamitePlugin(ProtocolPlugin):
 			reactor.callLater(self.delay+0.5, explode2)
 
 	@config("category", "build")
-	@op_only
+	@config("rank", "op")
 	@on_off_command
 	def commandDynamite(self, onoff, fromloc, overriderank):
 		"/tnt on|off - Op\nAliases: dynamite\nExplodes a radius around the TNT."

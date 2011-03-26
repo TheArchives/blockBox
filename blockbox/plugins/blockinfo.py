@@ -48,7 +48,6 @@ class BlockInfoPlugin(ProtocolPlugin):
 		else:
 			self.binfo = True
 			self.client.sendServerMessage("You are now getting info about blocks.")
-			self.client.sendServerMessage("Use '/infoend' to stop.")
 
 	@config("category", "build")
 	def commandBlockindex(self, parts, fromloc, overriderank):
@@ -61,4 +60,4 @@ class BlockInfoPlugin(ProtocolPlugin):
 			except KeyError:
 				self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
 				return
-			self.client.sendServerMessage("%s is represented by %s" % (parts[1],block))
+			self.client.sendServerMessage("%s is now being represented by %s." % (parts[1],block))

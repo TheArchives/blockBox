@@ -17,10 +17,10 @@ class ArchivesPlugin(ProtocolPlugin):	"Commands for handlings of archives."
 	def gotClient(self):
 		self.selected_archive_name = None
 		self.selected_archive = None
-	def commandAname(self, parts, True, False):
+	def commandAname(self, parts, fromloc, overriderank):
 		"/aname searchterm - Guest\nSelects an archive name, by part or all of the name."
 		if len(parts) == 1:
-			self.client.sendServerMessage("Please enter a search term")
+			self.client.sendServerMessage("Please enter a search term.")
 		else:
 			# See how many archives match
 			searchterm = parts[1].lower()
@@ -36,8 +36,8 @@ class ArchivesPlugin(ProtocolPlugin):	"Commands for handlings of archives."
 					self.client.sendServerMessage(match)
 				if len(matches) > 3:
 					self.client.sendServerMessage("..and %s more." % (len(matches) - 3))
-	def commandAtime(self, parts, True, False):
-		"/atime yyyy/mm/dd hh_mm - Guest\nSelects the archive time to get"
+	def commandAtime(self, parts, fromloc, overriderank):
+		"/atime yyyy/mm/dd hh_mm - Guest\nSelects the archive time to get."
 		if len(parts) == 2:
 			# Hackish. So sue me.
 			if parts[1].lower() == "newest":
@@ -65,7 +65,7 @@ class ArchivesPlugin(ProtocolPlugin):	"Commands for handlings of archives."
 				times.sort()
 				self.selected_archive = times[0][2]
 				self.client.sendServerMessage("Selected archive from %s" % times[0][1].strftime("%Y/%m/%d %H_%M"))
-	def commandAboot(self, parts, True, False):
+	def commandAboot(self, parts, fromloc, overriderank):
 		"/aboot - Guest\nBoots an archive after you've done /aname and /atime"
 		if not self.selected_archive:
 			if not self.selected_archive_name:
@@ -75,5 +75,5 @@ class ArchivesPlugin(ProtocolPlugin):	"Commands for handlings of archives."
 		else:
 			world_id = self.client.factory.loadArchive(self.selected_archive)
 			self.client.factory.worlds[world_id].admin_blocks = False
-			self.client.sendServerMessage("Archive loaded, as %s" % world_id)
+			self.client.sendServerMessage("Archive loaded, as %s." % world_id)
 			self.client.changeToWorld(world_id)

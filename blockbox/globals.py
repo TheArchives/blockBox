@@ -5,42 +5,42 @@
 from collections import defaultdict
 
 def Rank(self, parts, fromloc, overriderank, server=None):
-	username = parts[2].lower()
+	username = parts[1].lower()
 	if server:
 		factory = server
 	else:
 		factory = self.client.factory
-	if parts[1] == "builder":
+	if parts[2] == "builder":
 		if len(parts) > 3:
 			try:
 				world = factory.worlds[parts[3]]
 			except KeyError:
-				return ("Unknown world %s" %parts[3])
+				return ("Unknown world \"%s\"" %parts[3])
 		else:
 			if not server:
 				world = self.client.world
 			else:
 				return "You must provide a world."
-		#Make builder
+		# Make builder
 		if not server:
-			if not (self.client.username.lower() in world.ops or self.client.isMod() or self.client.isWorldOwner()) and not overriderank:
+			if not (self.client.username.lower() in world.ops or self.client.isWorldOwner() or self.client.isMod()) and not overriderank:
 				return ("You are not high enough rank!")
 		else:
 			if fromloc != "console":
 				if not ((parts[-1]) in world.ops) or factory.isMod(parts[-1]):
 					return ("You are not high enough rank!")
-		world.writers.add(username)
+		world.builders.add(username)
 		if username in factory.usernames:
 			user = factory.usernames[username]
 			if user.world == world:
-				user.sendWriterUpdate()
-		return ("%s is now a builder in world %s." % (username, world))
-	elif parts[1] == "op":
+				user.sendBuilderUpdate()
+		return ("%s is now a builder in world \"%s\"." % (username, world))
+	elif parts[2] == "op":
 		if len(parts) > 3:
 			try:
 				world = factory.worlds[parts[3]]
 			except KeyError:
-				return ("Unknown world %s" %parts[3])
+				return ("Unknown world \"%s\"" %parts[3])
 		else:
 			if not server:
 				world = self.client.world
@@ -54,13 +54,13 @@ def Rank(self, parts, fromloc, overriderank, server=None):
 				return ("You are not high enough rank!")
 		world.ops.add(username)
 		return ("Opped %s" % username)
-		#make op
-	elif parts[1] == "worldowner":
+		# make op
+	elif parts[2] == "worldowner":
 		if len(parts) > 3:
 			try:
 				world = factory.worlds[parts[3]]
 			except KeyError:
-				return ("Unknown world %s" %parts[3])
+				return ("Unknown world \"%s\"" %parts[3])
 		else:
 			if not server:
 				world = self.client.world
@@ -73,9 +73,9 @@ def Rank(self, parts, fromloc, overriderank, server=None):
 			if fromloc != "console":
 				return ("You are not high enough rank!")
 		world.owner = username
-		return ("%s is now the world owner of world %s." % (username, world))
-	elif parts[1] == "advbuilder":
-		#make them an advbuilder
+		return ("%s is now the world owner of world \"%s\"." % (username, world))
+	elif parts[2] == "advbuilder":
+		# make them an advbuilder
 		if not server:
 			if not self.client.isMod():
 				return ("You are not high enough rank!")
@@ -87,7 +87,7 @@ def Rank(self, parts, fromloc, overriderank, server=None):
 		if username in factory.usernames:
 			factory.usernames[username].sendAdvBuilderUpdate()
 		return ("%s is now an Advanced Builder." % username)
-	elif parts[1] == "mod":
+	elif parts[2] == "mod":
 		#make them a mod
 		if not server:
 			if not self.client.isDirector():
@@ -100,7 +100,7 @@ def Rank(self, parts, fromloc, overriderank, server=None):
 		if username in factory.usernames:
 			factory.usernames[username].sendModUpdate()
 		return ("%s is now a Mod." % username)
-	elif parts[1] == "admin":
+	elif parts[2] == "admin":
 		#make them admin
 		if not server:
 			if not self.client.isDirector():
@@ -113,7 +113,7 @@ def Rank(self, parts, fromloc, overriderank, server=None):
 		if username in factory.usernames:
 			factory.usernames[username].sendAdminUpdate()
 		return ("%s is now an admin." % username)
-	elif parts[1] == "director":
+	elif parts[2] == "director":
 		#make them director
 		if not server:
 			if not self.client.isOwner():
@@ -130,17 +130,17 @@ def Rank(self, parts, fromloc, overriderank, server=None):
 		return ("Unknown rank \"%s\""%parts[1])
 
 def DeRank(self, parts, fromloc, overriderank, server=None):
-	username = parts[2].lower()
+	username = parts[1].lower()
 	if server:
 		factory = server
 	else:
 		factory = self.client.factory
-	if parts[1] == "builder":
+	if parts[2] == "builder":
 		if len(parts) > 3:
 			try:
 				world = factory.worlds[parts[3]]
 			except KeyError:
-				return ("Unknown world %s" %parts[3])
+				return ("Unknown world \"%s\"" %parts[3])
 		else:
 			if not server:
 				world = self.client.world
@@ -148,27 +148,27 @@ def DeRank(self, parts, fromloc, overriderank, server=None):
 				return "You must provide a world."
 		#Make builder
 		if not server:
-			if not ((self.client.username in world.ops) or self.client.isMod()) and overriderank:
+			if not ((self.client.username in world.ops) or self.client.isWorldOwner() or self.client.isMod()) and overriderank:
 				return ("You are not high enough rank!")
 		else:
 			if fromloc != "console":
 				if not ((parts[-1]) in world.ops) or factory.isMod(parts[-1]):
 					return ("You are not high enough rank!")
 		try:
-			world.writers.remove(username)
+			world.builders.remove(username)
 		except KeyError:
-				return ("%s is not a builder in world %s." % (username, world))
+				return ("%s is not a builder in world \"%s\"." % (username, world))
 		if username in factory.usernames:
 			user = factory.usernames[username]
 			if user.world == world:
-				user.sendWriterUpdate()
-		return ("Removed builder %s in world %s" % (username, world))
-	elif parts[1] == "op":
+				user.sendBuilderUpdate()
+		return ("Removed %s as a builder in world \"%s\"" % (username, world))
+	elif parts[2] == "op":
 		if len(parts) > 3:
 			try:
 				world = factory.worlds[parts[3]]
 			except KeyError:
-				return ("Unknown world %s" %parts[3])
+				return ("Unknown world \"%s\"" %parts[3])
 		else:
 			if not server:
 				world = self.client.world
@@ -184,19 +184,19 @@ def DeRank(self, parts, fromloc, overriderank, server=None):
 		try:
 			world.ops.remove(username)
 		except KeyError:
-			return ("%s is not an op in world %s." % (username, world))
+			return ("%s is not an op in world \"%s\"." % (username, world))
 		if username in factory.usernames:
 			user = factory.usernames[username]
 			if user.world == world:
 				user.sendOpUpdate()
-		return ("%s is no longer an op in world %s." % (username, world))
+		return ("%s is no longer an op in world \"%s\"." % (username, world))
 		#make worldowner
-	elif parts[1] == "worldowner":
+	elif parts[2] == "worldowner":
 		if len(parts) > 3:
 			try:
 				world = factory.worlds[parts[3]]
 			except KeyError:
-				return ("Unknown world %s" %parts[3])
+				return ("Unknown world \"%s\"" %parts[3])
 		else:
 			if not server:
 				world = self.client.world
@@ -217,8 +217,8 @@ def DeRank(self, parts, fromloc, overriderank, server=None):
 			user = factory.usernames[username]
 			if user.world == world:
 				user.sendWorldOwnerUpdate()
-		return ("%s is no longer the world owner of world %s." % (username, world))
-	elif parts[1] == "advbuilder":
+		return ("%s is no longer the world owner of world \"%s\"." % (username, world))
+	elif parts[2] == "advbuilder":
 		#make them an advbuilder
 		if not server:
 			if not self.client.isMod():
@@ -230,11 +230,11 @@ def DeRank(self, parts, fromloc, overriderank, server=None):
 		if username in factory.advbuilders:
 			factory.advbuilders.remove(username)
 		else:
-			return ("No such advanced builder %s" % username.lower())
+			return ("No such advanced builder \"%s\"" % username.lower())
 		if username in factory.usernames:
 			factory.usernames[username].sendAdvBuilderUpdate()
 		return ("%s is no longer an Advanced Builder." % username.lower())
-	elif parts[1] == "mod":
+	elif parts[2] == "mod":
 		#make them a mod
 		if not server:
 			if not self.client.isDirector():
@@ -246,11 +246,11 @@ def DeRank(self, parts, fromloc, overriderank, server=None):
 		if username in factory.mods:
 			factory.mods.remove(username)
 		else:
-			return ("No such mod %s" % username.lower())
+			return ("No such mod \"%s\"" % username.lower())
 		if username in factory.usernames:
 			factory.usernames[username].sendModUpdate()
 		return ("%s is no longer a mod." % username.lower())
-	elif parts[1] == "admin":
+	elif parts[2] == "admin":
 		#make them admin
 		if not server:
 			if not self.client.isDirector():
@@ -265,8 +265,8 @@ def DeRank(self, parts, fromloc, overriderank, server=None):
 				factory.usernames[username].sendAdminUpdate()
 			return ("%s is no longer an admin." % username.lower())
 		else:
-			return ("No such admin %s." % username.lower())
-	elif parts[1] == "director":
+			return ("No such admin \"%s\""% username.lower())
+	elif parts[2] == "director":
 		#make them director
 		if not server:
 			if not self.client.isOwner():
@@ -281,9 +281,9 @@ def DeRank(self, parts, fromloc, overriderank, server=None):
 				factory.usernames[username].sendDirectorUpdate()
 			return ("%s is no longer a director." % username.lower())
 		else:
-			return ("No such director %s" % username.lower())
+			return ("No such director \"%s\"" % username.lower())
 	else:
-		return ("Unknown rank \"%s\"" % parts[1])
+		return ("Unknown rank \"%s\""% parts[1])
 
 def Spec(self, username, fromloc, overriderank, server=None):
 	if server:
@@ -297,31 +297,18 @@ def Spec(self, username, fromloc, overriderank, server=None):
 		factory.usernames[username].sendSpectatorUpdate()
 	return ("%s is now a spec." % username)
 
-def DeSpec(self, username, fromloc, overriderank, server=None):
-	if server:
-		factory = server
-	else:
-		factory = self.client.factory
-	try:
-		factory.spectators.remove(username)
-	except:
-		return ("%s was not specced." % username)
-	if username in factory.usernames:
-		factory.usernames[username].sendSpectatorUpdate()
-	return ("%s is no longer a spec." % username)
-
-def Staff(self, server=None):
+def Staff(server=None):
 	Temp = []
 	if server:
 		factory = server
 	else:
 		factory = self.client.factory
 	if len(factory.directors):
-		Temp.append (["Directors:"] + list(factory.directors))
+		Temp.append(["Directors:"] + list(factory.directors))
 	if len(factory.admins):
-		Temp.append (["Admins:"] + list(factory.admins))
+		Temp.append(["Admins:"] + list(factory.admins))
 	if len(factory.mods):
-		Temp.append (["Mods:"] + list(factory.mods))
+		Temp.append(["Mods:"] + list(factory.mods))
 	return Temp
 
 def Credits():
@@ -332,8 +319,8 @@ def Credits():
 	Temp.append ("Creators: aera (Myne), PixelEater (MyneCraft and blockBox), iKJames (iCraft)")
 	#Temp.append ("Devs: Adam01, revenant, gdude2002, gothfox, AndrewPH, Varriount, erronjason, destroyerx1, ntfwc, Dwarfy, goober, willempiee")
 	#Temp.append ("Others: Bidoof_King, Rils, fragmer, PyroPyro, TkTech, the Users, the Testers, the Modders, the Community, ...")
-	Temp.append ("Devs: tyteen4a03, ntfwc, UberFoX")
-	Temp.append ("Others: Ginger879, Gear3215")
+	Temp.append ("Contributors: tyteen4a03, ntfwc, UberFoX, fizyplankton, opticalza")
+	Temp.append ("Others: Ginger879, Gear3215, ImDeity")
 	return Temp
 
 def recursive_default():
@@ -353,3 +340,10 @@ def create_if_not(filename):
 		with open(filename, "w") as f:
 			f.write("")
 	del os
+
+def invertDict(OldDict):
+	NewDict = dict()
+	for key in OldDict.iterkeys():
+		if OldDict[key] not in NewDict:
+			NewDict[OldDict[key]] = key
+    return NewDict

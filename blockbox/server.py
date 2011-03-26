@@ -31,11 +31,13 @@ class BlockBoxFactory(Factory):
 	protocol = BlockBoxServerProtocol
 
 	def __init__(self):
+		"""Constructor method."""
 		self.initVariables()
 		self.initLoops()
 
 	def initVariables(self):
-		if  (os.path.exists("conf/options.dist.ini") and not os.path.exists("conf/options.ini")) or \
+		"""Loads variables from server configuration."""
+		if (os.path.exists("conf/options.dist.ini") and not os.path.exists("conf/options.ini")) or \
 			(os.path.exists("conf/plugins.dist.ini") and not os.path.exists("conf/plugins.ini")) or \
 			(os.path.exists("conf/server.dist.ini") and not os.path.exists("conf/server.ini")) or \
 			(os.path.exists("conf/wordfilter.dist.ini") and not os.path.exists("conf/wordfilter.ini")):
@@ -66,7 +68,6 @@ class BlockBoxFactory(Factory):
 		self.silenced = set()
 		self.banned = {}
 		self.ipbanned = {}
-		self.lastseen = {}
 
 		self.use_irc = False
 		if  (os.path.exists("conf/irc.ini")):
@@ -140,7 +141,7 @@ class BlockBoxFactory(Factory):
 		self.filter = []
 		number = self.wordfilter.getint("filter","count")
 		for x in range(number):
-			self.filter = self.filter + [[self.wordfilter.get("filter","s"+str(x)),self.wordfilter.get("filter","r"+str(x))]]
+			self.filter = self.filter + [self.wordfilter.get("filter", "s"+str(x)), self.wordfilter.get("filter", "r" + str(x))]
 		# Salt, for the heartbeat server/verify-names
 		self.salt = hashlib.md5(hashlib.md5(str(random.getrandbits(128))).digest()).hexdigest()[-32:].strip("0")
 		# Load up the plugins specified
@@ -180,7 +181,7 @@ class BlockBoxFactory(Factory):
 			self.loadWorld("mapdata/worlds/%s" % world, world)
 
 	def initLoops(self):
-		# Set up tasks to run during execution
+		"""Initialize server loops to run during execution."""
 		reactor.callLater(0.1, self.sendMessages)
 		self.loops["printinfo"] = task.LoopingCall(self.printInfo)
 		self.loops["printinfo"].start(60)
@@ -203,13 +204,14 @@ class BlockBoxFactory(Factory):
 #			self.loops["autobackup"].start(float(self.backup_freq * 60))
 
 	def cleanGarbage(self, slient=False):
+		"""Garbage cleaning."""
 		count = gc.collect()
 		if not slient:
 			self.logger.info("%i garbage objects collected, %i were uncollected." % (count, len(gc.garbage)))
 		#reactor.callLater(900, self.cleanGarbage)
 
 	def loadMeta(self):
-		"Loads the 'meta' - variables that change with the server (worlds, admins, etc.)"
+		"""Loads the 'meta' - variables that change with the server (worlds, admins, etc.)"""
 		config = ConfigParser()
 		config.read("data/server.meta")
 		specs = ConfigParser()
@@ -224,6 +226,10 @@ class BlockBoxFactory(Factory):
 			self.worlds["main"] = None
 		if not self.main_loaded:
 			self.worlds["main"] = None
+		# Read in the directors
+		if config.has_section("directors"):
+			for name in config.options("directors"):
+				self.directors.add(name)
 		# Read in the admins
 		if config.has_section("admins"):
 			for name in config.options("admins"):
@@ -232,13 +238,10 @@ class BlockBoxFactory(Factory):
 		if config.has_section("mods"):
 			for name in config.options("mods"):
 				self.mods.add(name)
+		# Read in the advanced builders
 		if config.has_section("advbuilders"):
 			for name in config.options("advbuilders"):
 				self.advbuilders.add(name)
-		# Read in the directors
-		if config.has_section("directors"):
-			for name in config.options("directors"):
-				self.directors.add(name)
 		if config.has_section("silenced"):
 			for name in config.options("silenced"):
 				self.silenced.add(name)
@@ -256,7 +259,7 @@ class BlockBoxFactory(Factory):
 				self.ipbanned[ip] = config.get("ipbanned", ip)
 
 	def saveMeta(self):
-		"Saves the server's meta back to a file."
+		"""Saves the server's meta back to a file."""
 		config = ConfigParser()
 		specs = ConfigParser()
 		# Make the sections
@@ -296,21 +299,22 @@ class BlockBoxFactory(Factory):
 		fp.close()
 
 	def printInfo(self):
+		"""Prints console info every minute, and performs other utility actions."""
 		if self.console_delay == self.delay_count:
 			if not len(self.clients) == 0:
-				self.logger.info("There are %s Players on the server" % len(self.clients))
+				self.logger.info("There are %s players on the server" % len(self.clients))
 				for key in self.worlds:
 					self.logger.info("%s: %s" % (key, ", ".join(str(c.username) for c in self.worlds[key].clients)))
-			self.delay_count=1
+			self.delay_count = 1
 		else:
-			self.delay_count+=1
+			self.delay_count += 1
 		gc.collect()
-		if (time.time() - self.last_heartbeat) > 180:
+		if (time.time() - self.last_heartbeat) > 180 and (self.use_blockbeat or self.send_heartbeat):
 			self.heartbeat = None
 			self.heartbeat = Heartbeat(self)
 
 	def loadArchive(self, filename):
-		"Boots an archive given a filename. Returns the new world ID."
+		"""Boots an archive given a filename. Returns the new world ID."""
 		# Get an unused world name
 		i = 1
 		while self.world_exists("a-%i" % i):
@@ -324,7 +328,7 @@ class BlockBoxFactory(Factory):
 		return world_id
 
 	def saveWorlds(self):
-		"Saves the worlds, one at a time, with a 1 second delay."
+		"""Saves the worlds, one at a time, with a 1 second delay."""
 		if not self.saving:
 			if not self.world_save_stack:
 				self.world_save_stack = list(self.worlds)
@@ -337,6 +341,7 @@ class BlockBoxFactory(Factory):
 				reactor.callLater(1, self.saveWorlds)
 
 	def saveWorld(self, world_id, shutdown=False):
+		"""Save the world, and flush it on disk."""
 		try:
 			world = self.worlds[world_id]
 			world.save_meta()
@@ -351,25 +356,28 @@ class BlockBoxFactory(Factory):
 				self.save_count += 1
 			if shutdown: del self.worlds[world_id]
 		except:
-			self.logger.error("Error saving %s" % world_id)
+			self.logger.error("Error saving world %s" % world_id)
 
 	def claimId(self, client):
+		"""Claims an empty player ID, and store it in the clients table."""
 		for i in range(1, self.max_clients+1):
 			if i not in self.clients:
 				self.clients[i] = client
 				return i
+		# Max client reached, return server full message
 		raise ServerFull
 
 	def releaseId(self, id):
+		"""Releases player ID from the clients table."""
 		del self.clients[id]
 
 	def joinWorld(self, worldid, user):
-		"Makes the player join the given World."
+		"""Makes the player join the given world."""
 		new_world = self.worlds[worldid]
 		try:
-			self.logger.info("%s is joining world %s" %(user.username,new_world.basename))
+			self.logger.info("%s is joining world %s" % (user.username, new_world.basename))
 		except:
-			self.logger.info("%s is joining world %s" %(user.transport.getPeer().host,new_world.basename))
+			self.logger.info("%s is joining world %s" % (user.transport.getPeer().host, new_world.basename))
 		if hasattr(user, "world") and user.world:
 			self.leaveWorld(user.world, user)
 		user.world = new_world
@@ -380,9 +388,10 @@ class BlockBoxFactory(Factory):
 		return new_world
 
 	def leaveWorld(self, world, user):
+		"""Leaves the current world."""
 		world.clients.remove(user)
-		if world.autoshutdown and len(world.clients)<1:
-			if world.basename == ("mapdata/worlds/main"):
+		if world.autoshutdown and len(world.clients) < 1:
+			if world.basename == ("mapdata/worlds/main"): # Can't leave main
 				return
 			else:
 				if not self.asd_delay == 0:
@@ -403,49 +412,48 @@ class BlockBoxFactory(Factory):
 		self.logger.info("World '%s' Booted." % world_id)
 		return world_id
 
-	def unloadWorld(self, world_id,ASD=False):
-		"""
-		Unloads the given world ID.
-		"""
+	def unloadWorld(self, world_id, ASD=False):
+		"""Unloads the given world ID."""
 		try:
-			if ASD and len(self.worlds[world_id].clients)>0:
-				self.worlds[world_id].ASD.kill()
-				self.worlds[world_id].ASD = None
-				return
+			if ASD and len(self.worlds[world_id].clients) > 0:
+				try:
+					self.worlds[world_id].ASD.kill()
+					self.worlds[world_id].ASD = None
+					return
+				except TypeError:
+					return
 		except KeyError:
 			return
 		try:
 			assert world_id != "main"
 		except:
 			if not client.console:
-				client.sendServerMessage("You can't shutdown main.")
+				client.sendServerMessage("You can't shut down main.")
 			else:
-				self.logger.warning("You can't shutdown main.")
+				self.logger.warning("You can't shut down main.")
 		if not self.worlds[world_id].ASD == None:
 			self.worlds[world_id].ASD.kill()
 			self.worlds[world_id].ASD = None
 		for client in list(list(self.worlds[world_id].clients))[:]:
 			client.changeToWorld("main")
-			client.sendServerMessage("World '%s' has been Shutdown." % world_id)
+			client.sendServerMessage("World '%s' has been shut down." % world_id)
 		self.worlds[world_id].stop()
-		self.saveWorld(world_id,True)
-		self.logger.info("World '%s' Shutdown." % world_id)
+		self.saveWorld(world_id, True)
+		self.logger.info("World '%s' has been shut down." % world_id)
 
-	def rebootworld(self, world_id):
-		"""
-		Reboots a world in a crash case
-		"""
+	def rebootWorld(self, world_id):
+		"""Reboots a world in a crash case."""
 		for client in list(list(self.worlds[world_id].clients))[:]:
 			if world_id == "main":
 				client.changeToWorld(self.factory.main_backup)
 			else:
 				client.changeToWorld("main")
-			client.sendServerMessage("%s has been Rebooted" % world_id)
+			client.sendServerMessage("%s has been rebooted." % world_id)
 		self.worlds[world_id].stop()
 		self.worlds[world_id].flush()
 		self.worlds[world_id].save_meta()
 		del self.worlds[world_id]
-		world = self.worlds[world_id] =  World("mapdata/worlds/%s" % world_id, world_id)
+		world = self.worlds[world_id] = World("mapdata/worlds/%s" % world_id, world_id)
 		world.source = "mapdata/worlds/" + world_id
 		world.clients = set()
 		world.id = world_id
@@ -462,14 +470,12 @@ class BlockBoxFactory(Factory):
 				yield world_id
 
 	def recordPresence(self, username):
-		"""
-		Records a sighting of 'username' in the lastseen dict.
-		"""
+		"""Records a sighting of 'username' in the user's persistence file."""
 		with Persist(username) as p:
 			p.set("main", "lastseen", time.time())
 
 	def unloadPlugin(self, plugin_name):
-		"Reloads the plugin with the given module name."
+		"""Reloads the plugin with the given module name."""
 		# Unload the plugin from everywhere
 		for plugin in plugins_by_module_name(plugin_name):
 			if issubclass(plugin, ProtocolPlugin):
@@ -479,6 +485,7 @@ class BlockBoxFactory(Factory):
 		unload_plugin(plugin_name)
 
 	def loadPlugin(self, plugin_name):
+		"""Loads a plugin."""
 		# Load it
 		load_plugin(plugin_name)
 		# Load it back into clients etc.
@@ -488,7 +495,7 @@ class BlockBoxFactory(Factory):
 					client.loadPlugin(plugin)
 
 	def sendMessages(self):
-		"Sends all queued messages, and lets worlds recieve theirs."
+		"""Sends all queued messages, and lets worlds recieve theirs."""
 		try:
 			while True:
 				# Get the next task
@@ -505,11 +512,13 @@ class BlockBoxFactory(Factory):
 						try:
 							world = source_client.world
 						except AttributeError:
-							if not source_client.connected:
-								continue
-							else:
-								self.logger.warning("Source client for message has no world. Ignoring.")
-								continue
+							try:
+								if not source_client.connected or self.console:
+									continue
+								else:
+									self.logger.warning("Source client for message has no world. Ignoring.")
+									continue
+							except
 					# Someone built/deleted a block
 					if task is TASK_BLOCKSET:
 						# Only run it for clients who weren't the source.
@@ -533,12 +542,11 @@ class BlockBoxFactory(Factory):
 						#LOL MOAR WORD FILTER
 						id, colour, username, text = data
 						text = self.messagestrip(text)
-						data = (id,colour,username,text)
+						data = (id, colour, username, text)
 						for client in self.clients.values():
 							if not client.console:
-								if (client.world.global_chat or client.world is source_client.world):
+								if client.world.global_chat or client.world is source_client.world:
 									client.sendMessage(*data)
-						id, colour, username, text = data
 						self.logger.info("%s: %s" % (username, text))
 						self.chatlog.write("%s - %s: %s\n" % (datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M"), username, text))
 						self.chatlog.flush()
@@ -559,7 +567,7 @@ class BlockBoxFactory(Factory):
 							self.irc_relay.sendMessage(username, text)
 					# Someone actioned!
 					elif task is TASK_ACTION:
-						#WORD FALTER
+						# Word Filter
 						id, colour, username, text = data
 						text = self.messagestrip(text)
 						data = (id, colour, username, text)
@@ -613,7 +621,7 @@ class BlockBoxFactory(Factory):
 						for user, client in self.usernames.items():
 							if self.isMod(user):
 								client.sendMessage(100, COLOUR_YELLOW+"#"+colour, username, message, False, False)
-						if self.irc_relay and len(data)>3:
+						if self.irc_relay and len(data) > 3:
 							self.irc_relay.sendServerMessage("#"+username+": "+text,True,username)
 						self.logger.info("#"+username+": "+text)
 						self.adlog = open("logs/server.log", "a")
@@ -639,10 +647,9 @@ class BlockBoxFactory(Factory):
 						self.logger.info(message)
 						if self.irc_relay and world:
 							self.irc_relay.sendServerMessage(message)
-					elif task == TASK_ONMESSAGE:
+					elif task == TASK_ONMESSAGE or task == TASK_ADMINMESSAGE:
 						# Give all people the message
-						message = data
-						message = self.messagestrip(message);
+						message = self.messagestrip(message)
 						for client in self.clients.values():
 							client.sendNormalMessage(COLOUR_YELLOW + message)
 						if self.irc_relay and world:
@@ -656,7 +663,7 @@ class BlockBoxFactory(Factory):
 								client.sendNewPlayer(id, username, x, y, z, h, p)
 					elif task == TASK_SERVERURGENTMESSAGE:
 						# Give all people the message
-						message = data
+						message = self.messagestrip(message)
 						for client in self.clients.values():
 							client.sendNormalMessage(COLOUR_DARKRED + message)
 						self.logger.info(message)
@@ -685,15 +692,13 @@ class BlockBoxFactory(Factory):
 		reactor.callLater(0.1, self.sendMessages)
 
 	def newWorld(self, new_name, template="default"):
-		"Creates a new world from some template."
+		"""Creates a new world from some template."""
 		# Make the directory
 		os.mkdir("mapdata/worlds/%s" % new_name)
 		# Find the template files, copy them to the new location
 		for filename in ["blocks.gz", "world.meta"]:
-			try:
-				shutil.copyfile("mapdata/templates/%s/%s" % (template, filename), "mapdata/worlds/%s/%s" % (new_name, filename))
-			except:
-				raise TemplateDoesNotExist
+				response = shutil.copyfile("mapdata/templates/%s/%s" % (template, filename), "mapdata/worlds/%s/%s" % (new_name, filename))
+				return response
 
 	def renameWorld(self, old_worldid, new_worldid):
 		"Renames a world."
@@ -764,23 +769,23 @@ class BlockBoxFactory(Factory):
 	def Backup(self, world_id, fromloc, backupname=None):
 		error = None
 		world_dir = ("mapdata/worlds/%s/" % world_id)
-		if world_id == "main" and not self.backup_main and not fromloc == "user" and not fromloc == "console": # This is to ensure manual backup still works
+		if world_id == "main" and not self.backup_main and not (fromloc == "user" or fromloc == "console"): # This is to ensure manual backup still works
 			return
 		if not os.path.exists(world_dir):
 			if fromloc == "console":
 				self.logger.error("World %s does not exist." % (world_id))
 			elif fromloc == "server":
-				self.logger.warning("AutoBackup tried to backup world %s which does not exist." % (world_id)) 
+				self.logger.warning("AutoBackup tried to backup world %s which does not exist." % (world_id))
 			elif fromloc == "user":
 				error = ("ERROR_WORLD_DOES_NOT_EXIST_%s" % world_id)
 				return error
 			return
 		else:
-			if not os.path.exists(world_dir+"backup/"):
-				os.mkdir(world_dir+"backup/")
-			folders = os.listdir(world_dir+"backup/")
+			if not os.path.exists(world_dir + "backup/"):
+				os.mkdir(world_dir + "backup/")
+			folders = os.listdir(world_dir + "backup/")
 			if backupname is not None:
-				path = os.path.join(world_dir+"backup/", backupname)
+				path = os.path.join(world_dir + "backup/", backupname)
 				if os.path.exists(path):
 					if fromloc == "console":
 						self.logger.error("Backup %s already exists." % (backupname))
@@ -797,9 +802,9 @@ class BlockBoxFactory(Factory):
 					if x.isdigit():
 						backups.append(x)
 				backups.sort(lambda x, y: int(x) - int(y))
-				path = os.path.join(world_dir+"backup/", "0")
+				path = os.path.join(world_dir + "backup/", "0")
 				if backups:
-					path = os.path.join(world_dir+"backup/", str(int(backups[-1])+1))
+					path = os.path.join(world_dir + "backup/", str(int(backups[-1])+1))
 			try:
 				os.mkdir(path)
 				shutil.copy(world_dir + "blocks.gz", path)
@@ -860,7 +865,7 @@ class BlockBoxFactory(Factory):
 		for x in self.filter:
 			rep = re.compile(x[0], re.IGNORECASE)
 			message = rep.sub(x[1], message)
-		return message   
+		return message
 
 	def loadArchives(self):
 		self.archives = {}
@@ -926,7 +931,7 @@ class BlockBoxFactory(Factory):
 			self.api_password = self.config.get("network", "api_password")
 		if toReload == "console_delay" or toReload == "api" or toReload == "all":
 			self.console_delay = self.config.getint("options", "console_delay")
-			if "resetloop" not in followup: 
+			if "resetloop" not in followup:
 				followup.add("resetloop")
 			loopsToReset["printinfo"] = self.console_delay
 		if toReload == "info_url" or toReload == "info" or toReload == "all":

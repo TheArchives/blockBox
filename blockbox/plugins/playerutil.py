@@ -22,7 +22,6 @@ class PlayerUtilPlugin(ProtocolPlugin):
 		"banned": "commandBanned",
 		"worldbanned": "commandWorldBanned",
 		"ops": "commandOps",
-		"writers": "commandBuilders",
 		"builders": "commandBuilders",
 		"specced": "commandSpecced",
 
@@ -62,14 +61,16 @@ class PlayerUtilPlugin(ProtocolPlugin):
 		"derank": "commandDeRank",
 		"colors": "commandColors",
 		"showops": "commandColors",
-		"writer": "commandOldRanks",
+
+		"spec": "commandOldRanks",
 		"builder": "commandOldRanks",
 		"advbuilder": "commandOldRanks",
 		"op": "commandOldRanks",
 		"mod": "commandOldRanks",
 		"admin": "commandOldRanks",
 		"director": "commandOldRanks",
-		"dewriter": "commandOldDeRanks",
+		"unspec": "commandOldDeRanks",
+		"despec": "commandOldDeRanks",
 		"debuilder": "commandOldDeRanks",
 		"deadvbuilder": "commandOldDeRanks",
 		"deop": "commandOldDeRanks",
@@ -216,7 +217,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("Mods: No one.")
 
 	@config("category", "player")
-	@admin_only
+	@config("rank", "admin")
 	def commandBanned(self, user, fromloc, overriderank):
 		"/banned - Admin\nShows who is Banned."
 		done = ""
@@ -228,7 +229,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 			self.client.sendServerList(["Banned: No one."])
 
 	@config("category", "player")
-	@op_only
+	@config("rank", "op")
 	def commandWorldBanned(self, user, fromloc, overriderank):
 		"/worldbanned - Op\nShows who is WorldBanned."
 		done = ""
@@ -255,7 +256,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 			self.client.respawn()
 
 	@config("category", "player")
-	@op_only
+	@config("rank", "op")
 	@username_command
 	def commandFetch(self, user, fromloc, overriderank):
 		"/fetch username - Op\nAliases: bring\nTeleports a player to be where you are."
@@ -266,14 +267,12 @@ class PlayerUtilPlugin(ProtocolPlugin):
 		if user.world == self.client.world:
 			user.teleportTo(rx, ry, rz)
 		else:
-			if self.client.isAdmin():
-				user.changeToWorld(self.client.world.id, position=(rx, ry, rz))
-			elif self.client.isMod():
+			if self.client.isMod():
 				user.changeToWorld(self.client.world.id, position=(rx, ry, rz))
 			else:
 				self.client.sendServerMessage("%s cannot be fetched from '%s'" % (self.client.username, user.world.id))
 				return
-		user.sendServerMessage("You have been fetched by %s" % self.client.username)
+		user.sendServerMessage("You have been fetched by %s." % self.client.username)
 
 	@config("category", "player")
 	@username_command
@@ -289,17 +288,17 @@ class PlayerUtilPlugin(ProtocolPlugin):
 		self.client.sendServerMessage("The fetch request has been sent.")
 
 	@config("category", "player")
-	@director_only
+	@config("rank", "director")
 	def commandSetTitle(self, parts, fromloc, overriderank):
 		"/title username [title] - Director\nAliases: settitle\nGives or removes a title to username."
 		with Persist(parts[1]) as p:
-			if len(parts)==3:
-				if len(parts[2])<6:
+			if len(parts) == 3:
+				if len(parts[2]) < 6:
 					p.set("misc", "title", parts[2])
 					self.client.sendServerMessage("Added title.")
 				else:
 					self.client.sendServerMessage("A title must be 5 character or less")
-			elif len(parts)==2:
+			elif len(parts) == 2:
 				if p.string("misc", "title") is None:
 					self.client.sendServerMessage("Syntax: /title username title")
 					return False
@@ -319,7 +318,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 
 	@config("category", "info")
 	def commandBuilders(self, parts, fromloc, overriderank):
-		"/builders - Guest\nAliases: writers\nLists this world's builders."
+		"/builders - Guest\nLists this world's builders."
 		if not self.client.world.writers:
 			self.client.sendServerMessage("This world has no builders.")
 		else:
@@ -371,7 +370,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 			user = parts[1].lower()
 			with Persist(user) as p:
 				if parts[1].lower() in self.client.factory.usernames:
-					#Parts is an array, always, so we get the first item.
+					# Parts is an array, always, so we get the first item.
 					username = self.client.factory.usernames[user]
 					if username.isOwner():
 						self.client.sendServerMessage(parts[1]+" - "+COLOUR_DARKGREEN+"Owner")
@@ -387,7 +386,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 						self.client.sendServerMessage(parts[1]+" - "+COLOUR_DARKCYAN+"Operator")
 					elif username.isAdvBuilder():
 						self.client.sendServerMessage(parts[1]+" - "+COLOUR_GREY+"Advanced Builder")
-					elif username.isWriter():
+					elif username.isBuilder():
 						self.client.sendServerMessage(parts[1]+" - "+COLOUR_CYAN+"Builder")
 					elif username.isSpectator():
 						self.client.sendServerMessage(parts[1]+" - "+COLOUR_BLACK+"Spec")
@@ -407,7 +406,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 					else:
 						self.client.sendServerMessage("Balance: N/A")
 				else:
-					#Parts is an array, always, so we get the first item.
+					# Parts is an array, always, so we get the first item.
 					username = parts[1].lower()
 					if username in self.client.factory.spectators:
 						self.client.sendServerMessage(parts[1]+" - "+COLOUR_BLACK+"Spec")
@@ -425,7 +424,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 						self.client.sendServerMessage(parts[1]+" - "+COLOUR_DARKCYAN+"Operator")
 					elif username in self.client.factory.advbuilders:
 						self.client.sendServerMessage(parts[1]+" - "+COLOUR_GREY+"Advanced Builder")
-					elif username in self.client.world.writers:
+					elif username in self.client.world.builders:
 						self.client.sendServerMessage(parts[1]+" - "+COLOUR_CYAN+"Builder")
 					else:
 						self.client.sendServerMessage(parts[1]+" - "+COLOUR_WHITE+"Guest")
@@ -479,7 +478,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 	@username_command
 	def commandLocate(self, user, fromloc, overriderank):
 		"/locate username - Guest\nAliases: find\nTells you what world a user is in."
-		self.client.sendServerMessage("%s is in %s" % (user.username, user.world.id))
+		self.client.sendServerMessage("%s is in world %s." % (user.username, user.world.id))
 
 	@config("category", "info")
 	def commandLastCommand(self, parts, fromloc, rankoverride):
@@ -487,57 +486,64 @@ class PlayerUtilPlugin(ProtocolPlugin):
 		message = self.lastcommand
 		parts = [x.strip() for x in message.split() if x.strip()]
 		command = parts[0].strip("/")
-		self.client.logger.info("%s just used: %s" % (self.client.username," ".join(parts)))
 		# See if we can handle it internally
 		try:
 			func = getattr(self.client, "command%s" % command.title())
 		except AttributeError:
 			# Can we find it from a plugin?
 			try:
-				func = self.client.commands[command.lower()]
-			except KeyError:
-				self.client.sendServerMessage("Unknown command '%s'" % command)
+				try:
+					func = self.commands[command.lower()]
+				except KeyError:
+					self.client.sendServerMessage("Unknown command '%s'" % command)
+					return
+			except AttributeError:
+				self.client.logger.error("Cannot find command code for %s, please report to blockBox team." % func)
+				self.client.sendSplitServerMessage("Command code not found, please report to server staff or blockBox team.")
 				return
-		if (self.client.isSpectator() and (getattr(func, "admin_only", False) or getattr(func, "mod_only", False) or getattr(func, "op_only", False) or getattr(func, "worldowner_only", False) or getattr(func, "advbuilder_only", False) or getattr(func, "writer_only", False))):
-			if fromloc == 'user':
-				self.client.sendServerMessage("'%s' is not available to specs." % command)
-				return
-		if getattr(func, "director_only", False) and not self.client.isDirector():
-			if fromloc == 'user':
-				self.client.sendServerMessage("'%s' is a Director-only command!" % command)
-				return
-		if getattr(func, "admin_only", False) and not self.client.isAdmin():
-			if fromloc == 'user':
-				self.client.sendServerMessage("'%s' is an Admin-only command!" % command)
-				return
-		if getattr(func, "mod_only", False) and not (self.client.isMod() or self.client.isAdmin()):
-			if fromloc == 'user':
-				self.client.sendServerMessage("'%s' is a Mod-only command!" % command)
-				return
-		if getattr(func, "op_only", False) and not (self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
-			if fromloc == 'user':
-				self.client.sendServerMessage("'%s' is an Op-only command!" % command)
-				return
-		if getattr(func, "worldowner_only", False) and not (self.client.isWorldOwner() or self.client.isMod()):
-			if fromloc == 'user':
-				self.client.sendServerMessage("'%s' is an WorldOwner-only command!" % command)
-				return
-		if getattr(func, "advbuilder_only", False) and not (self.client.isMember() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
-			if fromloc == 'user':
-				self.client.sendServerMessage("'%s' is a Member-only command!" % command)
-				return
-		if getattr(func, "writer_only", False) and not (self.client.isWriter() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
-			if fromloc == 'user':
-				self.client.sendServerMessage("'%s' is a Builder-only command!" % command)
-				return
+		if func.config["disabled"]:
+			self.sendServerMessage("Command %s has been disabled by the server owner." % command)
+			return
+		if self.client.isSpectator() and func.config["rank"]:
+			self.client.sendServerMessage("'%s' is not available to spectators." % command)
+			return
+		if func.config["rank"] == "owner" and not self.isOwner():
+			self.client.sendServerMessage("'%s' is an Owner-only command!" % command)
+			return
+		if func.config["rank"] == "director" and not self.isDirector():
+			self.client.sendServerMessage("'%s' is a Director-only command!" % command)
+			return
+		if func.config["rank"] == "admin" and not self.isAdmin():
+			self.client.sendServerMessage("'%s' is an Admin-only command!" % command)
+			return
+		if func.config["rank"] == "mod" and not self.isMod():
+			self.client.sendServerMessage("'%s' is a Mod-only command!" % command)
+			return
+		if func.config["rank"] == "worldowner" and not self.isWorldOwner():
+			self.client.sendServerMessage("'%s' is an WorldOwner-only command!" % command)
+			return
+		if func.config["rank"] == "op" and not self.isRank("op"):
+			self.client.sendServerMessage("'%s' is an Op-only command!" % command)
+			return
+		if func.config["rank"] == "advbuilder" and not self.isRank("advbuilder"):
+			self.client.sendServerMessage("'%s' is an Advanced Builder-only command!" % command)
+			return
+		if func.config["rank"] == "builder" and not self.isRank("builder"):
+			self.client.sendServerMessage("'%s' is a Builder-only command!" % command)
+			return
+		# Using custom message?
+		if func.config["custom_cmdlog_msg"]:
+			self.logger.info("%s %s" % (self.username, func.config["custom_cmdlog_msg"]))
+		else:
+			self.logger.info("%s just used: %s" % (self.username, " ".join(parts)))
 		try:
-			func(parts, 'user', False) #fromloc is user, overriderank is false
+			func(parts, 'user', False) # fromloc is user, overriderank is false
 		except Exception, e:
 			self.client.sendServerMessage("Internal server error.")
 			self.client.logger.error(traceback.format_exc())
 
 	@config("category", "player")
-	@mod_only
+	@config("rank", "mod")
 	def commandSpecced(self, user, fromloc, overriderank):
 		"/specced - Mod\nShows who is specced."
 		if len(self.client.factory.spectators):
@@ -546,16 +552,16 @@ class PlayerUtilPlugin(ProtocolPlugin):
 			self.client.sendServerList(["Specced: No one."])
 
 	@config("category", "player")
-	@op_only
+	@config("rank", "op")
 	def commandRank(self, parts, fromloc, overriderank):
-		"/rank rankname username - Op\nAliases: setrank\nMakes username the rank of rankname."
+		"/rank username rankname - Op\nAliases: setrank\nMakes username the rank of rankname."
 		if len(parts) < 3:
 			self.client.sendServerMessage("You must specify a rank and username.")
 		else:
 			self.client.sendServerMessage(Rank(self, parts, fromloc, overriderank))
 
 	@config("category", "player")
-	@op_only
+	@config("rank", "op")
 	def commandDeRank(self, parts, fromloc, overriderank):
 		"/derank rankname username - Op\nMakes playername lose the rank of rankname."
 		if len(parts) < 3:
@@ -564,31 +570,27 @@ class PlayerUtilPlugin(ProtocolPlugin):
 			self.client.sendServerMessage(DeRank(self, parts, fromloc, overriderank))
 
 	@config("category", "player")
-	@op_only
+	@config("rank", "op")
 	def commandOldRanks(self, parts, fromloc, overriderank):
-		"/rankname username [world] - Op\nAliases: writer, builder, op, mod, admin, director\nThis is here for Myne users."
+		"/rankname username [world] - Op\nAliases: spec, builder, op, mod, admin, director\nThis is here for Myne users."
 		if len(parts) < 2:
 			self.client.sendServerMessage("You must specify a rank and username.")
 		else:
-			if parts[0] == "/writer":
-				parts[0] = "/builder"
 			parts = ["/rank", parts[0][1:]] + parts[1:]
 			self.client.sendServerMessage(Rank(self, parts, fromloc, overriderank))
 
 	@config("category", "player")
-	@op_only
+	@config("rank", "op")
 	def commandOldDeRanks(self, parts, fromloc, overriderank):
-		"/derankname username [world] - Op\nAliases: dewriter, debuilder, deop, demod, deadmin, dedirector\nThis is here for Myne users."
+		"/derankname username [world] - Op\nAliases: despec, unspec, debuilder, deop, demod, deadmin, dedirector\nThis is here for Myne users."
 		if len(parts) < 2:
 			self.client.sendServerMessage("You must specify a rank and username.")
 		else:
-			if parts[0] == "/dewriter":
-				parts[0] = "/debuilder"
 			parts = ["/derank", parts[0][1:]] + parts[1:]
 			self.client.sendServerMessage(DeRank(self, parts, fromloc, overriderank))
 
 	@config("category", "player")
-	@op_only
+	@config("rank", "op")
 	@on_off_command
 	def commandColors(self, onoff, fromloc, overriderank):
 		"/colors on|off - Op\nAliases: showops\nEnables or disables colors in this world."
@@ -627,7 +629,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 	@config("category", "player")
 	@on_off_command
 	def commandFly(self, onoff, fromloc, overriderank):
-		"/fly on|off - Guest\nEnables or disables dad server-side flying"
+		"/fly on|off - Guest\nEnables or disables server-side flying."
 		if onoff == "on":
 			self.flying = True
 			self.client.sendServerMessage("You are now flying.")

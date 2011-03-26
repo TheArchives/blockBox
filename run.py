@@ -36,7 +36,7 @@ try:
 except: # Python 1.x doesn't have the version_info method
 	# Oh dear they are still using Python 1.x
 	print ("ATTENTION: Do you need help with blockBox? http://blockbox.hk-diy.net or #blockBox@irc.esper.net")
-	print ("NOTICE: Sorry, but blockBox does not support Python 3.x. Please use Python 2.6.x instead; http://www.python.org/download/releases/2.6.6/")
+	print ("NOTICE: Sorry, but blockBox does not support Python 1.x. Please use Python 2.6.x instead; http://www.python.org/download/releases/2.6.6/")
 	doExit()
 
 import logging

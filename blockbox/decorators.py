@@ -2,63 +2,20 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
+from blockbox.globals import *
+
 """
 Decorators for protocol (command) methods.
 """
 
 def config(key, value):
+	"Decorator that writes to the configuration of the command."
 	def config_inner(func):
-		"Decorator that writes to the configuration of the command."
-		if getattr(func, 'config', None) is None:
-			func.config = dict()
+		if getattr(func, "config", None) is None:
+			func.config = recursive_default()
 		func.config[key] = value
 		return func
 	return config_inner
-
-def owner_only(func):
-	"Decorator for owner-only command methods."
-	func.owner_only = True
-	return func
-
-def director_only(func):
-	"Decorator for director-only command methods."
-	func.director_only = True
-	return func
-
-def admin_only(func):
-	"Decorator for admin-only command methods."
-	func.admin_only = True
-	return func
-
-def mod_only(func):
-	"Decorator for mod-only command methods."
-	func.mod_only = True
-	return func
-
-def advbuilder_only(func):
-	"Decorator for advanced builder-only command methods."
-	func.advbuilder_only = True
-	return func
-
-def member_only(func):
-	"Decorator for advanced builder-only command methods."
-	func.advbuilder_only = True
-	return func
-
-def worldowner_only(func):
-	"Decorator for worldowner-only command methods."
-	func.worldowner_only = True
-	return func
-
-def op_only(func):
-	"Decorator for op-only command methods."
-	func.op_only = True
-	return func
-
-def writer_only(func):
-	"Decorator for builder-only command methods."
-	func.writer_only = True
-	return func
 
 def username_command(func):
 	"Decorator for commands that accept a single username parameter, and need a Client"
