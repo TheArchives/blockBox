@@ -346,4 +346,4 @@ def invertDict(OldDict):
 	for key in OldDict.iterkeys():
 		if OldDict[key] not in NewDict:
 			NewDict[OldDict[key]] = key
-    return NewDict
+	return NewDict
