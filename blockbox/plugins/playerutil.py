@@ -104,6 +104,26 @@ class PlayerUtilPlugin(ProtocolPlugin):
 	def chatmsg(self, message):
 		if message.startswith("/") and not message.split()[0].lower() == "/b":
 			self.lastcommand = message
+		elif self.client.var_fetchrequest:
+			self.client.var_fetchrequest = False
+			if message in ["y", "yes"]:
+				sender, world, rx, ry, rz = self.client.var_fetchdata
+				if self.client.world == world:
+					self.client.teleportTo(rx, ry, rz)
+				else:
+					self.client.changeToWorld(world.id, position=(rx, ry, rz))
+				self.client.sendServerMessage("You have accepted the fetch request.")
+				sender.sendServerMessage("%s has accepted your fetch request." % self.client.username)
+			elif message in ["n", "no"]:
+				sender = self.client.var_fetchdata[0]
+				self.client.sendServerMessage("You did not accept the fetch request.")
+				sender.sendServerMessage("%s did not accept your request." % self.client.username)
+			else:
+				sender = self.client.var_fetchdata[0]
+				self.client.sendServerMessage("You have ignored the fetch request.")
+				sender.sendServerMessage("%s has ignored your request." % self.client.username)
+				return
+			return True
 
 	def messageReceived(self, colour, username, text, fromloc):
 		"Stop viewing a message if we've muted them."
