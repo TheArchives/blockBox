@@ -65,14 +65,14 @@ logger.info("Starting up blockBox %s..." % VERSION)
 factory = BlockBoxFactory()
 try:
 	reactor.listenTCP(factory.config.getint("network", "port"), factory)
-except CannotListenError:
+except lib.twisted.internet.error.CannotListenError:
 	logger.critical("blockBox cannot listen on port %s. Is there another program using it?" % factory.config.getint("network", "port"))
 	doExit()
 if factory.config.getboolean("network", "use_api"):
 	api = APIFactory(factory)
 	try:
 		reactor.listenTCP(factory.config.getint("network", "api_port"), api)
-	except CannotListenError:
+	except lib.twisted.internet.error.CannotListenError:
 		logger.warning("blockBox API cannot listen on port %s. Disabled." % factory.config.getint("network", "port"))
 		del api
 

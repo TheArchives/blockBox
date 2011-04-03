@@ -339,7 +339,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 	@config("category", "info")
 	def commandBuilders(self, parts, fromloc, overriderank):
 		"/builders - Guest\nLists this world's builders."
-		if not self.client.world.writers:
+		if not self.client.world.builders:
 			self.client.sendServerMessage("This world has no builders.")
 		else:
 			self.client.sendServerList(["Builders for %s:" % self.client.world.id] + list(self.client.world.writers))
@@ -380,7 +380,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 						user = COLOUR_DARKCYAN + user
 					elif user in self.client.factory.advbuilders:
 						user = COLOUR_GREY + user
-					elif user in self.client.world.writers:
+					elif user in self.client.world.builders:
 						user = COLOUR_CYAN + user
 					else:
 						user = COLOUR_WHITE + user

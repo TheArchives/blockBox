@@ -171,11 +171,11 @@ class World(object):
 		else:
 			self.ops = set()
 		if config.has_section("builders"):
-			self.writers = set(x.lower() for x in config.options("builders"))
+			self.builders = set(x.lower() for x in config.options("builders"))
 		elif config.has_section("writers"):
-			self.writers = set(x.lower() for x in config.options("writers"))
+			self.builders = set(x.lower() for x in config.options("writers"))
 		else:
-			self.writers = set()
+			self.builders = set()
 		if config.has_section("permissions"):
 			if config.has_option("permissions", "all_write"):
 				self.all_write = config.getboolean("permissions", "all_write")
@@ -300,7 +300,7 @@ class World(object):
 		config.add_section("spawn")
 		config.add_section("owner")
 		config.add_section("ops")
-		config.add_section("writers")
+		config.add_section("builders")
 		config.add_section("permissions")
 		config.add_section("display")
 		config.add_section("teleports")
@@ -328,8 +328,8 @@ class World(object):
 		for op in self.ops:
 			config.set("ops", op, "true")
 		# Store builders
-		for writer in self.builders:
-			config.set("builders", writer, "true")
+		for builder in self.builders:
+			config.set("builders", builder, "true")
 		# Store permissions
 		config.set("permissions", "all_write", str(self.all_write))
 		config.set("permissions", "admin_blocks", str(self.admin_blocks))

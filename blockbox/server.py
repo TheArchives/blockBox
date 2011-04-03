@@ -45,7 +45,6 @@ class BlockBoxFactory(Factory):
 		self.logger = logging.getLogger("Server")
 		self.loops = recursive_default()
 		self.timers = recursive_default()
-		self.ServerVars = dict()
 		self.specs = ConfigParser()
 		self.last_heartbeat = time.time()
 		self.config = ConfigParser()

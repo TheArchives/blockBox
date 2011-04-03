@@ -45,7 +45,7 @@ class HelpPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("Ops: N/A")
 		else:
 			self.client.sendServerList(["Ops:"] + list(self.client.world.ops))
-		if not self.client.world.writers:
+		if not self.client.world.builders:
 			self.client.sendServerMessage("Builders: N/A")
 		else:
 			self.client.sendServerList(["Builders:"] + list(self.client.world.builders))

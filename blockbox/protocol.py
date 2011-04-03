@@ -27,7 +27,6 @@ class BlockBoxServerProtocol(Protocol):
 		self.buffer = ""
 		self.loading_world = False
 		# Load plugins for ourselves
-		self.identified = False
 		self.logger = logging.getLogger("Client")
 		self.quitmsg = "Goodbye."
 		self.homeworld = "main"
@@ -38,7 +37,6 @@ class BlockBoxServerProtocol(Protocol):
 		self.loops = recursive_default()
 		self.timers = recursive_default()
 		self.plugins = [plugin(self) for plugin in protocol_plugins]
-		self.ClientVars = dict()
 		# Set identification variable to false
 		self.identified = False
 		# Get an ID for ourselves
@@ -160,7 +158,7 @@ class BlockBoxServerProtocol(Protocol):
 				if self.factory.usernames[self.username.lower()] is self:
 					del self.factory.usernames[self.username.lower()]
 			except KeyError:
-				pass
+				self.logger.critical(traceback.format_exc())
 		# Remove from ID list, send removed msgs
 		self.factory.releaseId(self.id)
 		self.factory.queue.put((self, TASK_PLAYERLEAVE, (self.id,)))
@@ -646,7 +644,7 @@ class BlockBoxServerProtocol(Protocol):
 			color = COLOUR_DARKCYAN
 		elif self.isAdvBuilder():
 			color = COLOUR_GREY
-		elif self.isWriter():
+		elif self.isBuilder():
 			color = COLOUR_CYAN
 		else:
 			color = COLOUR_WHITE
@@ -671,7 +669,7 @@ class BlockBoxServerProtocol(Protocol):
 			name = "Op"
 		elif self.isAdvBuilder():
 			name = "Advanced Builder"
-		elif self.isWriter():
+		elif self.isBuilder():
 			name = "Writer"
 		else:
 			name = "Guest"
@@ -770,10 +768,10 @@ class BlockBoxServerProtocol(Protocol):
 
 	def sendBuilderUpdate(self):
 		"Sends a message."
-		if self.isWriter():
-			self.sendServerMessage("You are now a Builder in this world.")
+		if self.isBuilder():
+			self.sendServerMessage("You are now a auilder in this world.")
 		else:
-			self.sendServerMessage("You are no longer a Builder in this world.")
+			self.sendServerMessage("You are no longer a builder in this world.")
 		self.runHook("rankchange")
 		self.respawn()
 
