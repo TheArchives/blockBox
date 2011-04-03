@@ -638,7 +638,7 @@ class BlockBoxFactory(Factory):
 					elif task == TASK_SERVERMESSAGE:
 						# Give all people the message
 						message = data
-						message = self.messagestrip(message);
+						message = self.messagestrip(message)
 						for client in self.clients.values():
 							client.sendNormalMessage(COLOUR_DARKBLUE + message)
 						self.logger.info(message)
@@ -660,6 +660,7 @@ class BlockBoxFactory(Factory):
 								client.sendNewPlayer(id, username, x, y, z, h, p)
 					elif task == TASK_SERVERURGENTMESSAGE:
 						# Give all people the message
+						message = data
 						message = self.messagestrip(message)
 						for client in self.clients.values():
 							client.sendNormalMessage(COLOUR_DARKRED + message)
@@ -707,6 +708,26 @@ class BlockBoxFactory(Factory):
 	def numberWithPhysics(self):
 		"Returns the number of worlds with physics enabled."
 		return len([world for world in self.worlds.values() if world.physics])
+
+	def userColour(self, user):
+		"Returns the colour of the user. Global ranks only."
+		if user is self.owner:
+			color = COLOUR_DARKGREEN
+		if user in self.spectators:
+			color = COLOUR_BLACK
+		elif user in self.directors:
+			color = COLOUR_GREEN
+		elif user in self.admins:
+			color = COLOUR_RED
+		elif user in self.mods:
+			color = COLOUR_BLUE
+		elif user in VIPS:
+			color = COLOUR_YELLOW
+		elif user in self.advbuilders:
+			color = COLOUR_GREY
+		else:
+			color = COLOUR_WHITE
+		return color
 
 	def isSilenced(self, username):
 		return username.lower() in self.silenced

@@ -141,7 +141,7 @@ class StdinPlugin(threading.Thread):
 									print ("Please specify a username.")
 								else:
 									try:
-										print Rank(self, message, 'console', True, self.server)
+										print Rank(self, message, 'console', True, self.factory)
 									except:
 										print ("You must specify a rank and username.")
 							elif message[0] == "derank":
@@ -149,7 +149,7 @@ class StdinPlugin(threading.Thread):
 									print ("Please specify a username.")
 								else:
 									try:
-										print DeRank(self, message, 'console', True, self.server)
+										print DeRank(self, message, 'console', True, self.factory)
 									except:
 										print ("You must specify a rank and username.")
 							elif message[0] == "spec":
@@ -157,7 +157,7 @@ class StdinPlugin(threading.Thread):
 									print ("Please specify a username.")
 								else:
 									try:
-										print Spec(self, message[1], 'console', True, self.server)
+										print Spec(self, message[1], 'console', True, self.factory)
 									except:
 										print ("Please specify a username.")
 							elif message[0] == "despec":
@@ -165,7 +165,7 @@ class StdinPlugin(threading.Thread):
 									print ("Please specify a username.")
 								else:
 									try:
-										print DeSpec(self, message[1], 'console', True, self.server)
+										print DeSpec(self, message[1], 'console', True, self.factory)
 									except:
 										print ("Please specify a username.")
 							elif message[0] == ("boot"):
@@ -225,7 +225,7 @@ class StdinPlugin(threading.Thread):
 								if len(message) == 1:
 									self.factory.queue.put((self, TASK_SERVERURGENTMESSAGE, ("[Server Shutdown] See you later.")))
 								else:
-									self.server.queue.put((self, TASK_SERVERURGENTMESSAGE, ("[Server Shutdown] See you later: "+(" ".join(message[1:])))))
+									self.factory.queue.put((self, TASK_SERVERURGENTMESSAGE, ("[Server Shutdown] See you later: "+(" ".join(message[1:])))))
 							elif message[0] == ("help"):
 								print("Whispers: @username message")
 								print("WorldChat: !worldname message")
@@ -291,7 +291,7 @@ class StdinPlugin(threading.Thread):
 							elif message[0] == ("irc_cpr"):
 								self.factory.irc_relay.quit("Reloading the IRC Bot...")
 								self.factory.irc_relay = None
-								self.factory.irc_relay = ChatBotFactory(self.server)
+								self.factory.irc_relay = ChatBotFactory(self.factory)
 								reactor.connectTCP(self.factory.conf_irc.get("irc", "server"), self.factory.conf_irc.getint("irc", "port"), self.factory.irc_relay)
 							#elif message[0] == ("irc_unload"):
 							#	if not self.irc_relay:
@@ -304,7 +304,7 @@ class StdinPlugin(threading.Thread):
 							#	if self.irc_relay:
 							#		print("IRC bot is already loaded. If it failed please use /irc_cpr!")
 							#	else:
-							#		self.factory.irc_relay = ChatBotFactory(self.server)
+							#		self.factory.irc_relay = ChatBotFactory(self.factory)
 							#		reactor.connectTCP(self.factory.conf_irc.get("irc", "server"), self.factory.conf_irc.getint("irc", "port"), self.factory.irc_relay)
 							#		print("IRC Bot loaded.")
 							else:

@@ -446,11 +446,11 @@ class CommandPlugin(ProtocolPlugin):
 						try:
 							func = self.commands[command.lower()]
 						except KeyError:
-							self.sendServerMessage("Unknown command '%s'" % command)
+							self.client.sendServerMessage("Unknown command '%s'" % command)
 							return
 					except AttributeError:
-						self.logger.error("Cannot find command code for %s, please report to blockBox team." % func)
-						self.sendSplitServerMessage("Command code for command '%s' not found, please report to server staff or blockBox team." % command)
+						self.client.logger.error("Cannot find command code for %s, please report to blockBox team." % command)
+						self.client.sendSplitServerMessage("Command code for command '%s' not found, please report to server staff or blockBox team." % command)
 						return
 				if func.config["disabled"]:
 					return
@@ -570,14 +570,14 @@ class CommandPlugin(ProtocolPlugin):
 						try:
 							func = self.commands[command.lower()]
 						except KeyError:
-							self.sendServerMessage("Unknown command '%s'" % command)
+							self.client.sendServerMessage("Unknown command '%s'" % command)
 							return
 					except AttributeError:
-						self.logger.error("Cannot find command code for %s, please report to blockBox team." % func)
-						self.sendSplitServerMessage("Command code for command '%s' not found, please report to server staff or blockBox team." % command)
+						self.client.logger.error("Cannot find command code for %s, please report to blockBox team." % command)
+						self.client.sendSplitServerMessage("Command code for command '%s' not found, please report to server staff or blockBox team." % command)
 						return
 				if func.config["disabled"]:
-					self.sendServerMessage("Command %s is disabled by the server owner." % command)
+					self.client.sendServerMessage("Command %s is disabled by the server owner." % command)
 					return
 					if self.client.isSpectator() and func.config["rank"]:
 						self.client.sendServerMessage("'%s' is not available to spectators." % command)
@@ -920,14 +920,13 @@ class CommandPlugin(ProtocolPlugin):
 			func = getattr(self, "command%s" % command.title())
 		except AttributeError:
 			try:
-				try:
-					func = self.commands[command.lower()]
-				except KeyError:
-					self.sendServerMessage("Unknown command '%s'" % command)
-					runcmd = False
+				func = self.commands[command.lower()]
+			except KeyError:
+				self.client.sendServerMessage("Unknown command '%s'" % command)
+				runcmd = False
 			except AttributeError:
-				self.logger.error("Cannot find command code for %s, please report to blockBox team." % func)
-				self.sendSplitServerMessage("Command code for command '%s' not found, please report to server staff or blockBox team." % command)
+				self.client.logger.error("Cannot find command code for %s, please report to blockBox team." % command)
+				self.client.sendSplitServerMessage("Command code for command '%s' not found, please report to server staff or blockBox team." % command)
 				runcmd = False
 		if runcmd == True:
 			if func.config["disabled"]:
