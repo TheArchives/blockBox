@@ -259,7 +259,6 @@ class BlockBoxServerProtocol(Protocol):
 			if type == TYPE_INITIAL:
 				# Get the client's details
 				protocol, self.username, mppass, utype = parts
-				self.logger = logging.getLogger(self.username)
 				if self.identified == True:
 					self.logger.info("Kicked '%s'; already logged in to server" % (self.username))
 					self.sendError("You already logged in! Foolish bot owners.")
@@ -271,6 +270,7 @@ class BlockBoxServerProtocol(Protocol):
 						self.logger.info("Kicked '%s'; invalid password (%s, %s)" % (self.username, mppass, correct_pass))
 						self.sendError("Incorrect authentication. (try again in 60s?)")
 						return
+				self.logger = logging.getLogger(self.username)
 				self.logger.info("Connected, as '%s'" % self.username)
 				self.identified = True
 				# Are they banned?
@@ -327,11 +327,11 @@ class BlockBoxServerProtocol(Protocol):
 						self.sendBlock(x, y, z)
 						self.sendServerMessage("Spectators cannot edit maps.")
 						return
-					allowbuild = self.runHook("blockclick", x, y, z, block, True)
+					allowbuild = self.runHook("blockclick", x, y, z, block, "user")
 					if allowbuild is False:
 						self.sendBlock(x, y, z)
 						return
-					elif not self.AllowedToBuild(x,y,z):
+					elif not self.AllowedToBuild(x, y, z):
 						self.sendBlock(x, y, z)
 						return
 					# This try prevents out-of-range errors on the world storage
@@ -343,12 +343,12 @@ class BlockBoxServerProtocol(Protocol):
 					if not created:
 						block = 0
 					# Pre-hook, for stuff like /paint
-					new_block = self.runHook("preblockchange", x, y, z, block, selected_block, True)
+					new_block = self.runHook("preblockchange", x, y, z, block, selected_block, "user")
 					if new_block is not None:
 						block = new_block
 						overridden = True
 					# Call hooks
-					new_block = self.runHook("blockchange", x, y, z, block, selected_block, True)
+					new_block = self.runHook("blockchange", x, y, z, block, selected_block, "user")
 					if new_block is False:
 						# They weren't allowed to build here!
 						self.sendBlock(x, y, z)

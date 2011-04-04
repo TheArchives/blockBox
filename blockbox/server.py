@@ -33,6 +33,9 @@ class BlockBoxFactory(Factory):
 	def __init__(self):
 		"""Constructor method."""
 		self.initVariables()
+
+	def startFactory(self):
+		"""Launches the factory."""
 		self.initLoops()
 
 	def initVariables(self):
@@ -69,7 +72,7 @@ class BlockBoxFactory(Factory):
 		self.ipbanned = {}
 
 		self.use_irc = False
-		if  (os.path.exists("conf/irc.ini")):
+		if os.path.exists("conf/irc.ini"):
 			self.use_irc = True
 			self.conf_irc = ConfigParser()
 			self.conf_irc.read("conf/irc.ini")
@@ -173,14 +176,14 @@ class BlockBoxFactory(Factory):
 		self.queue = Queue()
 		self.clients = {}
 		self.usernames = {}
-		self.console = StdinPlugin(self)
-		self.console.start()
 		# Boot worlds that got loaded
 		for world in self.worlds:
 			self.loadWorld("mapdata/worlds/%s" % world, world)
 
 	def initLoops(self):
 		"""Initialize server loops to run during execution."""
+		self.console = StdinPlugin(self)
+		self.console.start()
 		reactor.callLater(0.1, self.sendMessages)
 		self.loops["printinfo"] = task.LoopingCall(self.printInfo)
 		self.loops["printinfo"].start(60)

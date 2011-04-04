@@ -2,7 +2,7 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-import datetime, logging, traceback
+import datetime, logging, string, traceback
 
 from lib.twisted.words.protocols import irc
 from lib.twisted.words.protocols.irc import IRC
@@ -33,6 +33,13 @@ class ChatBot(irc.IRCClient):
 		self.logger.info("Disconnected. (%s)" % reason)
 
 	# callbacks for events
+
+	def ctcpQuery_VERSION(self, user, channel, data):
+		"""Called when received a CTCP VERSION request."""
+		if data is not None:
+			self.quirkyMessage("Why did %s send '%s' with a VERSION query?" % (user, data))
+		nick = string.split(user,"!")[0]
+		self.ctcpMakeReply(nick, [('VERSION', 'blockBox %s - a Minecraft server written in Python. http://blockbox.hk-diy.net' % VERSION)])
 
 	def signedOn(self):
 		"""Called when bot has succesfully signed on to server."""

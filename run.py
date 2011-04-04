@@ -7,8 +7,9 @@ import time, sys
 
 def doExit(exitTime=10):
 	print ("blockBox will now exit in %s seconds." % exitTime)
-	time.sleep(exitTime)
-	exit(1)
+	if sys.platform == "win32":
+		print ("blockBox may not exit if run on Windows. Please close the window yourself.")
+	sys.exit(exitTime)
 
 if "--run" not in sys.argv and sys.platform == "win32":
 	# They did not use the start.bat. Boot them out
@@ -44,7 +45,7 @@ from logging.handlers import SMTPHandler
 from ConfigParser import RawConfigParser as ConfigParser
 
 from lib.twisted.internet import reactor
-
+from lib.twisted.internet.error import CannotListenError
 from blockbox.api import APIFactory
 from blockbox.constants import *
 from blockbox.globals import *
@@ -65,14 +66,14 @@ logger.info("Starting up blockBox %s..." % VERSION)
 factory = BlockBoxFactory()
 try:
 	reactor.listenTCP(factory.config.getint("network", "port"), factory)
-except lib.twisted.internet.error.CannotListenError:
+except CannotListenError:
 	logger.critical("blockBox cannot listen on port %s. Is there another program using it?" % factory.config.getint("network", "port"))
 	doExit()
 if factory.config.getboolean("network", "use_api"):
 	api = APIFactory(factory)
 	try:
 		reactor.listenTCP(factory.config.getint("network", "api_port"), api)
-	except lib.twisted.internet.error.CannotListenError:
+	except CannotListenError:
 		logger.warning("blockBox API cannot listen on port %s. Disabled." % factory.config.getint("network", "port"))
 		del api
 
