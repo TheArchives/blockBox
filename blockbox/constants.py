@@ -2,7 +2,7 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-VERSION = "v1.0.02C"
+VERSION = "v1.0.0 RBB (Really Buggy Beta) 1"
 
 FORMAT_LENGTHS = {
 	"b": 1,
@@ -447,6 +447,7 @@ VIPS = [
 	"uberfox",
 	"opticalza",
 	# Code contributors to products before blockBox
+	"099",
 	"adam01",
 	"andrewph",
 	"destroyerx1",
@@ -455,6 +456,7 @@ VIPS = [
 	"gdude2002",
 	"goober",
 	"gothfox",
+	"kelraider",
 	"notmeh",
 	"revenant",
 	"willempiee",
