@@ -58,11 +58,11 @@ class ZonesPlugin(ProtocolPlugin):
 				return
 		for id, zone in self.client.world.userzones.items():
 			if zone[0] == parts[1]:
-				self.client.sendServerMessage("Zone %s already exists. Pick a new name."%parts[1])
+				self.client.sendServerMessage("Zone %s already exists. Pick a new name." % parts[1])
 				return
 		for id, zone in self.client.world.rankzones.items():
 			if zone[0] == parts[1]:
-				self.client.sendServerMessage("Zone %s already exists. Pick a new name."%parts[1])
+				self.client.sendServerMessage("Zone %s already exists. Pick a new name." % parts[1])
 				return
 		try:
 			x, y, z = self.client.last_block_changes[0]
@@ -87,11 +87,11 @@ class ZonesPlugin(ProtocolPlugin):
 		x2 += 1
 		y2 += 1
 		z2 += 1
-		if parts[2].lower()=="rank":
+		if parts[2].lower() == "rank":
 			if len(parts) < 4:
 				self.client.sendServerMessage("Info missing. Usage - /znew name rank [rank]")
 				return
-			if parts[3].lower() == "all" or  parts[3].lower() == "builder" or  parts[3].lower() == "op" or  parts[3].lower() == "worldowner" or  parts[3].lower() == "mod" or  parts[3].lower() == "advbuilder" or  parts[3].lower() == "admin" or  parts[3].lower() == "director" or  parts[3].lower() == "owner":
+			if parts[3].lower() in ["all", "builder", "op", "worldowner", "mod", "advbuilder", "admin", "director", "owner"]:
 				i = 1
 				while True:
 					if not i in self.client.world.rankzones:
@@ -99,7 +99,7 @@ class ZonesPlugin(ProtocolPlugin):
 						break
 					else:
 						i += 1
-				self.client.sendServerMessage("Zone %s for rank %s has been created."%(parts[1].lower(),parts[3].lower()))
+				self.client.sendServerMessage("Zone %s for rank %s has been created." % (parts[1].lower(), parts[3].lower()))
 			else:
 				self.client.sendServerMessage("You must provide a proper rank.")
 				self.client.sendServerMessage("all|builder|op|worldowner|advbuilder|mod|admin|director|owner")
@@ -120,7 +120,7 @@ class ZonesPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("User zone %s has been created."%parts[1].lower())
 			self.client.sendServerMessage("Now use /zone name add|remove [player1 player2 ...]")
 		else:
-			self.client.sendServerMessage("You need to provide a zone type. (ie user or rank)")
+			self.client.sendServerMessage("You need to provide a zone type. (i.e: user or rank)")
 
 	@config("rank", "op")
 	def commandZone(self,parts, fromloc, overriderank):
@@ -129,11 +129,11 @@ class ZonesPlugin(ProtocolPlugin):
 			for id, zone in self.client.world.userzones.items():
 				if zone[0] == parts[1]:
 					try:
-						self.client.sendSplitServerMessage("Zone %s users: %s" %(zone[0],", ".join(map(str,zone[7:]))))
+						self.client.sendSplitServerMessage("Zone %s users: %s" % (zone[0], ", ".join(map(str,zone[7:]))))
 					except:
-						self.client.sendServerMessage("There are no users assigned to %s." %(zone[0]))
+						self.client.sendServerMessage("There are no users assigned to zone %s." % (zone[0]))
 					return
-			self.client.sendServerMessage("There is no zone with that name")
+			self.client.sendServerMessage("There is no zone with that name.")
 		elif len(parts) > 3:
 			if parts[2] == "add":
 				for id, zone in self.client.world.userzones.items():
@@ -145,10 +145,10 @@ class ZonesPlugin(ProtocolPlugin):
 								else:
 									self.client.sendServerMessage("%s is already assigned to %s." % (user.lower(), zone[0]))
 									return
-							self.client.sendServerMessage("Zone %s added user(s): %s." % (zone[0], ", ".join(map(str, parts[3:]))))
+							self.client.sendServerMessage("User %s added to zone %s." % (", ".join(map(str, parts[3:])), zone[0]))
 							return
 						else:
-							self.client.sendSplitServerMessage("You are not a member of %s. You must be one of its users to add users." %zone[0])
+							self.client.sendSplitServerMessage("You are not a member of %s. You must be one of its users to add users."  % zone[0])
 							return
 			if parts[2] == "remove":
 				for id, zone in self.client.world.userzones.items():
@@ -160,13 +160,13 @@ class ZonesPlugin(ProtocolPlugin):
 								except:
 									self.client.sendServerMessage("User %s is not assigned to %s" % (user.lower(), zone[0]))
 									return
-							self.client.sendServerMessage("Zone %s removed; user(s): %s" % (zone[0], ", ".join(map(str,parts[3:]))))
+							self.client.sendServerMessage("Removed %s from zone %s."  % (", ".join(map(str, parts[3:])), zone[0]))
 							return
 						else:
 							self.client.sendSplitServerMessage("You are not a member of %s. You must be one of its users to remove users." % zone[0])
 							return
 			else:
-				self.client.sendServerMessage("%s is an unknown command. Please try again."%parts[2])
+				self.client.sendServerMessage("Invalid action %s." % parts[2])
 		else:
 			self.client.sendServerMessage("You must at least provide a zone name.")
 
@@ -180,7 +180,7 @@ class ZonesPlugin(ProtocolPlugin):
 					if self.client.username in zone[6:] or self.client.isAdmin() or self.client.world.owner == self.client.username:
 						match = True
 						del self.client.world.userzones[id]
-						self.client.sendServerMessage("%s has been removed." % zone[0])
+						self.client.sendServerMessage("Zone %s has been removed." % zone[0])
 						return
 					else:
 						self.client.sendSplitServerMessage("You are not a member of %s. You must be one of its users to remove it." % zone[0])
@@ -188,26 +188,26 @@ class ZonesPlugin(ProtocolPlugin):
 			for id, zone in self.client.world.rankzones.items():
 				if zone[0] == parts[1]:
 					if zone[7] == "worldowner" and not self.client.isWorldOwner():
-						self.client.sendServerMessage("You can not remove a zone higher then you")
+						self.client.sendSplitServerMessage("You cannot remove a rank zone in which the rank is higher than your current rank.")
 						return
 					if zone[7] == "mod" and not self.client.isMod():
-						self.client.sendServerMessage("You can not remove a zone higher then you")
+						self.client.sendSplitServerMessage("You cannot remove a rank zone in which the rank is higher than your current rank.")
 						return
 					if zone[7] == "admin" and not self.client.isAdmin():
-						self.client.sendServerMessage("You can not remove a zone higher then you")
-						return			 
+						self.client.sendSplitServerMessage("You cannot remove a rank zone in which the rank is higher than your current rank.")
+						return
 					if zone[7] == "director" and not self.client.isDirector():
-						self.client.sendServerMessage("You can not remove a zone higher then you")
+						self.client.sendSplitServerMessage("You cannot remove a rank zone in which the rank is higher than your current rank.")
 						return
 					if zone[7] == "owner" and not self.client.isOwner():
-						self.client.sendServerMessage("You can not remove a zone higher then you")
+						self.client.sendSplitServerMessage("You cannot remove a rank zone in which the rank is higher than your current rank.")
 						return
 					match = True
 					del self.client.world.rankzones[id]
-					self.client.sendServerMessage("%s has been removed." % zone[0])
+					self.client.sendServerMessage("Zone %s has been removed." % zone[0])
 					return
 			if not match:
-				self.client.sendServerMessage("There is not a zone with that name.")
+				self.client.sendServerMessage("There is no zone with that name.")
 		else:
 			self.client.sendServerMessage("You must provide a zone name.")
 
@@ -283,7 +283,7 @@ class ZonesPlugin(ProtocolPlugin):
 					self.client.sendPacked(TYPE_BLOCKSET, x2, y, k, block)
 					self.client.sendPacked(TYPE_BLOCKSET, x, y2, k, block)
 					self.client.sendPacked(TYPE_BLOCKSET, x2, y2, k, block)
-			self.client.sendServerMessage("all zones in this map are showen temporarily by a water border.")
+			self.client.sendServerMessage("All zones in this map are showen temporarily by a water border.")
 		else:
 			match = False
 			user = parts[1].lower()
@@ -350,7 +350,7 @@ class ZonesPlugin(ProtocolPlugin):
 					except StopIteration:
 						pass
 				do_step()
-				self.client.sendServerMessage("%s is showing temporarily by a water border." % user)
+				self.client.sendServerMessage("Zone %s is showing temporarily by a water border." % user)
 			else:
 				self.client.sendServerMessage("That zone does not exist.")
 
@@ -387,19 +387,19 @@ class ZonesPlugin(ProtocolPlugin):
 				for id, zone in self.client.world.rankzones.items():
 					if user == zone[0]:
 						if zone[7] == "advbuilder" and not self.client.isAdvBuilder():
-							self.client.sendServerMessage("You can not remove a zone higher then you.")
+							self.client.sendSplitServerMessage("You cannot remove a rank zone in which the rank is higher than your current rank.")
 							return
 						if zone[7] == "mod" and not self.client.isMod():
-							self.client.sendServerMessage("You can not remove a zone higher then you.")
+							self.client.sendSplitServerMessage("You cannot remove a rank zone in which the rank is higher than your current rank.")
 							return
 						if zone[7] == "admin" and not self.client.isAdmin():
-							self.client.sendServerMessage("You can not remove a zone higher then you.")
+							self.client.sendSplitServerMessage("You cannot remove a rank zone in which the rank is higher than your current rank.")
 							return
 						if zone[7] == "director" and not self.client.isDirector():
-							self.client.sendServerMessage("You can not remove a zone higher then you.")
+							self.client.sendSplitServerMessage("You cannot remove a rank zone in which the rank is higher than your current rank.")
 							return
 						if zone[7] == "owner" and not self.client.isOwner():
-							self.client.sendServerMessage("You can not remove a zone higher then you.")
+							self.client.sendSplitServerMessage("You cannot remove a rank zone in which the rank is higher than your current rank.")
 							return
 						match = True
 						x , y, z, x2, y2, z2 = zone[1:7]
@@ -466,23 +466,22 @@ class ZonesPlugin(ProtocolPlugin):
 			else:
 				self.client.sendSplitServerMessage("You are not a member of %s. You must be one of its users to delete this zone." % zone[0])
 				return
-		self.client.sendServerMessage("userzones deleted")
 		for id, zone in self.client.world.rankzones.items():
 			try:
 				if zone[7] == "worldowner" and not self.client.isWorldOwner():
-					self.client.sendServerMessage("You can not remove a zone higher then you.")
+					self.client.sendSplitServerMessage("You cannot remove a rank zone in which the rank is higher than your current rank.")
 					return
 				if zone[7] == "mod" and not self.client.isMod():
-					self.client.sendServerMessage("You can not remove a zone higher then you.")
+					self.client.sendSplitServerMessage("You cannot remove a rank zone in which the rank is higher than your current rank.")
 					return
 				if zone[7] == "admin" and not self.client.isAdmin():
-					self.client.sendServerMessage("You can not remove a zone higher then you.")
+					self.client.sendSplitServerMessage("You cannot remove a rank zone in which the rank is higher than your current rank.")
 					return
 				if zone[7] == "director" and not self.client.isDirector():
-					self.client.sendServerMessage("You can not remove a zone higher then you.")
+					self.client.sendSplitServerMessage("You cannot remove a rank zone in which the rank is higher than your current rank.")
 					return
 				if zone[7] == "owner" and not self.client.isOwner():
-					self.client.sendServerMessage("You can not remove a zone higher then you.")
+					self.client.sendSplitServerMessage("You cannot remove a rank zone in which the rank is higher than your current rank.")
 					return
 			except:
 				pass
@@ -532,7 +531,6 @@ class ZonesPlugin(ProtocolPlugin):
 				if zone[0] == newname:
 					self.client.sendServerMessage("Zone %s already exists. Pick a new name." % newname)
 					return
-
 			for id,zone in self.client.world.userzones.items():
 				if oldname == zone[0]:
 					if self.client.username in zone[6:] or self.client.isAdmin() or self.client.world.owner == self.client.username:
@@ -545,21 +543,21 @@ class ZonesPlugin(ProtocolPlugin):
 			for id,zone in self.client.world.rankzones.items():
 				if oldname == zone[0]:
 					if zone[7] == "advbuilder" and not self.client.isAdvBuilder():
-						self.client.sendServerMessage("You can not rename a zone higher then you.")
+						self.client.sendSplitServerMessage("You can not rename a ranked zone in which the rank is higher than your current rank.")
 						return
 					if zone[7] == "mod" and not self.client.isMod():
-						self.client.sendServerMessage("You can not rename a zone higher then you.")
+						self.client.sendSplitServerMessage("You can not rename a ranked zone in which the rank is higher than your current rank.")
 						return
 					if zone[7] == "admin" and not self.client.isAdmin():
-						self.client.sendServerMessage("You can not rename a zone higher then you.")
+						self.client.sendSplitServerMessage("You can not rename a ranked zone in which the rank is higher than your current rank.")
 						return
 					if zone[7] == "director" and not self.client.isDirector():
-						self.client.sendServerMessage("You can not rename a zone higher then you.")
+						self.client.sendSplitServerMessage("You can not rename a ranked zone in which the rank is higher than your current rank.")
 						return
 					if zone[7] == "owner" and not self.client.isOwner():
-						self.client.sendServerMessage("You can not rename a zone higher then you.")
+						self.client.sendSplitServerMessage("You can not rename a ranked zone in which the rank is higher than your current rank.")
 						return
 					zone[0] = newname
-					self.client.sendServerMessage("The zone %s has been renamed to %s" % (oldname, newname))
+					self.client.sendServerMessage("Zone %s has been renamed to %s." % (oldname, newname))
 					return
-			self.client.sendServerMessage("The zone '%s' doesnt exist." % oldname)
+			self.client.sendServerMessage("Zone %s doesn't exist." % oldname)
