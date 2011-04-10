@@ -7,8 +7,9 @@ import time, sys
 
 def doExit(exitTime=10):
 	print ("blockBox will now exit in %s seconds." % exitTime)
-	time.sleep(exitTime)
-	exit(1)
+	if sys.platform == "win32":
+		print ("blockBox may not exit if run on Windows. Please close the window yourself.")
+	sys.exit(exitTime)
 
 if "--run" not in sys.argv and sys.platform == "win32":
 	# They did not use the start.bat. Boot them out
@@ -36,34 +37,28 @@ try:
 except: # Python 1.x doesn't have the version_info method
 	# Oh dear they are still using Python 1.x
 	print ("ATTENTION: Do you need help with blockBox? http://blockbox.hk-diy.net or #blockBox@irc.esper.net")
-	print ("NOTICE: Sorry, but blockBox does not support Python 3.x. Please use Python 2.6.x instead; http://www.python.org/download/releases/2.6.6/")
+	print ("NOTICE: Sorry, but blockBox does not support Python 1.x. Please use Python 2.6.x instead; http://www.python.org/download/releases/2.6.6/")
 	doExit()
 
 import logging
 from logging.handlers import SMTPHandler
 from ConfigParser import RawConfigParser as ConfigParser
 
-try:
-	from twisted.internet import reactor
-except ImportError:
-	try:
-		print ("blockBox could not find Twisted or Zope. Please either check if you have correctly installed Twisted and Zope, or use the official package instead.")
-	except:
-		print ("blockBox could not find Twisted or Zope. Please either check if you have correctly installed Twisted and Zope, or use the official package instead.")
-	doExit()
-
+from lib.twisted.internet import reactor
+from lib.twisted.internet.error import CannotListenError
 from blockbox.api import APIFactory
 from blockbox.constants import *
 from blockbox.globals import *
 from blockbox.server import BlockBoxFactory
+
+create_if_not("logs/")
+create_if_not("logs/console/console.log")
 
 logging.basicConfig(
 	format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 	level=("--debug" in sys.argv) and logging.DEBUG or logging.INFO,
 	datefmt="%m/%d/%Y %H:%M:%S",
 )
-
-create_if_not("logs/console/console.log")
 
 logger = logging.getLogger("blockBox")
 logger.info("Starting up blockBox %s..." % VERSION)
@@ -122,7 +117,7 @@ finally:
 	factory.saveMeta()
 	logger.info("Flushing worlds to disk...")
 	for world in factory.worlds.values():
-		logger.info("Saving: %s" % world.basename);
+		logger.info("Saving: %s" % world.basename)
 		world.stop()
 		world.save_meta()
 	logger.info("Done flushing...")

@@ -2,7 +2,7 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-VERSION = "v1.0.02C-nolib"
+VERSION = "v1.0.0 RBB (Really Buggy Beta) 1 -nolib"
 
 FORMAT_LENGTHS = {
 	"b": 1,
@@ -386,9 +386,9 @@ BlockList[5]="wood"
 BlockList[6]="plant"
 BlockList[7]="adminblock"
 BlockList[8]="water"
-BlockList[9]="still_water"
+BlockList[9]="still water"
 BlockList[10]="lava"
-BlockList[11]="still_lava"
+BlockList[11]="still lava"
 BlockList[12]="sand"
 BlockList[13]="gravel"
 BlockList[14]="goldore"
@@ -414,10 +414,10 @@ BlockList[33]="pink"
 BlockList[34]="black"
 BlockList[35]="grey"
 BlockList[36]="white"
-BlockList[37]="yellow_flower"
-BlockList[38]="red_flower"
-BlockList[39]="brown_mushroom"
-BlockList[40]="red_mushroom"
+BlockList[37]="yellow flower"
+BlockList[38]="red flower"
+BlockList[39]="brown mushroom"
+BlockList[40]="red mushroom"
 BlockList[41]="gold"
 BlockList[42]="iron"
 BlockList[43]="step"
@@ -428,12 +428,47 @@ BlockList[47]="bookcase"
 BlockList[48]="moss"
 BlockList[49]="obsidian"
 
-VIPS = set(["notch", "ez", "dock", "pixeleater", "andrewph", "ikjames", "goober", "gothfox", "destroyerx1", "willempiee", "dwarfy", "erronjason", "adam01", "aera", "andrewgodwin", "revenant", "gdude2002", "varriount", "notmeh", "bidoof_king", "rils", "fragmer", "tktech", "pyropyro", "fizyplankton", "tyteen4a03", "uberfox"])
+VIPS = [
+	# Mojang staff (current or retired)
+	"c418",
+	"dock",
+	"ez",
+	"jeb_",
+	"kappe",
+	"mollstam",
+	"notch",
+	# Founders of blockBox or other products before blockBox
+	"aera",
+	"andrewgodwin",
+	"pixeleater",
+	# Developers/contributors of blockBox
+	"fizyplankton",
+	"tyteen4a03",
+	"uberfox",
+	"opticalza",
+	# Code contributors to products before blockBox
+	"099",
+	"adam01",
+	"andrewph",
+	"destroyerx1",
+	"dwarfy",
+	"erronjason",
+	"gdude2002",
+	"goober",
+	"gothfox",
+	"kelraider",
+	"notmeh",
+	"revenant",
+	"willempiee",
+	"varriount",
+	# Others we give our bows to.
+	"fragmer",
+	"pandabear",
+	"pyropyro", 
+	"tktech"
+	]
 
 class ServerFull(Exception):
-	pass
-
-class TemplateDoesNotExist(Exception):
 	pass
 
 class NotConfigured(Exception):
@@ -445,7 +480,7 @@ class NotConfigured(Exception):
 		return self.msg
 
 class StoringMethodNotSupported(Exception):
-
+	"""Raised when the storing method supplied is not supported."""
 	def __init__(self):
 		self.msg = "blockBox currently does not support the storing method supplied. Please refer to the installation guide about storing methods blockBox supports."
 

@@ -53,8 +53,8 @@ class DirtBombPlugin(ProtocolPlugin):
 			# Explode in 2 seconds
 			reactor.callLater(self.delay, explode)
 
-	@build_list
-	@op_only
+	@config("category", "build")
+	@config("rank", "op")
 	@on_off_command
 	def commanddirtbomb(self, onoff, fromloc, overriderank):
 		"/dirtbomb on|off - Builder\nThis is some kind of bomb involving dirt."

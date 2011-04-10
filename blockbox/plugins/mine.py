@@ -21,6 +21,11 @@ class MinePlugin(ProtocolPlugin):
 		"poschange": "posChanged",
 	}
 
+	def gotClient(self):
+		self.explosion_radius = 3
+		self.delay = .5
+		self.placingmines = False
+
 	def blockChanged(self, x, y, z, block, selected_block, fromloc):
 		if fromloc != 'user':
 			#People shouldnt be blbing mines :P
@@ -60,7 +65,7 @@ class MinePlugin(ProtocolPlugin):
 					for i in range(-fanout, fanout+1):
 						for j in range(-fanout, fanout+1):
 							for k in range(-fanout, fanout+1):
-								if (i**2+j**2+k**2)**0.5 + 0.691 < fanout:
+								if (i ** 2 + j ** 2 + k ** 2) ** 0.5 + 0.691 < fanout:
 									if not self.client.AllowedToBuild(mx+i, my+j, mz+k):
 										return
 									check_offset = self.client.world.blockstore.get_offset(mx+i, my+j, mz+k)
@@ -108,21 +113,16 @@ class MinePlugin(ProtocolPlugin):
 			#oob
 			pass
 
-	@build_list
-	@op_only
+	@config("category", "build")
+	@config("rank", "op")
 	def commandMine(self, parts, fromloc, rankoverride):
 		"/mine - Op\nMakes the next black block you place a mine."
 		self.placingmines = True
 		self.client.sendServerMessage("You are now placing mine blocks.")
 		self.client.sendServerMessage("Place a black block.")
 
-	@build_list
-	@admin_only
+	@config("category", "build")
+	@config("rank", "admin")
 	def commandClear(self, parts, fromloc, rankoverride):
 		self.client.world.clear_mines()
-		self.client.sendServerMessage("You cleared all mines")
-
-	def gotClient(self):
-		self.explosion_radius = 3
-		self.delay = .5
-		self.placingmines = False
+		self.client.sendServerMessage("You cleared all mines.")

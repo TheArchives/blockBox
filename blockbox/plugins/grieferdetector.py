@@ -11,6 +11,7 @@ from blockbox.decorators import *
 from blockbox.plugins import ProtocolPlugin
 
 class GreiferDetectorPlugin(ProtocolPlugin):
+	"""Class that provides possible griefer report."""
 
 	hooks = {
 		"blockchange": "blockChanged",
@@ -32,8 +33,8 @@ class GreiferDetectorPlugin(ProtocolPlugin):
 					if self.var_blockchcount >= 35:
 						self.client.factory.queue.put((self.client, TASK_STAFFMESSAGE, ("#%s%s: %s%s" % (COLOUR_DARKGREEN, 'SERVER', COLOUR_DARKGREEN, "ALERT! Possible Griefer behavior detected in"))))
 						self.client.factory.queue.put((self.client, TASK_STAFFMESSAGE, ("#%s%s: %s%s" % (COLOUR_DARKGREEN, 'SERVER', COLOUR_DARKGREEN, "'" + worldname + "'! Username: " + username))))
-						self.client.log(username + " was detected as a possible griefer in '" + worldname + "'")
-						self.client.adlog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+" | STAFF | "+username + " was detected as a possible griefer in '" + worldname + "'" + "\n")
+						self.client.logger.info("%s was detected as a possible griefer in world %s." % (username, worldname))
+						self.client.adlog.write("%s | STAFF | %s was detected as a possible griefer in world %s.\n" % (datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M"), username, worldname))
 						self.client.adlog.flush()
 					self.var_blockchcount = 0
 				if self.var_blockchcount == 0:
@@ -41,7 +42,7 @@ class GreiferDetectorPlugin(ProtocolPlugin):
 				self.var_blockchcount += 1
 
 	def newWorld(self, world):
-		"Hook to reset portal abilities in new worlds if not op."
+		"Hook to reset griefer blockcount abilities in new worlds if not op."
 		if world.all_write == False:
 			self.in_publicworld = False
 			self.var_blockchcount = 0

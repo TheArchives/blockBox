@@ -75,7 +75,7 @@ class APIProtocol(LineReceiver):
 			(world.id, [client.username for client in world.clients if client.username], {
 				"id": world.id,
 				"ops": list(world.ops),
-				"writers": list(world.writers),
+				"builders": list(world.builders),
 				"private": world.private,
 				"archive": world.is_archive,
 				"locked": not world.all_write,
@@ -89,7 +89,7 @@ class APIProtocol(LineReceiver):
 		self.sendJson({
 			"id": world.id,
 			"ops": list(world.ops),
-			"writers": list(world.writers),
+			"builders": list(world.builders),
 			"private": world.private,
 			"archive": world.is_archive,
 			"locked": not world.all_write,

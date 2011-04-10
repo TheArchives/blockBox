@@ -17,7 +17,7 @@ class CorePlugin(ProtocolPlugin):
 		"plr": "commandPluginReload",
 	}
 
-	@admin_only
+	@config("rank", "admin")
 	@only_string_command("plugin name")
 	def commandPluginReload(self, plugin_name, fromloc, overriderank):
 		"/plr plugin - Admin\nReloads the plugin."
@@ -36,7 +36,7 @@ class CorePlugin(ProtocolPlugin):
 			else:
 				self.client.sendServerMessage("Plugin '%s' reloaded." % plugin_name)
 
-	@director_only
+	@config("rank", "director")
 	@only_string_command("plugin name")
 	def commandPluginLoad(self, plugin_name, fromloc, overriderank):
 		"/pll plugin - Director\nLoads the plugin."
@@ -50,7 +50,7 @@ class CorePlugin(ProtocolPlugin):
 		else:
 			self.client.sendServerMessage("Plugin '%s' loaded." % plugin_name)
 
-	@director_only
+	@config("rank", "director")
 	@only_string_command("plugin name")
 	def commandPluginUnload(self, plugin_name, fromloc, overriderank):
 		"/plu plugin - Director\nUnloads the plugin."

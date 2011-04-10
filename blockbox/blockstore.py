@@ -16,7 +16,7 @@ class BlockStore(Thread):
 	A class which deals with storing the block maps, flushing them, etc.
 	"""
 
-	def __init__(self, blocks_path,  sx, sy, sz):
+	def __init__(self, blocks_path, sx, sy, sz):
 		Thread.__init__(self)
 		self.x, self.y, self.z = sx, sy, sz
 		self.blocks_path = blocks_path
@@ -85,11 +85,11 @@ class BlockStore(Thread):
 				# ???
 				else:
 					raise ValueError("Unknown BlockStore task: %s" % task)
-			except (KeyboardInterrupt, IOError):
+			except KeyboardInterrupt, IOError:
 				pass
 
 	def enable_physics(self):
-		"Turns on physics"
+		"Turns on physics."
 		self.flush()
 		self.physics = True
 
@@ -116,7 +116,7 @@ class BlockStore(Thread):
 		assert 0 <= x < self.x
 		assert 0 <= y < self.y
 		assert 0 <= z < self.z
-		return y*(self.x*self.z) + z*(self.x) + x
+		return y * (self.x * self.z) + z * (self.x) + x
 
 	def get_coords(self, offset):
 		"Turns a data offset into coordinates"
@@ -212,7 +212,7 @@ class BlockStore(Thread):
 				os.rename(self.blocks_path + ".new", self.blocks_path)
 				self.queued_blocks = {}
 			except:
-				self.logger.error("Problem saving map %s" %self.blocks_path)
+				self.logger.error("Error saving map %s." % self.blocks_path)
 				self.saving = True
 				reactor.callLater(3, self.flush)
 		else:
@@ -237,5 +237,5 @@ class BlockStore(Thread):
 		fh.write(struct.pack("!i", sx*sy*sz))
 		# Write each level
 		for level in levels:
-			fh.write(chr(level)*(sx*sz))
+			fh.write(chr(level) * (sx * sz))
 		fh.close()

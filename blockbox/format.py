@@ -7,7 +7,7 @@ import struct
 from blockbox.constants import *
 
 class Format(object):
-	
+	"""The format class. Used in encoding and decoding packets."""
 	def __init__(self, format):
 		self.format = format
 

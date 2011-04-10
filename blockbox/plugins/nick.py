@@ -6,13 +6,15 @@ from blockbox.constants import *
 from blockbox.decorators import *
 from blockbox.plugins import ProtocolPlugin
 
-class NickPlugin(ProtocolPlugin):	"Commands for nickname changes."
+class NickPlugin(ProtocolPlugin):
+	"Commands for nickname changes."
+
 	commands = {
 		"nick": "commandNick",
 	}
 
-	@player_list
-	@director_only
+	@config("category", "player")
+	@config("rank", "director")
 	def commandNick(self, params, fromloc, overriderank):
 		"/nick - Changes your username and skin. Use with great care."
 		if len(params) < 1:

@@ -4,8 +4,8 @@
 
 import cPickle, datetime, hashlib, logging, os, traceback
 
-from twisted.internet import reactor, task
-from twisted.internet.protocol import Protocol
+from lib.twisted.internet import reactor, task
+from lib.twisted.internet.protocol import Protocol
 
 from blockbox.constants import *
 from blockbox.decorators import *
@@ -21,7 +21,7 @@ class BlockBoxServerProtocol(Protocol):
 	"""
 	
 	def connectionMade(self):
-		"We've got a TCP connection, let's set ourselves up."
+		"""We've got a TCP connection, let's set ourselves up."""
 		# We use the buffer because TCP is a stream protocol :)
 		self.console = False # Really hacky way to fix a bug.
 		self.buffer = ""
@@ -31,14 +31,13 @@ class BlockBoxServerProtocol(Protocol):
 		self.logger = logging.getLogger("Client")
 		self.quitmsg = "Goodbye."
 		self.homeworld = "main"
-		self.total = 0 # TOFIX: Don't use a client variable for blb count, it makes everything seem retarted
+		self.total = 0 # TOFIX: Don't use a client variable for blb count
 		self.ip = self.transport.getPeer().host
 		self.commands = {}
 		self.hooks = {}
 		self.loops = recursive_default()
 		self.timers = recursive_default()
 		self.plugins = [plugin(self) for plugin in protocol_plugins]
-		self.ClientVars = dict()
 		# Set identification variable to false
 		self.identified = False
 		# Get an ID for ourselves
@@ -47,7 +46,7 @@ class BlockBoxServerProtocol(Protocol):
 		except ServerFull:
 			self.sendError("No availible player slots.")
 			return
-		# Open the Whisper Log, Adminchat log and WorldChat Log
+		# Open the Whisper Log, AdminChat log and WorldChat Log
 		create_if_not("logs/whisper.log")
 		create_if_not("logs/staff.log")
 		create_if_not("logs/world.log")
@@ -70,7 +69,7 @@ class BlockBoxServerProtocol(Protocol):
 		self.frozen = False
 
 	def registerCommand(self, command, func):
-		"Registers func as the handler for the command named 'command'."
+		"""Registers func as the handler for the command named 'command'."""
 		# Make sure case doesn't matter
 		command = command.lower()
 		# Warn if already registered
@@ -78,9 +77,9 @@ class BlockBoxServerProtocol(Protocol):
 			self.logger.warning("Command '%s' is already registered. Overriding." % command)
 		# Register
 		self.commands[command] = func
-	
+
 	def unregisterCommand(self, command, func):
-		"Unregisters func as command's handler, if it is currently the handler."
+		"""Unregisters func as command's handler, if it is currently the handler."""
 		# Make sure case doesn't matter
 		command = command.lower()
 		try:
@@ -90,30 +89,31 @@ class BlockBoxServerProtocol(Protocol):
 			self.logger.warning("Command '%s' is not registered to %s." % (command, func))
 
 	def registerHook(self, hook, func):
-		"Registers func as something to be run for hook 'hook'."
+		"""Registers func as something to be run for hook 'hook'."""
 		if hook not in self.hooks:
 			self.hooks[hook] = []
 		self.hooks[hook].append(func)
 
 	def unregisterHook(self, hook, func):
-		"Unregisters func from hook 'hook'."
+		"""Unregisters func from hook 'hook'."""
 		try:
 			self.hooks[hook].remove(func)
 		except (KeyError, ValueError):
 			self.logger.warning("Hook '%s' is not registered to %s." % (command, func))
 
 	def unloadPlugin(self, plugin_class):
-		"Unloads the given plugin class."
+		"""Unloads the given plugin class."""
 		for plugin in self.plugins:
 			if isinstance(plugin, plugin_class):
 				self.plugins.remove(plugin)
 				plugin.unregister()
 
 	def loadPlugin(self, plugin_class):
+		"""Loads the given plugin class."""
 		self.plugins.append(plugin_class(self))
 
 	def runHook(self, hook, *args, **kwds):
-		"Runs the hook 'hook'."
+		"""Runs the hook 'hook'."""
 		for func in self.hooks.get(hook, []):
 			result = func(*args, **kwds)
 			# If they return False, we can skip over and return
@@ -122,7 +122,7 @@ class BlockBoxServerProtocol(Protocol):
 		return None
 
 	def queueTask(self, task, data=[], world=None):
-		"Adds the given task to the factory's queue."
+		"""Adds the given task to the factory's queue."""
 		# If they've overridden the world, use that as the client.
 		if world:
 			self.factory.queue.put((
@@ -138,18 +138,19 @@ class BlockBoxServerProtocol(Protocol):
 			))
 
 	def sendWorldMessage(self, message):
-		"Sends a message to everyone in the current world."
+		"""Sends a message to everyone in the current world."""
 		self.queueTask(TASK_WORLDMESSAGE, (255, self.world, COLOUR_YELLOW+message))
 
 	def sendPlainWorldMessage(self, message):
-		"Sends a message to everyone in the current world, without any added color."
+		"""Sends a message to everyone in the current world, without any added color."""
 		self.queueTask(TASK_WORLDMESSAGE, (255, self.world, message))
 
 	def connectionLost(self, reason):
+		"""Client disconnected, let's clean the stuff up."""
 		# Leave the world
 		try:
 			self.factory.leaveWorld(self.world, self)
-		except (KeyError, AttributeError):
+		except KeyError, AttributeError:
 			pass
 		# Remove ourselves from the username list
 		if self.username:
@@ -158,7 +159,7 @@ class BlockBoxServerProtocol(Protocol):
 				if self.factory.usernames[self.username.lower()] is self:
 					del self.factory.usernames[self.username.lower()]
 			except KeyError:
-				pass
+				self.logger.critical(traceback.format_exc())
 		# Remove from ID list, send removed msgs
 		self.factory.releaseId(self.id)
 		self.factory.queue.put((self, TASK_PLAYERLEAVE, (self.id,)))
@@ -166,7 +167,7 @@ class BlockBoxServerProtocol(Protocol):
 			self.logger.info("Disconnected.")
 			self.runHook("playerquit", self.username)
 			self.logger.debug("(reason: %s)" % reason)
-		# Kill all plugins
+		# Kill all plugins and loops
 		del self.plugins
 		del self.commands
 		del self.hooks
@@ -175,22 +176,26 @@ class BlockBoxServerProtocol(Protocol):
 		self.connected = 0
 
 	def send(self, data):
+		"""Basic packet sending method."""
 		self.transport.write(data)
 
 	def sendPacked(self, mtype, *args):
+		"""Sends a packet."""
 		fmt = TYPE_FORMATS[mtype]
 		self.transport.write(chr(mtype) + fmt.encode(*args))
 
 	def sendError(self, error):
+		"""Sends an error to the client."""
 		self.logger.info("Sending error: %s" % error)
 		self.sendPacked(TYPE_ERROR, error)
 		reactor.callLater(0.2, self.transport.loseConnection)
 
 	def duplicateKick(self):
-		"Called when someone else logs in with our username"
+		"""Called when someone else logs in with our username."""
 		self.sendError("You logged in on another computer.")
 
 	def packString(self, string, length=64, packWith=" "):
+		"""Packs a string."""
 		return string + (packWith*(length-len(string)))
 
 	def isOp(self):
@@ -214,22 +219,24 @@ class BlockBoxServerProtocol(Protocol):
 	def isMod(self):
 		return self.factory.isMod(self.username.lower()) or self.isAdmin() or self.isDirector() or self.isOwner()
 
-	def isWriter(self):
-		return (self.username.lower() in self.world.writers) or self.isAdvBuilder() or (self.username.lower() in self.world.ops) or self.isOp() or self.isWorldOwner()
-
 	def isAdvBuilder(self):
 		return self.factory.isAdvBuilder(self.username.lower()) or (self.username.lower() in self.world.ops) or self.isWorldOwner() or self.isMod() or self.isAdmin() or self.isDirector() or self.isOwner()
+
+	def isBuilder(self):
+		return (self.username.lower() in self.world.builders) or self.isAdvBuilder() or (self.username.lower() in self.world.ops) or self.isOp() or self.isWorldOwner()
 
 	def isSpectator(self):
 		return self.factory.isSpectator(self.username.lower())
 	
 	def canEnter(self, world):
+		"Checks if a user can enter that specific world."
 		if not world.private and (self.username.lower() not in world.worldbans):
 			return True
 		else:
-			return (self.username.lower() in world.writers) or (self.username.lower() in world.ops) or self.isWorldOwner() or self.isAdvBuilder() or self.isMod() or self.isAdmin() or self.isDirector()
+			return (self.username.lower() in world.builders) or (self.username.lower() in world.ops) or self.isWorldOwner() or self.isAdvBuilder() or self.isMod() or self.isAdmin() or self.isDirector()
 
 	def dataReceived(self, data):
+		"Handles data sent by the client."
 		# First, add the data we got onto our internal buffer
 		self.buffer += data
 		# While there's still data there...
@@ -239,7 +246,8 @@ class BlockBoxServerProtocol(Protocol):
 			try:
 				format = TYPE_FORMATS[type]
 			except KeyError:
-				#it's a weird data packet, probably a ping.
+				# It's a weird data packet, probably a ping.
+				self.logger.warning("%s pinged the server." % self.ip)
 				reactor.callLater(0.2, self.transport.loseConnection)
 				return
 			# See if we have all its data
@@ -252,7 +260,6 @@ class BlockBoxServerProtocol(Protocol):
 			if type == TYPE_INITIAL:
 				# Get the client's details
 				protocol, self.username, mppass, utype = parts
-				self.logger = logging.getLogger(self.username)
 				if self.identified == True:
 					self.logger.info("Kicked '%s'; already logged in to server" % (self.username))
 					self.sendError("You already logged in! Foolish bot owners.")
@@ -264,6 +271,7 @@ class BlockBoxServerProtocol(Protocol):
 						self.logger.info("Kicked '%s'; invalid password (%s, %s)" % (self.username, mppass, correct_pass))
 						self.sendError("Incorrect authentication. (try again in 60s?)")
 						return
+				self.logger = logging.getLogger(self.username)
 				self.logger.info("Connected, as '%s'" % self.username)
 				self.identified = True
 				# Are they banned?
@@ -291,7 +299,7 @@ class BlockBoxServerProtocol(Protocol):
 				)
 				# Then... stuff
 				for client in self.factory.usernames.values():
-					client.sendServerMessage("%s has come online." %self.username)
+					client.sendServerMessage("%s has come online." % self.username)
 				if self.factory.irc_relay:
 					self.factory.irc_relay.sendServerMessage("%s has come online." % self.username)
 				reactor.callLater(0.1, self.sendLevel)
@@ -320,11 +328,11 @@ class BlockBoxServerProtocol(Protocol):
 						self.sendBlock(x, y, z)
 						self.sendServerMessage("Spectators cannot edit maps.")
 						return
-					allowbuild = self.runHook("blockclick", x, y, z, block, True)
+					allowbuild = self.runHook("blockclick", x, y, z, block, "user")
 					if allowbuild is False:
 						self.sendBlock(x, y, z)
 						return
-					elif not self.AllowedToBuild(x,y,z):
+					elif not self.AllowedToBuild(x, y, z):
 						self.sendBlock(x, y, z)
 						return
 					# This try prevents out-of-range errors on the world storage
@@ -336,12 +344,12 @@ class BlockBoxServerProtocol(Protocol):
 					if not created:
 						block = 0
 					# Pre-hook, for stuff like /paint
-					new_block = self.runHook("preblockchange", x, y, z, block, selected_block, True)
+					new_block = self.runHook("preblockchange", x, y, z, block, selected_block, "user")
 					if new_block is not None:
 						block = new_block
 						overridden = True
 					# Call hooks
-					new_block = self.runHook("blockchange", x, y, z, block, selected_block, True)
+					new_block = self.runHook("blockchange", x, y, z, block, selected_block, "user")
 					if new_block is False:
 						# They weren't allowed to build here!
 						self.sendBlock(x, y, z)
@@ -358,7 +366,7 @@ class BlockBoxServerProtocol(Protocol):
 					if overridden:
 						self.sendBlock(x, y, z, block)
 				# Out of bounds!
-				except (KeyError, AssertionError):
+				except KeyError, AssertionError:
 					self.sendPacked(TYPE_BLOCKSET, x, y, z, "\0")
 				# OK, replay changes to others
 				else:
@@ -453,7 +461,7 @@ class BlockBoxServerProtocol(Protocol):
 				message = message.replace(".#", " #")
 				message = message.replace("%$rnd", "&$rnd")
 				if message[len(message)-2] == "&":
-					self.sendServerMessage("You can not use a color at the end of a message")
+					self.sendServerMessage("You cannot use color codes at the end of a message. Ignoring message.")
 					return
 				if len(message) > 51:
 					moddedmsg = message[:51].replace(" ", "")
@@ -464,16 +472,10 @@ class BlockBoxServerProtocol(Protocol):
 					self.sendError("Provide an authentication before chatting.")
 					return
 				if message.startswith("/"):
-					# It's a command
+					# It's a command.
 					#message = message.lower()
 					parts = [x.strip() for x in message.split() if x.strip()]
 					command = parts[0].strip("/")
-					if not message.startswith("/tlog "):
-						self.logger.info("%s just used: %s" % (self.username," ".join(parts)))
-						#for command logging to IRC
-						if self.factory.irc_relay:
-							if self.factory.irc_cmdlogs:
-								self.factory.irc_relay.sendServerMessage("%s just used: %s" % (self.username," ".join(parts)))
 					# See if we can handle it internally
 					try:
 						func = getattr(self, "command%s" % command.title())
@@ -486,38 +488,53 @@ class BlockBoxServerProtocol(Protocol):
 								self.sendServerMessage("Unknown command '%s'" % command)
 								return
 						except AttributeError:
-							self.logger.error("Cannot find plugin %s, please report to blockBox team." % func)
+							self.logger.error("Cannot find command code for %s, please report to blockBox team." % func)
 							self.sendSplitServerMessage("Command code not found, please report to server staff or blockBox team.")
 							return
-					if (self.isSpectator() and (getattr(func, "admin_only", False) or getattr(func, "mod_only", False) or getattr(func, "op_only", False) or getattr(func, "advbuilder_only", False) or getattr(func, "worldowner_only", False) or getattr(func, "writer_only", False))):
-						self.sendServerMessage("'%s' is not available to specs." % command)
+					if func.config["disabled"]:
+						self.sendServerMessage("Command %s has been disabled by the server owner." % command)
 						return
-					if getattr(func, "owner_only", False) and not self.isOwner():
-						self.sendServerMessage("'%s' is a Owner-only command!" % command)
+					if self.isSpectator() and func.config["rank"]:
+						self.sendServerMessage("'%s' is not available to spectators." % command)
 						return
-					if getattr(func, "director_only", False) and not self.isDirector():
+					if func.config["rank"] == "owner" and not self.isOwner():
+						self.sendServerMessage("'%s' is an Owner-only command!" % command)
+						return
+					if func.config["rank"] == "director" and not self.isDirector():
 						self.sendServerMessage("'%s' is a Director-only command!" % command)
 						return
-					if getattr(func, "admin_only", False) and not self.isAdmin():
+					if func.config["rank"] == "admin" and not self.isAdmin():
 						self.sendServerMessage("'%s' is an Admin-only command!" % command)
 						return
-					if getattr(func, "mod_only", False) and not (self.isMod() or self.isAdmin()):
+					if func.config["rank"] == "mod" and not self.isMod():
 						self.sendServerMessage("'%s' is a Mod-only command!" % command)
 						return
-					if getattr(func, "worldowner_only", False) and not (self.isMod() or self.isAdmin()):
-						self.sendServerMessage("'%s' is a WorldOwner-only command!" % command)
+					if func.config["rank"] == "worldowner" and not self.isWorldOwner():
+						self.sendServerMessage("'%s' is an WorldOwner-only command!" % command)
 						return
-					if getattr(func, "advbuilder_only", False) and not (self.isAdvBuilder() or self.isOp() or self.isMod()):
-						self.sendServerMessage("'%s' is an Advanced Builder-only command!" % command)
-						return
-					if getattr(func, "op_only", False) and not (self.isOp() or self.isMod()):
+					if func.config["rank"] == "op" and not self.isOp():
 						self.sendServerMessage("'%s' is an Op-only command!" % command)
 						return
-					if getattr(func, "writer_only", False) and not (self.isWriter() or self.isOp() or self.isMod()):
+					if func.config["rank"] == "advbuilder" and not self.isAdvBuilder():
+						self.sendServerMessage("'%s' is an Advanced Builder-only command!" % command)
+						return
+					if func.config["rank"] == "builder" and not self.isBuilder():
 						self.sendServerMessage("'%s' is a Builder-only command!" % command)
 						return
+					# Using custom message?
+					if func.config["custom_cmdlog_msg"]:
+						self.logger.info("%s %s" % (self.username, func.config["custom_cmdlog_msg"]))
+					else:
+						self.logger.info("%s just used: %s" % (self.username, " ".join(parts)))
+					# Log it in IRC, if enabled.
+					if self.factory.irc_relay:
+						if self.factory.irc_cmdlogs:
+							if func.config["custom_cmdlog_msg"]:
+								self.factory.irc_relay.sendServerMessage("%s %s" % (self.username, func.config["custom_cmdlog_msg"]))
+							else:
+								self.factory.irc_relay.sendServerMessage("%s just used: %s" % (self.username, " ".join(parts)))
 					try:
-						func(parts, 'user', False) #fromloc is user, overriderank is false
+						func(parts, 'user', False) # fromloc is user, overriderank is false
 					except Exception, e:
 						self.sendSplitServerMessage(traceback.format_exc().replace("Traceback (most recent call last):", ""))
 						self.sendSplitServerMessage("Internal Server Error - Traceback (Please report this to the Server Staff or the blockBox Team, see /about for contact info)")
@@ -550,17 +567,17 @@ class BlockBoxServerProtocol(Protocol):
 						else:
 							if self.world.global_chat:
 								if self.world.highlight_ops:
-									self.sendWorldMessage ("!"+self.userColour()+self.usertitlename+":"+COLOUR_WHITE+" "+text)
+									self.sendWorldMessage("!"+self.userColour()+self.usertitlename+":"+COLOUR_WHITE+" "+text)
 								else:
-									self.sendWorldMessage ("!"+COLOUR_WHITE+self.usertitlename+":"+COLOUR_WHITE+" "+text)
+									self.sendWorldMessage("!"+COLOUR_WHITE+self.usertitlename+":"+COLOUR_WHITE+" "+text)
 								self.logger.info("!"+self.usertitlename+" in "+str(self.world.id)+": "+text)
 								self.wclog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+" - "+self.usertitlename+" in "+str(self.world.id)+": "+text+"\n")
 								self.wclog.flush()
 							else:
 								if self.world.highlight_ops:
-									self.sendWorldMessage (" "+self.userColour()+self.usertitlename+":"+COLOUR_WHITE+" "+text)
+									self.sendWorldMessage(" "+self.userColour()+self.usertitlename+":"+COLOUR_WHITE+" "+text)
 								else:
-									self.sendWorldMessage (" "+COLOUR_WHITE+self.usertitlename+":"+COLOUR_WHITE+" "+text)
+									self.sendWorldMessage(" "+COLOUR_WHITE+self.usertitlename+":"+COLOUR_WHITE+" "+text)
 							if self.factory.irc_relay:
 								self.factory.irc_relay.sendServerMessage("!"+self.usertitlename+" in "+str(self.world.id)+": "+text)
 				elif message.startswith("#"):
@@ -581,14 +598,14 @@ class BlockBoxServerProtocol(Protocol):
 							self.factory.queue.put((self, TASK_MESSAGE, (self.id, self.userColour(), self.usertitlename, message)))
 				else:
 					if self.isSilenced():
-						self.sendServerMessage("You are Silenced and lost your tongue.")
+						self.sendServerMessage("You are silenced and lost your tongue.")
 					else:
-						if override is not True:
+						if not override:
 							if not self.world.global_chat:
 								if self.world.highlight_ops:
-									self.sendWorldMessage ("!"+self.userColour()+self.usertitlename+":"+COLOUR_WHITE+" "+message)
+									self.sendWorldMessage("!%s%s:%s %s" % (self.userColour(), self.usertitlename, COLOUR_WHITE, message))
 								else:
-									self.sendWorldMessage ("!"+COLOUR_WHITE+self.usertitlename+":"+COLOUR_WHITE+" "+message)
+									self.sendWorldMessage("!"+COLOUR_WHITE+self.usertitlename+":"+COLOUR_WHITE+" "+message)
 								self.logger.info("!"+self.usertitlename+" in "+str(self.world.id)+": "+message)
 								self.wclog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+" - "+self.usertitlename+" in "+str(self.world.id)+": "+message+"\n")
 								self.wclog.flush()
@@ -596,14 +613,18 @@ class BlockBoxServerProtocol(Protocol):
 								self.factory.queue.put((self, TASK_MESSAGE, (self.id, self.userColour(), self.usertitlename, message)))
 			else:
 				if type == 2:
-					self.logger.warn("Alpha Client attempted to connect.")
-					self.sendPacked(
-						255,
-						self.packString("This server is only compatible with Minecraft Classic!")
-					)
+					self.logger.warn("Alpha client (IP: %s) attempted to connect." % self.ip)
+					self.sendPacked(255, self.packString("This server is only compatible with Minecraft Classic!"))
 					self.transport.loseConnection()
 				else:
-					self.log("Unhandleable type %s" % type, logging.WARN)
+					self.logger.warning("Unhandleable type %s" % type)
+
+	def setPersist(self):
+		"""Load persisted variables, and store some important stuff."""
+		self.persist.set("main", "ip", self.ip)
+		self.quitmsg = self.persist.string("main", "quitmsg", "Goodbye.")
+		self.homeworld = self.persist.string("main", "homeworld", "main")
+		self.factory.joinWorld(self.homeworld, self)
 
 	def userColour(self):
 		if self.isSpectator():
@@ -624,7 +645,7 @@ class BlockBoxServerProtocol(Protocol):
 			color = COLOUR_DARKCYAN
 		elif self.isAdvBuilder():
 			color = COLOUR_GREY
-		elif self.isWriter():
+		elif self.isBuilder():
 			color = COLOUR_CYAN
 		else:
 			color = COLOUR_WHITE
@@ -648,8 +669,8 @@ class BlockBoxServerProtocol(Protocol):
 		elif self.isOp():
 			name = "Op"
 		elif self.isAdvBuilder():
-			name = "AdvBuilder"
-		elif self.isWriter():
+			name = "Advanced Builder"
+		elif self.isBuilder():
 			name = "Writer"
 		else:
 			name = "Guest"
@@ -662,7 +683,7 @@ class BlockBoxServerProtocol(Protocol):
 			return self.username
 
 	def teleportTo(self, x, y, z, h=0, p=0):
-		"Teleports the client to the coordinates"
+		"""Teleports the client to the coordinates."""
 		if h > 255:
 			h = 255
 		self.sendPacked(TYPE_PLAYERPOS, 255, (x<<5)+16, (y<<5)+16, (z<<5)+16, h, p)
@@ -677,7 +698,7 @@ class BlockBoxServerProtocol(Protocol):
 		self.last_block_changes = []
 		self.initial_position = position
 		if self.world.is_archive:
-			self.sendSplitServerMessage("This world is an Archive, and will cease to exist once the last person leaves.")
+			self.sendSplitServerMessage("This world is an archive, and will cease to exist once the last person leaves.")
 			self.sendServerMessage(COLOUR_RED+"Staff: Please do not reboot this world.")
 		breakable_admins = self.runHook("canbreakadmin")
 		self.sendPacked(TYPE_INITIAL, 7, "Loading...", "Entering world '%s'" % world_id, 100 if breakable_admins else 0)
@@ -746,17 +767,17 @@ class BlockBoxServerProtocol(Protocol):
 		self.runHook("rankchange")
 		self.respawn()
 
-	def sendWriterUpdate(self):
+	def sendBuilderUpdate(self):
 		"Sends a message."
-		if self.isWriter():
-			self.sendServerMessage("You are now a Builder in this world.")
+		if self.isBuilder():
+			self.sendServerMessage("You are now a auilder in this world.")
 		else:
-			self.sendServerMessage("You are no longer a Builder in this world.")
+			self.sendServerMessage("You are no longer a builder in this world.")
 		self.runHook("rankchange")
 		self.respawn()
 
 	def respawn(self):
-		"Respawns the player in-place for other players, updating their nick."
+		"""Respawns the player in-place for other players, updating their nick."""
 		self.queueTask(TASK_PLAYERRESPAWN, [self.id, self.colouredUsername(), self.x, self.y, self.z, self.h, self.p])
 
 	def sendBlock(self, x, y, z, block=None):
@@ -777,7 +798,7 @@ class BlockBoxServerProtocol(Protocol):
 		self.sendPacked(TYPE_PLAYERDIR, id, h, p)
 
 	def sendMessage(self, id, colour, username, text, fromloc='user'):
-		"Sends a message to the player, splitting it up if needed."
+		"""Sends a message to the player, splitting it up if needed."""
 		# See if it's muted.
 		replacement = self.runHook("recvmessage", colour, username, text, fromloc)
 		if replacement is False:
@@ -809,7 +830,7 @@ class BlockBoxServerProtocol(Protocol):
 		self._sendMessage(prefix, text, id)
 
 	def _sendMessage(self, prefix, message, id=127):
-		"Utility function for sending messages, which does line splitting."
+		"""Utility function for sending messages, which does line splitting."""
 		lines = []
 		temp = []
 		thisline = ""
@@ -824,7 +845,7 @@ class BlockBoxServerProtocol(Protocol):
 						lines.append(thisline)
 					while len(x) > linelen:
 						temp.append(x[:linelen])
-						x=x[linelen:]
+						x = x[linelen:]
 					lines = lines + temp
 					thisline = x
 				else:
@@ -865,7 +886,7 @@ class BlockBoxServerProtocol(Protocol):
 		self._sendMessage("", message)
 
 	def sendServerList(self, items, wrap_at=63):
-		"Sends the items as server messages, wrapping them correctly."
+		"""Sends the items as server messages, wrapping them correctly."""
 		current_line = items[0]
 		for item in items[1:]:
 			if len(current_line) + len(item) + 1 > wrap_at:
@@ -915,27 +936,15 @@ class BlockBoxServerProtocol(Protocol):
 		if self.connected:
 			self.sendPacked(TYPE_KEEPALIVE)
 
-	def sendOverload(self):
-		"Sends an overload - a fake map designed to use as much memory as it can."
-		self.sendPacked(TYPE_INITIAL, 7, "Loading...", "Entering world main", 0)
-		self.sendPacked(TYPE_PRECHUNK)
-		reactor.callLater(0.001, self.sendOverloadChunk)
-
-	def sendOverloadChunk(self):
-		"Sends a level chunk full of 1s."
-		if self.connected:
-			self.sendPacked(TYPE_CHUNK, 1024, "\1"*1024, 50)
-			reactor.callLater(0.001, self.sendOverloadChunk)
-
 	def sendLevel(self):
-		"Starts the process of sending a level to the client."
+		"""Starts the process of sending a level to the client."""
 		self.factory.recordPresence(self.username)
 		# Ask the World to flush the level and get a gzip handle back to us.
 		if hasattr(self, "world"):
 			self.world.get_gzip_handle().addCallback(self.sendLevelStart)
 
 	def sendLevelStart(self, (gzip_handle, zipped_size)):
-		"Called when the world is flushed and the gzip is ready to read."
+		"""Called when the world is flushed and the gzip is ready to read."""
 		# Store that handle and size
 		self.zipped_level, self.zipped_size = gzip_handle, zipped_size
 		# Preload our first chunk, send a level stream header, and go!
@@ -960,7 +969,7 @@ class BlockBoxServerProtocol(Protocol):
 			self.endSendLevel()
 
 	def endSendLevel(self):
-		self.logger.debug("Sent level data")
+		self.logger.debug("Sent level data.")
 		self.sendPacked(TYPE_LEVELSIZE, self.world.x, self.world.y, self.world.z)
 		sx, sy, sz, sh = self.world.spawn
 		self.p = 0
@@ -973,17 +982,17 @@ class BlockBoxServerProtocol(Protocol):
 				sx, sy, sz = self.initial_position
 				sh = 0
 			self.initial_position = None
-		self.x = (sx<<5)+16
-		self.y = (sy<<5)+16
-		self.z = (sz<<5)+16
-		self.h = int(sh*255/360.0)
+		self.x = (sx<<5) + 16
+		self.y = (sy<<5) + 16
+		self.z = (sz<<5) + 16
+		self.h = int(sh * 255 / 360.0)
 		self.sendPacked(TYPE_SPAWNPOINT, chr(255), "", self.x, self.y, self.z, self.h, 0)
 		self.sendAllNew()
 		self.factory.queue.put((self, TASK_NEWPLAYER, (self.id, self.colouredUsername(), self.x, self.y, self.z, self.h, 0)))
 		self.sendWelcome()
 
 	def sendAllNew(self):
-		"Sends a 'new player' notification for each new player in the world."
+		"""Sends a 'new player' notification for each new player in the world."""
 		for client in self.world.clients:
 			if client is not self and hasattr(client, "x"):
 				if self.world.highlight_ops:
@@ -996,11 +1005,30 @@ class BlockBoxServerProtocol(Protocol):
 			for line in self.factory.initial_greeting.split("\n"):
 				self.sendPacked(TYPE_MESSAGE, 127, line.strip())
 			self.sent_first_welcome = True
-			self.runHook("playerjoined",self.username)
+			self.runHook("playerjoined", self.username)
 			self.loops["messagealert"] = task.LoopingCall(self.MessageAlert)
 			self.loops["messagealert"].start(300)
 		else:
-			self.sendPacked(TYPE_MESSAGE, 255, "You are now in world '%s'" % self.world.id)
+			self.sendPacked(TYPE_MESSAGE, 255, "You are now in world '%s'." % self.world.id)
+
+	def canBreakAdminBlocks(self):
+		"""Shortcut method for checking admincrete-breaking permission."""
+		if hasattr(self, "world"):
+			return (not self.world.admin_blocks) or self.isOp()
+		else:
+			return False
+
+	def canUseRestrictedBlocks(self, block):
+		"""Shortcut method to check if the user can use restricted blocks (active water/lava/etc)"""
+		restricted_blocks = [BLOCK_SOLID, BLOCK_WATER, BLOCK_LAVA]
+		if ord(block) in restricted_blocks and not self.isOp():
+			return False
+		else:
+			return True
+
+	def sendAdminBlockUpdate(self):
+		"Sends a packet that updates the client's admin-building ability"
+		self.sendPacked(TYPE_INITIAL, 6, "Admincrete Update", "Reloading the server...", self.canBreakAdminBlocks() and 100 or 0)
 
 	def AllowedToBuild(self, x, y, z):
 		build = False
@@ -1013,7 +1041,7 @@ class BlockBoxServerProtocol(Protocol):
 			return False
 		if block == BLOCK_SOLID and not self.isOp():
 			return False
-		for id,zone in self.world.userzones.items():
+		for id, zone in self.world.userzones.items():
 			x1,y1,z1,x2,y2,z2 = zone[1:7]
 			if x1 < x < x2:
 				if y1 < y < y2:
@@ -1028,27 +1056,27 @@ class BlockBoxServerProtocol(Protocol):
 		if build:
 			return True
 		elif assigned:
-			self.sendServerList(["You are not allowed to build in this zone. Only:"]+assigned+["may."])
+			self.sendServerList(["You are not allowed to build in this zone. Only: %s may."] % assigned)
 			return False
-		for id,zone in self.world.rankzones.items():
-			if "all" == zone[7]:
+		for id, zone in self.world.rankzones.items():
+			if zone[7] == "all":
 				x1,y1,z1,x2,y2,z2 = zone[1:7]
 				if x1 < x < x2:
 					if y1 < y < y2:
 						if z1 < z < z2:
 							return True
 			if self.world.zoned:
-				if "builder" == zone[7]:
+				if zone[7] == "builder":
 					x1,y1,z1,x2,y2,z2 = zone[1:7]
 					if x1 < x < x2:
 						if y1 < y < y2:
 							if z1 < z < z2:
-								if self.isWriter():
+								if self.isBuilder():
 									return True
 								else:
-									self.sendServerMessage("You must be " + zone[7] + "to build here.")
+									self.sendServerMessage("You must be %s to build here." % zone[7])
 									return False
-				if "op" == zone[7]:
+				if zone[7] == "advbuilder":
 					x1,y1,z1,x2,y2,z2 = zone[1:7]
 					if x1 < x < x2:
 						if y1 < y < y2:
@@ -1056,9 +1084,9 @@ class BlockBoxServerProtocol(Protocol):
 								if self.isOp():
 									return True
 								else:
-									self.sendServerMessage("You must be " + zone[7] + "to build here.")
+									self.sendServerMessage("You must be %s to build here." % zone[7])
 									return False
-				if "worldowner" == zone[7]:
+				if zone[7] == "op":
 					x1,y1,z1,x2,y2,z2 = zone[1:7]
 					if x1 < x < x2:
 						if y1 < y < y2:
@@ -1066,19 +1094,19 @@ class BlockBoxServerProtocol(Protocol):
 								if self.isWorldOwner():
 									return True
 								else:
-									self.sendServerMessage("You must be " + zone[7] + "to build here.")
+									self.sendServerMessage("You must be %s to build here." % zone[7])
 									return False
-				if "advbuilder" == zone[7]:
+				if zone[7] == "worldowner":
 					x1,y1,z1,x2,y2,z2 = zone[1:7]
 					if x1 < x < x2:
 						if y1 < y < y2:
 							if z1 < z < z2:
-								if self.isAdvBuilder():
+								if self.isWorldOwner():
 									return True
 								else:
-									self.sendServerMessage("You must be " + zone[7] + "to build here.")
+									self.sendServerMessage("You must be %s to build here." % zone[7])
 									return False
-				if "mod" == zone[7]:
+				if zone[7] == "mod":
 					x1,y1,z1,x2,y2,z2 = zone[1:7]
 					if x1 < x < x2:
 						if y1 < y < y2:
@@ -1086,9 +1114,9 @@ class BlockBoxServerProtocol(Protocol):
 								if self.isMod():
 									return True
 								else:
-									self.sendServerMessage("You must be " + zone[7] + "to build here.")
+									self.sendServerMessage("You must be %s to build here." % zone[7])
 									return False
-				if "admin" == zone[7]:
+				if zone[7] == "admin":
 					x1,y1,z1,x2,y2,z2 = zone[1:7]
 					if x1 < x < x2:
 						if y1 < y < y2:
@@ -1096,9 +1124,9 @@ class BlockBoxServerProtocol(Protocol):
 								if self.isAdmin():
 									return True
 								else:
-									self.sendServerMessage("You must be " + zone[7] + "to build here.")
+									self.sendServerMessage("You must be %s to build here." % zone[7])
 									return False
-				if "director" == zone[7]:
+				if zone[7] == "director":
 					x1,y1,z1,x2,y2,z2 = zone[1:7]
 					if x1 < x < x2:
 						if y1 < y < y2:
@@ -1106,9 +1134,9 @@ class BlockBoxServerProtocol(Protocol):
 								if self.isDirector():
 									return True
 								else:
-									self.sendServerMessage("You must be " + zone[7] + "to build here.")
+									self.sendServerMessage("You must be %s to build here." % zone[7])
 									return False
-				if "owner" == zone[7]:
+				if zone[7] == "owner":
 					x1,y1,z1,x2,y2,z2 = zone[1:7]
 					if x1 < x < x2:
 						if y1 < y < y2:
@@ -1116,14 +1144,14 @@ class BlockBoxServerProtocol(Protocol):
 								if self.isOwner():
 									return True
 								else:
-									self.sendServerMessage("You must be " + zone[7] + "to build here.")
+									self.sendServerMessage("You must be %s to build here." % zone[7])
 									return False
-		#Idea: let users choose default world, yeah
+		# Idea: let users choose default world, yeah
 		if self.world.id == "main" and self.isAdvBuilder() and not self.isMod() and not self.world.all_write:
 			self.sendBlock(x, y, z)
 			self.sendServerMessage("Only Builder/Op and Mod+ may edit 'main'.")
 			return
-		if not self.world.all_write and self.isWriter() or self.isOp():
+		if not self.world.all_write and self.isBuilder() or self.isOp():
 			return True
 		if self.world.all_write:
 			return True
@@ -1141,7 +1169,7 @@ class BlockBoxServerProtocol(Protocol):
 			except KeyError:
 				self.sendServerMessage("'%s' is not a valid block type." % value)
 				return None
-					# Check the block is valid
+		# Check the block is valid
 		if ord(block) > 49:
 			self.sendServerMessage("'%s' is not a valid block type." % value)
 			return None
@@ -1161,21 +1189,14 @@ class BlockBoxServerProtocol(Protocol):
 					client.sendServerMessage("You have an message waiting in your Inbox.")
 					client.sendServerMessage("Use /inbox to check and see.")
 
-	def setPersist(self):
-		"Load persisted variables, and store some important stuff."
-		self.persist.set("misc", "ip", self.ip)
-		self.quitmsg = self.persist.string("misc", "quitmsg", "Goodbye.")
-		self.homeworld = self.persist.string("misc", "homeworld", "main")
-		self.factory.joinWorld(self.homeworld, self)
-
 	def finalizeMassCMD(self, command, block=0):
 		if block == 0:
 			self.sendServerMessage("Your %s has finished." % command)
 		else:
 			self.sendServerMessage("Your %s has finished, with %d blocks." % (command, abs(block)))
 
-	def getBlbLimit(self, username, factor=1):
-		"Fetches BLB Limit, and returns limit multiplied by a factor. 0 is returned if blb is disabled for that usergroup, and -1 for no limit."
+	def getBlbLimit(self, factor=1):
+		"""Fetches BLB Limit, and returns limit multiplied by a factor. 0 is returned if blb is disabled for that usergroup, and -1 for no limit."""
 		if self.factory.useblblimit:
 			if self.isSpectator():
 			   limit = 0
@@ -1193,7 +1214,7 @@ class BlockBoxServerProtocol(Protocol):
 				limit = self.factory.blblimit["op"]
 			elif self.isAdvBuilder():
 				limit = self.factory.blblimit["advbuilder"]
-			elif self.isWriter():
+			elif self.isBuilder():
 				limit = self.factory.blblimit["builder"]
 			else:
 				limit = self.factory.blblimit["player"]
@@ -1214,7 +1235,7 @@ class BlockBoxServerProtocol(Protocol):
 				limit = 110592
 			elif self.isAdvBuilder():
 				limit = 55296
-			elif self.isWriter():
+			elif self.isBuilder():
 				limit = 4062
 			else:
 				limit = 128

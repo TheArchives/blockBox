@@ -9,6 +9,7 @@ from ConfigParser import RawConfigParser as ConfigParser
 from twisted.internet import reactor
 
 class PersistenceEngine(object):
+	"""Engine that stores user's data using ConfigParser in a psuedo-row-database structure."""
 	def __init__(self, username):
 		self.username = username
 		self.ini = ConfigParser()

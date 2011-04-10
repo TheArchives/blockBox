@@ -8,7 +8,7 @@ from ConfigParser import SafeConfigParser as ConfigParser
 from twisted.internet import protocol, reactor
 
 from blockbox.constants import *
-from blockbox.protocol import BlockBoxServerProtocol, TYPE_FORMATS
+from blockbox.protocol import BlockBoxServerProtocol
 
 class RipClient(BlockBoxServerProtocol):
 	"""Once connected, send a message, then print the result."""
@@ -46,7 +46,6 @@ class RipClient(BlockBoxServerProtocol):
 				print ("Server identifies as '%s'" % name)
 				self.lolname = name.replace("/", "")
 				self.name = self.lolname.replace(" ", "_")
-		
 			if type == TYPE_PRECHUNK:
 				print ("Receiving level data...")
 			elif type == TYPE_CHUNK:
@@ -62,7 +61,6 @@ class RipClient(BlockBoxServerProtocol):
 			elif type == TYPE_SPAWNPOINT and self.name:
 				naff, nick, x, y, z, h, nafftoo = parts
 				basename = "mapdata/archives/"+"/".join([self.name, datetime.datetime.utcnow().strftime("%Y-%m-%d_%H_%M")])
-				#basename = basename.replace("/", "\\")
 				try:
 					os.makedirs(basename)
 				except OSError:
@@ -133,11 +131,17 @@ def rip(key, username, password):
 
 def main():
 	config = ConfigParser()
-		try:
-			config.read(os.path.join(os.path.dirname(__file__), "client.ini"))
-		except:
-			logger.error("You need to rename client.dist.ini to client.ini")
-			exit(1)
+	try:
+		config.read(os.path.join(os.path.dirname(__file__), "client.ini"))
+	except:
+		print("You need to rename client.dist.ini to client.ini.")
+		exit(1)
+	try:
+		username = config.get("client", "username")
+		password = config.get("client", "password")
+	except:
+		print("Please fill in the archive bot username and password.")
+		exit(1)
 	rip(sys.argv[1], config.get("client", "username"), config.get("client", "password"))
 
 # this only runs if the module was *not* imported

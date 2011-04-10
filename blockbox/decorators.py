@@ -2,74 +2,20 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
+from blockbox.globals import *
+
 """
 Decorators for protocol (command) methods.
 """
 
-def owner_only(func):
-	"Decorator for owner-only command methods."
-	func.owner_only = True
-	return func
-
-def director_only(func):
-	"Decorator for director-only command methods."
-	func.director_only = True
-	return func
-
-def admin_only(func):
-	"Decorator for admin-only command methods."
-	func.admin_only = True
-	return func
-
-def mod_only(func):
-	"Decorator for mod-only command methods."
-	func.mod_only = True
-	return func
-
-def advbuilder_only(func):
-	"Decorator for advanced builder-only command methods."
-	func.advbuilder_only = True
-	return func
-
-def member_only(func):
-	"Decorator for advanced builder-only command methods."
-	func.advbuilder_only = True
-	return func
-
-def worldowner_only(func):
-	"Decorator for worldowner-only command methods."
-	func.worldowner_only = True
-	return func
-
-def op_only(func):
-	"Decorator for op-only command methods."
-	func.op_only = True
-	return func
-
-def writer_only(func):
-	"Decorator for builder-only command methods."
-	func.writer_only = True
-	return func
-
-def build_list(func):
-	"Decorator for build-list category methods."
-	func.build_list = True
-	return func
-
-def world_list(func):
-	"Decorator for world-list category methods."
-	func.world_list = True
-	return func
-
-def player_list(func):
-	"Decorator for player-list category methods."
-	func.player_list = True
-	return func
-
-def info_list(func):
-	"Decorator for info-list category methods."
-	func.info_list = True
-	return func
+def config(key, value):
+	"Decorator that writes to the configuration of the command."
+	def config_inner(func):
+		if getattr(func, "config", None) is None:
+			func.config = recursive_default()
+		func.config[key] = value
+		return func
+	return config_inner
 
 def username_command(func):
 	"Decorator for commands that accept a single username parameter, and need a Client"
@@ -103,7 +49,7 @@ def only_string_command(string_name):
 		"Decorator for commands that accept a single username/plugin/etc parameter, and don't need it checked"
 		def inner(self, parts, fromloc, overriderank):
 			if len(parts) == 1:
-				self.client.sendServerMessage("Please specify a %s." % string_name)
+				self.client.sendServerMessage("Please specify a/an %s." % string_name)
 			else:
 				username = parts[1].lower()
 				if len(parts) > 2:

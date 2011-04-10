@@ -2451,7 +2451,7 @@ class EntityPlugin(ProtocolPlugin):
 				for i in range(maxentitiystepsatonetime):
 					entitylist.append(entitylist.pop(0))
 				
-	@op_only
+	@config("rank", "op")
 	def commandEntity(self, parts, fromloc, overriderank):
 		"/entity entityname- Op\nAliases: mob\nCreates the specified entity."
 		if len(parts) < 2:
@@ -2558,14 +2558,14 @@ class EntityPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("Entity %s selected." % entity)
 			self.client.sendServerMessage("To deselect just type /entity")
 
-	@op_only
+	@config("rank", "op")
 	def commandNumentities(self, parts, fromloc, overriderank):
 		"/numentities - Op\nAliases: nummobs\nTells you the number of entities in the map"
 		world = self.client.world
 		entitylist = world.entitylist
 		self.client.sendServerMessage(str(len(entitylist)))
 
-	@op_only
+	@config("rank", "op")
 	def commandEntityclear(self, parts, fromloc, overriderank):
 		"/entityclear - Op\nAliases: mobclear\nClears the entities from the map"
 		world = self.client.world
@@ -2598,13 +2598,13 @@ class EntityPlugin(ProtocolPlugin):
 				world[x, y, z] = block
 				self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
 				self.client.sendBlock(x, y, z, block)
-				i,j,k = var_loadblockoffset
-				rx,ry,rz = x+i,y+j,z+k
+				i, j, k = var_loadblockoffset
+				rx, ry, rz = x + i, y + j, z + k
 				world[rx, ry, rz] = block
 				self.client.queueTask(TASK_BLOCKSET, (rx, ry, rz, block), world=world)
 				self.client.sendBlock(rx, ry, rz, block)
-				for i,j,k in var_sensorblocksoffsets:
-					rx,ry,rz = x+i,y+j,z+k
+				for i, j, k in var_sensorblocksoffsets:
+					rx, ry, rz = x+i, y+j, z+k
 					world[rx, ry, rz] = block
 					self.client.queueTask(TASK_BLOCKSET, (rx, ry, rz, block), world=world)
 					self.client.sendBlock(rx, ry, rz, block)
@@ -2613,7 +2613,7 @@ class EntityPlugin(ProtocolPlugin):
 		self.client.world.entitylist = []
 		self.client.sendWorldMessage("Entities cleared.")
 
-	@op_only
+	@config("rank", "op")
 	def commandEntities(self, parts, fromloc, overriderank):
 		"/entities - Op\nAliases: mobs\nDisplays available entities"
 		var_listofvalidentities = ["blob","jumpingshroom","trippyshroom","zombie","aquabie","fastzombie","creeper","tnt","person","proxmine","var","spawner","paintballgun","cannon","cloud","bird","slime","trippyflower","fish","rainbowfish","noob"]
