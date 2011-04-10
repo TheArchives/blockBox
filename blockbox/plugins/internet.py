@@ -129,7 +129,7 @@ class InternetPlugin(ProtocolPlugin):
 				self.client.sendServerMessage("Please enter whether to flip or not (rotation)")
 				self.client.sendServerMessage("(and possibly two coord triples)")
 			else:
-				if len(parts)==3:
+				if len(parts) == 3:
 					# Try getting the rotation
 					try:
 						rotation = int(parts[2])
@@ -138,7 +138,7 @@ class InternetPlugin(ProtocolPlugin):
 						return
 				else:
 					rotation = 0
-				#try to get flip?
+				# try to get flip
 				flip = parts[1]
 				if flip == 'true' or flip == 'false':
 					pass
@@ -222,18 +222,18 @@ class InternetPlugin(ProtocolPlugin):
 										return
 									if flip == 'true':
 										if orientation == 0:
-											r,g,b,a = image.getpixel((abs(k - z),abs(i-x)))
+											r, g, b, a = image.getpixel((abs(k - z), abs(i-x)))
 										elif orientation == 1:
-											r,g,b,a = image.getpixel((abs(j - y),abs(i - x)))
+											r, g, b, a  = image.getpixel((abs(j - y), abs(i - x)))
 										else:
-											r,g,b,a = image.getpixel((abs(k - z),abs(j - y)))
+											r, g, b, a  = image.getpixel((abs(k - z), abs(j - y)))
 									else:
 										if orientation == 0:
-											r,g,b,a = image.getpixel((width - (abs(k - z) + 1), abs(i - x)))
+											r, g, b, a  = image.getpixel((width - (abs(k - z) + 1), abs(i - x)))
 										elif orientation == 1:
-											r,g,b,a = image.getpixel((width - (abs(j - y) + 1), abs(i - x)))
+											r, g, b, a  = image.getpixel((width - (abs(j - y) + 1), abs(i - x)))
 										else:
-											r,g,b,a = image.getpixel((width - (abs(k - z) + 1), abs(j - y)))
+											r, g, b, a  = image.getpixel((width - (abs(k - z) + 1), abs(j - y)))
 									if a < 25:
 										block = BLOCK_AIR
 									else:
@@ -297,7 +297,7 @@ class InternetPlugin(ProtocolPlugin):
 											block = BLOCK_RED
 										if (r, g, b) == (200, 150, 50):
 											block = BLOCK_ORANGE
-										if (r, g, b) == (200,200,50):
+										if (r, g, b) == (200, 200, 50):
 											block = BLOCK_YELLOW
 										if (r, g, b) == (150, 200, 50):
 											block = BLOCK_LIME

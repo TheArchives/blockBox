@@ -385,12 +385,12 @@ class BuildUtilPlugin(ProtocolPlugin):
 			# We also keep world as a local so they can't change worlds and affect the new one
 			world = self.client.world
 			def generate_changes():
-				for i in range(x, x2+1):
-					for j in range(y, y2+1):
-						for k in range(z, z2+1):
-							if not self.client.AllowedToBuild(i, j, k) and fromloc != 'user':
-								return
-							try:
+				try:
+					for i in range(x, x2+1):
+						for j in range(y, y2+1):
+							for k in range(z, z2+1):
+								if not self.client.AllowedToBuild(i, j, k) and fromloc != 'user':
+									return
 								check_offset = world.blockstore.get_offset(i, j, k)
 								block = world.blockstore.raw_blocks[check_offset]
 								if block == blockA:
@@ -399,10 +399,10 @@ class BuildUtilPlugin(ProtocolPlugin):
 									self.client.queueTask(TASK_BLOCKSET, (i, j, k, blockB), world=world)
 									self.client.sendBlock(i, j, k, blockB)
 									self.client.total += 1
-							except AssertionError:
-								self.client.sendServerMessage("Out of bounds replace error.")
-								return
-							yield
+									yield
+				except AssertionError:
+					self.client.sendServerMessage("Out of bounds replace error.")
+					return
 			# Now, set up a loop delayed by the reactor
 			block_iter = iter(generate_changes())
 			def do_step():

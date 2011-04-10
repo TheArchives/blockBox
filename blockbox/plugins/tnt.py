@@ -42,7 +42,7 @@ class DynamitePlugin(ProtocolPlugin):
 				for i in range(-fanout, fanout+1):
 					for j in range(-fanout, fanout+1):
 						for k in range(-fanout, fanout+1):
-							if (i**2+j**2+k**2)**0.5 + 0.691 < fanout:
+							if (i ** 2 + j ** 2 + k ** 2) ** 0.5 + 0.691 < fanout:
 								try:
 									if not self.client.AllowedToBuild(x+i, y+j, z+k):
 										return
@@ -53,7 +53,7 @@ class DynamitePlugin(ProtocolPlugin):
 									if blocktype not in unbreakables and blocktype not in strongblocks:
 										if not world.has_mine(x+i, y+j, z+k):
 											tobuild.append((i, j, k, BLOCK_STILLLAVA))
-									if (i**2+j**2+k**2)**0.5 + 0.691 < fanout-1:
+									if (i ** 2 + j ** 2 + k ** 2) ** 0.5 + 0.691 < fanout-1:
 										if blocktype not in unbreakables:
 											if not world.has_mine(x+i, y+j, z+k):
 												tobuild.append((i, j, k, BLOCK_STILLLAVA))

@@ -61,7 +61,6 @@ class RipClient(BlockBoxServerProtocol):
 			elif type == TYPE_SPAWNPOINT and self.name:
 				naff, nick, x, y, z, h, nafftoo = parts
 				basename = "mapdata/archives/"+"/".join([self.name, datetime.datetime.utcnow().strftime("%Y-%m-%d_%H_%M")])
-				#basename = basename.replace("/", "\\")
 				try:
 					os.makedirs(basename)
 				except OSError:
@@ -135,7 +134,7 @@ def main():
 	try:
 		config.read(os.path.join(os.path.dirname(__file__), "client.ini"))
 	except:
-		print("You need to rename client.dist.ini to client.ini")
+		print("You need to rename client.dist.ini to client.ini.")
 		exit(1)
 	try:
 		username = config.get("client", "username")

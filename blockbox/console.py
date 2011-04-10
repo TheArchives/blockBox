@@ -220,12 +220,12 @@ class StdinPlugin(threading.Thread):
 								if len(message) == 1:
 									self.factory.queue.put((self, TASK_SERVERURGENTMESSAGE, ("[Server Reboot] Be back very soon.")))
 								else:
-									self.factory.queue.put((self, TASK_SERVERURGENTMESSAGE, ("[Server Reboot] Be back very soon: "+(" ".join(message[1:])))))
+									self.factory.queue.put((self, TASK_SERVERURGENTMESSAGE, ("[Server Reboot] Be back very soon: %s" % (" ".join(message[1:])))))
 							elif message[0] == ("srs"):
 								if len(message) == 1:
 									self.factory.queue.put((self, TASK_SERVERURGENTMESSAGE, ("[Server Shutdown] See you later.")))
 								else:
-									self.factory.queue.put((self, TASK_SERVERURGENTMESSAGE, ("[Server Shutdown] See you later: "+(" ".join(message[1:])))))
+									self.factory.queue.put((self, TASK_SERVERURGENTMESSAGE, ("[Server Shutdown] See you later: %s" % (" ".join(message[1:])))))
 							elif message[0] == ("help"):
 								print("Whispers: @username message")
 								print("WorldChat: !worldname message")
@@ -245,7 +245,7 @@ class StdinPlugin(threading.Thread):
 								if len(message) == 1:
 									print("Please type a message.")
 								else:
-									self.factory.queue.put((self, TASK_SERVERMESSAGE, ("[MSG] "+(" ".join(message[1:])))))
+									self.factory.queue.put((self, TASK_SERVERMESSAGE, ("[MSG] %s" % (" ".join(message[1:])))))
 							elif message[0] == ("gc"):
 								# ManualGarbageMe
 								count = gc.collect()
@@ -254,7 +254,7 @@ class StdinPlugin(threading.Thread):
 								if len(message) == 1:
 									print("Please type a message.")
 								else:
-									self.factory.queue.put((self, TASK_SERVERURGENTMESSAGE, "[URGENT] "+(" ".join(message[1:]))))
+									self.factory.queue.put((self, TASK_SERVERURGENTMESSAGE, "[URGENT] %s" % (" ".join(message[1:]))))
 							elif message[0] == ("plr"):
 								if len(message) == 1:
 									print("Please provide a plugin name.")
@@ -308,7 +308,7 @@ class StdinPlugin(threading.Thread):
 							#		reactor.connectTCP(self.factory.conf_irc.get("irc", "server"), self.factory.conf_irc.getint("irc", "port"), self.factory.irc_relay)
 							#		print("IRC Bot loaded.")
 							else:
-								print("There is no " + message[0] + " command.")
+								print("There is no %s command." % message[0])
 						elif message.startswith("@"):
 							# It's a whisper
 							try:
@@ -320,7 +320,7 @@ class StdinPlugin(threading.Thread):
 								if username in self.factory.usernames:
 									self.factory.usernames[username].sendWhisper("Console", text)
 									self.logger.info("@Console to "+username+": "+text)
-									self.whisperlog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+" | @Console to "+username+": "+text+"\n")
+									self.whisperlog.write("%s | @Console to %s: %s\n" % ((datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")), username, text))
 									self.whisperlog.flush()
 								else:
 									print("%s is currently offline." % username)
@@ -331,16 +331,16 @@ class StdinPlugin(threading.Thread):
 							else:
 								try:
 									world, out = message[1:len(message)-1].split(" ")
-									text = COLOUR_YELLOW+"!"+COLOUR_DARKGREEN+"Console:"+COLOUR_WHITE+" "+out
+									text = "%s!%sConsole: %s" % (COLOUR_YELLOW, COLOUR_DARKGREEN, COLOUR_WHITE, out)
 								except ValueError:
 									print("Please include a message to send.")
 								else:
 									if world in self.factory.worlds:
-										self.factory.queue.put ((self.factory.worlds[world],TASK_WORLDMESSAGE,(255, self.factory.worlds[world], text),))
+										self.factory.queue.put((self.factory.worlds[world], TASK_WORLDMESSAGE, (255, self.factory.worlds[world], text),))
 										if self.factory.irc_relay:
 											self.factory.irc_relay.sendServerMessage("!Console in "+str(world)+": "+out)
 										self.logger.info("!Console in "+str(self.factory.worlds[world].id)+": "+out)
-										self.wclog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+" | !Console in "+str(self.factory.worlds[world].id)+": "+out+"\n")
+										self.wclog.write("%s | !Console in %s: %s\n" % (datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M"), str(self.factory.worlds[world].id), out))
 										self.wclog.flush()
 									else:
 										print("That world does not exist. Try !world message")
@@ -355,9 +355,9 @@ class StdinPlugin(threading.Thread):
 									self.factory.queue.put((self, TASK_MESSAGE, (0, COLOUR_DARKGREEN,"Console", message)))
 								else:
 									text = text[:len(text)-1]
-									self.factory.queue.put((self, TASK_STAFFMESSAGE, (0, COLOUR_DARKGREEN,"Console", text,False)))
-									self.logger.info("#Console: "+text)
-									self.adlog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+" | #Console: "+text+"\n")
+									self.factory.queue.put((self, TASK_STAFFMESSAGE, (0, COLOUR_DARKGREEN,"Console", text, False)))
+									self.logger.info("#Console: %s" % text)
+									self.adlog.write("%s | #Console: %s\n" % (datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M"), text))
 									self.adlog.flush()
 						else:
 							self.factory.queue.put((self, TASK_MESSAGE, (0, COLOUR_DARKGREEN,"Console", message[0:len(message)-1])))
