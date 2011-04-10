@@ -15,7 +15,7 @@ def Rank(self, parts, fromloc, overriderank, server=None):
 			try:
 				world = factory.worlds[parts[3]]
 			except KeyError:
-				return ("Unknown world \"%s\"" %parts[3])
+				return ("Unknown world %s" % parts[3])
 		else:
 			if not server:
 				world = self.client.world
@@ -34,13 +34,13 @@ def Rank(self, parts, fromloc, overriderank, server=None):
 			user = factory.usernames[username]
 			if user.world == world:
 				user.sendBuilderUpdate()
-		return ("%s is now a builder in world \"%s\"." % (username, world))
+		return ("%s is now a builder in world %s." % (username, world))
 	elif parts[2] == "op":
 		if len(parts) > 3:
 			try:
 				world = factory.worlds[parts[3]]
 			except KeyError:
-				return ("Unknown world \"%s\"" %parts[3])
+				return ("Unknown world %s" % parts[3])
 		else:
 			if not server:
 				world = self.client.world
@@ -60,7 +60,7 @@ def Rank(self, parts, fromloc, overriderank, server=None):
 			try:
 				world = factory.worlds[parts[3]]
 			except KeyError:
-				return ("Unknown world \"%s\"" %parts[3])
+				return ("Unknown world %s" % parts[3])
 		else:
 			if not server:
 				world = self.client.world
@@ -73,7 +73,7 @@ def Rank(self, parts, fromloc, overriderank, server=None):
 			if fromloc != "console":
 				return ("You are not high enough rank!")
 		world.owner = username
-		return ("%s is now the world owner of world \"%s\"." % (username, world))
+		return ("%s is now the world owner of world %s." % (username, world))
 	elif parts[2] == "advbuilder":
 		# make them an advbuilder
 		if not server:
@@ -130,7 +130,7 @@ def Rank(self, parts, fromloc, overriderank, server=None):
 		return ("Unknown rank \"%s\""%parts[1])
 
 def DeRank(self, parts, fromloc, overriderank, server=None):
-	username = parts[1].lower()
+	username = parts[2].lower()
 	if server:
 		factory = server
 	else:
@@ -140,7 +140,7 @@ def DeRank(self, parts, fromloc, overriderank, server=None):
 			try:
 				world = factory.worlds[parts[3]]
 			except KeyError:
-				return ("Unknown world \"%s\"" %parts[3])
+				return ("Unknown world %s" %parts[3])
 		else:
 			if not server:
 				world = self.client.world
@@ -157,18 +157,18 @@ def DeRank(self, parts, fromloc, overriderank, server=None):
 		try:
 			world.builders.remove(username)
 		except KeyError:
-				return ("%s is not a builder in world \"%s\"." % (username, world))
+				return ("%s is not a builder in world %s." % (username, world))
 		if username in factory.usernames:
 			user = factory.usernames[username]
 			if user.world == world:
 				user.sendBuilderUpdate()
-		return ("Removed %s as a builder in world \"%s\"" % (username, world))
+		return ("Removed builder %s in world %s" % (username, world))
 	elif parts[2] == "op":
 		if len(parts) > 3:
 			try:
 				world = factory.worlds[parts[3]]
 			except KeyError:
-				return ("Unknown world \"%s\"" %parts[3])
+				return ("Unknown world %s" % parts[3])
 		else:
 			if not server:
 				world = self.client.world
@@ -184,19 +184,19 @@ def DeRank(self, parts, fromloc, overriderank, server=None):
 		try:
 			world.ops.remove(username)
 		except KeyError:
-			return ("%s is not an op in world \"%s\"." % (username, world))
+			return ("%s is not an op in world %s." % (username, world))
 		if username in factory.usernames:
 			user = factory.usernames[username]
 			if user.world == world:
 				user.sendOpUpdate()
-		return ("%s is no longer an op in world \"%s\"." % (username, world))
+		return ("%s is no longer an op in world %s." % (username, world))
 		#make worldowner
 	elif parts[2] == "worldowner":
 		if len(parts) > 3:
 			try:
 				world = factory.worlds[parts[3]]
 			except KeyError:
-				return ("Unknown world \"%s\"" %parts[3])
+				return ("Unknown world %s" % parts[3])
 		else:
 			if not server:
 				world = self.client.world
@@ -217,7 +217,7 @@ def DeRank(self, parts, fromloc, overriderank, server=None):
 			user = factory.usernames[username]
 			if user.world == world:
 				user.sendWorldOwnerUpdate()
-		return ("%s is no longer the world owner of world \"%s\"." % (username, world))
+		return ("%s is no longer the world owner of world %s." % (username, world))
 	elif parts[2] == "advbuilder":
 		#make them an advbuilder
 		if not server:
@@ -230,7 +230,7 @@ def DeRank(self, parts, fromloc, overriderank, server=None):
 		if username in factory.advbuilders:
 			factory.advbuilders.remove(username)
 		else:
-			return ("No such advanced builder \"%s\"" % username.lower())
+			return ("No such advanced builder %s" % username.lower())
 		if username in factory.usernames:
 			factory.usernames[username].sendAdvBuilderUpdate()
 		return ("%s is no longer an Advanced Builder." % username.lower())
@@ -246,7 +246,7 @@ def DeRank(self, parts, fromloc, overriderank, server=None):
 		if username in factory.mods:
 			factory.mods.remove(username)
 		else:
-			return ("No such mod \"%s\"" % username.lower())
+			return ("No such mod %s" % username.lower())
 		if username in factory.usernames:
 			factory.usernames[username].sendModUpdate()
 		return ("%s is no longer a mod." % username.lower())
@@ -265,7 +265,7 @@ def DeRank(self, parts, fromloc, overriderank, server=None):
 				factory.usernames[username].sendAdminUpdate()
 			return ("%s is no longer an admin." % username.lower())
 		else:
-			return ("No such admin \"%s\""% username.lower())
+			return ("No such admin %s." % username.lower())
 	elif parts[2] == "director":
 		#make them director
 		if not server:
@@ -281,9 +281,9 @@ def DeRank(self, parts, fromloc, overriderank, server=None):
 				factory.usernames[username].sendDirectorUpdate()
 			return ("%s is no longer a director." % username.lower())
 		else:
-			return ("No such director \"%s\"" % username.lower())
+			return ("No such director %s" % username.lower())
 	else:
-		return ("Unknown rank \"%s\""% parts[1])
+		return ("Unknown rank %s" % parts[1])
 
 def Spec(self, username, fromloc, overriderank, server=None):
 	if server:
@@ -297,7 +297,20 @@ def Spec(self, username, fromloc, overriderank, server=None):
 		factory.usernames[username].sendSpectatorUpdate()
 	return ("%s is now a spec." % username)
 
-def Staff(server=None):
+def DeSpec(self, username, fromloc, overriderank, server=None):
+	if server:
+		factory = server
+	else:
+		factory = self.client.factory
+	try:
+		factory.spectators.remove(username)
+	except:
+		return ("%s was not specced." % username)
+	if username in factory.usernames:
+		factory.usernames[username].sendSpectatorUpdate()
+	return ("%s is no longer a spec." % username)
+
+def Staff(self, server=None):
 	Temp = []
 	if server:
 		factory = server

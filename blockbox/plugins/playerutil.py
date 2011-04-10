@@ -34,7 +34,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 		"title": "commandSetTitle",
 		"settitle": "commandSetTitle",
 
-		"goto": "commandGoto",
+		"coord": "commandCoord",
 		"tp": "commandTeleport",
 		"teleport": "commandTeleport",
 
@@ -670,12 +670,12 @@ class PlayerUtilPlugin(ProtocolPlugin):
 				self.client.sendServerMessage("Sorry, that world is private.")
 
 	@config("category", "world")
-	def commandGoto(self, parts, fromloc, overriderank):
-		"/goto x y z - Guest\nTeleports you to coords. NOTE: y is up."
+	def commandCoord(self, parts, fromloc, overriderank):
+		"/coord x y z - Guest\nTeleports you to coords. NOTE: y is up."
 		try:
 			x = int(parts[1])
 			y = int(parts[2])
 			z = int(parts[3])
 			self.client.teleportTo(x, y, z)
 		except (IndexError, ValueError):
-			self.client.sendServerMessage("Usage: /goto x y z")
+			self.client.sendServerMessage("Usage: /coord x y z")

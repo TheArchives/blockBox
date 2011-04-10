@@ -27,6 +27,7 @@ class BlockBoxServerProtocol(Protocol):
 		self.buffer = ""
 		self.loading_world = False
 		# Load plugins for ourselves
+		self.identified = False
 		self.logger = logging.getLogger("Client")
 		self.quitmsg = "Goodbye."
 		self.homeworld = "main"

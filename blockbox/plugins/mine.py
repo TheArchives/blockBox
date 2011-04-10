@@ -125,4 +125,4 @@ class MinePlugin(ProtocolPlugin):
 	@config("rank", "admin")
 	def commandClear(self, parts, fromloc, rankoverride):
 		self.client.world.clear_mines()
-		self.client.sendServerMessage("You cleared all mines")
+		self.client.sendServerMessage("You cleared all mines.")
