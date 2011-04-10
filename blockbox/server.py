@@ -90,6 +90,8 @@ class BlockBoxFactory(Factory):
 		self.server_message = self.config.get("main", "description")
 		self.initial_greeting = self.config.get("main", "greeting").replace("\\n", "\n")
 		self.public = self.config.getboolean("main", "public")
+		self.info_url = self.config.get("main", "info_url")
+		self.owner = self.config.get("main", "owner").lower()
 		self.isDebugging = self.config.getboolean("main", "debug_mode")
 		self.enable_archives = self.conf_options.getboolean("worlds", "enable_archives")
 		self.duplicate_logins = self.config.getboolean("options", "duplicate_logins")
@@ -98,13 +100,11 @@ class BlockBoxFactory(Factory):
 		self.api_password = self.config.get("network", "api_password")
 		self.physics_limit = self.conf_options.getint("worlds", "physics_limit")
 		self.console_delay = self.config.getint("options", "console_delay")
-		self.info_url = self.config.get("info", "info_url")
 		self.credit_name = self.conf_options.get("bank", "credit_name")
 		self.initial_amount = self.conf_options.get("bank", "initial_amount")
 		self.info_store = self.config.get("options", "info_store")
 		self.table_prefix = self.config.get("options", "table_prefix")
 		self.main_backup = self.conf_options.get("worlds", "main_backup")
-		self.owner = self.config.get("info", "owner").lower()
 		self.backup_freq = self.conf_options.getint("backup", "backup_freq")
 		self.backup_main = self.conf_options.getboolean("backup", "backup_main")
 		self.backup_max = self.conf_options.getint("backup", "backup_max")
@@ -127,10 +127,6 @@ class BlockBoxFactory(Factory):
 			self.irc_pass = self.conf_irc.get("irc", "password")
 			self.irc_channel = self.conf_irc.get("irc", "channel")
 			self.irc_cmdlogs = self.conf_irc.getboolean("irc", "cmdlogs")
-			self.irc_relay = ChatBotFactory(self)
-			reactor.connectTCP(self.conf_irc.get("irc", "server"), self.conf_irc.getint("irc", "port"), self.irc_relay)
-		else:
-			self.irc_relay = None
 		# Parse heartbeat related section
 		self.send_heartbeat = self.conf_options.getboolean("heartbeat", "send_heartbeat")
 		self.use_blockbeat = self.conf_options.getboolean("heartbeat", "use_blockbeat")
@@ -189,6 +185,11 @@ class BlockBoxFactory(Factory):
 		self.loops["printinfo"].start(60)
 		if self.use_blockbeat or self.send_heartbeat:
 			self.heartbeat = Heartbeat(self)
+		if self.use_irc:
+			self.irc_relay = ChatBotFactory(self)
+			reactor.connectTCP(self.conf_irc.get("irc", "server"), self.conf_irc.getint("irc", "port"), self.irc_relay)
+		else:
+			self.irc_relay = None
 		# Initial startup is instant, but it updates every 10 minutes.
 		self.world_save_stack = []
 		reactor.callLater(60, self.saveWorlds)
