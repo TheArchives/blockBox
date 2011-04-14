@@ -93,8 +93,8 @@ class Heartbeat(object):
 					"protocol": 7,
 					"public": self.factory.public,
 					"motd": self.factory.config.get("main", "description"),
-					"website": self.factory.config.get("info", "info_url"),
-					"owner": self.factory.config.get("info", "owner"),
+					"website": self.factory.config.get("main", "info_url"),
+					"owner": self.factory.config.get("main", "owner"),
 					"irc": (self.factory.conf_irc.get("irc", "channel")+"@"+self.factory.conf_irc.get("irc", "server") if self.factory.use_irc else ""),
 				}))
 				response = fh.read().strip()
