@@ -36,9 +36,7 @@ class ChatBot(irc.IRCClient):
 
 	def ctcpQuery_VERSION(self, user, channel, data):
 		"""Called when received a CTCP VERSION request."""
-		if data is not None:
-			self.quirkyMessage("Why did %s send '%s' with a VERSION query?" % (user, data))
-		nick = string.split(user, "!")[0]
+		nick = user.split("!")[0]
 		self.ctcpMakeReply(nick, [('VERSION', 'blockBox %s - a Minecraft server written in Python. http://blockbox.hk-diy.net' % VERSION)])
 
 	def signedOn(self):

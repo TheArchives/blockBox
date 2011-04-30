@@ -2,7 +2,7 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-import logging, time, threading, traceback, urllib
+import logging, time, threading, traceback, urllib, urllib2
 from ConfigParser import RawConfigParser as ConfigParser
 
 from lib.twisted.internet import reactor
@@ -38,11 +38,11 @@ class Heartbeat(object):
 			self.logger.error(traceback.format_exc())
 			reactor.callLater(1, self.turl)
 
-	def get_url(self, onetime=False):
+	def get_url(self, noisy=False, onetime=False):
 		try:
 			try:
 				self.factory.last_heartbeat = time.time()
-				fh = urllib.urlopen("http://www.minecraft.net/heartbeat.jsp", urllib.urlencode({
+				fh = urllib2.urlopen("http://www.minecraft.net/heartbeat.jsp", urllib.urlencode({
 				"port": self.factory.config.getint("network", "port"),
 				"users": len(self.factory.clients),
 				"max": self.factory.max_clients,
@@ -57,7 +57,9 @@ class Heartbeat(object):
 					self.logger.warning("Minecraft.net seems to be unstable. Heartbeat was not sent.")
 				else:
 					self.hash = self.url.partition("server=")[2]
-					if self.factory.console_delay == self.factory.delay_count:
+					if noisy:
+						self.logger.info("%s" % self.url)
+					else:
 						self.logger.debug("%s" % self.url)
 					open('data/url.txt', 'w').write(self.url)
 				if not self.factory.console.is_alive():
@@ -75,11 +77,11 @@ class Heartbeat(object):
 			if not onetime:
 				reactor.callLater(60, self.turl)
 
-	def bb_get_url(self, onetime=False):
+	def bb_get_url(self, noisy=False, onetime=False):
 		try:
 			try:
 				self.factory.last_heartbeat = time.time()
-				fh = urllib.urlopen("http://blockbeat.tk/heartbeat.php", urllib.urlencode({
+				fh = urllib2.urlopen("http://blockbeat.tk/heartbeat.php", urllib.urlencode({
 					"authkey": self.factory.blockbeat_authkey,
 					"passphrase": self.factory.blockbeat_passphrase,
 					"users": len(self.factory.clients),
@@ -161,7 +163,10 @@ class Heartbeat(object):
 					pass
 				elif response == "HEARTBEAT_RECEIVED":
 					# Heartbeat received
-					self.logger.debug("Query to blockBeat successful.")
+					if noisy:
+						self.logger.info("Query to blockBeat successful.")
+					else:
+						self.logger.info("Query to blockBeat successful.")
 					pass
 				else:
 					self.logger.error("blockBeat returned unknown error: %s" % response)

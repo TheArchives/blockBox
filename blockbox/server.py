@@ -648,9 +648,18 @@ class BlockBoxFactory(Factory):
 						self.logger.info(message)
 						if self.irc_relay and world:
 							self.irc_relay.sendServerMessage(message)
-					elif task == TASK_ONMESSAGE or task == TASK_ADMINMESSAGE:
+					elif task == TASK_ONMESSAGE:
 						# Give all people the message
-						message = self.messagestrip(message)
+						id, world, text = data
+						message = self.messagestrip(text)
+						for client in self.clients.values():
+							client.sendNormalMessage(COLOUR_YELLOW + message)
+						if self.irc_relay and world:
+							self.irc_relay.sendServerMessage(message)
+					elif task == TASK_ADMINMESSAGE:
+						# Give all people the message
+						id, world, text = data
+						message = self.messagestrip(text)
 						for client in self.clients.values():
 							client.sendNormalMessage(COLOUR_YELLOW + message)
 						if self.irc_relay and world:
@@ -664,7 +673,8 @@ class BlockBoxFactory(Factory):
 								client.sendNewPlayer(id, username, x, y, z, h, p)
 					elif task == TASK_SERVERURGENTMESSAGE:
 						# Give all people the message
-						message = data
+						id, colour, username, text = data
+						message = self.messagestrip(text)
 						message = self.messagestrip(message)
 						for client in self.clients.values():
 							client.sendNormalMessage(COLOUR_DARKRED + message)
