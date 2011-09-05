@@ -5,11 +5,11 @@
 VERSION = "v1.0.0 RBB (Really Buggy Beta) 1"
 
 FORMAT_LENGTHS = {
-	"b": 1,
-	"a": 1024,
-	"s": 64,
-	"h": 2,
-	"i": 4,
+    "b": 1,
+    "a": 1024,
+    "s": 64,
+    "h": 2,
+    "i": 4,
 }
 
 from format import Format
@@ -32,22 +32,22 @@ TYPE_ERROR = 14
 TYPE_SMP = 255
 
 TYPE_FORMATS = {
-	TYPE_INITIAL: Format("bssb"),
-	TYPE_KEEPALIVE: Format(""),
-	TYPE_PRECHUNK: Format(""),
-	TYPE_CHUNK: Format("hab"),
-	TYPE_LEVELSIZE: Format("hhh"),
-	TYPE_BLOCKCHANGE: Format("hhhbb"),
-	TYPE_BLOCKSET: Format("hhhb"),
-	TYPE_SPAWNPOINT: Format("bshhhbb"),
-	TYPE_PLAYERPOS: Format("bhhhbb"),
-	TYPE_NINE: Format("bbbbbb"),
-	TYPE_TEN: Format("bbbb"),
-	TYPE_PLAYERDIR: Format("bbb"),
-	TYPE_PLAYERLEAVE: Format("b"),
-	TYPE_MESSAGE: Format("bs"),
-	TYPE_ERROR: Format("s"),
-	TYPE_SMP: Format(""),
+    TYPE_INITIAL: Format("bssb"),
+    TYPE_KEEPALIVE: Format(""),
+    TYPE_PRECHUNK: Format(""),
+    TYPE_CHUNK: Format("hab"),
+    TYPE_LEVELSIZE: Format("hhh"),
+    TYPE_BLOCKCHANGE: Format("hhhbb"),
+    TYPE_BLOCKSET: Format("hhhb"),
+    TYPE_SPAWNPOINT: Format("bshhhbb"),
+    TYPE_PLAYERPOS: Format("bhhhbb"),
+    TYPE_NINE: Format("bbbbbb"),
+    TYPE_TEN: Format("bbbb"),
+    TYPE_PLAYERDIR: Format("bbb"),
+    TYPE_PLAYERLEAVE: Format("b"),
+    TYPE_MESSAGE: Format("bs"),
+    TYPE_ERROR: Format("s"),
+    TYPE_SMP: Format(""),
 }
 
 TASK_BLOCKSET = 1
@@ -373,7 +373,7 @@ BLOCK_OPSIDIAN = 49
 
 BlockList = []
 while len(BlockList) != 50:
-	BlockList.append('')
+    BlockList.append('')
 BlockList[0]="air"
 BlockList[1]="rock"
 BlockList[2]="grass"
@@ -426,62 +426,62 @@ BlockList[48]="moss"
 BlockList[49]="obsidian"
 
 VIPS = [
-	# Mojang staff (current or retired)
-	"c418",
-	"dock",
-	"ez",
-	"jeb_",
-	"kappe",
-	"mollstam",
-	"notch",
-	# Founders of blockBox or other products before blockBox
-	"aera",
-	"andrewgodwin",
-	"pixeleater",
-	# Developers/contributors of blockBox
-	"fizyplankton",
-	"tyteen4a03",
-	"uberfox",
-	"opticalza",
-	# Code contributors to products before blockBox
-	"099",
-	"adam01",
-	"andrewph",
-	"destroyerx1",
-	"dwarfy",
-	"erronjason",
-	"gdude2002",
-	"goober",
-	"gothfox",
-	"kelraider",
-	"notmeh",
-	"revenant",
-	"willempiee",
-	"varriount",
-	# Others we give our bows to.
-	"fragmer",
-	"pyropyro", 
-	"tktech"
-	]
+    # Mojang staff (current or retired)
+    "c418",
+    "dock",
+    "ez",
+    "jeb_",
+    "kappe",
+    "mollstam",
+    "notch",
+    # Founders of blockBox or other products before blockBox
+    "aera",
+    "andrewgodwin",
+    "pixeleater",
+    # Developers/contributors of blockBox
+    "fizyplankton",
+    "tyteen4a03",
+    "uberfox",
+    "opticalza",
+    # Code contributors to products before blockBox
+    "099",
+    "adam01",
+    "andrewph",
+    "destroyerx1",
+    "dwarfy",
+    "erronjason",
+    "gdude2002",
+    "goober",
+    "gothfox",
+    "kelraider",
+    "notmeh",
+    "revenant",
+    "willempiee",
+    "varriount",
+    # Others we give our bows to.
+    "fragmer",
+    "pyropyro", 
+    "tktech"
+    ]
 
 class ServerFull(Exception):
-	pass
+    pass
 
 class NotConfigured(Exception):
-	"""Raised when configuration files are missing."""
-	def __init__(self):
-		self.msg = "blockBox is not configured. Read the installation guide if you wish to proceed."
+    """Raised when configuration files are missing."""
+    def __init__(self):
+        self.msg = "blockBox is not configured. Read the installation guide if you wish to proceed."
 
-	def __str__(self):
-		return self.msg
+    def __str__(self):
+        return self.msg
 
 class StoringMethodNotSupported(Exception):
-	"""Raised when the storing method supplied is not supported."""
-	def __init__(self):
-		self.msg = "blockBox currently does not support the storing method supplied. Please refer to the installation guide about storing methods blockBox supports."
+    """Raised when the storing method supplied is not supported."""
+    def __init__(self):
+        self.msg = "blockBox currently does not support the storing method supplied. Please refer to the installation guide about storing methods blockBox supports."
 
-	def __str__(self):
-		return self.msg
+    def __str__(self):
+        return self.msg
 
 class WorldFileDoesNotExist(Exception):
-	pass
+    pass
