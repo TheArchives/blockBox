@@ -240,9 +240,6 @@ class LSystemPlugin(ProtocolPlugin):
 				block = self.client.GetBlockValue(parts[1])
 				if block == None:
 					return
-				if not self.client.canUseRestrictedBlocks(block):
-					self.client.sendServerMessage("Sorry, but you are not allowed to use that block.")
-					return
 				pointsseparation = math.sqrt(math.pow((x2-x),2)+math.pow((y2-y),2)+math.pow((z2-z),2))
 				drawer_orientationvector = ((x2-x)/pointsseparation,(y2-y)/pointsseparation,(z2-z)/pointsseparation)
 				drawer_location = (float(x),float(y),float(z))

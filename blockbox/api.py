@@ -2,7 +2,11 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-import json, logging, os, traceback
+import logging, os, traceback
+try:
+	import json
+except ImportError:
+	import simplejson as json
 
 from lib.twisted.protocols.basic import LineReceiver
 from lib.twisted.internet.protocol import Factory
@@ -26,7 +30,7 @@ class APIProtocol(LineReceiver):
 	def lineReceived(self, line):
 		data = json.loads(line)
 		peer = self.transport.getPeer()
-		if data['password'] != self.factory.api_password:
+		if data['password'] != self.factory.config["api_password"]:
 			self.sendJson({"error": "invalid password"})
 			self.api_factory.logger.info("Invalid password %s (%s:%s)" % (data, peer.host, peer.port))
 		else:
@@ -53,7 +57,7 @@ class APIProtocol(LineReceiver):
 		self.sendJson({"users": list(self.factory.usernames.keys())})
 
 	def commandOwner(self, data):
-		self.sendJson({"owner": list(self.factory.owner)})
+		self.sendJson({"owner": self.factory.config["owner"]})
 
 	def commandDirectors(self, data):
 		self.sendJson({"directors": list(self.factory.directors)})
@@ -98,7 +102,6 @@ class APIProtocol(LineReceiver):
 			"gchat": world.global_chat,
 			"colors": world.highlight_ops,
 			"fwater": world.finite_water,
-			"solids": world.admin_blocks,
 			"x": world.x,
 			"y": world.y,
 			"z": world.z,

@@ -2,11 +2,13 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-import gzip, logging, os, struct, time
+import gzip, logging, os, struct, time, traceback
 
 from array import array
 from Queue import Queue
 from threading import Thread
+
+from lib.twisted.internet import reactor
 
 from blockbox.constants import *
 from blockbox.physics import Physics
@@ -211,8 +213,9 @@ class BlockStore(Thread):
 				os.remove(self.blocks_path)
 				os.rename(self.blocks_path + ".new", self.blocks_path)
 				self.queued_blocks = {}
-			except:
-				self.logger.error("Error saving map %s." % self.blocks_path)
+			except Exception as e:
+				self.logger.error("Error saving map %s: %s" % (self.blocks_path, e))
+				self.logger.error(traceback.format_exc())
 				self.saving = True
 				reactor.callLater(3, self.flush)
 		else:

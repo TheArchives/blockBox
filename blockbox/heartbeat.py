@@ -19,9 +19,9 @@ class Heartbeat(object):
 		self.factory = factory
 		self.logger = logging.getLogger("Heartbeat")
 		self.hash = "na" # Another hacky way to fix a bug.
-		if self.factory.send_heartbeat:
+		if self.factory.config["send_heartbeat"]:
 			self.turl()
-		if self.factory.use_blockbeat:
+		if self.factory.config["use_blockbeat"]:
 			self.bb_turl()
 
 	def bb_turl(self):
@@ -43,13 +43,13 @@ class Heartbeat(object):
 			try:
 				self.factory.last_heartbeat = time.time()
 				fh = urllib2.urlopen("http://www.minecraft.net/heartbeat.jsp", urllib.urlencode({
-				"port": self.factory.config.getint("network", "port"),
+				"port": self.factory.conf_main.getint("network", "port"),
 				"users": len(self.factory.clients),
-				"max": self.factory.max_clients,
-				"name": self.factory.server_name,
-				"public": self.factory.public,
+				"max": self.factory.config["max_clients"],
+				"name": self.factory.config["server_name"],
+				"public": self.factory.config["public"],
 				"version": 7,
-				"salt": self.factory.salt,
+				"salt": self.factory.config["salt"],
 				}))
 				self.url = fh.read().strip()
 				if self.url.startswith("<html>"):
@@ -82,22 +82,22 @@ class Heartbeat(object):
 			try:
 				self.factory.last_heartbeat = time.time()
 				fh = urllib2.urlopen("http://blockbeat.tk/heartbeat.php", urllib.urlencode({
-					"authkey": self.factory.blockbeat_authkey,
-					"passphrase": self.factory.blockbeat_passphrase,
+					"authkey": self.factory.config["blockbeat_authkey"],
+					"passphrase": self.factory.config["blockbeat_passphrase"],
 					"users": len(self.factory.clients),
 					"hash": self.hash,
-					"max": self.factory.max_clients,
-					"port": self.factory.config.getint("network", "port"),
-					"name": self.factory.server_name,
+					"max": self.factory.config["max_clients"],
+					"port": self.factory.conf_main.getint("network", "port"),
+					"name": self.factory.config["server_name"],
 					"software": "blockbox",
 					"version": VERSION,
 					"gamemode": "classic",
 					"protocol": 7,
-					"public": self.factory.public,
-					"motd": self.factory.config.get("main", "description"),
-					"website": self.factory.config.get("main", "info_url"),
-					"owner": self.factory.config.get("main", "owner"),
-					"irc": (self.factory.conf_irc.get("irc", "channel")+"@"+self.factory.conf_irc.get("irc", "server") if self.factory.use_irc else ""),
+					"public": self.factory.config["public"],
+					"motd": self.factory.config["server_message"],
+					"website": self.factory.config["info_url"],
+					"owner": self.factory.config["owner"],
+					"irc": (self.factory.config["irc_channel"]+"@"+self.factory.conf_irc.get("irc", "server") if self.factory.config["use_irc"] else ""),
 				}))
 				response = fh.read().strip()
 				# Response handling
@@ -178,7 +178,7 @@ class Heartbeat(object):
 			except:
 				self.logger.error(traceback.format_exc())
 				self.logger.error("blockBeat seems to be offline.")
-		except IOError,SystemExit:
+		except IOError, SystemExit:
 			pass
 		except:
 			self.logger.error(traceback.format_exc())

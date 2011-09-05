@@ -23,7 +23,6 @@ class BlbPlugin(ProtocolPlugin):
 		"bcb": "commandBcb",
 		"bhcb": "commandBhcb",
 		"bfb": "commandFBlb",
-		#"useblblimit": "commandToggleUseBlb",
 	}
 
 	@config("category", "build")
@@ -34,9 +33,6 @@ class BlbPlugin(ProtocolPlugin):
 		else:
 			block = self.client.GetBlockValue(parts[1])
 			if block == None:
-				return
-			if not self.client.canUseRestrictedBlocks(block):
-				self.client.sendServerMessage("Sorry, but you are not allowed to use that block.")
 				return
 			# If they only provided the type argument, use the last two block places
 			if len(parts) == 2:
@@ -84,7 +80,6 @@ class BlbPlugin(ProtocolPlugin):
 								if not self.client.AllowedToBuild(i, j, k) and overriderank == False:
 									return
 								world[i, j, k] = block
-								self.client.runHook("blockchange", x, y, z, ord(block), ord(block), fromloc)
 								self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 								self.client.sendBlock(i, j, k, block)
 								self.client.total += 1
@@ -115,9 +110,6 @@ class BlbPlugin(ProtocolPlugin):
 		else:
 			block = self.client.GetBlockValue(parts[1])
 			if block == None:
-				return
-			if not self.client.canUseRestrictedBlocks(block):
-				self.client.sendServerMessage("Sorry, but you are not allowed to use that block.")
 				return
 			# If they only provided the type argument, use the last two block places
 			if len(parts) == 2:
@@ -166,7 +158,6 @@ class BlbPlugin(ProtocolPlugin):
 									return
 								if i == x or i == x2 or j == y or j == y2 or k == z or k == z2:
 									world[i, j, k] = block
-									self.client.runHook("blockchange", x, y, z, ord(block), ord(block), fromloc)
 								   	self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 									self.client.sendBlock(i, j, k, block)
 									self.client.total += 1
@@ -198,9 +189,6 @@ class BlbPlugin(ProtocolPlugin):
 		else:
 			block = self.client.GetBlockValue(parts[1])
 			if block == None:
-				return
-			if not self.client.canUseRestrictedBlocks(block):
-				self.client.sendServerMessage("Sorry, but you are not allowed to use that block.")
 				return
 			# If they only provided the type argument, use the last two block places
 			if len(parts) == 2:
@@ -249,7 +237,6 @@ class BlbPlugin(ProtocolPlugin):
 									return
 								if i == x or i == x2 or k == z or k == z2:
 									world[i, j, k] = block
-									self.client.runHook("blockchange", x, y, z, ord(block), ord(block), fromloc)
 									self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
 									self.client.sendBlock(i, j, k, block)
 									self.client.total += 1
@@ -281,9 +268,6 @@ class BlbPlugin(ProtocolPlugin):
 			block = self.client.GetBlockValue(parts[1])
 			block2 = self.client.GetBlockValue(parts[2])
 			if block == None or block2 == None:
-				return
-			if not self.client.canUseRestrictedBlocks(block) or not self.client.canUseRestrictedBlocks(block2):
-				self.client.sendServerMessage("Sorry, but you are not allowed to use that block.")
 				return
 			# If they only provided the type argument, use the last two block places
 			if len(parts) == 3:
@@ -375,9 +359,6 @@ class BlbPlugin(ProtocolPlugin):
 			block2 = self.client.GetBlockValue(parts[2])
 			if block == None or block2 == None:
 				return
-			if not self.client.canUseRestrictedBlocks(block) or not self.client.canUseRestrictedBlocks(block2):
-				self.client.sendServerMessage("Sorry, but you are not allowed to use that block.")
-				return
 			# If they only provided the type argument, use the last two block places
 			if len(parts) == 3:
 				try:
@@ -468,9 +449,6 @@ class BlbPlugin(ProtocolPlugin):
 			block = self.client.GetBlockValue(parts[1])
 			if block == None:
 				return
-			if not self.client.canUseRestrictedBlocks(block):
-				self.client.sendServerMessage("Sorry, but you are not allowed to use that block.")
-				return
 			# If they only provided the type argument, use the last two block places
 			if len(parts) == 2:
 				try:
@@ -541,14 +519,3 @@ class BlbPlugin(ProtocolPlugin):
 						self.client.total = 0
 					pass
 			do_step()
-
-#	@config("rank", "owner")
-#	@on_off_command
-#	def commandToggleUseBlb(self, onoff, fromloc, overriderank):
-#		"/useblblimit on|off - Owner\nSet if the server will use custom BLB limit or the default limit."
-#		if onoff == "on":
-#			self.client.factory.useblblimit = True
-#			self.client.sendServerMessage("Custom BLB Limit is now on.")
-#		else:
-#			self.client.factory.useblblimit = False
-#			self.client.sendServerMessage("Custom BLB Limit is now off.")

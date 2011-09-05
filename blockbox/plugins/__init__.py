@@ -2,10 +2,11 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
-import logging
+import logging, traceback
 
 protocol_plugins = []
 server_plugins = []
+world_plugins = []
 
 class PluginMetaclass(type):
 	"""
@@ -24,21 +25,41 @@ class PluginMetaclass(type):
 			elif ServerPlugin in bases:
 				logger.debug("Loaded server plugin: %s" % name)
 				server_plugins.append(new_cls)
+			elif WorldPlugin in bases:
+				logger.debug("Loaded world plugin: %s" % name)
+				server_plugins.append(new_cls)
 			else:
-				logger.warning("Plugin '%s' is not a server or a protocol plugin." % name)
+				logger.warning("Plugin '%s' is not a server, protocol or world plugin." % name)
 		return new_cls
 
 class ServerPlugin(object):
+	"""Parent object all server plugins inherit from."""
+	__metaclass__ = PluginMetaclass
+
+#	def __init__(self, factory):
+		# Store the factory
+#		self.factory = factory
+		# Register our hooks
+#		if hasattr(self, "hooks"):
+#			for name, fname in self.hooks.items():
+#				try:
+#					self.registerHook(name, getattr(self, fname))
+#				except AttributeError:
+					# Nope, can't find that hook. Return error
+#					self.factory.logger.error("Cannot find hook code for %s, please report to blockBox team." % fname)
+#					return
+		# Call clean setup method
+#		self.gotServer()
+
+class WorldPlugin(object):
 	"""
-	Parent object all plugins inherit from.
+	Parent object all world plugins inherit from.
 	"""
 	__metaclass__ = PluginMetaclass
 
 
 class ProtocolPlugin(object):
-	"""
-	Parent object all plugins inherit from.
-	"""
+	"""Parent object all protocol plugins inherit from."""
 	__metaclass__ = PluginMetaclass
 
 	def __init__(self, client):
@@ -51,7 +72,7 @@ class ProtocolPlugin(object):
 					self.client.registerCommand(name, getattr(self, fname))
 				except AttributeError:
 					# Nope, can't find the method for that command. Return error
-					self.client.factory.logger.error("Cannot find command code for %s (command name is %s), please report to blockBox team." % (fname, name))
+					logging.getLogger("Plugins").error("Cannot find command code for %s (command name is %s), please report to blockBox team." % (fname, name))
 					return
 		# Register our hooks
 		if hasattr(self, "hooks"):
@@ -60,7 +81,7 @@ class ProtocolPlugin(object):
 					self.client.registerHook(name, getattr(self, fname))
 				except AttributeError:
 					# Nope, can't find that hook. Return error
-					self.client.factory.logger.error("Cannot find hook code for %s, please report to blockBox team." % fname)
+					logging.getLogger("Plugins").error("Cannot find hook code for %s, please report to blockBox team." % fname)
 					return
 		# Call clean setup method
 		self.gotClient()
@@ -86,6 +107,7 @@ def load_plugins(plugins):
 			__import__("blockbox.plugins.%s" % module_name)
 		except ImportError:
 			logging.getLogger("Plugins").error("Cannot load plugin %s." % module_name)
+			logging.getLogger("Plugins").error(traceback.format_exc())
 
 def unload_plugin(plugin_name):
 	"Given a plugin name, reloads and re-imports its code."

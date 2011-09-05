@@ -21,7 +21,6 @@ class World(object):
 	"""
 
 	def __init__(self, basename, load=True):
-		self.WorldVars = dict()
 		self.basename = basename
 		self.blocks_path = os.path.join(basename, "blocks.gz")
 		self.meta_path = os.path.join(basename, "world.meta")
@@ -31,7 +30,6 @@ class World(object):
 		self.ops = set()
 		self.builders = set()
 		self.all_write = True
-		self.admin_blocks = True
 		self.private = False
 		self.highlight_ops = True
 		self._physics = False
@@ -175,10 +173,6 @@ class World(object):
 				self.all_write = config.getboolean("permissions", "all_write")
 			else:
 				self.all_write = True
-			if config.has_option("permissions", "admin_blocks"):
-				self.admin_blocks = config.getboolean("permissions", "admin_blocks")
-			else:
-				self.admin_blocks = True
 			if config.has_option("permissions", "private"):
 				self.private = config.getboolean("permissions", "private")
 			else:
@@ -312,7 +306,6 @@ class World(object):
 			config.set("builders", builder, "true")
 		# Store permissions
 		config.set("permissions", "all_write", str(self.all_write))
-		config.set("permissions", "admin_blocks", str(self.admin_blocks))
 		config.set("permissions", "private", str(self.private))
 		config.set("permissions", "zoned", str(self.zoned))
 		# Store display settings

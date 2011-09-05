@@ -60,4 +60,4 @@ class BlockInfoPlugin(ProtocolPlugin):
 			except KeyError:
 				self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
 				return
-			self.client.sendServerMessage("%s is now being represented by %s." % (parts[1],block))
+			self.client.sendServerMessage("%s is now being represented by %s." % (parts[1], block))

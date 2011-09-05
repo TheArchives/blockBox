@@ -66,7 +66,7 @@ class CommandPlugin(ProtocolPlugin):
 				cmdlist = self.cmdinfolines[index:index+10]
 				if len(cmdlist) < 10:
 					if len(cmdlist) > 0:
-						self.client.sendServerMessage("Page %s of %s:" %(int((index+11)/10), int((len(self.cmdinfolines)/10)+1)))
+						self.client.sendServerMessage("Page %s of %s:" % (int((index+11)/10), int((len(self.cmdinfolines)/10)+1)))
 						for x in cmdlist:
 							self.client.sendServerMessage(x)
 					self.client.sendServerMessage("Reached the end.")
@@ -85,7 +85,7 @@ class CommandPlugin(ProtocolPlugin):
 					self.infoindex += 10
 					self.client.sendServerMessage("Reached the beginning.")
 					return
-				self.client.sendServerMessage("Page %s of %s:" %(int((self.infoindex+1)/10), int(len(self.cmdinfolist)/10)))
+				self.client.sendServerMessage("Page %s of %s:" % (int((self.infoindex+1)/10), int(len(self.cmdinfolist)/10)))
 				for x in cmdlist:
 					self.client.sendServerMessage(x)
 				return True
@@ -444,7 +444,7 @@ class CommandPlugin(ProtocolPlugin):
 				except AttributeError:
 					try:
 						try:
-							func = self.commands[command.lower()]
+							func = self.client.commands[command.lower()]
 						except KeyError:
 							self.client.sendServerMessage("Unknown command '%s'" % command)
 							return
@@ -576,9 +576,10 @@ class CommandPlugin(ProtocolPlugin):
 						self.client.logger.error("Cannot find command code for %s, please report to blockBox team." % command)
 						self.client.sendSplitServerMessage("Command code for command '%s' not found, please report to server staff or blockBox team." % command)
 						return
-				if func.config["disabled"]:
-					self.client.sendServerMessage("Command %s is disabled by the server owner." % command)
-					return
+				if getattr(func, "config"):
+					if func.config["disabled"]:
+						self.client.sendServerMessage("Command %s is disabled by the server owner." % command)
+						return
 					if self.client.isSpectator() and func.config["rank"]:
 						self.client.sendServerMessage("'%s' is not available to spectators." % command)
 						return
@@ -692,16 +693,16 @@ class CommandPlugin(ProtocolPlugin):
 			if lastseen is 0:
 				lastseen = "?"
 		thiscmd = thiscmd.replace("$first", lastseen)
-		thiscmd = thiscmd.replace("$server", self.client.factory.server_name)
-		if self.client.factory.use_irc:
-			thiscmd = thiscmd.replace("$irc", self.client.factory.conf_irc.get("irc", "server") + " " + self.client.factory.irc_channel)
-			thiscmd = thiscmd.replace("$ircchan", self.client.factory.irc_channel)
+		thiscmd = thiscmd.replace("$server", self.client.factory.config["server_name"])
+		if self.client.factory.config["use_irc"]:
+			thiscmd = thiscmd.replace("$irc", self.client.factory.conf_irc.get("irc", "server") + " " + self.client.factory.config["irc_channel"])
+			thiscmd = thiscmd.replace("$ircchan", self.client.factory.config["irc_channel"])
 			thiscmd = thiscmd.replace("$ircnet", self.client.factory.conf_irc.get("irc", "server"))
-		thiscmd = thiscmd.replace("$owner", self.client.factory.owner)
+		thiscmd = thiscmd.replace("$owner", self.client.factory.config["owner"])
 		thiscmd = thiscmd.replace("$rcolor", self.client.userColour())
 		thiscmd = thiscmd.replace("$rname", self.client.rankName())
-		thiscmd = thiscmd.replace("$date", time.strftime("%m/%d/%Y",time.localtime(time.time())))
-		thiscmd = thiscmd.replace("$time", time.strftime("%H:%M:%S",time.localtime(time.time())))
+		thiscmd = thiscmd.replace("$date", time.strftime("%m/%d/%Y", time.localtime(time.time())))
+		thiscmd = thiscmd.replace("$time", time.strftime("%H:%M:%S", time.localtime(time.time())))
 		myrank = "guest"
 		myranknum = 1
 		if self.client.isSpectator():

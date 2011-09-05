@@ -19,14 +19,14 @@ class ChatBot(irc.IRCClient):
 	def connectionMade(self):
 		self.logger = logging.getLogger("IRC Bot")
 		self.ops = []
-		self.nickname = self.factory.main_factory.irc_nick
-		self.password = self.factory.main_factory.irc_pass
+		self.nickname = self.factory.main_factory.config["irc_nick"]
+		self.password = self.factory.main_factory.config["irc_pass"]
 		self.prefix = "none"
 		irc.IRCClient.connectionMade(self)
 		self.factory.instance = self
 		self.factory, self.controller_factory = self.factory.main_factory, self.factory
 		self.world = None
-		self.sendLine('NAMES ' + self.factory.irc_channel)
+		self.sendLine('NAMES ' + self.factory.config["irc_channel"])
 
 	def connectionLost(self, reason):
 		irc.IRCClient.connectionLost(self, reason)
@@ -43,8 +43,8 @@ class ChatBot(irc.IRCClient):
 		"""Called when bot has succesfully signed on to server."""
 		self.logger.info("Connected.")
 		self.msg("NickServ", "IDENTIFY %s" % self.password)
-		self.msg("ChanServ", "INVITE %s" % self.factory.irc_channel)
-		self.join(self.factory.irc_channel)
+		self.msg("ChanServ", "INVITE %s" % self.factory.config["irc_channel"])
+		self.join(self.factory.config["irc_channel"])
 
 	def joined(self, channel):
 		"""This will get called when the bot joins the channel."""
@@ -186,81 +186,81 @@ class ChatBot(irc.IRCClient):
 				if not self.nickname == user and not user == "NickServ" and not user == "ChanServ" and not user == "MemoServ":
 					msg_command = msg.split()
 					self.AdminCommand([user] + msg_command)
-			elif channel.lower() == self.factory.irc_channel.lower():
+			elif channel.lower() == self.factory.config["irc_channel"].lower():
 				if msg.lstrip(self.nickname).startswith("$"+self.nickname):
 					msg_command = msg.split()
 					if len(msg_command) > 1:
 						if msg_command[1] == ("who"):
-							self.msg(self.factory.irc_channel, "Who's Online?")
+							self.msg(self.factory.config["irc_channel"], "Who's Online?")
 							none = True
 							for key in self.factory.worlds:
 								users =  ", ".join(str(c.username) for c in self.factory.worlds[key].clients)
 								if users:
 									whois = ("%s: %s" % (key, users))
-									self.msg(self.factory.irc_channel, whois)
+									self.msg(self.factory.config["irc_channel"], whois)
 									users = None
 									none = False
 							if none:
-								self.msg(self.factory.irc_channel, "No users are online.")
+								self.msg(self.factory.config["irc_channel"], "No users are online.")
 						elif msg_command[1] == ("worlds"):
-							self.msg(self.factory.irc_channel, "Worlds Booted")
+							self.msg(self.factory.config["irc_channel"], "Worlds Booted")
 							worlds = ", ".join([id for id, world in self.factory.worlds.items()])
-							self.msg(self.factory.irc_channel, "Online Worlds: "+worlds)
+							self.msg(self.factory.config["irc_channel"], "Online Worlds: "+worlds)
 						elif msg_command[1] == ("staff"):
-							self.msg(self.factory.irc_channel,"The Server Staff")
+							self.msg(self.factory.config["irc_channel"],"The Server Staff")
 							list = Staff(self, self.factory)
 							for each in list:
 								self.msg(user," ".join(each))
 						elif msg_command[1] == ("credits"):
-							self.msg(self.factory.irc_channel, "Please see your PM for the Credits.")
+							self.msg(self.factory.config["irc_channel"], "Please see your PM for the Credits.")
 							self.msg(user, "The Credits")
 							list = Credits()
 							for each in list:
 								self.msg(user, "".join(each))
 						elif msg_command[1] == ("help"):
-							self.msg(self.factory.irc_channel, "Help Center")
-							self.msg(self.factory.irc_channel, "About: Use '$"+self.nickname+" about'")
-							self.msg(self.factory.irc_channel, "Credits: Use '$"+self.nickname+" credits'")
-							self.msg(self.factory.irc_channel, "Commands: Use '$"+self.nickname+" cmdlist'")
-							self.msg(self.factory.irc_channel, "WorldChat: Use '!world message'")
+							self.msg(self.factory.config["irc_channel"], "Help Center")
+							self.msg(self.factory.config["irc_channel"], "About: Use '$"+self.nickname+" about'")
+							self.msg(self.factory.config["irc_channel"], "Credits: Use '$"+self.nickname+" credits'")
+							self.msg(self.factory.config["irc_channel"], "Commands: Use '$"+self.nickname+" cmdlist'")
+							self.msg(self.factory.config["irc_channel"], "WorldChat: Use '!world message'")
 						elif msg_command[1] == ("cmdlist"):
-							self.msg(self.factory.irc_channel, "Command List")
-							self.msg(self.factory.irc_channel, "about cmdlist credits help staff who worlds")
-							self.msg(self.factory.irc_channel, "Use '$"+self.nickname+" command arguments' to do it.")
-							self.msg(self.factory.irc_channel, "NOTE: Admin Commands are by PMing "+self.nickname+" - only for ops.")
+							self.msg(self.factory.config["irc_channel"], "Command List")
+							self.msg(self.factory.config["irc_channel"], "about cmdlist credits help staff who worlds")
+							self.msg(self.factory.config["irc_channel"], "Use '$"+self.nickname+" command arguments' to do it.")
+							self.msg(self.factory.config["irc_channel"], "NOTE: Admin Commands are by PMing "+self.nickname+" - only for ops.")
 						elif msg_command[1] == ("about"):
-							self.msg(self.factory.irc_channel, "About the Server - blockBox %s - http://blockbox.hk-diy.net/" % VERSION)
-							self.msg(self.factory.irc_channel, "Name: "+self.factory.server_name)
-							self.msg(self.factory.irc_channel, "URL: "+self.factory.heartbeat.url)
-							self.msg(self.factory.irc_channel, "Site: "+self.factory.info_url)
-							self.msg(self.factory.irc_channel, "Owner: "+self.factory.owner)
+							self.msg(self.factory.config["irc_channel"], "About the Server - blockBox %s - http://blockbox.hk-diy.net/" % VERSION)
+							self.msg(self.factory.config["irc_channel"], "Name: "+self.factory.config["server_name"])
+							self.msg(self.factory.config["irc_channel"], "URL: "+self.factory.heartbeat.url)
+							self.msg(self.factory.config["irc_channel"], "Site: "+self.factory.config["info_url"])
+							self.msg(self.factory.config["irc_channel"], "Owner: "+self.factory.config["owner"])
 						else:
-							self.msg(self.factory.irc_channel, "Sorry, "+msg_command[1]+" is not a command!")
+							self.msg(self.factory.config["irc_channel"], "Sorry, "+msg_command[1]+" is not a command!")
 						self.logger.info("%s just used: %s" %(user," ".join(msg_command[1:])))
 					else:
-						self.msg(self.factory.irc_channel, "You must provide a command to use the IRC bot.")
+						self.msg(self.factory.config["irc_channel"], "You must provide a command to use the IRC bot.")
 				elif msg.startswith("!"):
 					# It's a world message.
 					message = msg.split(" ")
 					if len(message) == 1:
-						self.msg(self.factory.irc_channel, "Please include a message to send.")
+						self.msg(self.factory.config["irc_channel"], "Please include a message to send.")
 					else:
 						try:
 							world = message[0][1:len(message[0])]
 							out = " ".join(message[1:])
 							text = COLOUR_YELLOW+"!"+COLOUR_PURPLE+user+":"+COLOUR_WHITE+" "+out
 						except ValueError:
-							self.msg(self.factory.irc_channel,"Please include a message to send.")
+							self.msg(self.factory.config["irc_channel"],"Please include a message to send.")
 						else:
 							if world in self.factory.worlds:
-								self.factory.queue.put ((self.factory.worlds[world],TASK_WORLDMESSAGE,(255, self.factory.worlds[world], text),))
+								self.factory.queue.put ((self.factory.worlds[world],TASK_WORLDMESSAGE, (255, self.factory.worlds[world], text),))
 								self.logger.info("WORLD - "+user+" in "+str(self.factory.worlds[world].id)+": "+out)
 								self.wclog = open("logs/server.log", "a")
 								self.wclog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+" | !"+user+" in "+str(self.factory.worlds[world].id)+": "+out+"\n")
 								self.wclog.flush()
 								self.wclog.close()
 							else:
-								self.msg(self.factory.irc_channel,"That world does not exist. Try !world message")
+								self.msg(self.factory.config["irc_channel"],"That world does not exist. Try !world message")
 				elif self.prefix == "none":
 					allowed = True
 					goodchars = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", " ", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " ", "!", "@", "#", "$", "%", "*", "(", ")", "-", "_", "+", "=", "{", "[", "}", "]", ":", ";", "\"", "\'", "<", ",", ">", ".", "?", "/", "\\", "|"]
@@ -327,7 +327,7 @@ class ChatBot(irc.IRCClient):
 					msg = msg.replace("./", " /")
 					msg = msg.replace(".!", " !")
 					if msg[len(msg)-2] == "&":
-						self.msg(self.factory.irc_channel,"You can not use a color at the end of a message")
+						self.msg(self.factory.config["irc_channel"],"You can not use a color at the end of a message")
 						return
 					if len(msg) > 51:
 						moddedmsg = msg[:51].replace(" ", "")
@@ -336,7 +336,7 @@ class ChatBot(irc.IRCClient):
 					self.factory.queue.put((self, TASK_IRCMESSAGE, (127, self.factory.userColour(user), user, msg)))
 		except:
 			self.logger.error(traceback.format_exc())
-			self.msg(self.factory.irc_channel,"ERROR " + traceback.format_exc())
+			self.msg(self.factory.config["irc_channel"],"ERROR " + traceback.format_exc())
 
 	def action(self, user, channel, msg):
 		msg = msg.replace("./", " /")
@@ -379,7 +379,7 @@ class ChatBot(irc.IRCClient):
 		username = username.replace("&d", "")
 		username = username.replace("&e", "")
 		username = username.replace("&f", "")
-		self.msg(self.factory.irc_channel, "12%s:23 %s 3" % (username, message))
+		self.msg(self.factory.config["irc_channel"], "12%s:23 %s 3" % (username, message))
 
 	def sendServerMessage(self, message,admin=False,user="",IRC=False):
 		message = message.replace("./", " /")
@@ -405,7 +405,7 @@ class ChatBot(irc.IRCClient):
 				if not op == user:
 					self.IRCClient.msg(op, "4>> %s4" % (message))
 		else:
-			self.msg(self.factory.irc_channel, "4>> %s4" % (message))
+			self.msg(self.factory.config["irc_channel"], "4>> %s4" % (message))
 
 	def sendAction(self, username, message):
 		message = message.replace("&0", "01")
@@ -424,7 +424,7 @@ class ChatBot(irc.IRCClient):
 		message = message.replace("&d", "13")
 		message = message.replace("&e", "08")
 		message = message.replace("&f", "00")
-		self.msg(self.factory.irc_channel, "13* %s %s13" % (username, message))
+		self.msg(self.factory.config["irc_channel"], "13* %s %s13" % (username, message))
 
 		# irc callbacks
 

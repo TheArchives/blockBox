@@ -55,7 +55,6 @@ class ModUtilPlugin(ProtocolPlugin):
 
 		"overload": "commandOverload",
 		#"send": "commandSend",
-		"blazer": "commandBlazer",
 	}
 
 	hooks = {
@@ -277,11 +276,16 @@ class ModUtilPlugin(ProtocolPlugin):
 
 	@config("category", "player")
 	@config("rank", "op")
-	@username_command
-	def commandWorldBan(self, username, fromloc, overriderank):
+	@only_username_command
+	def commandWorldBan(self, parts, fromloc, overriderank):
 		"/worldban username - Op\nWorldBan a Player from this Map."
+		if len(parts) < 1:
+			self.client.sendServerMessage("Please specify a username.")
+		username = parts[1]
 		if self.client.world.isWorldBanned(username):
 			self.client.sendServerMessage("%s is already WorldBanned." % username)
+		elif username == self.client.world.owner:
+			self.client.sendServerMessage("You cannot WorldBan the world owner!")
 		else:
 			self.client.world.add_worldban(username)
 			if username in self.client.factory.usernames:
@@ -632,12 +636,6 @@ class ModUtilPlugin(ProtocolPlugin):
 			# Imagine that! They've mysteriously appeared.
 			self.client.queueTask(TASK_NEWPLAYER, [self.client.id, self.client.username, self.client.x, self.client.y, self.client.z, self.client.h, self.client.p])
 			#self.client.queueTask(TASK_PLAYERCONNECT, [self.client.id, self.client.username, self.client.x, self.client.y, self.client.z, self.client.h, self.client.p])
-
-	@config("rank", "mod")
-	def commandBlazer(self, parts, fromloc, overriderank):
-		"/blazer - Mod\nBlazer!"
-		for i in range(10):
-			self.client.sendServerMessage("SPAM!")
 
 	@config("category", "player")
 	@config("rank", "admin")

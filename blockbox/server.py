@@ -32,6 +32,7 @@ class BlockBoxFactory(Factory):
 
 	def __init__(self):
 		"""Constructor method."""
+		#self.plugins = [plugin(self) for plugin in server_plugins]
 		self.initVariables()
 
 	def startFactory(self):
@@ -40,25 +41,6 @@ class BlockBoxFactory(Factory):
 
 	def initVariables(self):
 		"""Loads variables from server configuration."""
-		if (os.path.exists("conf/options.dist.ini") and not os.path.exists("conf/options.ini")) or \
-			(os.path.exists("conf/plugins.dist.ini") and not os.path.exists("conf/plugins.ini")) or \
-			(os.path.exists("conf/server.dist.ini") and not os.path.exists("conf/server.ini")) or \
-			(os.path.exists("conf/wordfilter.dist.ini") and not os.path.exists("conf/wordfilter.ini")):
-			raise NotConfigured
-		self.logger = logging.getLogger("Server")
-		self.loops = recursive_default()
-		self.timers = recursive_default()
-		self.specs = ConfigParser()
-		self.last_heartbeat = time.time()
-		self.config = ConfigParser()
-		self.conf_options = ConfigParser()
-		self.conf_plugins = ConfigParser()
-		self.wordfilter = ConfigParser()
-		self.save_count = 1
-		self.delay_count = 1
-		self.config.read("conf/server.ini")
-		self.conf_options.read("conf/options.ini")
-		self.conf_plugins.read("conf/plugins.ini")
 		# Initialise internal datastructures
 		self.worlds = {}
 		self.directors = set()
@@ -70,78 +52,101 @@ class BlockBoxFactory(Factory):
 		self.silenced = set()
 		self.banned = {}
 		self.ipbanned = {}
+		self.queue = Queue()
+		self.clients = {}
+		self.usernames = {}
+		if not os.path.exists("conf/options.ini") or not os.path.exists("conf/plugins.ini") or not os.path.exists("conf/server.ini"):
+			raise NotConfigured
+		self.logger = logging.getLogger("Server")
+		self.loops = recursive_default()
+		self.timers = recursive_default()
+		self.logs = recursive_default()
+		self.last_heartbeat = time.time()
+		self.conf_main = ConfigParser()
+		self.conf_options = ConfigParser()
+		self.conf_plugins = ConfigParser()
+		self.save_count = 1
+		self.delay_count = 1
+		self.config = recursive_default()
+		self.conf_main.read("conf/server.ini")
+		self.conf_options.read("conf/options.ini")
+		self.conf_plugins.read("conf/plugins.ini")
 
-		self.use_irc = False
+		self.config["use_irc"] = False
 		if os.path.exists("conf/irc.ini"):
-			self.use_irc = True
+			self.config["use_irc"] = True
 			self.conf_irc = ConfigParser()
 			self.conf_irc.read("conf/irc.ini")
 
-		self.use_email = False
-		if  (os.path.exists("conf/email.ini")):
-			self.use_email = True
-			self.conf_email = ConfigParser()
-			self.conf_email.read("conf/email.ini")
+		self.config["use_wordfilter"] = False
+		if os.path.exists("conf/wordfilter.ini"):
+			self.config["use_wordfilter"] = True
+			self.wordfilter = ConfigParser()
+			self.wordfilter.read("conf/wordfilter.ini")
 
 		self.saving = False
-		self.blblimit = defaultdict()
-		self.max_clients = self.config.getint("main", "max_clients")
-		self.server_name = self.config.get("main", "name")
-		self.server_message = self.config.get("main", "description")
-		self.initial_greeting = self.config.get("main", "greeting").replace("\\n", "\n")
-		self.public = self.config.getboolean("main", "public")
-		self.info_url = self.config.get("main", "info_url")
-		self.owner = self.config.get("main", "owner").lower()
-		self.isDebugging = self.config.getboolean("main", "debug_mode")
-		self.enable_archives = self.conf_options.getboolean("worlds", "enable_archives")
-		self.duplicate_logins = self.config.getboolean("options", "duplicate_logins")
-		self.verify_names = self.config.getboolean("options", "verify_names")
-		self.asd_delay = self.conf_options.getint("worlds", "asd_delay")
-		self.api_password = self.config.get("network", "api_password")
-		self.physics_limit = self.conf_options.getint("worlds", "physics_limit")
-		self.console_delay = self.config.getint("options", "console_delay")
-		self.credit_name = self.conf_options.get("bank", "credit_name")
-		self.initial_amount = self.conf_options.get("bank", "initial_amount")
-		self.info_store = self.config.get("options", "info_store")
-		self.table_prefix = self.config.get("options", "table_prefix")
-		self.main_backup = self.conf_options.get("worlds", "main_backup")
-		self.backup_freq = self.conf_options.getint("backup", "backup_freq")
-		self.backup_main = self.conf_options.getboolean("backup", "backup_main")
-		self.backup_max = self.conf_options.getint("backup", "backup_max")
-		self.backup_auto = self.conf_options.getboolean("backup", "backup_auto")
-		self.useblblimit = self.conf_options.getboolean("blb", "use_blb_limiter")
-		if self.useblblimit:
-			self.blblimit["player"] = self.conf_options.getint("blb", "player")
-			self.blblimit["builder"] = self.conf_options.getint("blb", "builder")
-			self.blblimit["advbuilder"] = self.conf_options.getint("blb", "advbuilder")
-			self.blblimit["op"] = self.conf_options.getint("blb", "op")
-			self.blblimit["worldowner"] = self.conf_options.getint("blb", "worldowner")
-			self.blblimit["mod"] = self.conf_options.getint("blb", "mod")
-			self.blblimit["admin"] = self.conf_options.getint("blb", "admin")
-			self.blblimit["director"] = self.conf_options.getint("blb", "director")
-			self.blblimit["owner"] = self.conf_options.getint("blb", "owner")
+		self.config["blblimit"] = defaultdict()
+		self.config["max_clients"] = self.conf_main.getint("main", "max_clients")
+		self.config["server_name"] = self.conf_main.get("main", "name")
+		self.config["server_message"] = self.conf_main.get("main", "description")
+		self.config["initial_greeting"] = self.conf_main.get("main", "greeting").replace("\\n", "\n")
+		self.config["public"] = self.conf_main.getboolean("main", "public")
+		self.config["info_url"] = self.conf_main.get("main", "info_url")
+		# Salt, for the heartbeat server/verify-names
+		# Now mandatory to cope with WoM
+		self.config["salt"] = self.conf_main.get("main", "salt")
+		self.config["owner"] = self.conf_main.get("main", "owner").lower()
+		self.config["enable_archives"] = self.conf_options.getboolean("worlds", "enable_archives")
+		self.config["duplicate_logins"] = self.conf_main.getboolean("options", "duplicate_logins")
+		self.config["verify_names"] = self.conf_main.getboolean("options", "verify_names")
+		self.config["asd_delay"] = self.conf_options.getint("worlds", "asd_delay")
+		self.config["api_password"] = self.conf_main.get("network", "api_password")
+		self.config["physics_limit"] = self.conf_options.getint("worlds", "physics_limit")
+		self.config["credit_name"] = self.conf_options.get("bank", "credit_name")
+		self.config["initial_amount"] = self.conf_options.get("bank", "initial_amount")
+		self.config["info_store"] = self.conf_main.get("options", "info_store")
+		self.config["table_prefix"] = self.conf_main.get("options", "table_prefix")
+		self.config["main_backup"] = self.conf_options.get("worlds", "main_backup")
+		self.config["backup_freq"] = self.conf_options.getint("backup", "backup_freq")
+		self.config["backup_main"] = self.conf_options.getboolean("backup", "backup_main")
+		self.config["backup_max"] = self.conf_options.getint("backup", "backup_max")
+		self.config["backup_auto"] = self.conf_options.getboolean("backup", "backup_auto")
+		self.config["useblblimit"] = self.conf_options.getboolean("blb", "use_blb_limiter")
+		if self.config["useblblimit"]:
+			self.config["blblimit"]["player"] = self.conf_options.getint("blb", "player")
+			self.config["blblimit"]["builder"] = self.conf_options.getint("blb", "builder")
+			self.config["blblimit"]["advbuilder"] = self.conf_options.getint("blb", "advbuilder")
+			self.config["blblimit"]["op"] = self.conf_options.getint("blb", "op")
+			self.config["blblimit"]["worldowner"] = self.conf_options.getint("blb", "worldowner")
+			self.config["blblimit"]["mod"] = self.conf_options.getint("blb", "mod")
+			self.config["blblimit"]["admin"] = self.conf_options.getint("blb", "admin")
+			self.config["blblimit"]["director"] = self.conf_options.getint("blb", "director")
+			self.config["blblimit"]["owner"] = self.conf_options.getint("blb", "owner")
 
 		# Parse IRC section
-		if self.use_irc:
-			self.irc_nick = self.conf_irc.get("irc", "nick")
-			self.irc_pass = self.conf_irc.get("irc", "password")
-			self.irc_channel = self.conf_irc.get("irc", "channel")
-			self.irc_cmdlogs = self.conf_irc.getboolean("irc", "cmdlogs")
+		if self.config["use_irc"]:
+			self.config["irc_nick"] = self.conf_irc.get("irc", "nick")
+			self.config["irc_pass"] = self.conf_irc.get("irc", "password")
+			self.config["irc_channel"] = self.conf_irc.get("irc", "channel")
+			self.config["irc_cmdlogs"] = self.conf_irc.getboolean("irc", "cmdlogs")
 		# Parse heartbeat related section
-		self.send_heartbeat = self.conf_options.getboolean("heartbeat", "send_heartbeat")
-		self.use_blockbeat = self.conf_options.getboolean("heartbeat", "use_blockbeat")
-		if self.use_blockbeat:
-			self.blockbeat_authkey = self.conf_options.get("heartbeat", "blockbeat_authkey")
-			self.blockbeat_passphrase = self.conf_options.get("heartbeat", "blockbeat_passphrase")
+		self.config["send_heartbeat"] = self.conf_options.getboolean("heartbeat", "send_heartbeat")
+		self.config["use_blockbeat"] = self.conf_options.getboolean("heartbeat", "use_blockbeat")
+		if self.config["use_blockbeat"]:
+			self.config["blockbeat_authkey"] = self.conf_options.get("heartbeat", "blockbeat_authkey")
+			self.config["blockbeat_passphrase"] = self.conf_options.get("heartbeat", "blockbeat_passphrase")
 		self.main_loaded = False
 		# Word Filter
-		self.wordfilter.read("conf/wordfilter.ini")
 		self.filter = []
-		number = self.wordfilter.getint("filter","count")
-		for x in range(number):
-			self.filter = self.filter + [self.wordfilter.get("filter", "s"+str(x)), self.wordfilter.get("filter", "r" + str(x))]
-		# Salt, for the heartbeat server/verify-names
-		self.salt = hashlib.md5(hashlib.md5(str(random.getrandbits(128))).digest()).hexdigest()[-32:].strip("0")
+		if self.config["use_wordfilter"]:
+			if not os.path.exists("conf/wordfilter.ini"):
+				self.logger.error("Cannot find wordfilter.ini. Disabled.")
+				self.config["use_wordfilter"] = False
+			else:
+				self.wordfilter.read("conf/wordfilter.ini")
+				number = self.wordfilter.getint("filter", "count")
+				for x in range(number):
+					self.filter = self.filter + [self.wordfilter.get("filter", "s"+str(x)), self.wordfilter.get("filter", "r" + str(x))]
 		# Load up the plugins specified
 		plugins = self.conf_plugins.options("plugins")
 		self.logger.info("Loading %i plugins..." % len(plugins))
@@ -168,10 +173,6 @@ class BlockBoxFactory(Factory):
 			self.logger.info("Generated.")
 		# Load up the contents of data.
 		self.loadMeta()
-		# Set up a few more things.
-		self.queue = Queue()
-		self.clients = {}
-		self.usernames = {}
 		# Boot worlds that got loaded
 		for world in self.worlds:
 			self.loadWorld("mapdata/worlds/%s" % world, world)
@@ -183,9 +184,9 @@ class BlockBoxFactory(Factory):
 		reactor.callLater(0.1, self.sendMessages)
 		self.loops["printinfo"] = task.LoopingCall(self.printInfo)
 		self.loops["printinfo"].start(60)
-		if self.use_blockbeat or self.send_heartbeat:
+		if self.config["use_blockbeat"] or self.config["send_heartbeat"]:
 			self.heartbeat = Heartbeat(self)
-		if self.use_irc:
+		if self.config["use_irc"]:
 			self.irc_relay = ChatBotFactory(self)
 			reactor.connectTCP(self.conf_irc.get("irc", "server"), self.conf_irc.getint("irc", "port"), self.irc_relay)
 		else:
@@ -193,7 +194,7 @@ class BlockBoxFactory(Factory):
 		# Initial startup is instant, but it updates every 10 minutes.
 		self.world_save_stack = []
 		reactor.callLater(60, self.saveWorlds)
-		if self.enable_archives:
+		if self.config["enable_archives"]:
 			if "archives" not in protocol_plugins:
 				self.loadPlugin("archives")
 			#self.loops["loadarchives"] = task.LoopingCall(self.loadArchives)
@@ -202,9 +203,10 @@ class BlockBoxFactory(Factory):
 		gc.disable()
 		self.loops["gc"] = task.LoopingCall(self.cleanGarbage)
 		self.loops["gc"].start(900)
-#		if self.backup_auto:
+		if self.config["backup_auto"]:
 #			self.loops["autobackup"] = task.LoopingCall(self.AutoBackup)
-#			self.loops["autobackup"].start(float(self.backup_freq * 60))
+#			self.loops["autobackup"].start(float(self.cpnfig["backup_freq"] * 60))
+			reactor.callLater(float(self.config["backup_freq"] * 60), self.AutoBackup)
 
 	def cleanGarbage(self, slient=False):
 		"""Garbage cleaning."""
@@ -303,16 +305,12 @@ class BlockBoxFactory(Factory):
 
 	def printInfo(self):
 		"""Prints console info every minute, and performs other utility actions."""
-		if self.console_delay == self.delay_count:
-			if not len(self.clients) == 0:
-				self.logger.info("There are %s players on the server" % len(self.clients))
-				for key in self.worlds:
+		if not len(self.clients) == 0:
+			self.logger.info("There are %s players on the server." % len(self.clients))
+			for key in self.worlds:
+				if len(self.worlds[key].clients) > 0:
 					self.logger.info("%s: %s" % (key, ", ".join(str(c.username) for c in self.worlds[key].clients)))
-			self.delay_count = 1
-		else:
-			self.delay_count += 1
-		gc.collect()
-		if (time.time() - self.last_heartbeat) > 180 and (self.use_blockbeat or self.send_heartbeat):
+		if (time.time() - self.last_heartbeat) > 180 and (self.config["use_blockbeat"] or self.config["send_heartbeat"]):
 			self.heartbeat = None
 			self.heartbeat = Heartbeat(self)
 
@@ -349,8 +347,7 @@ class BlockBoxFactory(Factory):
 			world = self.worlds[world_id]
 			world.save_meta()
 			world.flush()
-			if self.console_delay == self.delay_count:
-				self.logger.info("World '%s' has been saved." % world_id)
+			self.logger.info("World '%s' has been saved." % world_id)
 			if self.save_count == 5:
 				for client in list(list(self.worlds[world_id].clients))[:]:
 					client.sendServerMessage("World '%s' has been saved." % world_id)
@@ -359,11 +356,11 @@ class BlockBoxFactory(Factory):
 				self.save_count += 1
 			if shutdown: del self.worlds[world_id]
 		except:
-			self.logger.error("Error saving world %s" % world_id)
+			self.logger.error("Error saving world %s." % world_id)
 
 	def claimId(self, client):
 		"""Claims an empty player ID, and store it in the clients table."""
-		for i in range(1, self.max_clients+1):
+		for i in range(1, self.config["max_clients"]+1):
 			if i not in self.clients:
 				self.clients[i] = client
 				return i
@@ -397,7 +394,7 @@ class BlockBoxFactory(Factory):
 			if world.basename == ("mapdata/worlds/main"): # Can't leave main
 				return
 			else:
-				if not self.asd_delay == 0:
+				if not self.config["asd_delay"] == 0:
 					world.ASD = self.timers["asd"] = ResettableTimer(self.asd_delay*60,1,world.unload)
 					world.ASD.start()
 
@@ -448,7 +445,7 @@ class BlockBoxFactory(Factory):
 		"""Reboots a world in a crash case."""
 		for client in list(list(self.worlds[world_id].clients))[:]:
 			if world_id == "main":
-				client.changeToWorld(self.factory.main_backup)
+				client.changeToWorld(self.factory.config["main_backup"])
 			else:
 				client.changeToWorld("main")
 			client.sendServerMessage("%s has been rebooted." % world_id)
@@ -596,16 +593,20 @@ class BlockBoxFactory(Factory):
 					# Someone left!
 					elif task is TASK_PLAYERLEAVE:
 						# Only run it for clients who weren't the source.
+						text, erroredOut = data
 						for client in self.clients.values():
-							client.sendPlayerLeave(*data)
+							client.sendPlayerLeave(text)
 							if not source_client.username is None:
-								client.sendServerMessage("%s has quit! (%s%s%s)" % (source_client.username, COLOUR_RED, source_client.quitmsg, COLOUR_YELLOW))
+								if not erroredOut:
+									client.sendServerMessage("%s has quit! (%s%s%s)" % (source_client.username, COLOUR_RED, source_client.quitmsg, COLOUR_YELLOW))
 							else:
 								source_client.logger.info("Pinged the server.")
 						if not source_client.username is None:
 							if self.irc_relay and world:
-								self.irc_relay.sendServerMessage("%s has quit! (%s%s%s)" % (source_client.username, COLOUR_RED, source_client.quitmsg, COLOUR_BLACK))
-						self.logger.info("%s has quit! (%s)" % (source_client.username, source_client.quitmsg))
+								if not erroredOut:
+									self.irc_relay.sendServerMessage("%s has quit! (%s%s%s)" % (source_client.username, COLOUR_RED, source_client.quitmsg, COLOUR_BLACK))
+						if not erroredOut:
+							self.logger.info("%s has quit! (%s)" % (source_client.username, source_client.quitmsg))
 					# Someone changed worlds!
 					elif task is TASK_WORLDCHANGE:
 						# Only run it for clients who weren't the source.
@@ -628,12 +629,6 @@ class BlockBoxFactory(Factory):
 						self.adlog = open("logs/server.log", "a")
 						self.adlog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+" - "+username+": "+text+"\n")
 						self.adlog.flush()
-					elif task == TASK_GLOBALMESSAGE:
-						# Give all world people the message
-						id, world, message = data
-						message = self.messagestrip(message);
-						for client in world.clients:
-							client.sendNormalMessage(message)
 					elif task == TASK_WORLDMESSAGE:
 						# Give all world people the message
 						id, world, message = data
@@ -646,14 +641,6 @@ class BlockBoxFactory(Factory):
 						for client in self.clients.values():
 							client.sendNormalMessage(COLOUR_DARKBLUE + message)
 						self.logger.info(message)
-						if self.irc_relay and world:
-							self.irc_relay.sendServerMessage(message)
-					elif task == TASK_ONMESSAGE:
-						# Give all people the message
-						id, world, text = data
-						message = self.messagestrip(text)
-						for client in self.clients.values():
-							client.sendNormalMessage(COLOUR_YELLOW + message)
 						if self.irc_relay and world:
 							self.irc_relay.sendServerMessage(message)
 					elif task == TASK_ADMINMESSAGE:
@@ -725,7 +712,7 @@ class BlockBoxFactory(Factory):
 
 	def userColour(self, user):
 		"Returns the colour of the user. Global ranks only."
-		if user is self.owner:
+		if user == self.config["owner"]:
 			color = COLOUR_DARKGREEN
 		if user in self.spectators:
 			color = COLOUR_BLACK
@@ -747,7 +734,7 @@ class BlockBoxFactory(Factory):
 		return username.lower() in self.silenced
 
 	def isOwner(self, username):
-		return username.lower()==self.owner
+		return username.lower() == self.config["owner"]
 
 	def isDirector(self, username):
 		return username.lower() in self.directors or self.isOwner(username)
@@ -795,13 +782,13 @@ class BlockBoxFactory(Factory):
 	def AutoBackup(self):
 		for world in self.worlds:
 			self.Backup(world, "server")
-		if self.backup_auto:
-			reactor.callLater(float(self.backup_freq * 60), self.AutoBackup)
+		if self.config["backup_auto"]:
+			reactor.callLater(float(self.config["backup_freq"] * 60), self.AutoBackup)
 
 	def Backup(self, world_id, fromloc, backupname=None):
 		error = None
 		world_dir = ("mapdata/worlds/%s/" % world_id)
-		if world_id == "main" and not self.backup_main and not (fromloc == "user" or fromloc == "console"): # This is to ensure manual backup still works
+		if world_id == "main" and not self.config["backup_main"] and not (fromloc == "user" or fromloc == "console"): # This is to ensure manual backup still works
 			return
 		if not os.path.exists(world_dir):
 			if fromloc == "console":
@@ -823,7 +810,7 @@ class BlockBoxFactory(Factory):
 						self.logger.error("Backup %s already exists." % (backupname))
 					elif fromloc == "server":
 						# Should never reach here
-						self.logger.warning("AutoBackup error, please contact the blockBox team.")
+						self.logger.error("AutoBackup error, please contact the blockBox team.")
 					elif fromloc == "user":
 						error = ("ERROR_BACKUP_ALREADY_EXISTS_%s" % (backupname))
 						return error
@@ -843,25 +830,19 @@ class BlockBoxFactory(Factory):
 				shutil.copy(world_dir + "world.meta", path)
 			except:
 				if backupname is not None:
-					if fromloc == "console":
-						self.logger.error("Unable to save backup %s of world %s" % (backupname, world_id))
-					elif fromloc == "console":
+					if fromloc == "console" or fromloc == "server":
 						self.logger.error("Unable to save backup %s of world %s" % (backupname, world_id))
 					elif fromloc == "user":
 						error = ("ERROR_UNABLE_TO_SAVE_BACKUP_%s" % (backupname))
 						return error
 				else:
-					if fromloc == "console":
-						self.logger.error("Unable to save backup %s of world %s" % (str(int(backups[-1])+1)), world_id)
-					elif fromloc == "server":
+					if fromloc == "console" or fromloc == "server":
 						self.logger.error("Unable to save backup %s of world %s" % (str(int(backups[-1])+1)), world_id)
 					elif fromloc == "user":
 						error = ("ERROR_UNABLE_TO_SAVE_BACKUP_%s" % (backup))
 						return error
 			if backupname is not None:
-				if fromloc == "console":
-					self.logger.error("Unable to save backup %s of world %s" % (backupname, world_id))
-				elif fromloc == "server":
+				if fromloc == "console" or fromloc == "server":
 					self.logger.error("Unable to save backup %s of world %s" % (backupname, world_id))
 				elif fromloc == "user":
 					error = ("ERROR_UNABLE_TO_SAVE_BACKUP_%s" % (backupname))
@@ -869,9 +850,9 @@ class BlockBoxFactory(Factory):
 			else:
 				try:
 					if fromloc == "console":
-						self.logger.info("%s's backup %s is saved." %(world_id, str(int(backups[-1])+1)))
+						self.logger.info("%s's backup %s is saved." % (world_id, str(int(backups[-1])+1)))
 					elif fromloc == "server":
-						self.logger.debug("%s's backup %s is saved." %(world_id, str(int(backups[-1])+1)))
+						self.logger.debug("%s's backup %s is saved." % (world_id, str(int(backups[-1])+1)))
 					elif fromloc == "user":
 						error = str(int(backups[-1])+1)
 				except:
@@ -881,9 +862,9 @@ class BlockBoxFactory(Factory):
 						self.logger.debug("%s's backup 0 is saved." %(world_id))
 					elif fromloc == "user":
 						error = 0
-			if self.backup_max > 0:
-				if len(backups)+1 > self.backup_max:
-					for i in range(0,((len(backups)+1)-self.backup_max)):
+			if self.config["backup_max"] > 0:
+				if len(backups) + 1 > self.config["backup_max"]:
+					for i in range(0, ((len(backups) + 1) - self.config["backup_max"])):
 						shutil.rmtree(os.path.join(world_dir+"backup/", str(int(backups[i]))))
 			if error is not None:
 				return error
@@ -918,110 +899,22 @@ class BlockBoxFactory(Factory):
 		self.logger.info("Loaded %s discrete archives." % len(self.archives))
 		reactor.callLater(60, self.loadArchives)
 
-	def reloadOptions(self, toReload="all"):
-		self.reloading = True
-		followup = set()
-		loopsToReset = dict()
-		timersToReset = set()
-		if toReload == "max_clients" or toReload == "info" or toReload == "all":
-			self.max_clients = self.config.getint("main", "max_clients")
-			if "heartbeat" not in followup:
-				followup.add("heartbeat")
-		if toReload == "server_name" or toReload == "info" or toReload == "all":
-			self.server_name = self.config.get("main", "name")
-			if "heartbeat" not in followup:
-				followup.add("heartbeat")
-		if toReload == "server_message" or toReload == "info" or toReload == "all":
-			self.server_message = self.config.get("main", "description")
-			if "heartbeat" not in followup:
-				followup.add("heartbeat")
-		if toReload == "initial_greeting" or toReload == "info" or toReload == "all":
-			self.initial_greeting = self.config.get("main", "greeting").replace("\\n", "\n")
-		if toReload == "public" or toReload == "info" or toReload == "all":
-			self.public = self.config.getboolean("main", "public")
-			if "heartbeat" not in followup:
-				followup.add("heartbeat")
-		if toReload == "enable_archives" or toReload == "worlds" or toReload == "all":
-			self.enable_archives = self.conf_options.getboolean("worlds", "enable_archives")
-		if toReload == "asd_delay" or toReload == "worlds" or toReload == "all":
-			self.asd_delay = self.conf_options.getint("worlds", "asd_delay")
-			if "resetloop" not in followup:
-				followup.add("resetloop")
-			loopsToReset["asd"] = self.asd_delay
-			if "resetimer" not in followup:
-				followup.add("resettimer")
-			timersToReset.add("asd")
-		if toReload == "physics_limit" or toReload == "worlds" or toReload == "all":
-			self.physics_limit = self.conf_options.getint("worlds", "physics_limit")
-		if toReload == "main_backup" or toReload == "worlds" or toReload == "all":
-			self.main_backup = self.conf_options.get("worlds", "main_backup")
-		if toReload == "duplicate_logins" or toReload == "players" or toReload == "all":
-			self.duplicate_logins = self.config.getboolean("options", "duplicate_logins")
-		if toReload == "verify_names" or toReload == "players" or toReload == "all":
-			self.verify_names = self.config.getboolean("options", "verify_names")
-		if toReload == "api_password" or toReload == "api" or toReload == "all":
-			self.api_password = self.config.get("network", "api_password")
-		if toReload == "console_delay" or toReload == "api" or toReload == "all":
-			self.console_delay = self.config.getint("options", "console_delay")
-			if "resetloop" not in followup:
-				followup.add("resetloop")
-			loopsToReset["printinfo"] = self.console_delay
-		if toReload == "info_url" or toReload == "info" or toReload == "all":
-			self.info_url = self.config.get("info", "info_url")
-		if toReload == "credit_name" or toReload == "players" or toReload == "all":
-			self.credit_name = self.conf_options.get("bank", "credit_name")
-		if toReload == "initial_amount" or toReload == "players" or toReload == "all":
-			self.initial_amount = self.conf_options.get("bank", "initial_amount")
-		if toReload == "backup_freq" or toReload == "backup" or toReload == "all":
-			self.backup_freq = self.conf_options.getint("backup", "backup_freq")
-			if "resetloop" not in followup:
-				followup.add("resetloop")
-			if "autobackup" not in loopsToReset:
-				loopsToReset["autobackup"] = self.backup_freq
-		if toReload == "backup_main" or toReload == "backup" or toReload == "all":
-			self.backup_main = self.conf_options.getboolean("backup", "backup_main")
-		if toReload == "backup_max" or toReload == "backup" or toReload == "all":
-			self.backup_max = self.conf_options.getint("backup", "backup_max")
-		if toReload == "backup_auto" or toReload == "backup" or toReload == "all":
-			self.backup_auto = self.conf_options.getboolean("backup", "backup_auto")
-			if self.backup_auto:
-				if "resetloop" not in followup:
-					followup.add("resetloop")
-				if "autobackup" not in loopsToReset:
-					loopsToReset["autobackup"] = self.backup_freq
-		if toReload == "useblblimit" or toReload == "blb" or toReload == "all":
-			self.useblblimit = self.conf_options.getboolean("blb", "use_blb_limiter")
-			if self.useblblimit:
-				self.blblimit["player"] = self.conf_options.getint("blb", "player")
-				self.blblimit["builder"] = self.conf_options.getint("blb", "builder")
-				self.blblimit["advbuilder"] = self.conf_options.getint("blb", "advbuilder")
-				self.blblimit["op"] = self.conf_options.getint("blb", "op")
-				self.blblimit["worldowner"] = self.conf_options.getint("blb", "worldowner")
-				self.blblimit["mod"] = self.conf_options.getint("blb", "mod")
-				self.blblimit["admin"] = self.conf_options.getint("blb", "admin")
-				self.blblimit["director"] = self.conf_options.getint("blb", "director")
-				self.blblimit["owner"] = self.conf_options.getint("blb", "owner")
-		if toReload == "blblimit" or toReload == "blb" or toReload == "all":
-				self.blblimit["player"] = self.conf_options.getint("blb", "player")
-				self.blblimit["builder"] = self.conf_options.getint("blb", "builder")
-				self.blblimit["advbuilder"] = self.conf_options.getint("blb", "advbuilder")
-				self.blblimit["op"] = self.conf_options.getint("blb", "op")
-				self.blblimit["worldowner"] = self.conf_options.getint("blb", "worldowner")
-				self.blblimit["mod"] = self.conf_options.getint("blb", "mod")
-				self.blblimit["admin"] = self.conf_options.getint("blb", "admin")
-				self.blblimit["director"] = self.conf_options.getint("blb", "director")
-				self.blblimit["owner"] = self.conf_options.getint("blb", "owner")
-		for todo in followup:
-			if todo == "heartbeat":
-				# Resend heartbeat
-				self.Heartbeat.get_url()
-			elif todo == "resetloop":
-				# Look in the loopsToReset set
-				for toreset in loopsToReset:
-					if toreset in self.loops:
-						self.loops[toreset].stop()
-						self.loops[toreset].start(loopsToReset[toreset])
-			elif todo == "resettimer":
-				for toreset in timersToReset:
-					if toreset in self.timers:
-						self.timers["_server"][toreset].reset()
+#	def reloadOptions(self, toReload="all"):
+#		self.reloading = True
+#		followup = set()
+#		loopsToReset = dict()
+#		timersToReset = set()
+#		for todo in followup:
+#			if todo == "heartbeat":
+#				# Resend heartbeat
+#				self.Heartbeat.get_url()
+#			elif todo == "resetloop":
+#				# Look in the loopsToReset set
+#				for toreset in loopsToReset:
+#					if toreset in self.loops:
+#						self.loops[toreset].stop()
+#						self.loops[toreset].start(loopsToReset[toreset])
+#			elif todo == "resettimer":
+#				for toreset in timersToReset:
+#					if toreset in self.timers:
+#						self.timers["_server"][toreset].reset()

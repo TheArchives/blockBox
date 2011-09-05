@@ -74,6 +74,5 @@ class ArchivesPlugin(ProtocolPlugin):	"Commands for handlings of archives."
 				self.client.sendServerMessage("Please select an archive time first. (/atime)")
 		else:
 			world_id = self.client.factory.loadArchive(self.selected_archive)
-			self.client.factory.worlds[world_id].admin_blocks = False
 			self.client.sendServerMessage("Archive loaded, as %s." % world_id)
 			self.client.changeToWorld(world_id)

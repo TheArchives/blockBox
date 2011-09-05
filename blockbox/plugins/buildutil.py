@@ -22,8 +22,8 @@ class BuildUtilPlugin(ProtocolPlugin):
 		"creplace": "commandCreplace",
 		"crep": "commandCreplace",
 		"fill": "commandFill",
-		"copy": "commandSave",
-		"paste": "commandLoad",
+		"copy": "commandCopy",
+		"paste": "commandPaste",
 		"rotate": "commandRotate"
 	}
 
@@ -49,7 +49,7 @@ class BuildUtilPlugin(ProtocolPlugin):
 	def canBreakAdminBlocks(self):
 		"Shortcut for checking permissions."
 		if hasattr(self.client, "world"):
-			return (not self.client.world.admin_blocks) or self.client.isOp()
+			return self.client.isOp()
 		else:
 			return False
 
@@ -83,7 +83,7 @@ class BuildUtilPlugin(ProtocolPlugin):
 
 	@config("category", "build")
 	def commandBind(self, parts, fromloc, overriderank):
-		"/bind blockA blockB - Guest\nAliases: build, material\nBinds blockB to blockA."
+		"/bind blockA blockB - Guest\nAliases: material\nBinds blockB to blockA."
 		if len(parts) == 1:
 			if self.block_overrides:
 				temp = tuple(self.block_overrides)
@@ -109,9 +109,6 @@ class BuildUtilPlugin(ProtocolPlugin):
 			old = self.client.GetBlockValue(parts[1])
 			new = self.client.GetBlockValue(parts[2])
 			if old == None or new == None:
-				return
-			if not self.client.canUseRestrictedBlocks(new):
-				self.client.sendServerMessage("Sorry, but you are not allowed to use that block.")
 				return
 			name = parts[2].lower()
 			old_name = parts[1].lower()
@@ -162,7 +159,7 @@ class BuildUtilPlugin(ProtocolPlugin):
 
 	@config("category", "build")
 	@config("rank", "builder")
-	def commandLoad(self, parts, fromloc, overriderank):
+	def commandPaste(self, parts, fromloc, overriderank):
 		"/paste [x y z] - Builder\nRestore blocks saved earlier using /copy"
 		if len(parts) < 4 and len(parts) != 1:
 			self.client.sendServerMessage("Please enter a coordinate triplet.")
@@ -225,7 +222,7 @@ class BuildUtilPlugin(ProtocolPlugin):
 
 	@config("category", "build")
 	@config("rank", "builder")
-	def commandSave(self, parts, fromloc, overriderank):
+	def commandCopy(self, parts, fromloc, overriderank):
 		"/copy [x y z x2 y2 z2] - Builder\nCopy blocks using specified offsets."
 		if len(parts) < 7 and len(parts) != 1:
 			self.client.sendServerMessage("Please enter 2 coordinate triplets.")
@@ -264,7 +261,7 @@ class BuildUtilPlugin(ProtocolPlugin):
 
 			self.client.bsaved_blocks = set()
 			world = self.client.world
-			def generate_changes():
+			def doBlocks():
 				try:
 					for i in range(x, x2+1):
 						for j in range(y, y2+1):
@@ -275,24 +272,12 @@ class BuildUtilPlugin(ProtocolPlugin):
 								block = world.blockstore.raw_blocks[check_offset]
 								self.client.bsaved_blocks.add((i - x, j - y, k - z, block))
 								self.client.total += 1
-								yield
+					self.client.finalizeMassCMD("copy", self.client.total)
+					self.client.total = 0
 				except AssertionError:
 					self.client.sendServerMessage("Out of bounds copy error.")
 					return
-			# Now, set up a loop delayed by the reactor
-			block_iter = iter(generate_changes())
-			def do_step():
-				# Do 10 blocks
-				try:
-					for x in range(10):
-						block_iter.next()
-					reactor.callLater(0.01, do_step)
-				except StopIteration:
-					if fromloc == 'user':
-						self.client.finalizeMassCMD('copy', self.client.total)
-						self.client.total = 0
-					pass
-			do_step()
+			threading.Thread(target=doBlocks).start()
 
 	@config("category", "build")
 	@config("rank", "builder")
@@ -345,9 +330,6 @@ class BuildUtilPlugin(ProtocolPlugin):
 			blockA = self.client.GetBlockValue(parts[1])
 			blockB = self.client.GetBlockValue(parts[2])
 			if blockA == None or blockB == None:
-				return
-			if not self.client.canUseRestrictedBlocks(blockB):
-				self.client.sendServerMessage("Sorry, but you are not allowed to use that block.")
 				return
 			# If they only provided the type argument, use the last two block places
 			if len(parts) == 3:
@@ -430,9 +412,6 @@ class BuildUtilPlugin(ProtocolPlugin):
 			blockB = self.client.GetBlockValue(parts[2])
 			blockC = self.client.GetBlockValue(parts[3])
 			if blockA == None or blockB == None or blockC == None:
-				return
-			if not self.client.canUseRestrictedBlocks(blockB) or not self.client.canUseRestrictedBlocks(blockC):
-				self.client.sendServerMessage("Sorry, but you are not allowed to use that block.")
 				return
 			# If they only provided the type argument, use the last two block places
 			if len(parts) == 4:
@@ -518,9 +497,6 @@ class BuildUtilPlugin(ProtocolPlugin):
 			var_repblock = self.client.GetBlockValue(parts[2])
 			if block == None or var_repblock == None:
 				return
-			if not self.client.canUseRestrictedBlocks(var_repblock):
-				self.client.sendServerMessage("Sorry, but you are not allowed to use that block.")
-				return
 			# If they only provided the type argument, use the last block place
 			if len(parts) == 3:
 				try:
@@ -541,6 +517,9 @@ class BuildUtilPlugin(ProtocolPlugin):
 					self.client.sendServerMessage("All coordinate parameters must be integers.")
 					return
 			limit = self.client.getBlbLimit()
+			if limit == 0:
+				self.client.sendServerMessage("You have exceeded the fill limit for your rank. (Limit is %s)" % limit)
+				return
 			var_locxchecklist = [(1, 0, 0), (-1, 0, 0)]
 			var_locychecklist = [(0, 1, 0), (0, -1, 0)]
 			var_loczchecklist = [(0, 0, 1), (0, 0, -1)]
@@ -573,7 +552,7 @@ class BuildUtilPlugin(ProtocolPlugin):
 				while self.var_blocklist != []:
 					if limit != -1:
 						# Stop them doing silly things
-						if (var_blockchanges > limit) or limit == 0:
+						if var_blockchanges > limit:
 							self.client.sendServerMessage("You have exceeded the fill limit for your rank (Limit is %s)" % limit)
 							return
 					i,j,k,positionprevious = self.var_blocklist[0]

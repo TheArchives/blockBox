@@ -29,7 +29,7 @@ def username_command(func):
 				if user in username:
 					names.append(username)
 
-			if len(names)==1:
+			if len(names) == 1:
 				user = names[0]
 			if not user in self.client.factory.usernames:
 				self.client.sendServerMessage("No such player '%s'" % user)

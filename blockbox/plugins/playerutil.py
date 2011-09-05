@@ -52,7 +52,6 @@ class PlayerUtilPlugin(ProtocolPlugin):
 		"pinfo": "commandWho",
 		"lastseen": "commandLastseen",
 
-		"b": "commandLastCommand",
 		"lastcmd": "commandLastCommand",
 		"lastcommand": "commandLastCommand",
 
@@ -196,7 +195,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 	@config("category", "info")
 	def commandStaff(self, parts, fromloc, overriderank):
 		"/staff - Guest\nLists all server staff."
-		self.client.sendServerMessage("The Server Staff - Owner: "+self.client.factory.owner)
+		self.client.sendServerMessage("The Server Staff - Owner: "+self.client.factory.config["owner"])
 		list = Staff(self)
 		for each in list:
 			self.client.sendServerList(each)
@@ -363,7 +362,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 				else:
 					if user in self.client.factory.spectators:
 						user = COLOUR_BLACK + user
-					elif user in self.client.factory.owner:
+					elif user is self.client.factory.config["owner"]:
 						user = COLOUR_DARKGREEN + user
 					elif user in self.client.factory.directors:
 						user = COLOUR_GREEN + user
@@ -371,7 +370,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 						user = COLOUR_RED + user
 					elif user in self.client.factory.mods:
 						user = COLOUR_BLUE + user
-					elif user in self.client.world.owner:
+					elif user is self.client.world.owner:
 						user = COLOUR_DARKPURPLE + user
 					elif user in self.client.world.ops:
 						user = COLOUR_DARKCYAN + user
@@ -382,7 +381,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 					else:
 						user = COLOUR_WHITE + user
 				userlist.add(user)
-			self.client.sendServerList(["Players:"] + list(userlist))
+			self.client.sendServerList((["Players:"] + list(userlist)), plain=True)
 		else:
 			user = parts[1].lower()
 			with Persist(user) as p:
@@ -427,7 +426,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 					username = parts[1].lower()
 					if username in self.client.factory.spectators:
 						self.client.sendServerMessage(parts[1]+" - "+COLOUR_BLACK+"Spec")
-					elif username in self.client.factory.owner:
+					elif username == self.client.factory.config["owner"]:
 						self.client.sendServerMessage(parts[1]+" - "+COLOUR_DARKGREEN+"Owner")
 					elif username in self.client.factory.directors:
 						self.client.sendServerMessage(parts[1]+" - "+COLOUR_GREEN+"Director")
@@ -448,16 +447,16 @@ class PlayerUtilPlugin(ProtocolPlugin):
 					if self.client.isAdmin():
 						self.client.sendServerMessage("IP: "+p.string("main", "ip", "None recorded."))
 					self.client.sendServerMessage("Status: "+COLOUR_DARKRED+"Offline")
-					if username not in self.client.factory.lastseen:
-						self.client.sendServerMessage("Last Seen: N/A")
-					else:
-						t = time.time() - self.client.factory.lastseen[username]
+					lastseen = p.int("main", "lastseen", None)
+					if lastseen is not None:
+						t = time.time() - lastseen
 						days = t // 86400
 						hours = (t % 86400) // 3600
 						mins = (t % 3600) // 60
 						desc = "%id, %ih, %im" % (days, hours, mins)
 						self.client.sendServerMessage("Last Seen: %s ago." % (desc))
-						#self.commandLastseen(parts, fromloc, overriderank)
+					else:
+						self.client.sendServerMessage("Last Seen: None recorded.")
 					if p.int("bank", "balance", -1) is not -1:
 						self.client.sendServerMessage("Balance: C%d." %(p.int("bank", "balance", 0)))
 					else:
@@ -482,15 +481,17 @@ class PlayerUtilPlugin(ProtocolPlugin):
 	@only_username_command
 	def commandLastseen(self, username, fromloc, overriderank):
 		"/lastseen username - Guest\nTells you when 'username' was last seen."
-		if self.persist.string("main", "lastseen", -1):
-			self.client.sendServerMessage("There are no records of %s." % username)
-		else:
-			t = time.time() - self.persist.string("main", "lastseen", -1)
-			days = t // 86400
-			hours = (t % 86400) // 3600
-			mins = (t % 3600) // 60
-			desc = "%id, %ih, %im" % (days, hours, mins)
-			self.client.sendServerMessage("%s was last seen %s ago." % (username, desc))
+		with Persist(user) as p:
+			lastseen = p.int("main", "lastseen", None)
+			if lastseen is not None:
+				t = time.time() - lastseen
+				days = t // 86400
+				hours = (t % 86400) // 3600
+				mins = (t % 3600) // 60
+				desc = "%id, %ih, %im" % (days, hours, mins)
+				self.client.sendServerMessage("Last Seen: %s ago." % (desc))
+			else:
+				self.client.sendServerMessage("Last Seen: None recorded.")
 
 	@username_command
 	def commandLocate(self, user, fromloc, overriderank):
@@ -499,7 +500,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 
 	@config("category", "info")
 	def commandLastCommand(self, parts, fromloc, rankoverride):
-		"/b - Guest\nAliases: lastcmd, lastcommand\nRedos the last command you entered."
+		"/lastcmd - Guest\nAliases: lastcommand\nRedos the last command you entered."
 		message = self.lastcommand
 		parts = [x.strip() for x in message.split() if x.strip()]
 		command = parts[0].strip("/")
@@ -539,13 +540,13 @@ class PlayerUtilPlugin(ProtocolPlugin):
 		if func.config["rank"] == "worldowner" and not self.isWorldOwner():
 			self.client.sendServerMessage("'%s' is an WorldOwner-only command!" % command)
 			return
-		if func.config["rank"] == "op" and not self.isRank("op"):
+		if func.config["rank"] == "op" and not self.isOp():
 			self.client.sendServerMessage("'%s' is an Op-only command!" % command)
 			return
-		if func.config["rank"] == "advbuilder" and not self.isRank("advbuilder"):
+		if func.config["rank"] == "advbuilder" and not self.isAdvBuilder():
 			self.client.sendServerMessage("'%s' is an Advanced Builder-only command!" % command)
 			return
-		if func.config["rank"] == "builder" and not self.isRank("builder"):
+		if func.config["rank"] == "builder" and not self.isAdvBuilder():
 			self.client.sendServerMessage("'%s' is a Builder-only command!" % command)
 			return
 		# Using custom message?
@@ -603,8 +604,13 @@ class PlayerUtilPlugin(ProtocolPlugin):
 		if len(parts) < 2:
 			self.client.sendServerMessage("You must specify a rank and username.")
 		else:
-			parts = ["/derank", parts[0][1:]] + parts[1:]
-			self.client.sendServerMessage(DeRank(self, parts, fromloc, overriderank))
+			if parts[0] == "/dewriter":
+				rank = "/debuilder"
+			else:
+				rank = parts[0]
+			rank = rank.strip("/de")
+			partsToSend = ["/derank", rank] + parts[1:]
+			self.client.sendServerMessage(DeRank(self, partsToSend, fromloc, overriderank))
 
 	@config("category", "player")
 	@config("rank", "op")
@@ -671,7 +677,7 @@ class PlayerUtilPlugin(ProtocolPlugin):
 
 	@config("category", "world")
 	def commandCoord(self, parts, fromloc, overriderank):
-		"/coord x y z - Guest\nTeleports you to coords. NOTE: y is up."
+		"/goto x y z - Guest\nAliases: coord\nTeleports you to coords. NOTE: y is up."
 		try:
 			x = int(parts[1])
 			y = int(parts[2])
@@ -679,3 +685,4 @@ class PlayerUtilPlugin(ProtocolPlugin):
 			self.client.teleportTo(x, y, z)
 		except (IndexError, ValueError):
 			self.client.sendServerMessage("Usage: /coord x y z")
+			self.client.sendServerMessage("MCLawl users: /l [worldname]")

@@ -19,7 +19,7 @@ class BlockBoxServerProtocol(Protocol):
 	Main protocol class for communicating with clients.
 	Commands are mainly provided by plugins (protocol plugins).
 	"""
-	
+
 	def connectionMade(self):
 		"""We've got a TCP connection, let's set ourselves up."""
 		# We use the buffer because TCP is a stream protocol :)
@@ -31,6 +31,7 @@ class BlockBoxServerProtocol(Protocol):
 		self.logger = logging.getLogger("Client")
 		self.quitmsg = "Goodbye."
 		self.homeworld = "main"
+		self.erroredOut = False
 		self.total = 0 # TOFIX: Don't use a client variable for blb count
 		self.ip = self.transport.getPeer().host
 		self.commands = {}
@@ -162,7 +163,7 @@ class BlockBoxServerProtocol(Protocol):
 				self.logger.critical(traceback.format_exc())
 		# Remove from ID list, send removed msgs
 		self.factory.releaseId(self.id)
-		self.factory.queue.put((self, TASK_PLAYERLEAVE, (self.id,)))
+		self.factory.queue.put((self, TASK_PLAYERLEAVE, (self.id, self.erroredOut)))
 		if self.username:
 			self.logger.info("Disconnected.")
 			self.runHook("playerquit", self.username)
@@ -187,6 +188,7 @@ class BlockBoxServerProtocol(Protocol):
 	def sendError(self, error):
 		"""Sends an error to the client."""
 		self.logger.info("Sending error: %s" % error)
+		self.erroredOut = True
 		self.sendPacked(TYPE_ERROR, error)
 		reactor.callLater(0.2, self.transport.loseConnection)
 
@@ -205,7 +207,7 @@ class BlockBoxServerProtocol(Protocol):
 		return (self.username.lower() in self.world.owner.lower()) or self.isMod() or self.isAdmin() or self.isDirector() or self.isOwner()
 
 	def isOwner(self):
-		return self.username.lower()==self.factory.owner
+		return self.username.lower()==self.factory.config["owner"]
 
 	def isDirector(self):
 		return self.factory.isDirector(self.username.lower()) or self.isOwner()
@@ -227,7 +229,7 @@ class BlockBoxServerProtocol(Protocol):
 
 	def isSpectator(self):
 		return self.factory.isSpectator(self.username.lower())
-	
+
 	def canEnter(self, world):
 		"Checks if a user can enter that specific world."
 		if not world.private and (self.username.lower() not in world.worldbans):
@@ -247,7 +249,6 @@ class BlockBoxServerProtocol(Protocol):
 				format = TYPE_FORMATS[type]
 			except KeyError:
 				# It's a weird data packet, probably a ping.
-				self.logger.warning("%s pinged the server." % self.ip)
 				reactor.callLater(0.2, self.transport.loseConnection)
 				return
 			# See if we have all its data
@@ -264,10 +265,10 @@ class BlockBoxServerProtocol(Protocol):
 					self.logger.info("Kicked '%s'; already logged in to server" % (self.username))
 					self.sendError("You already logged in! Foolish bot owners.")
 				# Check their password
-				correct_pass = hashlib.md5(self.factory.salt + self.username).hexdigest()[-32:].strip("0")
+				correct_pass = hashlib.md5(self.factory.config["salt"] + self.username).hexdigest()[-32:].strip("0")
 				mppass = mppass.strip("0")
 				if not self.transport.getHost().host.split(".")[0:2] == self.transport.getPeer().host.split(".")[0:2]:
-					if self.factory.verify_names and mppass != correct_pass:
+					if self.factory.config["verify_names"] and mppass != correct_pass:
 						self.logger.info("Kicked '%s'; invalid password (%s, %s)" % (self.username, mppass, correct_pass))
 						self.sendError("Incorrect authentication. (try again in 60s?)")
 						return
@@ -279,7 +280,7 @@ class BlockBoxServerProtocol(Protocol):
 					self.sendError("Banned: %s" % self.factory.banReason(self.username))
 					return
 				# OK, see if there's anyone else with that username
-				if not self.factory.duplicate_logins and self.username.lower() in self.factory.usernames:
+				if not self.factory.config["duplicate_logins"] and self.username.lower() in self.factory.usernames:
 					self.factory.usernames[self.username.lower()].duplicateKick()
 				self.factory.usernames[self.username.lower()] = self
 				# Right protocol?
@@ -293,8 +294,8 @@ class BlockBoxServerProtocol(Protocol):
 				self.sendPacked(
 					TYPE_INITIAL,
 					7, # Protocol version
-					self.packString(self.factory.server_name),
-					self.packString(self.factory.server_message),
+					self.packString(self.factory.config["server_name"]),
+					self.packString(self.factory.config["server_message"]),
 					100 if breakable_admins else 0,
 				)
 				# Then... stuff
@@ -491,36 +492,37 @@ class BlockBoxServerProtocol(Protocol):
 							self.logger.error("Cannot find command code for %s, please report to blockBox team." % func)
 							self.sendSplitServerMessage("Command code not found, please report to server staff or blockBox team.")
 							return
-					if func.config["disabled"]:
-						self.sendServerMessage("Command %s has been disabled by the server owner." % command)
-						return
-					if self.isSpectator() and func.config["rank"]:
-						self.sendServerMessage("'%s' is not available to spectators." % command)
-						return
-					if func.config["rank"] == "owner" and not self.isOwner():
-						self.sendServerMessage("'%s' is an Owner-only command!" % command)
-						return
-					if func.config["rank"] == "director" and not self.isDirector():
-						self.sendServerMessage("'%s' is a Director-only command!" % command)
-						return
-					if func.config["rank"] == "admin" and not self.isAdmin():
-						self.sendServerMessage("'%s' is an Admin-only command!" % command)
-						return
-					if func.config["rank"] == "mod" and not self.isMod():
-						self.sendServerMessage("'%s' is a Mod-only command!" % command)
-						return
-					if func.config["rank"] == "worldowner" and not self.isWorldOwner():
-						self.sendServerMessage("'%s' is an WorldOwner-only command!" % command)
-						return
-					if func.config["rank"] == "op" and not self.isOp():
-						self.sendServerMessage("'%s' is an Op-only command!" % command)
-						return
-					if func.config["rank"] == "advbuilder" and not self.isAdvBuilder():
-						self.sendServerMessage("'%s' is an Advanced Builder-only command!" % command)
-						return
-					if func.config["rank"] == "builder" and not self.isBuilder():
-						self.sendServerMessage("'%s' is a Builder-only command!" % command)
-						return
+					if hasattr(func, "config"):
+						if func.config["disabled"]:
+							self.sendServerMessage("Command %s has been disabled by the server owner." % command)
+							return
+						if self.isSpectator() and func.config["rank"]:
+							self.sendServerMessage("'%s' is not available to spectators." % command)
+							return
+						if func.config["rank"] == "owner" and not self.isOwner():
+							self.sendServerMessage("'%s' is an Owner-only command!" % command)
+							return
+						if func.config["rank"] == "director" and not self.isDirector():
+							self.sendServerMessage("'%s' is a Director-only command!" % command)
+							return
+						if func.config["rank"] == "admin" and not self.isAdmin():
+							self.sendServerMessage("'%s' is an Admin-only command!" % command)
+							return
+						if func.config["rank"] == "mod" and not self.isMod():
+							self.sendServerMessage("'%s' is a Mod-only command!" % command)
+							return
+						if func.config["rank"] == "worldowner" and not self.isWorldOwner():
+							self.sendServerMessage("'%s' is an WorldOwner-only command!" % command)
+							return
+						if func.config["rank"] == "op" and not self.isOp():
+							self.sendServerMessage("'%s' is an Op-only command!" % command)
+							return
+						if func.config["rank"] == "advbuilder" and not self.isAdvBuilder():
+							self.sendServerMessage("'%s' is an Advanced Builder-only command!" % command)
+							return
+						if func.config["rank"] == "builder" and not self.isBuilder():
+							self.sendServerMessage("'%s' is a Builder-only command!" % command)
+							return
 					# Using custom message?
 					if func.config["custom_cmdlog_msg"]:
 						self.logger.info("%s %s" % (self.username, func.config["custom_cmdlog_msg"]))
@@ -528,9 +530,12 @@ class BlockBoxServerProtocol(Protocol):
 						self.logger.info("%s just used: %s" % (self.username, " ".join(parts)))
 					# Log it in IRC, if enabled.
 					if self.factory.irc_relay:
-						if self.factory.irc_cmdlogs:
-							if func.config["custom_cmdlog_msg"]:
-								self.factory.irc_relay.sendServerMessage("%s %s" % (self.username, func.config["custom_cmdlog_msg"]))
+						if self.factory.config["irc_cmdlogs"]:
+							if hasattr(func, "config"):
+								if func.config["custom_cmdlog_msg"]:
+									self.factory.irc_relay.sendServerMessage("%s %s" % (self.username, func.config["custom_cmdlog_msg"]))
+								else:
+									self.factory.irc_relay.sendServerMessage("%s just used: %s" % (self.username, " ".join(parts)))
 							else:
 								self.factory.irc_relay.sendServerMessage("%s just used: %s" % (self.username, " ".join(parts)))
 					try:
@@ -759,7 +764,7 @@ class BlockBoxServerProtocol(Protocol):
 		self.respawn()
 
 	def sendSpectatorUpdate(self):
-		"Sends a spec demotion message"  
+		"Sends a spec demotion message"
 		if self.isSpectator():
 			return
 		else:
@@ -885,7 +890,7 @@ class BlockBoxServerProtocol(Protocol):
 	def sendNormalMessage(self, message):
 		self._sendMessage("", message)
 
-	def sendServerList(self, items, wrap_at=63):
+	def sendServerList(self, items, wrap_at=63, plain=False):
 		"""Sends the items as server messages, wrapping them correctly."""
 		current_line = items[0]
 		for item in items[1:]:
@@ -894,7 +899,10 @@ class BlockBoxServerProtocol(Protocol):
 				current_line = item
 			else:
 				current_line += " " + item
-		self.sendServerMessage(current_line)
+		if plain:
+			self.sendNormalMessage(current_line)
+		else:
+			self.sendServerMessage(current_line)
 
 	def sendSplitServerMessage(self, message):
 		linelen = 63
@@ -929,7 +937,7 @@ class BlockBoxServerProtocol(Protocol):
 	def sendNewPlayer(self, id, username, x, y, z, h, p):
 		self.sendPacked(TYPE_SPAWNPOINT, id, username, x, y, z, h, p)
 
-	def sendPlayerLeave(self, id,):
+	def sendPlayerLeave(self, id):
 		self.sendPacked(TYPE_PLAYERLEAVE, id)
 
 	def sendKeepAlive(self):
@@ -1002,7 +1010,7 @@ class BlockBoxServerProtocol(Protocol):
 
 	def sendWelcome(self):
 		if not self.sent_first_welcome:
-			for line in self.factory.initial_greeting.split("\n"):
+			for line in self.factory.config["initial_greeting"].split("\n"):
 				self.sendPacked(TYPE_MESSAGE, 127, line.strip())
 			self.sent_first_welcome = True
 			self.runHook("playerjoined", self.username)
@@ -1014,17 +1022,9 @@ class BlockBoxServerProtocol(Protocol):
 	def canBreakAdminBlocks(self):
 		"""Shortcut method for checking admincrete-breaking permission."""
 		if hasattr(self, "world"):
-			return (not self.world.admin_blocks) or self.isOp()
+			return self.isOp()
 		else:
 			return False
-
-	def canUseRestrictedBlocks(self, block):
-		"""Shortcut method to check if the user can use restricted blocks (active water/lava/etc)"""
-		restricted_blocks = [BLOCK_SOLID, BLOCK_WATER, BLOCK_LAVA]
-		if ord(block) in restricted_blocks and not self.isOp():
-			return False
-		else:
-			return True
 
 	def sendAdminBlockUpdate(self):
 		"Sends a packet that updates the client's admin-building ability"
@@ -1146,7 +1146,6 @@ class BlockBoxServerProtocol(Protocol):
 								else:
 									self.sendServerMessage("You must be %s to build here." % zone[7])
 									return False
-		# Idea: let users choose default world, yeah
 		if self.world.id == "main" and self.isAdvBuilder() and not self.isMod() and not self.world.all_write:
 			self.sendBlock(x, y, z)
 			self.sendServerMessage("Only Builder/Op and Mod+ may edit 'main'.")
@@ -1158,7 +1157,7 @@ class BlockBoxServerProtocol(Protocol):
 		self.sendServerMessage("This map is locked. You must be Builder+ to build here.")
 		return False
 
-	def GetBlockValue(self, value):
+	def GetBlockValue(self, value, overriderank=False):
 		# Try getting the block as a direct integer type.
 		try:
 			block = chr(int(value))
@@ -1173,10 +1172,11 @@ class BlockBoxServerProtocol(Protocol):
 		if ord(block) > 49:
 			self.sendServerMessage("'%s' is not a valid block type." % value)
 			return None
-		op_blocks = [BLOCK_SOLID, BLOCK_WATER, BLOCK_LAVA]
-		if ord(block) in op_blocks and not self.isOp():
-			self.sendServerMessage("Sorry, but you can't use that block.")
-			return
+		if not overriderank:
+			op_blocks = [BLOCK_SOLID, BLOCK_WATER, BLOCK_LAVA]
+			if ord(block) in op_blocks and not self.isOp():
+				self.sendServerMessage("Sorry, but you can't use that block.")
+				return
 		return block
 
 	def MessageAlert(self):
@@ -1197,27 +1197,27 @@ class BlockBoxServerProtocol(Protocol):
 
 	def getBlbLimit(self, factor=1):
 		"""Fetches BLB Limit, and returns limit multiplied by a factor. 0 is returned if blb is disabled for that usergroup, and -1 for no limit."""
-		if self.factory.useblblimit:
+		if self.factory.config["useblblimit"]:
 			if self.isSpectator():
 			   limit = 0
 			elif self.isOwner():
-				limit = self.factory.blblimit["owner"]
+				limit = self.factory.config["blblimit"]["owner"]
 			elif self.isDirector():
-				limit = self.factory.blblimit["director"]
+				limit = self.factory.config["blblimit"]["director"]
 			elif self.isAdmin():
-				limit = self.factory.blblimit["admin"]
+				limit = self.factory.config["blblimit"]["admin"]
 			elif self.isMod():
-				limit = self.factory.blblimit["mod"]
+				limit = self.factory.config["blblimit"]["mod"]
 			elif self.isWorldOwner():
-				limit = self.factory.blblimit["worldowner"]
+				limit = self.factory.config["blblimit"]["worldowner"]
 			elif self.isOp():
-				limit = self.factory.blblimit["op"]
+				limit = self.factory.config["blblimit"]["op"]
 			elif self.isAdvBuilder():
-				limit = self.factory.blblimit["advbuilder"]
+				limit = self.factory.config["blblimit"]["advbuilder"]
 			elif self.isBuilder():
-				limit = self.factory.blblimit["builder"]
+				limit = self.factory.config["blblimit"]["builder"]
 			else:
-				limit = self.factory.blblimit["player"]
+				limit = self.factory.config["blblimit"]["player"]
 		else:
 			if self.isSpectator():
 				limit = 0

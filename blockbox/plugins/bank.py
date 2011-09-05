@@ -25,14 +25,12 @@ class BankPlugin(ProtocolPlugin):
 		"/bank - Guest\nAliases: balance\nFirst time: Creates you a account.\nOtherwise: Checks your balance."
 		if self.client.persist.int("bank", "balance", -1) is not -1:
 			self.client.sendServerMessage("Welcome to the bank!")
-			self.client.sendServerMessage("Your current balance is %d %s." % (self.client.persist.int("bank", "balance", -1), self.client.factory.credit_name))
+			self.client.sendServerMessage("Your current balance is %d %s." % (self.client.persist.int("bank", "balance", -1), self.client.factory.config["credit_name"]))
 		else:
-			self.client.persist.set("bank", "balance", self.client.factory.initial_amount)
-			self.client.factory.balancesqllog.write("INSERT INTO " + self.client.factory.table_prefix + "players (username, balance) VALUES ('" + self.client.username + "', " + self.client.factory.initial_amount + ");")
-			self.client.factory.balancesqllog.flush()
+			self.client.persist.set("bank", "balance", self.client.factory.config["initial_amount"])
 			self.client.sendServerMessage("Welcome to the bank!")
 			self.client.sendServerMessage("We have created your account.")
-			self.client.sendServerMessage("Your current balance is %d %s." % (self.client.persist.int("bank", "balance", -1), self.client.factory.credit_name))
+			self.client.sendServerMessage("Your current balance is %d %s." % (self.client.persist.int("bank", "balance", -1), self.client.factory.config["credit_name"]))
 			self.client.sendServerMessage("NOTE: We CAN detect cheating. Do NOT try it.")
 			self.money_logger.info("%s has created an account." % self.client.username)
 
@@ -55,9 +53,7 @@ class BankPlugin(ProtocolPlugin):
 			return False
 		with Persist(target) as p:
 			p.set("bank", "balance", amount)
-		self.client.factory.balancesqllog.write("UPDATE " + self.client.factory.table_prefix + "players SET balance=" + amount + " WHERE username='" + target + "';")
-		self.client.factory.balancesqllog.flush()
-		self.client.sendServerMessage("Set player balance to %d %s." % (amount, self.client.factory.credit_name))
+		self.client.sendServerMessage("Set player balance to %d %s." % (amount, self.client.factory.config["credit_name"]))
 
 	def commandPay(self, parts, fromloc, overriderank):
 		"/pay username amount - Guest\nThis lets you send money to other people."
@@ -85,19 +81,15 @@ class BankPlugin(ProtocolPlugin):
 			self.client.sendServerMessage("Error: Amount must be positive.")
 			return False
 		elif amount > ubalance or amount < -(tbalance):
-			self.client.sendServerMessage("Error: Not enough %s." % self.client.factory.credit_name)
+			self.client.sendServerMessage("Error: Not enough %s." % self.client.factory.config["credit_name"])
 			return False
 		else:
 			with Persist(target) as p:
 				p.set("bank", "balance", tbalance + amount)
 			self.client.persist.set("bank", "balance", ubalance - amount)
-			self.client.factory.balancesqllog.write("UPDATE " + self.client.factory.table_prefix + "players SET balance=(balance-" + amount + ") WHERE username='" + self.client.username + "';")
-			self.client.factory.balancesqllog.flush()
 			self.client.sendServerMessage("You sent %d ." % amount)
 			if target in self.client.factory.usernames:
-				self.client.factory.usernames[target].sendServerMessage("You received %(amount)d %(creditname)s from %(user)s." % {'amount': amount, 'creditname': self.client.factory.credit_name, 'user': user})
-				self.client.factory.balancesqllog.write("UPDATE " + self.client.factory.table_prefix + "players SET balance=(balance+" + amount + ") WHERE username='" + target + "';")
-				self.client.factory.balancesqllog.flush()
+				self.client.factory.usernames[target].sendServerMessage("You received %(amount)d %(creditname)s from %(user)s." % {'amount': amount, 'creditname': self.client.factory.config["credit_name"], 'user': user})
 			self.money_logger.info("%(user)s sent %(amount)d to %(target)s" % {'user': user, 'amount': amount, 'target': target})
 
 	@config("rank", "director")
@@ -112,6 +104,4 @@ class BankPlugin(ProtocolPlugin):
 				self.client.sendServerMessage("Invalid target.")
 				return False
 			p.set("bank", "balance", -1)
-			self.client.factory.balancesqllog.write("UPDATE " + self.client.factory.table_prefix + "players SET balance=-1 WHERE username='" + target + "';")
-			self.client.factory.balancesqllog.flush()
 		self.client.sendServerMessage("Account deleted.")

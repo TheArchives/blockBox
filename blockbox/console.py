@@ -127,8 +127,8 @@ class StdinPlugin(threading.Thread):
 											else:
 												# Check persist
 												with Persist(message[1]) as p:
-													ip = p.string("main", "ip")
-													if ip == "":
+													ip = p.string("main", "ip", None)
+													if ip == None:
 														print("Warning: %s has never come on the server, therefore no IP record of that user." % username)
 														continue
 											self.factory.addIpBan(ip, " ".join(message[2:]))
@@ -236,7 +236,7 @@ class StdinPlugin(threading.Thread):
 							elif message[0] == ("about"):
 								print("About The Server")
 								print("Powered by blockBox %s - http://blockbox.hk-diy.net/" % VERSION )
-								print("Name: %s" % self.factory.server_name)
+								print("Name: %s" % self.factory.config["server_name"])
 								try:
 									print("URL: "+self.factory.heartbeat.url)
 								except:

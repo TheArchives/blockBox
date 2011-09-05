@@ -327,13 +327,11 @@ def Staff(self, server=None):
 def Credits():
 	Temp = []
 	Temp.append ("Thanks to the following people for making blockBox possible...")
-	Temp.append ("(a full list is available on the blockBox website, which can be found at blockbox.bradness.info)")
 	Temp.append ("Mojang Specifications (Minecraft): Notch, dock, ez, ...")
-	Temp.append ("Creators: aera (Myne), PixelEater (MyneCraft and blockBox), iKJames (iCraft)")
-	#Temp.append ("Devs: Adam01, revenant, gdude2002, gothfox, AndrewPH, Varriount, erronjason, destroyerx1, ntfwc, Dwarfy, goober, willempiee")
-	#Temp.append ("Others: Bidoof_King, Rils, fragmer, PyroPyro, TkTech, the Users, the Testers, the Modders, the Community, ...")
-	Temp.append ("Contributors: tyteen4a03, ntfwc, UberFoX, fizyplankton, opticalza")
-	Temp.append ("Others: Ginger879, Gear3215, ImDeity")
+	Temp.append ("Creators and Maintainers: aera (Myne), PixelEater (MyneCraft), gdude2002 (Arc), tyteen4a03 (blockBox)")
+	Temp.append ("Devs: Adam01, revenant, gdude2002, gothfox, AndrewPH, Varriount, erronjason, destroyerx1, ntfwc, Dwarfy, goober, willempiee")
+	Temp.append ("Devs: tyteen4a03, ntfwc, UberFoX, fizyplankton, opticalza")
+	Temp.append ("Others: Bidoof_King, Rils, fragmer, PyroPyro, TkTech, the Users, the Testers, the Modders, the Community, ...")
 	return Temp
 
 def recursive_default():
@@ -360,3 +358,9 @@ def invertDict(OldDict):
 		if OldDict[key] not in NewDict:
 			NewDict[OldDict[key]] = key
 	return NewDict
+
+def doExit(exitTime=10):
+	print ("blockBox will now exit in %s seconds." % exitTime)
+	#if sys.platform == "win32":
+	#	print ("blockBox may not exit if run on Windows. Please close the window yourself.")
+	sys.exit(exitTime)

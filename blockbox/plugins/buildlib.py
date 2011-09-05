@@ -330,9 +330,6 @@ class BuildLibPlugin(ProtocolPlugin):
 			block = self.client.GetBlockValue(parts[1])
 			if block == None:
 				return
-			if not self.client.canUseRestrictedBlocks(block):
-				self.client.sendServerMessage("Sorry, but you are not allowed to use that block.")
-				return
 			# If they only provided the type argument, use the last two block places
 			if len(parts) == 2:
 				try:
@@ -469,9 +466,6 @@ class BuildLibPlugin(ProtocolPlugin):
 			block = self.client.GetBlockValue(parts[1])
 			if block == None:
 				return
-			if not self.client.canUseRestrictedBlocks(block):
-				self.client.sendServerMessage("Sorry, but you are not allowed to use that block.")
-				return
 			# If they only provided the type argument, use the last two block places
 			if len(parts) == 3:
 				try:
@@ -544,9 +538,6 @@ class BuildLibPlugin(ProtocolPlugin):
 			block = self.client.GetBlockValue(parts[1])
 			if block == None:
 				return
-			if not self.client.canUseRestrictedBlocks(block):
-				self.client.sendServerMessage("Sorry, but you are not allowed to use that block.")
-				return
 			# If they only provided the type argument, use the last two block places
 			if len(parts) == 3:
 				try:
@@ -613,9 +604,6 @@ class BuildLibPlugin(ProtocolPlugin):
 		else:
 			block = self.client.GetBlockValue(parts[1])
 			if block == None:
-				return
-			if not self.client.canUseRestrictedBlocks(block):
-				self.client.sendServerMessage("Sorry, but you are not allowed to use that block.")
 				return
 			# If they only provided the type argument, use the last three block places
 			if len(parts) == 2:
@@ -717,9 +705,6 @@ class BuildLibPlugin(ProtocolPlugin):
 			block = self.client.GetBlockValue(parts[1])
 			if block == None:
 				return
-			if not self.client.canUseRestrictedBlocks(block):
-				self.client.sendServerMessage("Sorry, but you are not allowed to use that block.")
-				return
 			# If they only provided the type argument, use the last two block places
 			if len(parts) == 4:
 				try:
@@ -800,9 +785,6 @@ class BuildLibPlugin(ProtocolPlugin):
 		else:
 			block = self.client.GetBlockValue(parts[1])
 			if block == None:
-				return
-			if not self.client.canUseRestrictedBlocks(block):
-				self.client.sendServerMessage("Sorry, but you are not allowed to use that block.")
 				return
 			# If they only provided the type argument, use the last two block places
 			if len(parts) == 2:
@@ -892,9 +874,6 @@ class BuildLibPlugin(ProtocolPlugin):
 			block2 = self.client.GetBlockValue(parts[2])
 			if block == None or block2 == None:
 				return
-			if not self.client.canUseRestrictedBlocks(block) or not self.client.canUseRestrictedBlocks(block2):
-				self.client.sendServerMessage("Sorry, but you are not allowed to use that block.")
-				return
 			# If they only provided the type argument, use the last two block places
 			if len(parts) == 4:
 				try:
@@ -982,13 +961,10 @@ class BuildLibPlugin(ProtocolPlugin):
 			try:
 				radius = int(parts[2])
 			except ValueError:
-				self.client.sendServerMessage("Radius must be a Number.")
+				self.client.sendServerMessage("Radius must be a number.")
 				return
 			block = self.client.GetBlockValue(parts[1])
 			if block == None:
-				return
-			if not self.client.canUseRestrictedBlocks(block):
-				self.client.sendServerMessage("Sorry, but you are not allowed to use that block.")
 				return
 			# If they only provided the type argument, use the last two block places
 			if len(parts) == 4:
@@ -1079,9 +1055,6 @@ class BuildLibPlugin(ProtocolPlugin):
 			block = self.client.GetBlockValue(parts[1])
 			if block == None:
 				return
-			if not self.client.canUseRestrictedBlocks(block):
-				self.client.sendServerMessage("Sorry, but you are not allowed to use that block.")
-				return
 			# If they only provided the type argument, use the last block place
 			if len(parts) == 4:
 				try:
@@ -1157,9 +1130,6 @@ class BuildLibPlugin(ProtocolPlugin):
 			block = self.client.GetBlockValue(parts[1])
 			if block == None:
 				return
-			if not self.client.canUseRestrictedBlocks(block):
-				self.client.sendServerMessage("Sorry, but you are not allowed to use that block.")
-				return
 			# If they only provided the type argument, use the last two block places
 			if len(parts) == 3:
 				try:
@@ -1186,7 +1156,7 @@ class BuildLibPlugin(ProtocolPlugin):
 			limit = self.client.getBlbLimit()
 			if limit != -1:
 				# Stop them doing silly things
-				if (int(4/3 * cmath.pi * radius** 2 * endradius) > limit) or limit == 0:
+				if (int(4/3 * cmath.pi * radius ** 2 * endradius) > limit) or limit == 0:
 					self.client.sendServerMessage("Sorry, that area is too big for you to ellipsoid (Limit is %s)" % limit)
 					return
 			# Draw all the blocks on, I guess
@@ -1234,9 +1204,6 @@ class BuildLibPlugin(ProtocolPlugin):
 		else:
 			block = self.client.GetBlockValue(parts[1])
 			if block == None:
-				return
-			if not self.client.canUseRestrictedBlocks(block):
-				self.client.sendServerMessage("Sorry, but you are not allowed to use that block.")
 				return
 			# If they only provided the type argument, use the last three block places
 			if len(parts) == 2:
@@ -1379,9 +1346,6 @@ class BuildLibPlugin(ProtocolPlugin):
 				return
 			block = self.client.GetBlockValue(parts[1])
 			if block == None:
-				return
-			if not self.client.canUseRestrictedBlocks(block):
-				self.client.sendServerMessage("Sorry, but you are not allowed to use that block.")
 				return
 			# If they only provided the type argument, use the last two block places
 			if len(parts) == 3 or len(parts) == 4:

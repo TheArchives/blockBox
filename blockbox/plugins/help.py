@@ -2,6 +2,8 @@
 # blockBox is licensed under the Creative Commons by-nc-sa 3.0 UnPorted License.
 # To view more details, please see the "LICENSING" file in the "docs" folder of the blockBox Package.
 
+import hashlib, socket
+
 from blockbox.constants import *
 from blockbox.decorators import *
 from blockbox.globals import *
@@ -21,6 +23,8 @@ class HelpPlugin(ProtocolPlugin):
 		"credits": "commandCredits",
 		"motd": "commandMOTD",
 		"greeting": "commandMOTD",
+		"dcurl": "commandDCURL",
+		"womurl": "commandDCURL",
 	}
 
 	@config("category", "info")
@@ -38,8 +42,7 @@ class HelpPlugin(ProtocolPlugin):
 		self.client.sendServerMessage("- " + \
 			(self.client.world.highlight_ops and "&2Colors" or "&4Colors") + "&e | " + \
 			(self.client.world.physics and "&2Physics" or "&4Physics") + "&e | " + \
-			(self.client.world.finite_water and "&4FWater" or "&2FWater") + "&e | " + \
-			(self.client.world.admin_blocks and "&2Solids" or "&4Solids")
+			(self.client.world.finite_water and "&4FWater" or "&2FWater")
 		)
 		if not self.client.world.ops:
 			self.client.sendServerMessage("Ops: N/A")
@@ -66,7 +69,7 @@ class HelpPlugin(ProtocolPlugin):
 				elif parts[1].lower() == "chat":
 					self.client.sendServerMessage("The Chats")
 					if self.client.isMod():
-						self.client.sendServerMessage("Whispers: @username Whispers")	
+						self.client.sendServerMessage("Whispers: @username Whispers")
 						self.client.sendServerMessage("WorldChat: !message")
 						self.client.sendServerMessage("StaffChat: #message")
 					else:
@@ -172,11 +175,11 @@ class HelpPlugin(ProtocolPlugin):
 	@config("category", "info")
 	def commandAbout(self, parts, fromloc, overriderank):
 		self.client.sendServerMessage("About The Server - blockBox %s" % VERSION)
-		self.client.sendServerMessage("Name: "+self.client.factory.server_name)
-		self.client.sendServerMessage("URL: "+self.client.factory.info_url)
-		self.client.sendServerMessage("Owner: "+self.client.factory.owner)
-		if self.client.factory.use_irc:
-			self.client.sendServerMessage("IRC: "+self.client.factory.conf_irc.get("irc", "server")+" "+self.client.factory.irc_channel)
+		self.client.sendServerMessage("Name: "+self.client.factory.config["server_name"])
+		self.client.sendServerMessage("URL: "+self.client.factory.config["info_url"])
+		self.client.sendServerMessage("Owner: "+self.client.factory.config["owner"])
+		if self.client.factory.config["use_irc"]:
+			self.client.sendServerMessage("IRC: "+self.client.factory.conf_irc.get("irc", "server")+" "+self.client.factory.config["irc_channel"])
 
 	@config("category", "info")
 	def commandCredits(self, parts, fromloc, overriderank):
@@ -189,6 +192,18 @@ class HelpPlugin(ProtocolPlugin):
 	@config("category", "info")
 	def commandMOTD(self, parts, fromloc, overriderank):
 		"/motd - Guest\nAliases: greeting\nShows the greeting."
-		self.client.sendServerMessage("MOTD for "+self.client.factory.server_name+":")
-		for line in self.client.factory.initial_greeting.split("\n"):
+		self.client.sendServerMessage("MOTD for "+self.client.factory.config["server_name"]+":")
+		for line in self.client.factory.config["initial_greeting"].split("\n"):
 			self.client.sendNormalMessage(line)
+
+	@config("category", "info")
+	def commandDCURL(self, parts, fromloc, overriderank):
+		"/dcurl - Guest\nAliases: womurl\nGives your Direct Connect URL for WoM Client 1.6.3+"
+		# TODO: I think there is a twisted alt for this -tyteen
+		ip = socket.gethostbyname(socket.gethostname())
+		if ip == "127.0.0.1": # TODO: Also check LAN IP
+			output = commands.getoutput("/sbin/ifconfig")
+			ip = parseaddress(output)
+		mppass = hashlib.md5(self.client.factory.confoig["salt"] + self.client.username).hexdigest()[-32:].strip("0")
+		self.client.sendServerMessage("Direct Connect URL:")
+		self.client.sendServerMessage("mc://%s:%s/%s/" % (ip, self.client.factory.config.getint("network", "port"), self.client.username))
