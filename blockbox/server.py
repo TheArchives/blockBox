@@ -131,6 +131,8 @@ class BlockBoxFactory(Factory):
             self.config["irc_cmdlogs"] = self.conf_irc.getboolean("irc", "cmdlogs")
         # Parse heartbeat related section
         self.config["send_heartbeat"] = self.conf_options.getboolean("heartbeat", "send_heartbeat")
+        if self.config["send_heartbeat"]:
+            self.config["wom_heartbeat"] = self.conf_options.getboolean("heartbeat", "wom_heartbeat")
         self.config["use_blockbeat"] = self.conf_options.getboolean("heartbeat", "use_blockbeat")
         if self.config["use_blockbeat"]:
             self.config["blockbeat_authkey"] = self.conf_options.get("heartbeat", "blockbeat_authkey")

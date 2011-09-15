@@ -42,7 +42,7 @@ class Heartbeat(object):
         try:
             try:
                 self.factory.last_heartbeat = time.time()
-                fh = urllib2.urlopen("http://www.minecraft.net/heartbeat.jsp", urllib.urlencode({
+                fh = urllib2.urlopen(("http://www.minecraft.net/heartbeat.jsp" if not self.factory.config["wom_heartbeat"] else "http://direct.worldofminecraft.com/hb.php"), urllib.urlencode({
                 "port": self.factory.conf_main.getint("network", "port"),
                 "users": len(self.factory.clients),
                 "max": self.factory.config["max_clients"],
